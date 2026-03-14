@@ -40,10 +40,11 @@
             background-position: center;
             opacity: 0;
             transition: opacity 1s ease;
-            filter: grayscale(1) contrast(1.2) brightness(0.35); 
+            filter: contrast(1.2) brightness(0.4); 
         }
         .project-bg.active {
-            opacity: 0.4; 
+            opacity: 0.6; /* Increased visibility */
+            filter: contrast(1.2) brightness(0.6); /* Boosted brightness */
         }
         .title {
             font-family: var(--display);
@@ -64,6 +65,7 @@
             letter-spacing: -0.02em;
             opacity: 1;
             z-index: 5;
+            line-height: 1.1;
         }
         .footer-metadata {
             position: absolute;
@@ -192,7 +194,10 @@
         <div class="corner br"></div>
     </div>
 
-    <div class="bg-container" id="bg-container"></div>
+    <div class="bg-container" id="bg-container">
+        <!-- Initial Mood Background -->
+        <div class="project-bg active" id="initial-bg" style="background-image: url('landing-mood.png'); opacity: 0.35;"></div>
+    </div>
 
     <main class="portal-wrapper" id="portal">
         <a href="info.html" class="info-link">[ INFO ]</a>
@@ -257,6 +262,14 @@
 
         portal.addEventListener('click', (e) => {
             if (e.target.closest('.btn') || e.target.closest('.info-link') || e.target.closest('.footer-metadata a')) return;
+            
+            // Kill initial background
+            const initialBg = document.getElementById('initial-bg');
+            if (initialBg) {
+                initialBg.classList.remove('active');
+                initialBg.style.display = 'none'; // HARD REMOVE
+            }
+
             currentIndex = (currentIndex + 1) % projects.length;
             const p = projects[currentIndex];
             titleEl.textContent = p.title;
@@ -294,6 +307,11 @@
                     titleEl.textContent = "BROUHAHAHA";
                     subtitleEl.innerHTML = "I craft copy into ideas into<br>scripts into films into culture.";
                     document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
+                    const initialBg = document.getElementById('initial-bg');
+                    if (initialBg) {
+                        initialBg.style.display = 'block'; // RESTORE VISIBILITY
+                        setTimeout(() => initialBg.classList.add('active'), 10);
+                    }
                     actionGroup.classList.remove('visible');
                 }
             }
