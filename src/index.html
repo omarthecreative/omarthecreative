@@ -95,17 +95,15 @@
         .tr { top: -1px; right: -1px; border-left: 0; border-bottom: 0; }
         .bl { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
         .br { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+        
         .nav-hint {
-            position: absolute;
-            top: 4rem;
             font-family: var(--mono);
             font-size: 0.6rem;
             letter-spacing: 0.2em;
             color: var(--vibrant-red);
-            opacity: 0.4;
             text-transform: uppercase;
-            z-index: 10;
         }
+
         .info-link {
             position: absolute;
             top: 4rem;
@@ -118,10 +116,8 @@
             z-index: 100;
         }
         .info-link:hover { color: var(--vibrant-red); }
-        </style>
-        </head>
-        <body>
-        <a href="info.html" class="info-link">[ INFO ]</a>
+
+        .action-group {
             margin-top: 4rem;
             display: flex;
             gap: 1rem;
@@ -221,6 +217,8 @@
         </div>
     </div>
 
+    <a href="info.html" class="info-link">[ INFO ]</a>
+
     <div class="corner-frame">
         <div class="corner tl"></div>
         <div class="corner tr"></div>
@@ -232,7 +230,9 @@
     <div class="overlay-heat"></div>
 
     <main class="portal-wrapper" id="portal">
-        <div class="nav-hint" style="top: 4rem; color: white; opacity: 0.8; font-weight: 700;">[ OMAR SILWANY ]</div>
+        <div style="position: absolute; top: 4rem; color: white; opacity: 0.8; font-weight: 700; font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;">
+            [ OMAR SILWANY ]
+        </div>
         
         <div class="project-display">
             <div class="subtitle" id="project-subtitle">I push brands into culture.</div>
@@ -246,7 +246,7 @@
         
         <div class="footer-metadata">
             <span id="meta-left">[ MOTION ]</span>
-            <span id="nav-hint" style="position: static; opacity: 0.4;">[ CLICK TO CYCLE OBSERVATIONS ]</span>
+            <span class="nav-hint" style="opacity: 0.4;">[ CLICK TO CYCLE OBSERVATIONS ]</span>
             <span id="meta-right">[ SOUND ]</span>
         </div>
 
@@ -334,9 +334,9 @@
             metaLeft.textContent = `[ ${p.tag} ]`;
             metaRight.textContent = `[ ${p.year} ]`;
             document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
-            document.getElementById(`bg-${currentIndex}`).classList.add('active');
+            const bg = document.getElementById(`bg-${currentIndex}`);
+            if (bg) bg.classList.add('active');
             actionGroup.classList.add('visible');
-            document.getElementById('nav-hint').textContent = "[ CLICK SCREEN TO CYCLE // SELECT ACTION BELOW ]";
         });
 
         watchBtn.addEventListener('click', () => {
