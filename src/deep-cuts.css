@@ -4,7 +4,7 @@
     --color-accent: #FF0000;
     --color-white: #FFFFFF;
     --font-primary: "freight-sans-pro", sans-serif;
-    --font-display: "brothers", sans-serif;
+    --font-display: "Anton", sans-serif;
     --font-mono: "IBM Plex Mono", monospace;
 }
 
@@ -53,7 +53,7 @@
 
 .deep-cuts-wrapper {
     min-height: 100vh;
-    padding: 10rem 4rem 8rem 4rem;
+    padding: 15rem 4rem 8rem 4rem;
     display: flex;
     flex-direction: column;
 }
@@ -61,30 +61,36 @@
 .lessons-container {
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 0;
+    max-width: 1800px;
+    margin: 0 auto;
+    width: 100%;
 }
 
 .lesson-row {
     display: grid;
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 350px 1fr;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    padding: 20px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.4s ease;
+    padding: 80px 0;
+    border-top: 1px solid rgba(255, 0, 0, 0.15);
+    gap: 80px;
 }
 
 .lesson-row:hover {
-    background-color: rgba(255, 0, 0, 0.02);
+    background-color: rgba(255, 0, 0, 0.03);
+    padding-left: 20px;
 }
 
 .lesson-number {
-    font-family: var(--font-primary);
-    font-size: clamp(80px, 10vw, 150px);
-    font-weight: 900;
+    font-family: var(--font-display);
+    font-size: clamp(100px, 18vw, 320px);
+    font-weight: 400;
     color: var(--color-accent);
-    line-height: 0.8;
-    letter-spacing: -0.05em;
+    line-height: 0.75;
+    letter-spacing: -0.06em;
     transition: color 0.3s ease;
+    text-align: right;
 }
 
 .lesson-row:hover .lesson-number {
@@ -95,16 +101,16 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 15px;
+    gap: 20px;
 }
 
 .lesson-text {
     font-family: var(--font-display);
-    font-size: clamp(24px, 3vw, 40px);
-    font-weight: 700;
-    line-height: 0.7;
+    font-size: clamp(40px, 7vw, 130px);
+    font-weight: 400;
+    line-height: 0.8;
     text-transform: uppercase;
-    letter-spacing: 0.02em;
+    letter-spacing: -0.03em;
     transition: color 0.3s ease;
 }
 
@@ -114,16 +120,20 @@
 
 .lesson-meta {
     font-family: var(--font-mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
     opacity: 0.4;
     text-transform: uppercase;
 }
 
 /* Filter Section */
 .filter-section {
-    margin-top: 100px;
-    padding-bottom: 40px;
+    margin-top: 150px;
+    padding-bottom: 80px;
+    max-width: 1800px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
 }
 
 .filter-divider {
@@ -174,6 +184,14 @@
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+    .lesson-row {
+        grid-template-columns: 150px 1fr;
+        padding: 40px 0;
+        gap: 40px;
+    }
+}
+
 @media (max-width: 768px) {
     .apex-nav, .deep-cuts-wrapper {
         left: 2rem;
@@ -182,12 +200,19 @@
         padding-right: 2rem;
     }
     .lesson-row {
-        grid-template-columns: 80px 1fr;
+        grid-template-columns: 1fr;
+        padding: 40px 0;
+        gap: 20px;
+        text-align: center;
+    }
+    .lesson-row:hover {
+        padding-left: 0;
     }
     .lesson-number {
-        font-size: 60px;
+        font-size: 80px;
+        text-align: center;
     }
     .lesson-text {
-        font-size: 20px;
+        font-size: 28px;
     }
 }
