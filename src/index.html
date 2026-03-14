@@ -336,27 +336,35 @@
 
         /* MEDIA QUERIES */
         
-        /* Tablet Landscape (iPad Pro) */
-        @media (max-width: 1366px) and (orientation: landscape) {
+        /* MEDIA QUERIES - ORIENTATION AWARE */
+        
+        /* LANDSCAPE - MOBILE & TABLET */
+        @media (orientation: landscape) and (max-width: 1366px) {
             .header-name { top: 3.5rem; left: 3.5rem; font-size: 1.2rem; }
             .info-link { top: 3.5rem; right: 3.5rem; font-size: 0.7rem; }
             .footer-metadata { bottom: 8rem; padding: 0 4rem; font-size: 0.7rem; }
             .subtitle { font-size: 4vw; margin-top: -1vw; }
             .copyright-tag { bottom: 0.8rem; display: block !important; }
+            
+            /* Mobile Landscape Specific (Short Viewports) */
+            @media (max-height: 600px) {
+                .header-name { top: 1.5rem; left: 2rem; font-size: 1rem; }
+                .info-link { top: 1.5rem; right: 2rem; }
+                .title { font-size: 12vw; }
+                .subtitle { font-size: 3.5vw; margin-top: 0; }
+                .action-group { margin-top: 1rem; flex-direction: row; gap: 1rem; }
+                .footer-metadata { bottom: 4rem; }
+                .hud-tag { font-size: 0.4rem; }
+                .hud-tl { top: -0.8rem; }
+                .hud-tr { top: -0.8rem; }
+                .hud-bl { bottom: -0.8rem; }
+                .hud-br { bottom: -0.8rem; }
+                #lut-toggle.unlocked { top: -0.9rem; }
+            }
         }
 
-        /* General Tablet */
-        @media (max-width: 1024px) {
-            .header-name { top: 3rem; left: 3rem; font-size: 1.1rem; }
-            .info-link { top: 3rem; right: 3rem; font-size: 0.7rem; }
-            .footer-metadata { bottom: 8rem; padding: 0 4rem; font-size: 0.7rem; letter-spacing: 0.2em; }
-            .corner-frame { top: 1.5rem; left: 1.5rem; right: 1.5rem; bottom: 1.5rem; }
-            .subtitle { font-size: 4.5vw; margin-top: -0.5vw; }
-            .copyright-tag { bottom: 0.8rem; display: block !important; }
-        }
-
-        /* Mobile Portrait */
-        @media (max-width: 768px) {
+        /* PORTRAIT - MOBILE & TABLET */
+        @media (orientation: portrait) and (max-width: 1024px) {
             .hud-tag { 
                 font-size: 0.45rem; 
                 opacity: 0.5; 
