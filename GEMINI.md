@@ -1,20 +1,28 @@
 # GEMINI.md — Project Context for Omar, the Creative
 
 ## Project Status
-- **Last Updated:** March 4, 2026
-- **Current Task:** Favicon / Site Icon Resolution (Completed)
+- **Last Updated:** March 14, 2026
+- **Current Task:** Apex Migration / Cinematic Portal (Observation Deck)
 
 ## Technical Decisions & Memory
 
-### Favicon / Site Icon (Mobile Safari Cache Bug)
-- **Problem:** Mobile Safari was persistently showing an old Squarespace-era favicon even after updating Semplice settings and clearing browser cache. Firefox and Desktop browsers showed the correct icon.
-- **Root Cause:** iOS Safari uses an aggressive, separate internal database for favicons and `apple-touch-icon` metadata that is not always cleared by standard cache deletion.
-- **Resolution:**
-  1. **WordPress Site Icon:** Logged into the WordPress dashboard via mobile (which bypassed the Semplice-only restrictions encountered on desktop) to update the **Appearance > Customize > Site Identity > Site Icon**.
-  2. **Cache Busting:** Used versioning (`?v=3`) in the header code to force Safari to treat the icon as a new asset.
-  3. **Metadata Force:** Added explicit `apple-touch-icon` and `shortcut icon` links to the global Semplice Header Custom Code (documented in `GLOBAL-CUSTOM-HEAD.md`).
+### Migration to Apex (March 2026)
+- **Decision:** Shifted the site from Semplice (WordPress/Flywheel) to a modern **Apex** framework (HTML/CSS/JS) to enable a Git-driven "Push-to-Publish" workflow on Netlify.
+- **Goal:** To create a "Cinematic Portal" (Observation Deck) that feels aggressive, high-impact, and modern, moving away from "clinical" layouts into a bold, vibrating red-on-black aesthetic.
+- **Repository:** Initialized a clean Git repo in `~/Documents/Omar, the Creative/` with a dedicated SSH key for a new personal GitHub account (`omarthecreative`).
+- **Framework:** Apex/Stitch.
 
-### Deployment Context
-- **Hosting:** Flywheel
-- **CMS:** Semplice 7 on WordPress
-- **DNS/Domain:** Squarespace (Current Registrar)
+### The Cinematic "Vibration" Aesthetic
+- **Mission:** Bridging "Pre-med precision" with "Poetic instinct" by making type an *object*. 
+- **Reference:** "COLDEST IN THE GAME" (vibrating, high-contrast, saturated red).
+- **Typography:**
+  - **Title:** `Anton` (Heavy, condensed, vibrating).
+  - **Body/Poetry:** `Playfair Display` (Italic, high-contrast) and `IBM Plex Mono` (Technical/Metadata).
+
+### Legacy Archive (Semplice)
+- All WordPress/Semplice files are excluded from the Git repository via `.gitignore` to maintain a lean, fast source-code-only repo while keeping the legacy data local for reference.
+
+## Roadmap
+1/ **Portal Launch:** Finalize the "Observation Deck" landing page on Netlify.
+2/ **Project Pages:** Migrate the "Deep Cuts" case studies from Semplice into Apex components.
+3/ **Skills Intelligence:** Add a dedicated skills repository for this project (separate from Git Mad).

@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OMAR SILWANY — Observation Deck</title>
+    <title>Omar, the Creative</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤘🏽</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;700&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;700&family=Playfair+Display:wght@900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="base.css">
     <style>
+        :root {
+            --vibrant-red: #FF003C;
+            --glow: rgba(255, 0, 60, 0.4);
+        }
+        body { background: #000; margin: 0; padding: 0; }
         .portal-wrapper {
             height: 100vh;
             display: flex;
@@ -18,12 +24,14 @@
             position: relative;
             cursor: pointer;
             overflow: hidden;
+            background: transparent;
+            z-index: 10;
         }
         .bg-container {
-            position: absolute;
+            position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2;
-            background: #050505;
+            z-index: 1;
+            background: #000;
         }
         .project-bg {
             position: absolute;
@@ -31,19 +39,11 @@
             background-size: cover;
             background-position: center;
             opacity: 0;
-            transition: opacity 1.2s ease;
-            filter: grayscale(1) contrast(1.2) brightness(0.3);
+            transition: opacity 1s ease;
+            filter: grayscale(1) contrast(1.2) brightness(0.4);
         }
         .project-bg.active {
-            opacity: 1;
-        }
-        .overlay-heat {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, var(--glow) 0%, transparent 70%);
-            z-index: -1;
-            pointer-events: none;
-            opacity: 0.5;
+            opacity: 0.4; /* High visibility for testing */
         }
         .title {
             font-family: var(--display);
@@ -53,7 +53,6 @@
             text-transform: uppercase;
             color: var(--vibrant-red);
             letter-spacing: -0.04em;
-            filter: blur(0.5px);
         }
         .subtitle {
             font-family: var(--serif);
@@ -62,8 +61,7 @@
             color: white;
             margin-top: -1.5vw;
             letter-spacing: -0.02em;
-            opacity: 0.9;
-            z-index: 5;
+            opacity: 1;
         }
         .footer-metadata {
             position: absolute;
@@ -76,15 +74,18 @@
             font-size: 0.55rem;
             text-transform: uppercase;
             letter-spacing: 0.3em;
-            color: var(--vibrant-red);
-            opacity: 0.4;
+            color: white;
+            opacity: 0.8;
         }
+        .footer-metadata a { color: inherit; text-decoration: none; }
+        .footer-metadata a:hover { color: var(--vibrant-red); }
+
         .corner-frame {
-            position: absolute;
+            position: fixed;
             top: 2rem; left: 2rem; right: 2rem; bottom: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 0, 60, 0.2);
             pointer-events: none;
-            z-index: 10;
+            z-index: 100;
         }
         .corner {
             position: absolute;
@@ -96,14 +97,6 @@
         .bl { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
         .br { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
         
-        .nav-hint {
-            font-family: var(--mono);
-            font-size: 0.55rem;
-            letter-spacing: 0.2em;
-            color: var(--vibrant-red);
-            text-transform: uppercase;
-        }
-
         .info-link {
             position: absolute;
             top: 4rem;
@@ -112,9 +105,8 @@
             font-size: 0.55rem;
             letter-spacing: 0.2em;
             color: white;
-            opacity: 0.4;
+            opacity: 0.6;
             text-decoration: none;
-            z-index: 100;
             text-transform: uppercase;
         }
         .info-link:hover { color: var(--vibrant-red); opacity: 1; }
@@ -125,7 +117,6 @@
             gap: 1rem;
             opacity: 0;
             transition: opacity 0.3s ease;
-            z-index: 20;
         }
         .action-group.visible { opacity: 1; }
 
@@ -139,15 +130,9 @@
             color: var(--vibrant-red);
             background: transparent;
             cursor: pointer;
-            transition: all 0.3s ease;
         }
-        .btn:hover {
-            background: var(--vibrant-red);
-            color: white;
-            box-shadow: 0 0 20px var(--glow);
-        }
+        .btn:hover { background: var(--vibrant-red); color: white; }
 
-        /* VIDEO MODAL */
         #video-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -157,7 +142,6 @@
             align-items: center;
             justify-content: center;
         }
-        #video-modal iframe { width: 100%; height: 100%; border: none; }
         #close-video {
             position: absolute;
             top: 2rem; right: 2rem;
@@ -166,43 +150,20 @@
             text-transform: uppercase; letter-spacing: 0.2em;
         }
 
-        /* INTEL OVERLAY */
         #intel-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 5, 5, 0.95);
+            background: rgba(0, 0, 0, 0.98);
             z-index: 500;
             display: none;
             align-items: center;
             justify-content: center;
             padding: 4rem;
         }
-        .intel-content {
-            max-width: 600px;
-            font-family: var(--mono);
-            color: white;
-        }
-        .intel-role {
-            color: var(--vibrant-red);
-            font-size: 0.7rem;
-            letter-spacing: 0.3em;
-            margin-bottom: 2rem;
-            text-transform: uppercase;
-        }
-        .intel-desc {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            letter-spacing: -0.01em;
-        }
-        .intel-close {
-            position: absolute;
-            top: 2rem; right: 2rem;
-            font-family: var(--mono);
-            font-size: 0.8rem;
-            color: var(--vibrant-red);
-            cursor: pointer;
-            letter-spacing: 0.2em;
-        }
+        .intel-content { max-width: 600px; font-family: 'Newsreader', serif; color: white; }
+        .intel-role { color: var(--vibrant-red); font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.3em; margin-bottom: 2rem; text-transform: uppercase; }
+        .intel-desc { font-size: 1.4rem; line-height: 1.5; letter-spacing: -0.01em; }
+        .intel-close { position: absolute; top: 2rem; right: 2rem; font-family: var(--mono); font-size: 0.8rem; color: var(--vibrant-red); cursor: pointer; letter-spacing: 0.2em; }
     </style>
 </head>
 <body>
@@ -219,8 +180,6 @@
         </div>
     </div>
 
-    <a href="info.html" class="info-link">[ INFO ]</a>
-
     <div class="corner-frame">
         <div class="corner tl"></div>
         <div class="corner tr"></div>
@@ -229,27 +188,28 @@
     </div>
 
     <div class="bg-container" id="bg-container"></div>
-    <div class="overlay-heat"></div>
 
     <main class="portal-wrapper" id="portal">
-        <div style="position: absolute; top: 4rem; color: white; opacity: 0.9; font-family: var(--display); font-size: 1.2rem; letter-spacing: 0.1em; text-transform: uppercase;">
+        <a href="info.html" class="info-link">[ INFO ]</a>
+        
+        <div style="position: absolute; top: 4rem; left: 4rem; color: white; opacity: 1; font-family: 'Playfair Display', serif; font-size: 1.5rem; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 900;">
             OMAR SILWANY
         </div>
         
         <div class="project-display">
-            <div class="subtitle" id="project-subtitle">I push brands into culture.</div>
-            <h1 class="title animate-vibrate" id="project-title">COLDEST</h1>
+            <div class="subtitle" id="project-subtitle">I craft copy into ideas into<br>scripts into films into culture.</div>
+            <h1 class="title animate-vibrate" id="project-title">BROUHAHAHA</h1>
         </div>
         
         <div class="action-group" id="action-group">
             <button class="btn" id="watch-btn">[ WATCH ]</button>
-            <button class="btn" id="intel-btn">[ INTEL ]</button>
+            <button class="btn" id="intel-btn">[ LEARN ]</button>
         </div>
         
         <div class="footer-metadata">
-            <span id="meta-left">[ MOTION ]</span>
-            <span class="nav-hint" style="opacity: 0.6;">[ CLICK TO CYCLE OBSERVATIONS ]</span>
-            <span id="meta-right">[ SOUND ]</span>
+            <a href="long-copy.html">[ LONG COPY ]</a>
+            <span class="nav-hint" style="opacity: 0.6;">[ CLICK FOR THE WORK ]</span>
+            <a href="deep-cuts.html">[ DEEP CUTS ]</a>
         </div>
 
         <div style="position: absolute; bottom: 1rem; width: 100%; text-align: center; opacity: 0.2; font-family: var(--mono); font-size: 0.4rem; letter-spacing: 0.1em; pointer-events: none;">
@@ -259,56 +219,19 @@
 
     <script>
         const projects = [
-            { 
-                title: "SAMSUNG", subtitle: "Study Is Better With Play", year: "2021", tag: "TECHNOLOGY", 
-                vimeoId: "637229831", img: "https://omarthecreative.com/wp-content/uploads/2026/02/01-samsung-study-better-play-scaled.png",
-                role: "CREATIVE DIRECTOR, WRITER",
-                desc: "We told students to make play work for them.<br>Then proved it with pen spinning.<br><br>Turned ADHD into a superpower.<br>Made fidgeting fashionable.<br>Convinced a generation that distraction is focus."
-            },
-            { 
-                title: "MBK ALLIANCE", subtitle: "We Are The Ones", year: "2017", tag: "SOCIAL IMPACT", 
-                vimeoId: "267027000", img: "https://omarthecreative.com/wp-content/uploads/2026/02/02-mbk-we-are-the-ones-scaled-e1772257041527.png",
-                role: "CREATIVE DIRECTOR, WRITER",
-                desc: "One voice becomes a movement.<br>Obama listens. Curry takes note.<br>Chance amplifies.<br>And it all starts when a kid decides to speak.<br><br>50 million impressions. Zero paid media.<br>Just truth traveling at the speed of culture."
-            },
-            { 
-                title: "GOOGLE PIXEL", subtitle: "Lose The Flash", year: "2018", tag: "TECHNOLOGY", 
-                vimeoId: "306235541", img: "https://omarthecreative.com/wp-content/uploads/2026/02/03-google-pixel-lose-the-flash-scaled-e1772256909967.png",
-                role: "CREATIVE DIRECTOR, WRITER",
-                desc: "Dracula sells cameras now.<br>Queen provides the soundtrack.<br>The flash is officially dead.<br><br>We turned Pixel's Night Sight from a spec<br>into a cultural moment. No technical jargon.<br>Just vampires doing what they do best."
-            },
-            { 
-                title: "SAMSUNG", subtitle: "Stay Ahead Of Tomorrow", year: "2021", tag: "TECHNOLOGY", 
-                vimeoId: "442857172", img: "https://omarthecreative.com/wp-content/uploads/2026/02/04-samsung-stay-ahead-tomorrow.png",
-                role: "CREATIVE DIRECTOR, WRITER",
-                desc: "Samsung wanted to sell 5G devices.<br>We sold Gen Z their own skepticism instead.<br><br>Let our hero argue with her future.<br>Made global markets copy our playbook.<br>Turns out that little 5G icon changes everything."
-            },
-            { 
-                title: "LEGENCE", subtitle: "Built For Building", year: "2025", tag: "INFRASTRUCTURE", 
-                vimeoId: "1080884698", img: "https://omarthecreative.com/wp-content/uploads/2026/02/06-legence-built-for-building.png",
-                role: "CREATIVE DIRECTOR, ART",
-                desc: "We made infrastructure sexy.<br>$5 billion sexy, to be exact.<br>Turned MEP into a rallying cry.<br>Made engineers feel like astronauts.<br><br>Helped a company nobody heard of<br>become essential overnight."
-            },
-            { 
-                title: "BUD LIGHT", subtitle: "Home Advantage", year: "2016", tag: "CPG", 
-                vimeoId: "154384335", img: "https://omarthecreative.com/wp-content/uploads/2026/02/07-bud-light-home-advantage.png",
-                role: "CREATIVE DIRECTOR, COPY",
-                desc: "Super Bowl 50 needed a bottle.<br>We gave it a time machine.<br>Leaped into 1982, leaped out 2016.<br><br>Big tube TV became a flatscreen.<br>Mullets morphed to man buns.<br>Epic football and Bud Light is status quo.<br>That's home advantage."
-            },
-            { 
-                title: "CITI", subtitle: "RISE", year: "2022", tag: "FINANCE", 
-                vimeoId: "812285745", img: "https://omarthecreative.com/wp-content/uploads/2026/02/08-citi-rise.png",
-                role: "CREATIVE DIRECTOR, COPY",
-                desc: "$1 trillion in sustainable finance is complex.<br>We gave it one simple direction. Up.<br>Every shot rises. Every community lifts.<br>Every frame defies gravity.<br><br>Zero poverty takes everything.<br>By making the metaphor visual.<br>We made it for everyone."
-            }
+            { title: "SAMSUNG", subtitle: "Study Is Better With Play", vimeoId: "637229831", img: "01-samsung-study-better-play-scaled.png", role: "CREATIVE DIRECTOR, WRITER", desc: "Turned ADHD into a superpower.<br>Made fidgeting fashionable." },
+            { title: "MBK ALLIANCE", subtitle: "We Are The Ones", vimeoId: "267027000", img: "02-mbk-we-are-the-ones-scaled-e1772257041527.png", role: "CREATIVE DIRECTOR, WRITER", desc: "One voice becomes a movement.<br>50 million impressions. Zero paid media." },
+            { title: "GOOGLE PIXEL", subtitle: "Lose The Flash", vimeoId: "306235541", img: "03-google-pixel-lose-the-flash-scaled-e1772256909967.png", role: "CREATIVE DIRECTOR, WRITER", desc: "Dracula sells cameras now.<br>The flash is officially dead." },
+            { title: "SAMSUNG", subtitle: "Stay Ahead Of Tomorrow", vimeoId: "442857172", img: "04-samsung-stay-ahead-tomorrow.png", role: "CREATIVE DIRECTOR, WRITER", desc: "Samsung wanted to sell 5G devices.<br>We sold Gen Z their own skepticism instead." },
+            { title: "LEGENCE", subtitle: "Built For Building", vimeoId: "1080884698", img: "06-legence-built-for-building.png", role: "CREATIVE DIRECTOR, ART", desc: "We made infrastructure sexy.<br>Turned MEP into a rallying cry." },
+            { title: "BUD LIGHT", subtitle: "Home Advantage", vimeoId: "154384335", img: "07-bud-light-home-advantage.png", role: "CREATIVE DIRECTOR, COPY", desc: "Super Bowl 50 needed a bottle.<br>We gave it a time machine." },
+            { title: "CITI", subtitle: "RISE", vimeoId: "812285745", img: "08-citi-rise.png", role: "CREATIVE DIRECTOR, COPY", desc: "$1 trillion in sustainable finance is complex.<br>We gave it one simple direction. Up." }
         ];
 
         let currentIndex = -1;
         const portal = document.getElementById('portal');
         const titleEl = document.getElementById('project-title');
         const subtitleEl = document.getElementById('project-subtitle');
-        const metaLeft = document.getElementById('meta-left');
-        const metaRight = document.getElementById('meta-right');
         const bgContainer = document.getElementById('bg-container');
         const actionGroup = document.getElementById('action-group');
         const watchBtn = document.getElementById('watch-btn');
@@ -319,31 +242,29 @@
         const intelDesc = document.getElementById('intel-desc');
         const intelRole = document.getElementById('intel-role');
 
+        // Force background injection immediately
         projects.forEach((p, i) => {
             const div = document.createElement('div');
             div.className = 'project-bg';
             div.id = `bg-${i}`;
-            div.style.backgroundImage = `url(${p.img})`;
+            div.style.backgroundImage = `url('${p.img}')`;
             bgContainer.appendChild(div);
         });
 
         portal.addEventListener('click', (e) => {
-            if (e.target.closest('.btn') || e.target.closest('.info-link')) return;
+            if (e.target.closest('.btn') || e.target.closest('.info-link') || e.target.closest('.footer-metadata a')) return;
             currentIndex = (currentIndex + 1) % projects.length;
             const p = projects[currentIndex];
             titleEl.textContent = p.title;
             subtitleEl.textContent = p.subtitle;
-            metaLeft.textContent = `[ ${p.tag} ]`;
-            metaRight.textContent = `[ ${p.year} ]`;
             document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
-            const bg = document.getElementById(`bg-${currentIndex}`);
-            if (bg) bg.classList.add('active');
+            document.getElementById(`bg-${currentIndex}`).classList.add('active');
             actionGroup.classList.add('visible');
         });
 
         watchBtn.addEventListener('click', () => {
             const p = projects[currentIndex];
-            vimeoWrap.innerHTML = `<iframe src="https://player.vimeo.com/video/${p.vimeoId}?autoplay=1&background=0&muted=0&title=0&byline=0&portrait=0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+            vimeoWrap.innerHTML = `<iframe src="https://player.vimeo.com/video/${p.vimeoId}?autoplay=1&background=0&muted=0&title=0&byline=0&portrait=0" style="width:100%;height:100%;border:none;" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
             modal.style.display = 'flex';
         });
 
@@ -354,20 +275,22 @@
             intelOverlay.style.display = 'flex';
         });
 
-        document.getElementById('close-video').addEventListener('click', () => {
-            modal.style.display = 'none';
-            vimeoWrap.innerHTML = '';
-        });
-
-        document.getElementById('close-intel').addEventListener('click', () => {
-            intelOverlay.style.display = 'none';
-        });
+        document.getElementById('close-video').addEventListener('click', () => { modal.style.display = 'none'; vimeoWrap.innerHTML = ''; });
+        document.getElementById('close-intel').addEventListener('click', () => { intelOverlay.style.display = 'none'; });
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                modal.style.display = 'none';
-                intelOverlay.style.display = 'none';
-                vimeoWrap.innerHTML = '';
+                if (modal.style.display === 'flex' || intelOverlay.style.display === 'flex') {
+                    modal.style.display = 'none';
+                    intelOverlay.style.display = 'none';
+                    vimeoWrap.innerHTML = '';
+                } else if (actionGroup.classList.contains('visible')) {
+                    currentIndex = -1;
+                    titleEl.textContent = "BROUHAHAHA";
+                    subtitleEl.innerHTML = "I craft copy into ideas into<br>scripts into films into culture.";
+                    document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
+                    actionGroup.classList.remove('visible');
+                }
             }
         });
     </script>
