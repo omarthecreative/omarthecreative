@@ -1,31 +1,44 @@
 # GEMINI.md — Project Context for Omar, the Creative
 
 ## Project Status
-- **Last Updated:** March 14, 2026
-- **Current Task:** Apex Migration / Landing & INFO Complete
+- **Last Updated:** March 14, 2026 (Evening)
+- **Current Task:** Apex Migration / Interactive Core Complete
 
 ## Progress Log (March 14, 2026)
-- **Apex Architecture:** Initialized clean repository structure (`src`, `assets`, `components`) in `~/Documents/Omar, the Creative`.
-- **Git/Deployment:** Created a dedicated GitHub account (`omarthecreative`) and linked it to a separate Netlify account. Established a verified "Push-to-Publish" workflow.
-- **The Landing Page:** 
-    - Title: **BROUHAHAHA** (Anton).
-    - Subtitle: "I craft copy into ideas into scripts into films into culture." (Playfair Display).
-    - Imagery: Pooneh Ghana "mosh pit" mood background on entry; 7 project backgrounds with boosted visibility/color during cycle.
-    - Navigation: Technical white frame with links to INFO, LONG COPY, and DEEP CUTS.
-    - Reset: Esc key logic returns user to the initial landing mood state.
-- **The INFO Page:**
-    - Narrative: Led with "That's not me in the mosh pit."
-    - Typography: Newsreader for literary editorial body copy; Playfair Display for headers.
-    - Background: Hedi Slimane abstract photo with cinematic full-height gradient fade.
-    - Dossier: Technical profile categorized as **[ BIOGRAPHIA LITERARIA // v2.0 ]**.
+- **Deep Cuts Migration:**
+    - Built `src/deep-cuts.html` grid index with category filtering.
+    - Migrated first project: Disney Parks & Resorts "Be Our Guest."
+    - Established `project-template.html` and `project-page.css` for 4-column editorial layout.
+- **Long Copy Template:**
+    - Built `src/long-copy.html` index for editorial essays.
+    - Migrated inaugural essay: "Remember WE" (Tribute to Warren Eakins).
+    - Preserved sacrosanct custom logo (Brothers/Stencil/Script) and original Typekit kits (`fqr6eyz`, `shz5hny`).
+- **Interactive HUD & Tracking:**
+    - Implemented Live Camera HUD in `src/index.html` corner frame.
+    - Features: Timecode `[ TC ]`, Battery `[ BAT ]` (progress %), and clickable `[ LUT ]` toggle.
+    - Logic: `localStorage` tracks 10 content milestones (7 videos, Info, 1 Deep Cut, 1 Long Copy).
+    - Reward: Viewing 1+ item unlocks `[ LUT: RUBY ]` toggle; 100% completion unlocks `[ STATUS: LOCKED ]` (Picture Lock).
+- **Advanced "Learn" Modals:**
+    - Redesigned Intel Overlay with scrollable manifestos.
+    - Restored "American Haiku" poem-like line breaks for all project descriptions.
+    - Added Credits Drawer triggered by `Enter` key shorthand: `[ ↵ // CREDITS ]`.
+    - Added "Shooting Script" discovery layer triggered by `S` key: `[ S // SCRIPT ]`.
+- **Responsiveness & UX:**
+    - Fine-tuned all layouts for iPad Pro (Landscape) and Mobile Portrait.
+    - Fixed "OMAR SILWANY" header size and footer overlap issues on smaller viewports.
+    - Implemented hierarchical `Escape` key navigation (Levels: Project/Essay -> Section Index -> Landing).
+    - Added elegant HUD-styled **`[ TOP ]`** back-to-top buttons.
+- **Utility & Metadata:**
+    - Contact link now copies email to clipboard with visual `[ COPIED ]` feedback.
+    - Added Open Graph and Twitter metadata with high-impact "BROUHAHAHA" landing screenshot.
 
 ## Technical Decisions
-- **Color:** Locked into **Ruby Red** (`#FF003C`) to neutralize the "warming" effect of black backgrounds and keep the energy aggressive and cool.
-- **Structure:** Assets are flattened into `src/` for local server and Netlify compatibility.
-- **Components:** Created a global footer component for consistent copyright application.
+- **Color:** Finalized Ruby Red at `#FF0000` with `rgba(255, 0, 0, 0.8)` glow for maximum cinematic impact.
+- **Typography:** Verified `text-wrap: pretty` and non-breaking spaces across INFO to eliminate widows/orphans.
+- **Interactivity:** HUD elements tucked inside frame corners on mobile for "mechanical UI" feel.
 
 ## Roadmap for Next Session
-1/ **Deep Cuts Migration:** Build the high-impact grid for the 21 lessons.
-2/ **Long Copy Template:** Establish the "Cinematic Editorial" layout for essays, ensuring "Remember WE" is treated as a sacrosanct asset.
-3/ **Interactive UI:** Implement frame counters and cursor-reactive viewfinder overlays as mentioned in SITE.md.
-4/ **Skills Intelligence:** Initialize the dedicated `.agent/skills` repo for this folder.
+1/ **Deep Cuts Completion:** Batch-migrate the remaining 20 lessons using established template.
+2/ **Viewfinder Overlays:** Implement interactive crosshair/line overlays for project hover states.
+3/ **Script Content:** Source or create verified transcripts for all featured video shooting scripts.
+4/ **Performance Audit:** Review asset weight (`og-image.png`, background stills) for mobile load times.
