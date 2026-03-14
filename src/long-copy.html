@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Long Copy | Omar, the Creative</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✍️</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="long-copy.css">
+    <!-- Back to Top -->
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top" style="position:fixed; bottom:4rem; right:4rem; width:60px; height:30px; padding:0; border:1px solid var(--color-accent); background:rgba(5,5,5,0.8); color:var(--color-accent); font-family:var(--font-mono); font-size:0.55rem; letter-spacing:0.1em; cursor:pointer; opacity:0; transition:all 0.4s ease; z-index:9999; display:flex; align-items:center; justify-content:center;">
+        [ TOP ]
+    </button>
+
+    <script>
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Back to Top Visibility
+        const backToTop = document.getElementById('back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 600) {
+                backToTop.style.opacity = '0.6';
+                backToTop.style.pointerEvents = 'auto';
+            } else {
+                backToTop.style.opacity = '0';
+                backToTop.style.pointerEvents = 'none';
+            }
+        });
+        backToTop.addEventListener('mouseenter', () => backToTop.style.opacity = '1');
+        backToTop.addEventListener('mouseleave', () => { if(window.scrollY > 600) backToTop.style.opacity = '0.6'; });
+
+        // Tracking
+        const viewed = JSON.parse(localStorage.getItem('omar_viewed') || '[]');
+        if (!viewed.includes('long-copy')) {
+            viewed.push('long-copy');
+            localStorage.setItem('omar_viewed', JSON.stringify(viewed));
+        }
+    </script>
+    </body>
+<body class="long-copy-body">
+    <div class="corner-frame">
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+    </div>
+
+    <div class="bg-container">
+        <div class="project-bg active" style="background-image: url('landing-mood.png'); opacity: 0.1;"></div>
+    </div>
+
+    <nav class="apex-nav">
+        <div class="nav-left">
+            <a href="index.html" class="nav-name">OMAR SILWANY</a>
+        </div>
+        <div class="nav-right">
+            <a href="deep-cuts.html" class="nav-link">[ DEEP CUTS ]</a>
+            <a href="info.html" class="nav-link">[ INFO ]</a>
+        </div>
+    </nav>
+
+    <main class="long-copy-wrapper">
+        <!-- Hero Section -->
+        <section class="lc-section-hero">
+            <h1 class="hero-text">LONG COPY</h1>
+            <div class="deck-wrapper">
+                <p class="deck-text">
+                    <span class="accent-text">In a world reeling with carousels, this is the long way home.</span>
+                    <span class="sub-deck">An ADHD-Free Zone torn from the dopamine matrix.</span>
+                </p>
+            </div>
+        </section>
+
+        <!-- Post Index List -->
+        <section class="lc-post-list">
+            <!-- Entry: Remember WE -->
+            <article class="lc-article">
+                <span class="date-label">February 2026</span>
+                
+                <div class="lc-article-row">
+                    <div class="lc-article-content">
+                        <a href="essays/remember-we.html" class="post-title-link">
+                            <h2 class="post-title-text">Remember WE</h2>
+                        </a>
+                        <p class="post-excerpt">
+                            A tribute to leader, teammate, and friend: Warren Eakins.
+                        </p>
+                        <a class="read-more-link" href="essays/remember-we.html">
+                            <span>Read Full Piece</span>
+                            <span class="arrow">→</span>
+                        </a>
+                    </div>
+
+                    <div class="post-thumb-container">
+                        <a class="post-thumb" href="essays/remember-we.html">
+                            <img class="post-thumb-img" src="https://omarthecreative.com/wp-content/uploads/2026/02/WE_landing_brightened-scaled.png" alt="Warren Eakins portfolio"/>
+                        </a>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <div class="footer-metadata">
+            <a href="long-copy.html">[ LONG COPY ]</a>
+            <span class="nav-hint" style="opacity: 0.6;">[ SELECT AN ESSAY ]</span>
+            <a href="deep-cuts.html">[ DEEP CUTS ]</a>
+        </div>
+
+        <div class="copyright">
+            © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
+        </div>
+    </main>
+</body>
+</html>

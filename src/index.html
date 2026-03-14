@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="base.css">
     <style>
         :root {
-            --vibrant-red: #FF003C;
-            --glow: rgba(255, 0, 60, 0.4);
+            --vibrant-red: #FF0000;
+            --glow: rgba(255, 0, 0, 0.8);
         }
         body { background: #000; margin: 0; padding: 0; }
         .portal-wrapper {
@@ -54,8 +54,23 @@
             text-transform: uppercase;
             color: var(--vibrant-red);
             letter-spacing: -0.04em;
-            text-shadow: 0 0 20px rgba(255, 0, 60, 0.3);
+            text-shadow: 0 0 20px var(--glow);
         }
+
+        /* HIGH-IMPACT VIBRATION */
+        @keyframes vibrate-heavy {
+            0% { transform: translate(0); text-shadow: 0 0 10px var(--glow); }
+            20% { transform: translate(-2px, 2px); text-shadow: 4px 0 15px var(--vibrant-red); }
+            40% { transform: translate(-2px, -2px); text-shadow: -4px 0 20px var(--vibrant-red); }
+            60% { transform: translate(2px, 2px); text-shadow: 0 4px 15px var(--vibrant-red); }
+            80% { transform: translate(2px, -2px); text-shadow: 0 -4px 20px var(--vibrant-red); }
+            100% { transform: translate(0); text-shadow: 0 0 10px var(--glow); }
+        }
+
+        .animate-vibrate {
+            animation: vibrate-heavy 0.15s infinite ease-in-out;
+        }
+
         .subtitle {
             font-family: var(--serif);
             font-style: italic;
@@ -98,6 +113,27 @@
             border: 2px solid var(--vibrant-red);
             opacity: 1;
         }
+        
+        /* HUD STYLING */
+        .hud-tag {
+            position: absolute;
+            font-family: var(--mono);
+            font-size: 0.55rem;
+            letter-spacing: 0.2em;
+            color: var(--vibrant-red);
+            opacity: 0.4;
+            pointer-events: none;
+            text-transform: uppercase;
+            z-index: 110;
+        }
+        .hud-tl { top: -1.2rem; left: 0; }
+        .hud-tr { top: -1.2rem; right: 0; pointer-events: auto; cursor: pointer; }
+        .hud-bl { bottom: -1.2rem; left: 0; }
+        .hud-br { bottom: -1.2rem; right: 0; }
+        
+        #lut-toggle:hover { opacity: 1; text-shadow: 0 0 10px var(--vibrant-red); }
+        #lut-toggle.unlocked { opacity: 0.8; font-weight: 700; border: 1px solid var(--vibrant-red); padding: 2px 5px; top: -1.7rem; }
+
         .tl { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
         .tr { top: -1px; right: -1px; border-left: 0; border-bottom: 0; }
         .bl { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
@@ -157,20 +193,210 @@
             text-transform: uppercase; letter-spacing: 0.2em;
         }
 
+        .header-name {
+            position: absolute;
+            top: 4rem;
+            left: 4rem;
+            color: white;
+            opacity: 1;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            font-weight: 900;
+            z-index: 100;
+            text-decoration: none;
+        }
+
         #intel-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.98);
-            z-index: 500;
+            z-index: 1000;
             display: none;
             align-items: center;
             justify-content: center;
-            padding: 4rem;
+            padding: 2rem;
         }
-        .intel-content { max-width: 600px; font-family: 'Newsreader', serif; color: white; }
+        .intel-content { 
+            width: 100%;
+            max-width: 800px; 
+            font-family: 'Newsreader', serif; 
+            color: white;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            max-height: 80vh;
+        }
+        .intel-scroll-area {
+            overflow-y: auto;
+            padding-right: 2rem;
+            flex: 1;
+        }
+        /* Custom Scrollbar */
+        .intel-scroll-area::-webkit-scrollbar { width: 2px; }
+        .intel-scroll-area::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        .intel-scroll-area::-webkit-scrollbar-thumb { background: var(--vibrant-red); }
+
         .intel-role { color: var(--vibrant-red); font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.3em; margin-bottom: 2rem; text-transform: uppercase; }
-        .intel-desc { font-size: 1.4rem; line-height: 1.5; letter-spacing: -0.01em; }
-        .intel-close { position: absolute; top: 2rem; right: 2rem; font-family: var(--mono); font-size: 0.8rem; color: var(--vibrant-red); cursor: pointer; letter-spacing: 0.2em; }
+        .intel-desc { font-size: 1.8rem; line-height: 1.4; letter-spacing: -0.01em; margin-bottom: 3rem; text-wrap: pretty; }
+        .intel-close { position: absolute; top: 2rem; right: 2rem; font-family: var(--mono); font-size: 0.8rem; color: var(--vibrant-red); cursor: pointer; letter-spacing: 0.2em; z-index: 1100; }
+        
+        .credits-drawer {
+            display: none;
+            margin-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .credits-drawer.active { display: block; }
+        
+        /* SCRIPT OVERLAY */
+        #script-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .script-page {
+            width: 100%;
+            max-width: 850px;
+            height: 90vh;
+            background: #fdfdfd; /* Off-white paper */
+            box-shadow: 0 0 50px rgba(0,0,0,0.5), inset 0 0 100px rgba(0,0,0,0.05);
+            position: relative;
+            overflow-y: auto;
+            transform: rotate(-0.5deg); /* Slight physical tilt */
+        }
+        /* Paper texture */
+        .script-paper {
+            padding: 4rem 6rem;
+            min-height: 100%;
+            background-image: 
+                radial-gradient(circle at 2px 2px, rgba(0,0,0,0.02) 1px, transparent 0);
+            background-size: 40px 40px;
+            color: #1a1a1a;
+            font-family: "Courier Prime", "Courier New", Courier, monospace;
+            line-height: 1.2;
+            text-transform: uppercase; /* Scripts are often all caps in action */
+        }
+        .script-close { position: fixed; top: 2rem; right: 2rem; font-family: var(--mono); font-size: 0.8rem; color: var(--vibrant-red); cursor: pointer; letter-spacing: 0.2em; z-index: 2100; }
+        
+        /* Screenplay Elements */
+        .sc-slug { font-weight: bold; margin: 2rem 0 1rem 0; }
+        .sc-action { margin-bottom: 1.5rem; }
+        .sc-char { text-align: center; width: 50%; margin: 2rem auto 0.2rem auto; }
+        .sc-parenthetical { text-align: center; width: 40%; margin: 0 auto 0.2rem auto; font-size: 0.9em; }
+        .sc-dialogue { text-align: center; width: 70%; margin: 0 auto 1.5rem auto; }
+        .sc-transition { text-align: right; margin: 2rem 0; }
+
+        @media (max-width: 768px) {
+            .script-paper { padding: 2rem; }
+            .sc-char, .sc-dialogue, .sc-parenthetical { width: 100%; text-align: left; margin-left: 0; }
+        }
+        .credits-divider { height: 1px; background: rgba(255,255,255,0.1); margin-bottom: 2rem; }
+        .credits-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.2em; color: var(--vibrant-red); margin-bottom: 1.5rem; text-transform: uppercase; }
+        
+        .credits-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(255,255,255,0.6); }
+        .credits-table tr { border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .credits-table td { padding: 0.8rem 0; vertical-align: top; }
+        .credits-table .c-label { width: 40%; color: rgba(255,255,255,0.3); }
+        .credits-table .c-value { color: #FFFFFF; font-weight: 700; }
+
+        .intel-footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05); }
+        .intel-hint { font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.2em; opacity: 0.4; }
+
+        .copyright-tag {
+            position: fixed;
+            bottom: 0.8rem;
+            width: 100%;
+            text-align: center;
+            opacity: 0.3;
+            font-family: var(--mono);
+            font-size: 0.45rem;
+            letter-spacing: 0.1em;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* MEDIA QUERIES */
+        
+        /* Tablet Landscape (iPad Pro) */
+        @media (max-width: 1366px) and (orientation: landscape) {
+            .header-name { top: 3.5rem; left: 3.5rem; font-size: 1.2rem; }
+            .info-link { top: 3.5rem; right: 3.5rem; font-size: 0.7rem; }
+            .footer-metadata { bottom: 8rem; padding: 0 4rem; font-size: 0.7rem; }
+            .subtitle { font-size: 4vw; margin-top: -1vw; }
+            .copyright-tag { bottom: 0.8rem; display: block !important; }
+        }
+
+        /* General Tablet */
+        @media (max-width: 1024px) {
+            .header-name { top: 3rem; left: 3rem; font-size: 1.1rem; }
+            .info-link { top: 3rem; right: 3rem; font-size: 0.7rem; }
+            .footer-metadata { bottom: 8rem; padding: 0 4rem; font-size: 0.7rem; letter-spacing: 0.2em; }
+            .corner-frame { top: 1.5rem; left: 1.5rem; right: 1.5rem; bottom: 1.5rem; }
+            .subtitle { font-size: 4.5vw; margin-top: -0.5vw; }
+            .copyright-tag { bottom: 0.8rem; display: block !important; }
+        }
+
+        /* Mobile Portrait */
+        @media (max-width: 768px) {
+            .hud-tag { 
+                font-size: 0.45rem; 
+                opacity: 0.5; 
+                letter-spacing: 0.05em; 
+            }
+            /* Nudged away from the 1rem frame edges */
+            .hud-tl { top: 0.5rem; left: 0.5rem; }
+            .hud-tr { top: 0.5rem; right: 0.5rem; }
+            .hud-bl { bottom: 0.5rem; left: 0.5rem; }
+            .hud-br { bottom: 0.5rem; right: 0.5rem; }
+            #lut-toggle.unlocked { top: 0.4rem; padding: 1px 3px; }
+
+            .header-name { top: 3rem; left: 3rem; font-size: 0.9rem; max-width: 50%; line-height: 1.2; }
+            .info-link { top: 3rem; right: 3rem; font-size: 0.7rem; opacity: 1; }
+            
+            .title { font-size: 18vw; }
+            .subtitle { font-size: 6vw; margin-top: 1.5rem; width: 100%; max-width: 320px; margin-left: auto; margin-right: auto; }
+            
+            .action-group { flex-direction: column; gap: 0.5rem; margin-top: 3rem; }
+            .btn { padding: 0.8rem 1.5rem; font-size: 0.7rem; }
+
+            .footer-metadata { 
+                bottom: 6rem;
+                padding: 0 3rem; 
+                flex-direction: row; 
+                justify-content: space-between;
+                font-size: 0.7rem; 
+                letter-spacing: 0.1em;
+            }
+            .nav-hint { 
+                position: absolute;
+                bottom: 3.5rem;
+                left: 0;
+                width: 100%;
+                text-align: center;
+                display: block; 
+                font-size: 0.55rem;
+            } 
+            
+            .copyright-tag { bottom: 0.4rem; font-size: 0.4rem; opacity: 0.4; display: block !important; }
+            .corner-frame { top: 1rem; left: 1rem; right: 1rem; bottom: 1rem; }
+
+            .intel-content { max-height: 90vh; }
+            .intel-desc { font-size: 1.3rem; margin-bottom: 2rem; }
+            .credits-table { font-size: 0.55rem; }
+            .credits-table .c-label { width: 50%; }
+        }
+
+        /* Small Mobile */
+        @media (max-width: 480px) {
+            .header-name { font-size: 0.8rem; }
+            .footer-metadata { font-size: 0.6rem; }
+        }
     </style>
 </head>
 <body>
@@ -179,11 +405,38 @@
         <div id="vimeo-wrap" style="width: 100%; height: 100%;"></div>
     </div>
 
+    <div id="script-overlay">
+        <div class="script-close" id="close-script">[ ESC // CLOSE ]</div>
+        <div class="script-page">
+            <div class="script-paper">
+                <div class="script-content" id="script-content">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="intel-overlay">
         <div class="intel-close" id="close-intel">[ ESC // CLOSE ]</div>
         <div class="intel-content">
-            <div class="intel-role" id="intel-role">CREATIVE DIRECTOR, WRITER</div>
-            <div class="intel-desc" id="intel-desc">Observation metadata loading...</div>
+            <div class="intel-scroll-area" id="intel-scroll-area">
+                <div class="intel-role" id="intel-role">CREATIVE DIRECTOR, WRITER</div>
+                <div class="intel-desc" id="intel-desc">Observation metadata loading...</div>
+                
+                <!-- Credits Drawer (Hidden by default) -->
+                <div id="credits-drawer" class="credits-drawer">
+                    <div class="credits-divider"></div>
+                    <div class="credits-label">[ PROJECT CREDITS ]</div>
+                    <table class="credits-table" id="credits-table">
+                        <!-- Populated by JS -->
+                    </table>
+                </div>
+            </div>
+            
+            <div class="intel-footer">
+                <div class="intel-hint" id="intel-hint">[ ↵ // CREDITS ]</div>
+                <div class="intel-hint" id="script-hint" style="display: none; margin-top: 0.5rem; color: #FFFFFF; opacity: 0.8;">[ S // SCRIPT ]</div>
+            </div>
         </div>
     </div>
 
@@ -192,6 +445,12 @@
         <div class="corner tr"></div>
         <div class="corner bl"></div>
         <div class="corner br"></div>
+        
+        <!-- HUD Elements -->
+        <div class="hud-tag hud-tl" id="hud-tc">[ TC 00:00:00:00 ]</div>
+        <div class="hud-tag hud-tr" id="lut-toggle">[ LUT: REC.709 ]</div>
+        <div class="hud-tag hud-bl" id="hud-fps">[ 24 FPS ]</div>
+        <div class="hud-tag hud-br" id="bat-status">[ BAT: 00% ]</div>
     </div>
 
     <div class="bg-container" id="bg-container">
@@ -202,12 +461,12 @@
     <main class="portal-wrapper" id="portal">
         <a href="info.html" class="info-link">[ INFO ]</a>
         
-        <div style="position: absolute; top: 4rem; left: 4rem; color: white; opacity: 1; font-family: 'Playfair Display', serif; font-size: 1.5rem; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 900;">
+        <a href="index.html" class="header-name">
             OMAR SILWANY
-        </div>
+        </a>
         
         <div class="project-display">
-            <div class="subtitle" id="project-subtitle">I craft copy into ideas into<br>scripts into films into culture.</div>
+            <div class="subtitle" id="project-subtitle">I craft copy<br> into ideas into<br> scripts into films into culture.</div>
             <h1 class="title animate-vibrate" id="project-title">BROUHAHAHA</h1>
         </div>
         
@@ -218,24 +477,204 @@
         
         <div class="footer-metadata">
             <a href="long-copy.html">[ LONG COPY ]</a>
-            <span class="nav-hint" style="opacity: 0.6;">[ CLICK FOR THE WORK ]</span>
+            <span class="nav-hint" style="opacity: 0.6;">[ TAP FOR THE WORK ]</span>
             <a href="deep-cuts.html">[ DEEP CUTS ]</a>
         </div>
 
-        <div style="position: absolute; bottom: 1rem; width: 100%; text-align: center; opacity: 0.2; font-family: var(--mono); font-size: 0.4rem; letter-spacing: 0.1em; pointer-events: none;">
+        <div class="copyright-tag">
             © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
         </div>
     </main>
 
     <script>
         const projects = [
-            { title: "SAMSUNG", subtitle: "Study Is Better With Play", vimeoId: "637229831", img: "01-samsung-study-better-play-scaled.png", role: "CREATIVE DIRECTOR, WRITER", desc: "Turned ADHD into a superpower.<br>Made fidgeting fashionable." },
-            { title: "MBK ALLIANCE", subtitle: "We Are The Ones", vimeoId: "267027000", img: "02-mbk-we-are-the-ones-scaled-e1772257041527.png", role: "CREATIVE DIRECTOR, WRITER", desc: "One voice becomes a movement.<br>50 million impressions. Zero paid media." },
-            { title: "GOOGLE PIXEL", subtitle: "Lose The Flash", vimeoId: "306235541", img: "03-google-pixel-lose-the-flash-scaled-e1772256909967.png", role: "CREATIVE DIRECTOR, WRITER", desc: "Dracula sells cameras now.<br>The flash is officially dead." },
-            { title: "SAMSUNG", subtitle: "Stay Ahead Of Tomorrow", vimeoId: "442857172", img: "04-samsung-stay-ahead-tomorrow.png", role: "CREATIVE DIRECTOR, WRITER", desc: "Samsung wanted to sell 5G devices.<br>We sold Gen Z their own skepticism instead." },
-            { title: "LEGENCE", subtitle: "Built For Building", vimeoId: "1080884698", img: "06-legence-built-for-building.png", role: "CREATIVE DIRECTOR, ART", desc: "We made infrastructure sexy.<br>Turned MEP into a rallying cry." },
-            { title: "BUD LIGHT", subtitle: "Home Advantage", vimeoId: "154384335", img: "07-bud-light-home-advantage.png", role: "CREATIVE DIRECTOR, COPY", desc: "Super Bowl 50 needed a bottle.<br>We gave it a time machine." },
-            { title: "CITI", subtitle: "RISE", vimeoId: "812285745", img: "08-citi-rise.png", role: "CREATIVE DIRECTOR, COPY", desc: "$1 trillion in sustainable finance is complex.<br>We gave it one simple direction. Up." }
+            { 
+                title: "SAMSUNG", 
+                subtitle: "Study Is Better With Play", 
+                vimeoId: "637229831", 
+                img: "01-samsung-study-better-play-scaled.png", 
+                role: "CREATIVE DIRECTOR, WRITER", 
+                desc: "We told students<br>to make play work for them.<br>Then proved it<br>with pen spinning.<br><br>Turned ADHD into a superpower.<br>Made fidgeting fashionable.<br>Convinced a generation<br>that distraction is focus.",
+                script: `
+                    <div class="sc-slug">INT. COMMUNITY ROOM - DAY</div>
+                    <div class="sc-action">WE OPEN ON THE SAMSUNG LOGO ON THE MYSTIC GREEN TAB S7 FE.</div>
+                    <div class="sc-action">THE CAMERA RISES TO A TOP DOWN SHOT OF A LONG TABLE. THERE IS ACADEMIC PARAPHERNALIA LAID OUT.</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">THEY TOLD US DISTRACTION WAS THE ENEMY.</div>
+                    <div class="sc-action">THE CAMERA FRAMES FOUR TAB S7 FE IN FOUR DIFFERENT COLORS. FOUR HANDS START TWIRLING THEIR S PENS IN UNISON.</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">THEY WERE WRONG.</div>
+                    <div class="sc-transition">CUT TO:</div>
+                    <div class="sc-slug">INT. LIBRARY - MOMENTS LATER</div>
+                    <div class="sc-action">A GIRL'S HAND - DRIED PAINT SPLATTERED ON IT - TWIRLING THE GREEN S PEN.</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">STUDY IS BETTER WITH PLAY.</div>
+                `,
+                credits: [
+                    {l: "Client", v: "Samsung"},
+                    {l: "Creative Director, Copy", v: "Omar Silwany"},
+                    {l: "Creative Director, Art", v: "Coral Garvey"},
+                    {l: "Senior Copywriter", v: "Patrick DeYoung"},
+                    {l: "Senior Art Director", v: "Rosendo Ayala"},
+                    {l: "Chief Creative Officer", v: "Rafael Rizuto"},
+                    {l: "Agency", v: "BBH USA"},
+                    {l: "Director", v: "We Are From LA"},
+                    {l: "Color", v: "Company3"}
+                ]
+            },
+            { 
+                title: "MBK ALLIANCE", 
+                subtitle: "We Are The Ones", 
+                vimeoId: "267027000", 
+                img: "02-mbk-we-are-the-ones-scaled-e1772257041527.png", 
+                role: "CREATIVE DIRECTOR, WRITER", 
+                desc: "One voice becomes a movement.<br>Obama listens.<br>Curry takes note.<br>Chance amplifies.<br><br>And it all starts<br>when a kid decides to speak.<br>50 million impressions.<br>Zero paid media.<br><br>Just truth traveling<br>at the speed of culture.",
+                script: `
+                    <div class="sc-slug">EXT. CHICAGO STREET - DAY</div>
+                    <div class="sc-action">A YOUNG MAN STANDS ALONE. THE CITY HUMS AROUND HIM.</div>
+                    <div class="sc-char">YOUNG MAN</div>
+                    <div class="sc-dialogue">I AM NOT A STATISTIC.</div>
+                    <div class="sc-action">HE BEGINS TO WALK. OTHERS JOIN HIM. THE SILENCE IS BROKEN BY A STEADY, DRIVING BEAT.</div>
+                    <div class="sc-char">BARACK OBAMA (V.O.)</div>
+                    <div class="sc-dialogue">YOU ARE THE ONES WE HAVE BEEN WAITING FOR.</div>
+                `,
+                credits: [
+                    {l: "Client", v: "MBK Alliance"},
+                    {l: "Creative Director, Copy", v: "Omar Silwany"},
+                    {l: "Creative Director, Art", v: "Warren Eakins"},
+                    {l: "Additional Creative", v: "Shabazz Larkin"},
+                    {l: "Agency", v: "Matter Unlimited"},
+                    {l: "Director", v: "Jason J.M. Harper"},
+                    {l: "Production", v: "LonelyLeap"}
+                ]
+            },
+            { 
+                title: "GOOGLE PIXEL", 
+                subtitle: "Lose The Flash", 
+                vimeoId: "306235541", 
+                img: "03-google-pixel-lose-the-flash-scaled-e1772256909967.png", 
+                role: "CREATIVE DIRECTOR, WRITER", 
+                desc: "Dracula sells cameras now.<br>Queen provides the soundtrack.<br>The flash is officially dead.<br><br>We turned Pixel's Night Sight<br>from a spec into a cultural moment.<br>No technical jargon.<br>Just vampires doing<br>what they do best.",
+                script: `
+                    <div class="sc-slug">INT. DARK MANSION - NIGHT</div>
+                    <div class="sc-action">DRACULA STEPS OUT OF THE SHADOWS. HE LOOKS ANNOYED.</div>
+                    <div class="sc-char">DRACULA</div>
+                    <div class="sc-dialogue">REALLY? A FLASH? IN THIS CENTURY?</div>
+                    <div class="sc-action">HE HOLDS UP A GOOGLE PIXEL. THE SCREEN IS BRIGHT, VIBRANT, AND FLASH-FREE.</div>
+                    <div class="sc-char">DRACULA</div>
+                    <div class="sc-dialogue">LOSE THE FLASH. KEEP THE VIBE.</div>
+                `,
+                credits: [
+                    {l: "Client", v: "Google"},
+                    {l: "Creative Director, Copy", v: "Omar Silwany"},
+                    {l: "Creative Director, Art", v: "Lars Mars Jorgensen"},
+                    {l: "Chief Creative Officer", v: "Jaime Robinson"},
+                    {l: "Agency", v: "JOAN NY"},
+                    {l: "Director", v: "Terri Timely"},
+                    {l: "Production", v: "Park Pictures"},
+                    {l: "Edit", v: "Exile"},
+                    {l: "Post/Color", v: "The Mill"}
+                ]
+            },
+            { 
+                title: "SAMSUNG", 
+                subtitle: "Stay Ahead Of Tomorrow", 
+                vimeoId: "442857172", 
+                img: "04-samsung-stay-ahead-tomorrow.png", 
+                role: "CREATIVE DIRECTOR, WRITER", 
+                desc: "Samsung wanted to sell 5G devices.<br>We sold Gen Z<br>their own skepticism instead.<br><br>Let our hero argue with her future.<br>Made global markets copy our playbook.<br>Turns out that little 5G icon<br>changes everything.",
+                script: `
+                    <div class="sc-slug">EXT. NEON CITY - NIGHT</div>
+                    <div class="sc-action">A TEENAGER STARES AT A HOLOGRAM OF HERSELF FROM TEN YEARS IN THE FUTURE.</div>
+                    <div class="sc-char">TEENAGER</div>
+                    <div class="sc-dialogue">SO... DO WE EVER GET IT TOGETHER?</div>
+                    <div class="sc-char">FUTURE SELF</div>
+                    <div class="sc-parenthetical">(SMIRKING)</div>
+                    <div class="sc-dialogue">WE STAY AHEAD. THAT'S THE POINT.</div>
+                `,
+                credits: [
+                    {l: "Client", v: "Samsung Global"},
+                    {l: "Creative Director, Copy", v: "Omar Silwany"},
+                    {l: "Creative Director, Art", v: "Joakim Saul"},
+                    {l: "Chief Creative Officer", v: "Louis-Philippe Tremblay"},
+                    {l: "Agency", v: "Publicis NYC"},
+                    {l: "Director", v: "Sara Dunlop"},
+                    {l: "Editor", v: "Maury Loeb / PS 260"},
+                    {l: "Color", v: "Fergus McCall / The Mill"}
+                ]
+            },
+            { 
+                title: "LEGENCE", 
+                subtitle: "Built For Building", 
+                vimeoId: "1080884698", 
+                img: "06-legence-built-for-building.png", 
+                role: "CREATIVE DIRECTOR, ART", 
+                desc: "We made infrastructure sexy.<br>$5 billion sexy, to be exact.<br><br>Turned mechanical, electrical, and plumbing<br>into a rallying cry.<br>Made engineers feel like astronauts.<br><br>Helped a company nobody heard of<br>become essential overnight.",
+                script: `
+                    <div class="sc-slug">INT. MASSIVE DATA CENTER - DAY</div>
+                    <div class="sc-action">AN ENGINEER IN A SLEEK BLACK JUMPSUIT WALKS THROUGH A FOREST OF GLOWING PIPES.</div>
+                    <div class="sc-char">ENGINEER</div>
+                    <div class="sc-dialogue">THIS ISN'T PLUMBING. IT'S THE PULSE OF THE WORLD.</div>
+                    <div class="sc-action">WE ZOOM INTO A VALVE. IT LOOKS LIKE A PIECE OF FINE JEWELRY.</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">LEGENCE. BUILT FOR BUILDING.</div>
+                `,
+                credits: [
+                    {l: "Client", v: "Legence"},
+                    {l: "Creative Director, Art", v: "Omar Silwany"},
+                    {l: "Agency", v: "Fundamentalco"},
+                    {l: "Edit", v: "Whitehouse Post"},
+                    {l: "Post & GFX", v: "Carbon"},
+                    {l: "Sound", v: "Sounds Good"}
+                ]
+            },
+            { 
+                title: "BUD LIGHT", 
+                subtitle: "Home Advantage", 
+                vimeoId: "154384335", 
+                img: "07-bud-light-home-advantage.png", 
+                role: "CREATIVE DIRECTOR, COPY", 
+                desc: "Super Bowl 50 needed a bottle.<br>We gave it a time machine.<br><br>Bud Light doesn't just sell beer;<br>it sells heritage.<br><br>We reminded fans<br>that the home field advantage<br>starts long before kickoff.",
+                script: `
+                    <div class="sc-slug">EXT. STADIUM PARKING LOT - DAY</div>
+                    <div class="sc-action">A FATHER AND SON OPEN A VINTAGE COOLER. A GOLDEN BUD LIGHT BOTTLE GLINTS IN THE SUN.</div>
+                    <div class="sc-char">FATHER</div>
+                    <div class="sc-dialogue">THIS WAS MY DAD'S SPOT. NOW IT'S OURS.</div>
+                    <div class="sc-action">THE SOUND OF THE CROWD ROARS IN THE DISTANCE. THE BOTTLE IS SWEATING. IT LOOKS PERFECT.</div>
+                `,
+                credits: [
+                    {l: "Client", v: "Bud Light"},
+                    {l: "Creative Director, Copy", v: "Omar Silwany"},
+                    {l: "GCD", v: "Chris Bradley"},
+                    {l: "Creative Director, Art", v: "Andy Cummings"},
+                    {l: "Agency", v: "VaynerX"},
+                    {l: "Director", v: "Lucy Tcherniak"},
+                    {l: "Production", v: "Radical Media"},
+                    {l: "Editor", v: "Charlie Harvey / Whitehouse Post"}
+                ]
+            },
+            { 
+                title: "CITI", 
+                subtitle: "RISE", 
+                vimeoId: "812285745", 
+                img: "08-citi-rise.png", 
+                role: "CREATIVE DIRECTOR, COPY", 
+                desc: "$1 trillion in sustainable finance<br>is complex.<br>We gave it one simple direction. Up.<br><br>We turned global capital into local impact,<br>proving that profit and purpose<br>aren't just compatible—they're powerful.",
+                script: `
+                    <div class="sc-slug">EXT. VARIOUS LOCATIONS - MONTAGE</div>
+                    <div class="sc-action">A WIND TURBINE SPINS. A SMALL BUSINESS OPENS ITS DOORS. A CHILD FLIPS A LIGHT SWITCH.</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">MONEY IS JUST A TOOL. IT'S WHAT YOU DO WITH IT THAT MATTERS.</div>
+                    <div class="sc-action">THE CAMERA PAN UP TO THE CITI LOGO AGAINST A CLEAR BLUE SKY.</div>
+                `,
+                credits: [
+                    {l: "Client", v: "Citi"},
+                    {l: "Creative Director, Copy", v: "Omar Silwany"},
+                    {l: "Creative Director, Art", v: "Kim Davies"},
+                    {l: "Chief Creative Officer", v: "Erica Roberts"},
+                    {l: "Agency", v: "Publicis NY"}
+                ]
+            }
         ];
 
         let currentIndex = -1;
@@ -248,9 +687,83 @@
         const intelBtn = document.getElementById('intel-btn');
         const modal = document.getElementById('video-modal');
         const intelOverlay = document.getElementById('intel-overlay');
+        const scriptOverlay = document.getElementById('script-overlay');
         const vimeoWrap = document.getElementById('vimeo-wrap');
         const intelDesc = document.getElementById('intel-desc');
         const intelRole = document.getElementById('intel-role');
+        const creditsDrawer = document.getElementById('credits-drawer');
+        const creditsTable = document.getElementById('credits-table');
+        const intelScrollArea = document.getElementById('intel-scroll-area');
+        const scriptContent = document.getElementById('script-content');
+        const scriptHint = document.getElementById('script-hint');
+
+        // HUD & TRACKING LOGIC
+        const totalItems = 10; // 7 videos + Info + 1 Deep Cut + 1 Long Copy
+        function updateHUD() {
+            const viewed = JSON.parse(localStorage.getItem('omar_viewed') || '[]');
+            const count = viewed.length;
+            const progress = Math.min(Math.round((count / totalItems) * 100), 100);
+            
+            // Update Battery
+            document.getElementById('bat-status').textContent = `[ BAT: ${progress.toString().padStart(2, '0')}% ]`;
+            
+            // Update Timecode (simplistic mapping of count to frames)
+            document.getElementById('hud-tc').textContent = `[ TC 00:00:00:${count.toString().padStart(2, '0')} ]`;
+            
+            // Check Unlock
+            if (count > 0) {
+                const lut = document.getElementById('lut-toggle');
+                lut.classList.add('unlocked');
+                if (localStorage.getItem('omar_lut') === 'RUBY') {
+                    applyRubyLUT(true);
+                }
+            }
+
+            if (count >= totalItems) {
+                applyPictureLock();
+            }
+        }
+
+        function applyRubyLUT(active) {
+            const lut = document.getElementById('lut-toggle');
+            if (active) {
+                document.documentElement.style.setProperty('--vibrant-red', '#FF0000');
+                document.documentElement.style.setProperty('--glow', 'rgba(255, 0, 0, 1)');
+                lut.textContent = '[ LUT: RUBY ]';
+                localStorage.setItem('omar_lut', 'RUBY');
+            } else {
+                document.documentElement.style.setProperty('--vibrant-red', '#FF003C');
+                document.documentElement.style.setProperty('--glow', 'rgba(255, 0, 60, 0.8)');
+                lut.textContent = '[ LUT: REC.709 ]';
+                localStorage.setItem('omar_lut', 'REC.709');
+            }
+        }
+
+        function applyPictureLock() {
+            const title = document.getElementById('project-title');
+            title.classList.remove('animate-vibrate');
+            document.getElementById('lut-toggle').textContent = '[ STATUS: LOCKED ]';
+            document.getElementById('lut-toggle').style.color = '#FFFFFF';
+        }
+
+        document.getElementById('lut-toggle').addEventListener('click', () => {
+            const viewed = JSON.parse(localStorage.getItem('omar_viewed') || '[]');
+            if (viewed.length > 0) {
+                const isRuby = localStorage.getItem('omar_lut') === 'RUBY';
+                applyRubyLUT(!isRuby);
+            }
+        });
+
+        function markAsViewed(id) {
+            const viewed = JSON.parse(localStorage.getItem('omar_viewed') || '[]');
+            if (!viewed.includes(id)) {
+                viewed.push(id);
+                localStorage.setItem('omar_viewed', JSON.stringify(viewed));
+                updateHUD();
+            }
+        }
+
+        updateHUD();
 
         projects.forEach((p, i) => {
             const div = document.createElement('div');
@@ -261,7 +774,7 @@
         });
 
         portal.addEventListener('click', (e) => {
-            if (e.target.closest('.btn') || e.target.closest('.info-link') || e.target.closest('.footer-metadata a')) return;
+            if (e.target.closest('.btn') || e.target.closest('.info-link') || e.target.closest('.header-name') || e.target.closest('.footer-metadata a')) return;
             
             // Kill initial background
             const initialBg = document.getElementById('initial-bg');
@@ -284,35 +797,84 @@
             const p = projects[currentIndex];
             vimeoWrap.innerHTML = `<iframe src="https://player.vimeo.com/video/${p.vimeoId}?autoplay=1&background=0&muted=0&title=0&byline=0&portrait=0" style="width:100%;height:100%;border:none;" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
             modal.style.display = 'flex';
+            markAsViewed(`v-${currentIndex}`);
         });
 
         intelBtn.addEventListener('click', () => {
             const p = projects[currentIndex];
             intelRole.textContent = p.role;
             intelDesc.innerHTML = p.desc;
+            scriptContent.innerHTML = p.script || 'SCRIPT PENDING...';
+            
+            // Populate Credits
+            const creditsTable = document.getElementById('credits-table');
+            const creditsDrawer = document.getElementById('credits-drawer');
+            const intelScrollArea = document.getElementById('intel-scroll-area');
+            
+            creditsTable.innerHTML = p.credits.map(c => `
+                <tr>
+                    <td class="c-label">${c.l}</td>
+                    <td class="c-value">${c.v}</td>
+                </tr>
+            `).join('');
+            
+            creditsDrawer.classList.remove('active');
+            scriptHint.style.display = 'none';
+            intelScrollArea.scrollTop = 0;
+            
             intelOverlay.style.display = 'flex';
+            markAsViewed(`v-${currentIndex}`);
         });
 
         document.getElementById('close-video').addEventListener('click', () => { modal.style.display = 'none'; vimeoWrap.innerHTML = ''; });
         document.getElementById('close-intel').addEventListener('click', () => { intelOverlay.style.display = 'none'; });
+        document.getElementById('close-script').addEventListener('click', () => { scriptOverlay.style.display = 'none'; });
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                if (modal.style.display === 'flex' || intelOverlay.style.display === 'flex') {
+                if (scriptOverlay.style.display === 'flex') {
+                    scriptOverlay.style.display = 'none';
+                    return;
+                }
+                if (modal.style.display === 'flex') {
                     modal.style.display = 'none';
-                    intelOverlay.style.display = 'none';
                     vimeoWrap.innerHTML = '';
-                } else if (actionGroup.classList.contains('visible')) {
+                    return;
+                }
+                if (intelOverlay.style.display === 'flex') {
+                    intelOverlay.style.display = 'none';
+                    return;
+                }
+                if (actionGroup.classList.contains('visible')) {
                     currentIndex = -1;
                     titleEl.textContent = "BROUHAHAHA";
-                    subtitleEl.innerHTML = "I craft copy into ideas into<br>scripts into films into culture.";
+                    subtitleEl.innerHTML = "I craft copy<br> into ideas into<br> scripts into films into culture.";
                     document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
                     const initialBg = document.getElementById('initial-bg');
                     if (initialBg) {
-                        initialBg.style.display = 'block'; // RESTORE VISIBILITY
+                        initialBg.style.display = 'block';
                         setTimeout(() => initialBg.classList.add('active'), 10);
                     }
                     actionGroup.classList.remove('visible');
+                }
+            }
+
+            if (e.key === 'Enter') {
+                if (intelOverlay.style.display === 'flex') {
+                    const creditsDrawer = document.getElementById('credits-drawer');
+                    creditsDrawer.classList.toggle('active');
+                    scriptHint.style.display = creditsDrawer.classList.contains('active') ? 'block' : 'none';
+                    if (creditsDrawer.classList.contains('active')) {
+                        setTimeout(() => {
+                            creditsDrawer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 100);
+                    }
+                }
+            }
+
+            if (e.key === 's' || e.key === 'S') {
+                if (intelOverlay.style.display === 'flex' && creditsDrawer.classList.contains('active')) {
+                    scriptOverlay.style.display = 'flex';
                 }
             }
         });

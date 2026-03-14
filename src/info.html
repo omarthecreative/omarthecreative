@@ -72,6 +72,31 @@
             filter: blur(0.5px);
             z-index: 2;
             position: relative;
+            text-shadow: 0 0 20px var(--glow);
+        }
+
+        /* HIGH-IMPACT VIBRATION */
+        @keyframes vibrate-heavy {
+            0% { transform: translate(0); text-shadow: 0 0 10px var(--glow); }
+            20% { transform: translate(-2px, 2px); text-shadow: 4px 0 15px var(--vibrant-red); }
+            40% { transform: translate(-2px, -2px); text-shadow: -4px 0 20px var(--vibrant-red); }
+            60% { transform: translate(2px, 2px); text-shadow: 0 4px 15px var(--vibrant-red); }
+            80% { transform: translate(2px, -2px); text-shadow: 0 -4px 20px var(--vibrant-red); }
+            100% { transform: translate(0); text-shadow: 0 0 10px var(--glow); }
+        }
+
+        /* CALIBRATED MOBILE VIBRATION */
+        @keyframes vibrate-mobile {
+            0% { transform: translate(0); text-shadow: 0 0 5px var(--glow); }
+            20% { transform: translate(-1px, 1px); text-shadow: 2px 0 8px var(--vibrant-red); }
+            40% { transform: translate(-1px, -1px); text-shadow: -2px 0 12px var(--vibrant-red); }
+            60% { transform: translate(1px, 1px); text-shadow: 0 2px 8px var(--vibrant-red); }
+            80% { transform: translate(1px, -1px); text-shadow: 0 -2px 12px var(--vibrant-red); }
+            100% { transform: translate(0); text-shadow: 0 0 5px var(--glow); }
+        }
+
+        .animate-vibrate {
+            animation: vibrate-heavy 0.15s infinite ease-in-out;
         }
 
         /* BIO SECTION */
@@ -85,6 +110,7 @@
             font-size: 1.6rem;
             line-height: 1.5;
             color: #ddd;
+            text-wrap: pretty;
         }
         .bio-text p {
             margin-bottom: 2.5rem;
@@ -118,6 +144,7 @@
             font-size: 1.2rem;
             color: #aaa;
             line-height: 1.6;
+            text-wrap: pretty;
         }
 
         /* NAV */
@@ -155,14 +182,66 @@
         .still-here:hover { color: var(--vibrant-red); }
 
         @media (max-width: 768px) {
+            .animate-vibrate {
+                animation: vibrate-mobile 0.15s infinite ease-in-out;
+            }
             .bio-section, .dossier { grid-template-columns: 1fr; }
         }
     </style>
+    <!-- Back to Top -->
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top" style="position:fixed; bottom:4rem; right:4rem; width:60px; height:30px; padding:0; border:1px solid var(--vibrant-red); background:rgba(5,5,5,0.8); color:var(--vibrant-red); font-family:var(--mono); font-size:0.55rem; letter-spacing:0.1em; cursor:pointer; opacity:0; transition:all 0.4s ease; z-index:9999; display:flex; align-items:center; justify-content:center;">
+        [ TOP ]
+    </button>
+
+    <script>
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Back to Top Visibility
+        const backToTop = document.getElementById('back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > window.innerHeight) {
+                backToTop.style.opacity = '0.6';
+                backToTop.style.pointerEvents = 'auto';
+            } else {
+                backToTop.style.opacity = '0';
+                backToTop.style.pointerEvents = 'none';
+            }
+        });
+        backToTop.addEventListener('mouseenter', () => backToTop.style.opacity = '1');
+        backToTop.addEventListener('mouseleave', () => { if(window.scrollY > window.innerHeight) backToTop.style.opacity = '0.6'; });
+
+        // Tracking
+        const viewed = JSON.parse(localStorage.getItem('omar_viewed') || '[]');
+        if (!viewed.includes('info')) {
+            viewed.push('info');
+            localStorage.setItem('omar_viewed', JSON.stringify(viewed));
+        }
+
+        // Contact Clipboard logic
+        const contactLink = document.getElementById('contact-link');
+        contactLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const email = 'info@omarsilwany.com';
+            navigator.clipboard.writeText(email).then(() => {
+                const originalText = contactLink.textContent;
+                contactLink.textContent = '[ COPIED ]';
+                contactLink.style.color = '#FFFFFF';
+                setTimeout(() => {
+                    contactLink.textContent = originalText;
+                    contactLink.style.color = '';
+                }, 2000);
+            });
+        });
+    </script>
 </head>
 <body>
     <nav class="info-nav">
         <a href="index.html">[ BACK TO THE WORK ]</a>
-        <a href="mailto:info@omarsilwany.com">[ CONTACT ]</a>
+        <a href="#" id="contact-link">[ CONTACT ]</a>
     </nav>
 
     <div class="info-hero">
@@ -171,16 +250,16 @@
     </div>
 
     <div class="container">
+        <div class="dossier-label" style="margin-bottom: 4rem; opacity: 0.5;">[ BIOGRAPHIA LITERARIA // v2.0 ]</div>
         <section class="bio-section">
             <div class="bio-text">
-                <p>That's not me in the mosh pit.</p>
-                <p>I'm a Creative Director. Writer. And More.</p>
-                <p>I've helped a President help young men help each other, named a credit card still running 16 years later, and launched two Samsung campaigns that went global. I conspired with Dracula to kill flash photography. And convinced a generation that pen-spinning is focus. I write manifestos. One got me hired on the spot.</p>
-                <p>Pre-med and poetry at Cornell. Mentored by A.R. Ammons. He taught me that science and art aren't that far apart.</p>
-                <p>Born in Nicaragua's highlands. Grown under Miami Beach's sun. Forged in New York.</p>
-                <p>Now operating globally as <a href="https://meanwhileinjupiter.com" target="_blank">Meanwhile In Jupiter</a>.</p>
+                <p>That's not me in the mosh&nbsp;pit.</p>
+                <p>I'm a Creative Director. Writer. And&nbsp;More.</p>
+                <p>I've helped a President help young men help each other, named a credit card still running 16 years later, and launched two Samsung campaigns that went global. I conspired with Dracula to kill flash photography. And convinced a generation that pen-spinning is focus. I write manifestos. One got me hired on the&nbsp;spot.</p>
+                <p>Pre-med and poetry at Cornell. Mentored by A.R. Ammons. He taught me that science and art aren't that far&nbsp;apart.</p>
+                <p>Born in Nicaragua's highlands. Grown under Miami Beach's sun. Forged in New&nbsp;York.</p>
+                <p>Now operating globally as <a href="https://meanwhileinjupiter.com" target="_blank">Meanwhile In&nbsp;Jupiter</a>.</p>
             </div>
-            <div class="dossier-label" style="text-align: right; opacity: 0.5;">[ BIOGRAPHIA LITERARIA // v2.0 ]</div>
         </section>
 
         <section class="dossier">
@@ -190,12 +269,12 @@
 
         <section class="dossier">
             <div class="dossier-label">Client Collaborators</div>
-            <div class="dossier-content">Google, Samsung, Chase, American Express, Verizon, Bentley, Under Armour, Guinness, Johnnie Walker, Honda, Panasonic, Disney, Kraft, Citi, Glenfiddich, Balvenie, Stoli, SKYY, Espolón, Crayola, Bud Light, R1-RCM, Palantir, Legence, MBK Alliance.</div>
+            <div class="dossier-content">Google, Samsung, Chase, American Express, Verizon, Bentley, Under Armour, Guinness, Johnnie Walker, Honda, Panasonic, Disney, Kraft, Citi, Glenfiddich, Balvenie, Stoli, SKYY, Espolón, Crayola, Bud Light, Legence, MBK Alliance.</div>
         </section>
 
         <section class="dossier">
             <div class="dossier-label">Notably</div>
-            <div class="dossier-content">Cooked in Google's kitchen. Robert McKee Story Seminar graduate. One Page Poetry, Founding Editor. Published Science Journal Author.<br><br>Triathlete. Bike Builder. Certified Scuba Diver. Child Cancer Awareness Advocate.</div>
+            <div class="dossier-content">Cooked in Google's kitchen. Robert McKee Story Seminar graduate. One Page Poetry, Founding Editor. Published Science Journal Author.<br><br>Triathlete. Bike Builder. Certified Scuba Diver.<br><br>Child Cancer Awareness&nbsp;Advocate.</div>
         </section>
 
         <section class="dossier">
@@ -204,9 +283,14 @@
         </section>
 
         <footer>
+            <div style="margin-bottom: 4rem; font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.15em; color: rgba(255,255,255,0.3); text-transform: uppercase; line-height: 1.6;">
+                INFO HERO PHOTOGRAPHY BY <a href="https://www.hedislimane.com/" target="_blank" style="color: inherit; text-decoration: underline;">HEDI SLIMANE</a>.<br>
+                LANDING PAGE PHOTOGRAPHY BY <a href="http://www.poonehghana.com/" target="_blank" style="color: inherit; text-decoration: underline;">POONEH GHANA</a>.
+            </div>
             <a href="https://www.youtube.com/watch?v=GKY--qaHWSw" target="_blank" class="still-here">still here?</a>
-            <div style="margin-top: 4rem; opacity: 0.2; font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase;">
-                © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
+            <div style="margin-top: 2rem; opacity: 0.2; font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase;">
+                © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.<br>
+                DESIGNED & MAINTAINED BY <a href="https://meanwhileinjupiter.com" target="_blank" style="color: inherit; text-decoration: none;">MEANWHILE IN JUPITER LLC</a>.
             </div>
         </footer>
     </div>

@@ -1,0 +1,231 @@
+/* PROJECT PAGE - APEX VERSION */
+
+:root {
+    --color-accent: #FF0000;
+    --color-white: #FFFFFF;
+    --font-primary: "freight-sans-pro", sans-serif;
+    --font-display: "brothers", sans-serif;
+    --font-mono: "IBM Plex Mono", monospace;
+    --font-serif: 'Newsreader', serif;
+}
+
+.project-body {
+    background-color: #050505;
+    color: var(--color-white);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.apex-nav {
+    position: fixed;
+    top: 4rem;
+    left: 4rem;
+    right: 4rem;
+    display: flex;
+    justify-content: space-between;
+    z-index: 1000;
+}
+
+.nav-name {
+    color: white;
+    text-decoration: none;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 900;
+}
+
+.nav-link {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    color: white;
+    opacity: 0.6;
+    text-decoration: none;
+    text-transform: uppercase;
+    margin-left: 1.5rem;
+}
+
+.nav-link:hover {
+    color: var(--color-accent);
+    opacity: 1;
+}
+
+.project-wrapper {
+    padding: 15rem 4rem 8rem 4rem;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* HERO */
+.project-hero {
+    margin-bottom: 10rem;
+}
+
+.project-meta-top {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+}
+
+.project-title-main {
+    font-family: "Anton", sans-serif;
+    font-size: clamp(60px, 12vw, 180px);
+    line-height: 0.85;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    margin: 0 0 2rem 0;
+}
+
+.project-credits {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.2rem;
+    opacity: 0.6;
+    line-height: 1.4;
+}
+
+/* INTRO */
+.project-intro-section {
+    margin-bottom: 10rem;
+    max-width: 800px;
+}
+
+.project-intro-text {
+    font-family: var(--font-serif);
+    font-size: clamp(24px, 3.5vw, 36px);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    white-space: pre-line;
+}
+
+/* ASSETS */
+.assets-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15rem;
+    margin-bottom: 15rem;
+}
+
+.visual-asset-item {
+    width: 100%;
+}
+
+.visual-asset-item.half-width {
+    width: 60%;
+    margin: 0 auto;
+}
+
+.visual-asset-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: brightness(0.9);
+}
+
+.visual-asset-label {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    opacity: 0.3;
+    text-transform: uppercase;
+    margin-top: 1.5rem;
+    text-align: right;
+}
+
+.section-headline {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 4vw, 60px);
+    line-height: 1;
+    text-transform: uppercase;
+    margin-bottom: 4rem;
+}
+
+.section-headline-rounded {
+    font-family: "Titan One", sans-serif;
+    font-size: clamp(30px, 4vw, 60px);
+    line-height: 1;
+    margin-bottom: 4rem;
+    color: var(--color-accent);
+}
+
+/* CAMPAIGN STORY */
+.campaign-section {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 6rem;
+    margin-bottom: 10rem;
+}
+
+.campaign-table {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4rem;
+}
+
+.campaign-col-heading {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    color: var(--color-accent);
+    margin-bottom: 2rem;
+}
+
+.campaign-col-content {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    opacity: 0.8;
+}
+
+/* FOOTER */
+.footer-metadata {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 4rem;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: white;
+    opacity: 0.8;
+}
+
+.footer-metadata a { color: inherit; text-decoration: none; }
+.footer-metadata a:hover { color: var(--color-accent); }
+
+.copyright {
+    margin-top: 4rem;
+    text-align: center;
+    opacity: 0.2;
+    font-family: var(--font-mono);
+    font-size: 0.4rem;
+    letter-spacing: 0.1em;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .campaign-table {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .apex-nav, .project-wrapper {
+        left: 2rem;
+        right: 2rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+    .campaign-table {
+        grid-template-columns: 1fr;
+    }
+    .visual-asset-item.half-width {
+        width: 100%;
+    }
+}
