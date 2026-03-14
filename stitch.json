@@ -1,0 +1,7 @@
+{
+  "id": "omarthecreative",
+  "framework": "apex",
+  "src": "src",
+  "out": "dist",
+  "public": "public"
+}
