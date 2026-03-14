@@ -73,11 +73,11 @@
             justify-content: space-between;
             padding: 0 4rem;
             font-family: var(--mono);
-            font-size: 0.7rem;
+            font-size: 0.55rem;
             text-transform: uppercase;
-            letter-spacing: 0.4em;
+            letter-spacing: 0.3em;
             color: var(--vibrant-red);
-            opacity: 0.6;
+            opacity: 0.4;
         }
         .corner-frame {
             position: absolute;
@@ -98,7 +98,7 @@
         
         .nav-hint {
             font-family: var(--mono);
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             letter-spacing: 0.2em;
             color: var(--vibrant-red);
             text-transform: uppercase;
@@ -109,13 +109,15 @@
             top: 4rem;
             right: 4rem;
             font-family: var(--mono);
-            font-size: 0.7rem;
+            font-size: 0.55rem;
             letter-spacing: 0.2em;
             color: white;
+            opacity: 0.4;
             text-decoration: none;
             z-index: 100;
+            text-transform: uppercase;
         }
-        .info-link:hover { color: var(--vibrant-red); }
+        .info-link:hover { color: var(--vibrant-red); opacity: 1; }
 
         .action-group {
             margin-top: 4rem;
@@ -143,6 +145,25 @@
             background: var(--vibrant-red);
             color: white;
             box-shadow: 0 0 20px var(--glow);
+        }
+
+        /* VIDEO MODAL */
+        #video-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        #video-modal iframe { width: 100%; height: 100%; border: none; }
+        #close-video {
+            position: absolute;
+            top: 2rem; right: 2rem;
+            color: white; font-family: var(--mono); font-size: 0.8rem;
+            cursor: pointer; z-index: 1001;
+            text-transform: uppercase; letter-spacing: 0.2em;
         }
 
         /* INTEL OVERLAY */
@@ -182,25 +203,6 @@
             cursor: pointer;
             letter-spacing: 0.2em;
         }
-
-        /* VIDEO MODAL */
-        #video-modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            z-index: 1000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-        #video-modal iframe { width: 100%; height: 100%; border: none; }
-        #close-video {
-            position: absolute;
-            top: 2rem; right: 2rem;
-            color: white; font-family: var(--mono); font-size: 0.8rem;
-            cursor: pointer; z-index: 1001;
-            text-transform: uppercase; letter-spacing: 0.2em;
-        }
     </style>
 </head>
 <body>
@@ -230,8 +232,8 @@
     <div class="overlay-heat"></div>
 
     <main class="portal-wrapper" id="portal">
-        <div style="position: absolute; top: 4rem; color: white; opacity: 0.8; font-weight: 700; font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;">
-            [ OMAR SILWANY ]
+        <div style="position: absolute; top: 4rem; color: white; opacity: 0.9; font-family: var(--display); font-size: 1.2rem; letter-spacing: 0.1em; text-transform: uppercase;">
+            OMAR SILWANY
         </div>
         
         <div class="project-display">
@@ -246,11 +248,11 @@
         
         <div class="footer-metadata">
             <span id="meta-left">[ MOTION ]</span>
-            <span class="nav-hint" style="opacity: 0.4;">[ CLICK TO CYCLE OBSERVATIONS ]</span>
+            <span class="nav-hint" style="opacity: 0.6;">[ CLICK TO CYCLE OBSERVATIONS ]</span>
             <span id="meta-right">[ SOUND ]</span>
         </div>
 
-        <div style="position: absolute; bottom: 1rem; width: 100%; text-align: center; opacity: 0.2; font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.1em; pointer-events: none;">
+        <div style="position: absolute; bottom: 1rem; width: 100%; text-align: center; opacity: 0.2; font-family: var(--mono); font-size: 0.4rem; letter-spacing: 0.1em; pointer-events: none;">
             © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
         </div>
     </main>
@@ -326,7 +328,7 @@
         });
 
         portal.addEventListener('click', (e) => {
-            if (e.target.closest('.btn')) return;
+            if (e.target.closest('.btn') || e.target.closest('.info-link')) return;
             currentIndex = (currentIndex + 1) % projects.length;
             const p = projects[currentIndex];
             titleEl.textContent = p.title;
