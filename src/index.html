@@ -95,7 +95,6 @@
         .tr { top: -1px; right: -1px; border-left: 0; border-bottom: 0; }
         .bl { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
         .br { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
-        
         .nav-hint {
             position: absolute;
             top: 4rem;
@@ -107,8 +106,22 @@
             text-transform: uppercase;
             z-index: 10;
         }
-
-        .action-group {
+        .info-link {
+            position: absolute;
+            top: 4rem;
+            right: 4rem;
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            color: white;
+            text-decoration: none;
+            z-index: 100;
+        }
+        .info-link:hover { color: var(--vibrant-red); }
+        </style>
+        </head>
+        <body>
+        <a href="info.html" class="info-link">[ INFO ]</a>
             margin-top: 4rem;
             display: flex;
             gap: 1rem;
