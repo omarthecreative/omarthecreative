@@ -17,10 +17,33 @@
             flex-direction: column;
             position: relative;
             cursor: pointer;
+            overflow: hidden;
         }
-        .project-display {
-            text-align: center;
-            width: 100%;
+        .bg-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            background: #050505;
+        }
+        .project-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.2s ease;
+            filter: grayscale(1) contrast(1.2) brightness(0.3);
+        }
+        .project-bg.active {
+            opacity: 1;
+        }
+        .overlay-heat {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, var(--glow) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.5;
         }
         .title {
             font-family: var(--display);
@@ -31,7 +54,6 @@
             color: var(--vibrant-red);
             letter-spacing: -0.04em;
             filter: blur(0.5px);
-            transition: opacity 0.3s ease;
         }
         .subtitle {
             font-family: var(--serif);
@@ -62,6 +84,7 @@
             top: 2rem; left: 2rem; right: 2rem; bottom: 2rem;
             border: 1px solid rgba(255, 255, 255, 0.05);
             pointer-events: none;
+            z-index: 10;
         }
         .corner {
             position: absolute;
@@ -82,10 +105,109 @@
             color: var(--vibrant-red);
             opacity: 0.4;
             text-transform: uppercase;
+            z-index: 10;
+        }
+
+        .action-group {
+            margin-top: 4rem;
+            display: flex;
+            gap: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 20;
+        }
+        .action-group.visible { opacity: 1; }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: 1px solid var(--vibrant-red);
+            font-family: var(--mono);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--vibrant-red);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: var(--vibrant-red);
+            color: white;
+            box-shadow: 0 0 20px var(--glow);
+        }
+
+        /* INTEL OVERLAY */
+        #intel-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 5, 0.95);
+            z-index: 500;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem;
+        }
+        .intel-content {
+            max-width: 600px;
+            font-family: var(--mono);
+            color: white;
+        }
+        .intel-role {
+            color: var(--vibrant-red);
+            font-size: 0.7rem;
+            letter-spacing: 0.3em;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+        .intel-desc {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            letter-spacing: -0.01em;
+        }
+        .intel-close {
+            position: absolute;
+            top: 2rem; right: 2rem;
+            font-family: var(--mono);
+            font-size: 0.8rem;
+            color: var(--vibrant-red);
+            cursor: pointer;
+            letter-spacing: 0.2em;
+        }
+
+        /* VIDEO MODAL */
+        #video-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        #video-modal iframe { width: 100%; height: 100%; border: none; }
+        #close-video {
+            position: absolute;
+            top: 2rem; right: 2rem;
+            color: white; font-family: var(--mono); font-size: 0.8rem;
+            cursor: pointer; z-index: 1001;
+            text-transform: uppercase; letter-spacing: 0.2em;
         }
     </style>
 </head>
 <body>
+    <div id="video-modal">
+        <div id="close-video">[ ESC // CLOSE ]</div>
+        <div id="vimeo-wrap" style="width: 100%; height: 100%;"></div>
+    </div>
+
+    <div id="intel-overlay">
+        <div class="intel-close" id="close-intel">[ ESC // CLOSE ]</div>
+        <div class="intel-content">
+            <div class="intel-role" id="intel-role">CREATIVE DIRECTOR, WRITER</div>
+            <div class="intel-desc" id="intel-desc">Observation metadata loading...</div>
+        </div>
+    </div>
+
     <div class="corner-frame">
         <div class="corner tl"></div>
         <div class="corner tr"></div>
@@ -93,12 +215,20 @@
         <div class="corner br"></div>
     </div>
 
+    <div class="bg-container" id="bg-container"></div>
+    <div class="overlay-heat"></div>
+
     <main class="portal-wrapper" id="portal">
-        <div class="nav-hint">[ CLICK TO CYCLE OBSERVATIONS ]</div>
+        <div class="nav-hint" id="nav-hint">[ CLICK TO CYCLE OBSERVATIONS ]</div>
         
         <div class="project-display">
             <div class="subtitle" id="project-subtitle">I push brands into culture.</div>
             <h1 class="title animate-vibrate" id="project-title">COLDEST</h1>
+        </div>
+        
+        <div class="action-group" id="action-group">
+            <button class="btn" id="watch-btn">[ WATCH ]</button>
+            <button class="btn" id="intel-btn">[ INTEL ]</button>
         </div>
         
         <div class="footer-metadata">
@@ -108,17 +238,50 @@
         </div>
     </main>
 
-    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60vw; height: 60vw; background: radial-gradient(circle, var(--glow) 0%, transparent 70%); z-index: -1; pointer-events: none; opacity: 0.5;"></div>
-
     <script>
         const projects = [
-            { title: "SAMSUNG", subtitle: "Study Is Better With Play", year: "2021", tag: "STUDY" },
-            { title: "MBK ALLIANCE", subtitle: "We Are The Ones", year: "2017", tag: "IDENTITY" },
-            { title: "GOOGLE PIXEL", subtitle: "Lose The Flash", year: "2018", tag: "MOTION" },
-            { title: "SAMSUNG", subtitle: "Stay Ahead Of Tomorrow", year: "2021", tag: "FUTURE" },
-            { title: "LEGENCE", subtitle: "Built For Building", year: "2025", tag: "SYSTEMS" },
-            { title: "BUD LIGHT", subtitle: "Home Advantage", year: "2016", tag: "MOMENT" },
-            { title: "CITI", subtitle: "RISE", year: "2022", tag: "RISE" }
+            { 
+                title: "SAMSUNG", subtitle: "Study Is Better With Play", year: "2021", tag: "STUDY", 
+                vimeoId: "637229831", img: "https://omarthecreative.com/wp-content/uploads/2026/02/01-samsung-study-better-play-scaled.png",
+                role: "CREATIVE DIRECTOR, WRITER",
+                desc: "We told students to make play work for them.<br>Then proved it with pen spinning.<br><br>Turned ADHD into a superpower.<br>Made fidgeting fashionable.<br>Convinced a generation that distraction is focus."
+            },
+            { 
+                title: "MBK ALLIANCE", subtitle: "We Are The Ones", year: "2017", tag: "IDENTITY", 
+                vimeoId: "267027000", img: "https://omarthecreative.com/wp-content/uploads/2026/02/02-mbk-we-are-the-ones-scaled-e1772257041527.png",
+                role: "CREATIVE DIRECTOR, WRITER",
+                desc: "One voice becomes a movement.<br>Obama listens. Curry takes note.<br>Chance amplifies.<br>And it all starts when a kid decides to speak.<br><br>50 million impressions. Zero paid media.<br>Just truth traveling at the speed of culture."
+            },
+            { 
+                title: "GOOGLE PIXEL", subtitle: "Lose The Flash", year: "2018", tag: "MOTION", 
+                vimeoId: "306235541", img: "https://omarthecreative.com/wp-content/uploads/2026/02/03-google-pixel-lose-the-flash-scaled-e1772256909967.png",
+                role: "CREATIVE DIRECTOR, WRITER",
+                desc: "Dracula sells cameras now.<br>Queen provides the soundtrack.<br>The flash is officially dead.<br><br>We turned Pixel's Night Sight from a spec<br>into a cultural moment. No technical jargon.<br>Just vampires doing what they do best."
+            },
+            { 
+                title: "SAMSUNG", subtitle: "Stay Ahead Of Tomorrow", year: "2021", tag: "FUTURE", 
+                vimeoId: "1079838915", img: "https://omarthecreative.com/wp-content/uploads/2026/02/04-samsung-stay-ahead-tomorrow.png",
+                role: "CREATIVE DIRECTOR, WRITER",
+                desc: "Samsung wanted to sell 5G devices.<br>We sold Gen Z their own skepticism instead.<br><br>Let our hero argue with her future.<br>Made global markets copy our playbook.<br>Turns out that little 5G icon changes everything."
+            },
+            { 
+                title: "LEGENCE", subtitle: "Built For Building", year: "2025", tag: "SYSTEMS", 
+                vimeoId: "1080884698", img: "https://omarthecreative.com/wp-content/uploads/2026/02/06-legence-built-for-building.png",
+                role: "CREATIVE DIRECTOR, ART",
+                desc: "We made infrastructure sexy.<br>$5 billion sexy, to be exact.<br>Turned MEP into a rallying cry.<br>Made engineers feel like astronauts.<br><br>Helped a company nobody heard of<br>become essential overnight."
+            },
+            { 
+                title: "BUD LIGHT", subtitle: "Home Advantage", year: "2016", tag: "MOMENT", 
+                vimeoId: "154384335", img: "https://omarthecreative.com/wp-content/uploads/2026/02/07-bud-light-home-advantage.png",
+                role: "CREATIVE DIRECTOR, COPY",
+                desc: "Super Bowl 50 needed a bottle.<br>We gave it a time machine.<br>Leaped into 1982, leaped out 2016.<br><br>Big tube TV became a flatscreen.<br>Mullets morphed to man buns.<br>Epic football and Bud Light is status quo.<br>That's home advantage."
+            },
+            { 
+                title: "CITI", subtitle: "RISE", year: "2022", tag: "RISE", 
+                vimeoId: "812285745", img: "https://omarthecreative.com/wp-content/uploads/2026/02/08-citi-rise.png",
+                role: "CREATIVE DIRECTOR, COPY",
+                desc: "$1 trillion in sustainable finance is complex.<br>We gave it one simple direction. Up.<br>Every shot rises. Every community lifts.<br>Every frame defies gravity.<br><br>Zero poverty takes everything.<br>By making the metaphor visual.<br>We made it for everyone."
+            }
         ];
 
         let currentIndex = -1;
@@ -127,15 +290,66 @@
         const subtitleEl = document.getElementById('project-subtitle');
         const metaLeft = document.getElementById('meta-left');
         const metaRight = document.getElementById('meta-right');
+        const bgContainer = document.getElementById('bg-container');
+        const actionGroup = document.getElementById('action-group');
+        const watchBtn = document.getElementById('watch-btn');
+        const intelBtn = document.getElementById('intel-btn');
+        const modal = document.getElementById('video-modal');
+        const intelOverlay = document.getElementById('intel-overlay');
+        const vimeoWrap = document.getElementById('vimeo-wrap');
+        const intelDesc = document.getElementById('intel-desc');
+        const intelRole = document.getElementById('intel-role');
 
-        portal.addEventListener('click', () => {
+        projects.forEach((p, i) => {
+            const div = document.createElement('div');
+            div.className = 'project-bg';
+            div.id = `bg-${i}`;
+            div.style.backgroundImage = `url(${p.img})`;
+            bgContainer.appendChild(div);
+        });
+
+        portal.addEventListener('click', (e) => {
+            if (e.target.closest('.btn')) return;
             currentIndex = (currentIndex + 1) % projects.length;
             const p = projects[currentIndex];
-            
             titleEl.textContent = p.title;
             subtitleEl.textContent = p.subtitle;
             metaLeft.textContent = `[ ${p.tag} ]`;
             metaRight.textContent = `[ ${p.year} ]`;
+            document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
+            document.getElementById(`bg-${currentIndex}`).classList.add('active');
+            actionGroup.classList.add('visible');
+            document.getElementById('nav-hint').textContent = "[ CLICK SCREEN TO CYCLE // SELECT ACTION BELOW ]";
+        });
+
+        watchBtn.addEventListener('click', () => {
+            const p = projects[currentIndex];
+            vimeoWrap.innerHTML = `<iframe src="https://player.vimeo.com/video/${p.vimeoId}?autoplay=1&background=0&muted=0&title=0&byline=0&portrait=0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+            modal.style.display = 'flex';
+        });
+
+        intelBtn.addEventListener('click', () => {
+            const p = projects[currentIndex];
+            intelRole.textContent = p.role;
+            intelDesc.innerHTML = p.desc;
+            intelOverlay.style.display = 'flex';
+        });
+
+        document.getElementById('close-video').addEventListener('click', () => {
+            modal.style.display = 'none';
+            vimeoWrap.innerHTML = '';
+        });
+
+        document.getElementById('close-intel').addEventListener('click', () => {
+            intelOverlay.style.display = 'none';
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                modal.style.display = 'none';
+                intelOverlay.style.display = 'none';
+                vimeoWrap.innerHTML = '';
+            }
         });
     </script>
 </body>
