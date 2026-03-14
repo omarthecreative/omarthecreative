@@ -1,18 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="dark" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Remember WE | Omar, the Creative</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥀</text></svg>">
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Remember WE - Omar Silwany</title>
     
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css"/>
     <link rel="stylesheet" href="https://use.typekit.net/shz5hny.css"/>
     <link rel="stylesheet" href="../base.css"/>
 
-    <script>
+    <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
@@ -31,7 +30,6 @@
             },
         }
     </script>
-
     <style>
         body {
             background-color: #050505;
@@ -74,13 +72,13 @@
             opacity: 1;
         }
 
-        /* Remember WE Styles */
         .brothers-font {
             font-family: "octin-stencil", sans-serif;
             font-weight: 900;
             letter-spacing: 0.04em;
             text-transform: uppercase;
         }
+        /* Stencil drop caps — alternating red / yellow */
         .dropcap-red::first-letter {
             font-family: "octin-stencil", sans-serif;
             font-weight: 900;
@@ -91,6 +89,17 @@
             margin-bottom: 0;
             text-transform: uppercase;
             color: rgba(160, 31, 36, 0.85);
+        }
+        .dropcap-yellow::first-letter {
+            font-family: "octin-stencil", sans-serif;
+            font-weight: 900;
+            font-size: 120px;
+            line-height: 0.8;
+            float: left;
+            margin-right: 0.75rem;
+            margin-bottom: 0;
+            text-transform: uppercase;
+            color: #a87835;
         }
 
         @media (max-width: 768px) {
@@ -131,7 +140,7 @@
     </div>
 
     <!-- Main Content -->
-    <main class="pb-24 pt-32">
+    <main class="pb-24 pt-32" data-section="long-copy">
         <div class="max-w-7xl mx-auto px-6">
             <!-- Header Section -->
             <div class="flex flex-col mb-16 min-h-screen justify-center">
@@ -187,24 +196,209 @@
                     <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">"Too bad you're not named Warren Obadiah Winchester. Then the initials on your site could read WOW, which happens to be exactly what I shouted when I first hit the landing page. Lucky for you, WE happens to be a very solid monogram too — and I know Muhammad Ali would agree. The shortest poem in the English language is frequently said to be Ali's: 'Me. We.'"</p>
                     
                     <blockquote class="my-12 px-8 py-8 border-l-4" style="border-color: rgba(160, 31, 36, 0.85);">
-                        <p style="font-family: 'dalliance-script-display', cursive; font-size: clamp(32px, 3.5vw, 50px); line-height: 1.5; color: rgba(250, 243, 141, 0.92);">"Omar Dude — what are you up to these days? Let me know, I'd be interested."</p>
+                        <p style="font-family: 'dalliance-script-display', cursive; font-size: clamp(28px, 3vw, 44px); line-height: 1.5; color: rgba(250, 243, 141, 0.92);">"Omar Dude — what are you up to these days? Let me know, I'd be interested."</p>
                     </blockquote>
                     
                     <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">That question opened something. I told him I was out on my own. Had started an agency called Professor with Kenny and Agustin, two of the world-class designers from the McGarry team. After we split, Jason Borzouyeh, JB, was working at Dentsu in Malaysia and pulled me in on a Honda Hybrids pitch. We won. Then a Lumix pitch came along — I told them if we won, they'd fly me over for the production. We won. Three months in Malaysia, Indonesia and Thailand. Shoots in Kuala Lumpur and Tokyo. Once JB and I were back in the city, I emailed Warren to ask where I should be working. He pointed me toward specific agencies, named specific people, and then landed on the thing I actually needed:</p>
                     
-                    <p style="font-family: 'dalliance-script-display', cursive; font-size: clamp(32px, 3.5vw, 50px); line-height: 1.5; color: rgba(250, 243, 141, 0.92); border-color: rgba(160, 31, 36, 0.85);" class="my-12 px-8 py-8 border-l-4">"Remember Omar, don't limit yourself, you can't catch fish if you don't have a few lines in the water."</p>
+                    <p style="font-family: 'dalliance-script-display', cursive; font-size: clamp(28px, 3vw, 44px); line-height: 1.5; color: rgba(250, 243, 141, 0.92); border-color: rgba(160, 31, 36, 0.85);" class="my-12 px-8 py-8 border-l-4">"Remember Omar, don't limit yourself, you can't catch fish if you don't have a few lines in the water."</p>
                     
-                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">He was right. I started casting more lines. I worked at BBH. Then Publicis. Then I went to McGarryBowen — the mothership — to run the Verizon Droid business. I stayed for three years. Warren and I would catch up in the elevator, or in the hallway, or in that ninth-floor conference room. He was always the same. Calm. Curious. Certain.</p>
-                    
-                    <div class="my-24">
-                        <img alt="Nike Cantona wall mural" class="w-full object-cover shadow-2xl rounded-lg" src="https://omarthecreative.com/wp-content/uploads/2026/02/THE-WALL.png"/>
-                        <p class="font-mono text-[11px] text-white/30 tracking-wide mt-3 text-right">Nike 'The Wall' — McGarryBowen</p>
-                    </div>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">He asked me to say hello to JB.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">He was Executive Creative Director of one of the largest agencies in New York, a decade into that title, replying to my email like a peer, asking after the people in my orbit, the same way he always had. I was surprised he replied. I was surprised he was so generous. I shouldn't have been. That's who he was.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Later I would learn he'd come to advertising in his thirties. I was thirty when I first watched him present. The parallel landed late, the way the useful ones do.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">In 2016, a Bud Light spot I'd written for Vayner ran near the Super Bowl. Warren liked it on Facebook. Said I was one of the only ones still posting new work.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">By 2017 he was living a few blocks from me in lower Manhattan — 88 Greenwich, near the water. He came over, we shot pool, drank Hudson bourbon. He thanked me the next morning for "a great evening Friday." He had a hangover. We were friends.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">I corresponded with him more than I did with my own father.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">At Blacktail, a bar on Battery Place, we sat across from each other. Somewhere that evening we got onto the subject of a campaign for the Obama Foundation's My Brother's Keeper Alliance. We had a couple of days to figure something out, a donated ESPN media buy, and no concept. He suggested we call the team OW — Omar and Warren, first letters of our names, like two guys serving gut punches.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">What follows are two of Warren's campaigns. And one from <span style="font-family: 'stencil-std', sans-serif; font-weight: 400; color: #a87835;">O</span><span style="font-family: 'octin-stencil', sans-serif; font-weight: 900; font-size: 1.02em; color: rgba(160, 31, 36, 0.85);">W</span>.</p>
+                </section>
 
-                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">When Warren passed, the industry lost a master. I lost a North Star. Someone who showed me that you could do this work at the highest level without losing your soul, or your cool, or your curiosity. He didn't just make ads. He made a version of a creative life that felt worth having.</p>
+                <!-- Section II: The Wall -->
+                <section class="mb-24">
+                    <div class="border-t border-white/10 pt-12 mb-12">
+                        <h2 style="font-family: 'stencil-std', sans-serif; font-weight: 400; color: #a87835;" class="text-5xl mb-2 uppercase tracking-wide">THE <span style="font-family: 'octin-stencil', sans-serif; font-weight: 900; font-size: 1.06em; color: rgba(160, 31, 36, 0.85);">W</span>ALL</h2>
+                        <span class="font-mono text-[11px] text-slate-500 uppercase tracking-widest">1995</span>
+                    </div>
+                    <figure class="mb-12">
+                        <a href="https://vimeo.com/178962172?fl=pl&fe=vl" target="_blank" rel="noopener">
+                            <img alt="Nike Cantona wall mural" class="w-full object-cover shadow-2xl" src="https://omarthecreative.com/wp-content/uploads/2026/02/THE-WALL.png"/>
+                        </a>
+                        <figcaption class="font-mono text-[11px] text-white/30 tracking-wide mt-3">Nike — The Wall, 1995. Art direction: Warren Eakins.</figcaption>
+                    </figure>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8 dropcap-yellow">Warren was in Brazil filming a Nike commercial when he thought of a different Nike commercial.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">His eye was always running. On this job, on the next one, on the city outside the frame. He watched the walls, and somewhere in there he saw it: the game played billboard to billboard, city to city, the world's best players kicking the same ball from Paris to London to Milan to Berlin to New York to Rio. Nike was just beginning to figure out soccer. Warren had already figured out the commercial.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">He brought it to Joe Pytka. Pytka had one of the great catalogs in commercial directing — Michael Jordan, Madonna, the whole run. Warren asked him how they'd pull it off.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Pytka said he had no idea. He said let's figure it out.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">That was enough.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Warren mentioned the shoot to me over drinks years later. The details I have are mostly Pytka's. He wrote about it at length on his site.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">The shoot took them across six cities. The roster was world-class — Romario and Bebeto, the centerpiece of Brazil's 1994 World Cup, plus Ian Wright, Cantona, and Jorge Campos. Filming proved complicated in the ways that anything worth making proves complicated — not in the ways you planned for. They went to Barcelona first. Jorge Campos was supposed to be there. No show. London: Ian Wright, Cantona, Campos again. Wright did a perfect bicycle kick on the first try; his agent rushed the set screaming about dangerous maneuvers. The kick was done. Cantona was difficult but they got what they needed. Campos: no show.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Mexico City. Campos finally agreed to meet them at his team's training facility. Pytka's crew waited on one side of the field. Campos and his entourage waited on the other, staring across the pitch. Eventually a representative came over. Through an interpreter: Campos wanted to know who the director had worked with. Pytka started with Michael Jordan. When he got to Michael Jackson, they had a deal. The one hitch was that Campos was hurting. Pytka turned the camera sideways — to make it look like he's jumping laterally. Done.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Back in the States, the real problem surfaced. The concept was pre-digital: the ball passed from city to city, player to player, kicked and headed through billboard after billboard. With each strike, the concrete of the wall explodes outward — like the athlete is trying to break through the building with the force of a wrecking ball. No post house could make it convincing. Every test looked like what it was — photography placed on pre-filmed billboards. Pytka went through every reel, every company, every artist. Nothing worked.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Pytka's editor, Adam Liebowitz, went outside the VFX world. He came back with Kristin Johnson, who'd been cutting titles and promos at a television station in San Francisco. She wasn't a VFX artist. What she had was an eye and a willingness to work on a Paintbox — a system so archaic the work had to be done frame by frame.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">It took months. Adam ran the bay. Warren kept his seat.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">That image — Warren Eakins, sitting in an edit bay watching a television station compositor work a Paintbox one frame at a time — is the whole story. He didn't hand off the vision and wait for results. He sat there. He made sure the thing he'd seen in Brazil was still in the room when it was done.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">He wrote about it on his site years later, plain as anything:</p>
+                    <blockquote class="my-12 px-8 py-8 border-l-4" style="border-color: rgba(160, 31, 36, 0.85);">
+                        <p style="font-family: 'dalliance-script-display', cursive; font-size: clamp(28px, 3vw, 44px); line-height: 1.5; color: rgba(250, 243, 141, 0.92);">"This one TV spot instantly made Nike a global soccer brand."</p>
+                    </blockquote>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">The spot swept the shows — Gold Lion at Cannes, D&amp;AD Silver Pencil, Best of Show at the One Show, Film Epica d'Or, Communication Arts Advertising Annual. The International Press named it their favorite of the year. It should have won the Grand Prix. No Grand Prix was given that year. The jury president — Frank Lowe — had feelings about a public service announcement that wasn't eligible. Pytka wrote about it years later with the precision he brings to everything: <em>a Shakespearean study in hubris.</em></p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">The Museum of Modern Art added it to their Permanent Film &amp; Video Collection.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Nike has the trophy. The man moves on.</p>
+                </section>
+
+                <!-- Section III: I Am What I Am -->
+                <section class="mb-24">
+                    <div class="border-t border-white/10 pt-12 mb-12">
+                        <h2 style="font-family: 'stencil-std', sans-serif; font-weight: 400; color: #a87835;" class="text-5xl mb-2 uppercase tracking-wide">I AM <span style="font-family: 'octin-stencil', sans-serif; font-weight: 900; font-size: 1.06em; color: rgba(160, 31, 36, 0.85);">W</span>HAT I AM</h2>
+                        <span class="font-mono text-[11px] text-slate-500 uppercase tracking-widest">2005</span>
+                    </div>
+                    <figure class="mb-12">
+                        <a href="https://vimeo.com/4515029" target="_blank" rel="noopener">
+                            <img alt="Reebok I Am What I Am — Jay-Z campaign" class="w-full object-cover shadow-2xl" src="https://omarthecreative.com/wp-content/uploads/2026/02/I-AM-WHAT-I-AM.png"/>
+                        </a>
+                        <figcaption class="font-mono text-[11px] text-white/30 tracking-wide mt-3">Reebok — I Am What I Am, 2005. Art direction: Warren Eakins.</figcaption>
+                    </figure>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8 dropcap-red">By 2005, Nike owned and had democratized performance. "Just Do It" had been telling you what to do for nearly twenty years. An open contract: anyone can earn the shoe, if they perform.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Reebok was finding its way as a challenger brand. Still is.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Warren came from the agency that wrote that contract. He knew the playbook. He threw it out.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">At McGarryBowen, working with copywriter Randy Van Kleeck, he went looking for a different argument. What they found was this: Reebok's roster wasn't clean. Jay-Z had dealt crack cocaine as a teenager. 50 Cent had been shot nine times. Allen Iverson had spent half his career defying the NBA's dress code. These weren't liabilities. They were the brief.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Years later, pitching new clients, Warren sent a follow-up email with a print ad attached. He wrote:</p>
+                    <blockquote class="my-12 px-8 py-8 border-l-4" style="border-color: rgba(160, 31, 36, 0.85);">
+                        <p style="font-family: 'dalliance-script-display', cursive; font-size: clamp(28px, 3vw, 44px); line-height: 1.5; color: rgba(250, 243, 141, 0.92);">"In developing the campaign we realized that Reebok's assets were unique — they were flawed — but had achieved success by overcoming difficult obstacles early in life. This ad refers to the phenomenal success of Jay Z as a business man despite having dealt crack cocaine when he was a teenager. The photo on the right is a re-creation of how he used rubber bands on his wrist to keep track of sales."</p>
+                    </blockquote>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">No euphemism. No spin. Just: here's who this man is, here's where he came from, here's the image. The rubber bands on Jay-Z's wrist, right side of the frame. Not a metaphor. A fact.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">The Hughes Brothers — who brought the same unblinking eye to <em>Menace II Society</em> and <em>Dead Presidents</em> — directed documentary-style films for the campaign. One revealed what Warren called "a surprising side of Fifty Cent." The other followed Stevie Williams, the first African American to gain fame as a skateboarder — who honed his skills on the rugged concrete of his North Philadelphia neighborhood and earned his fame at Love Park downtown. Nobody was cleaned up. Nobody was made safe.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">The 50 Cent spot got pulled in the UK. They said it glamorized gun culture. The campaign kept running everywhere else.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">It put Reebok in the athletic shoe conversation for the first time in years.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">I started at McGarryBowen in 2006, eleven months after the campaign launched. I had just missed the making but stepped into the longtail of the legend. Warren was still there. I was on the design team, a bunch of punks looking to do great work. He was our biggest fan. I didn't fully understand yet what I was standing next to.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">A few years later, while I was still at McGarry, Droga5 dropped <em>Decoded</em> — an experiential campaign for Microsoft Bing built entirely around Jay-Z's memoir, with pages hidden in locations from his actual life. The Marcy Projects. A hotel pool in Miami. A boxing ring in Detroit. Whether or not Droga5 had Warren's work in mind, the DNA was there. Warren and Randy had seen something in 2005 that the industry spent the next decade trying to learn: that authenticity isn't a tone of voice. It's a set of facts you're willing to show.</p>
+                </section>
+
+                <!-- Section IV: We Are The Ones -->
+                <section class="mb-24">
+                    <div class="border-t border-white/10 pt-12 mb-12">
+                        <h2 style="font-family: 'stencil-std', sans-serif; font-weight: 400; color: #a87835;" class="text-5xl mb-2 uppercase tracking-wide"><span style="font-family: 'octin-stencil', sans-serif; font-weight: 900; font-size: 1.06em; color: rgba(160, 31, 36, 0.85);">W</span>E ARE THE ONES</h2>
+                        <span class="font-mono text-[11px] text-slate-500 uppercase tracking-widest">2017</span>
+                    </div>
+                    <figure class="mb-12">
+                        <a href="../index.html" target="_blank" rel="noopener">
+                            <img alt="We Are The Ones — Obama Foundation MBK campaign" class="w-full object-cover shadow-2xl" src="https://omarthecreative.com/wp-content/uploads/2026/02/WE-ARE-THE-ONES.png"/>
+                        </a>
+                        <figcaption class="font-mono text-[11px] text-white/30 tracking-wide mt-3">Obama Foundation My Brother's Keeper Alliance — We Are The Ones, 2017. OW: Omar Silwany + Warren Eakins.</figcaption>
+                    </figure>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8 dropcap-yellow">He'd done Nike. He'd done Reebok. He'd done Adidas for Leagas Delaney in London. The only creative I've ever known to hold all three.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">I tried to get him on UnderArmour. We got Obama instead.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Matter Unlimited had been working on a campaign called <em>Brave Together</em> for over a year when the client killed it. They had a week before a donated ESPN media buy went dark. They called me in.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">I brought Warren in.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">I sent him two lines: <em>"This thing for Matter Unlimited is actually pretty cool. They need help with a campaign to rally American young men and it will kick off with a spot on ESPN. Interested?"</em></p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Warren replied:</p>
+                    <p style="font-family: 'dalliance-script-display', cursive; font-size: clamp(28px, 3vw, 44px); line-height: 1.5; color: rgba(250, 243, 141, 0.92); border-color: rgba(160, 31, 36, 0.85);" class="my-12 px-8 py-8 border-l-4">"Young men" brings to mind the Village People — "Young man, there's no need to feel down. I said, young man, pick yourself off the ground..." Pretty inspiring, right? Haha.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">I wrote back: <em>"As the saying goes...it takes a village people to raise a young man."</em></p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Then he got serious. And then he almost left.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">When we met in person, I laid out the full picture: a donated ESPN media buy, no real budget, and I was doing it pro-bono. Two days in, he sent an email with the subject line "Something weird." He no longer had the stomach for it, he wrote. The resources were too thin, the timeline impossible. He was used to armies of designers and the infrastructure of a large agency behind him. Here, we had Google Slides, one staff designer, and a deadline that felt like a firing squad. He'd be glad to be a set of eyes, he said, but couldn't get into the trenches.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Then, in that same email, he sketched a spot anyway.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">He couldn't help it. He described projections on buildings, people engaging with a phrase, the feeling of a movement building.</p>
+                    <blockquote class="my-12 px-8 py-8 border-l-4" style="border-color: rgba(160, 31, 36, 0.85);">
+                        <p style="font-family: 'dalliance-script-display', cursive; font-size: clamp(28px, 3vw, 44px); line-height: 1.5; color: rgba(250, 243, 141, 0.92);">"In a way like 'Black lives matter' but I wouldn't mention that."</p>
+                    </blockquote>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">He endorsed two lines I'd been working with: <em>We Are The Ones</em> and <em>Conquer We Must.</em> He suggested ending on the latter as a super. He was leaving, but he left a blueprint.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">I wrote back and talked him down. The task wasn't as daunting as it seemed. I told him I just needed him to show up.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">He stayed.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">That afternoon I sent him a full copy deck — the campaign, the elements, and something new I'd been circling: The Keeper's Code. A playbook for the sport of brotherhood. A code for forming friendships and peer-to-peer alliances, written for young men who only had each other as role models. Warren wrote back at 3:32 PM:</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8"><em>"Really well done Omar, it makes a lot of sense. I love the creating a playbook, this was an element that was sorely missing. I favor the sports side of things, THE KEEPER'S CODE, rather than the cookbook, fits young men better, they can identify with it and it lets them know what is expected of them and others. The trading cards are really great. Perhaps new sets of 10 are released periodically. Good stuff."</em></p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">I went off to write. By 9:34 that night I sent him THE SPEECH.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8"><em>Open on a crowd of young men gathering at the footsteps of the Lincoln Memorial at night. There's an empty podium in place under a spotlight. There is silence and restlessness builds in the crowd. Until one of them just can't wait any longer and steps up to the microphone.</em></p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Warren read it the next morning. July 30, 11:38 AM:</p>
+                    <p style="font-family: 'dalliance-script-display', cursive; font-size: clamp(28px, 3vw, 44px); line-height: 1.5; color: rgba(250, 243, 141, 0.92); border-color: rgba(160, 31, 36, 0.85);" class="my-12 px-8 py-8 border-l-4">"Visually, I absolutely love the Lincoln Memorial setting at night with laser-projected images. It will be phenomenally powerful combining the vastly different worlds of American Heritage, politics (the D.C. setting) and that of urban culture as seen through the lens of Dave Meyers. Fucking cool man."</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">He was already directing it in his head.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">By then I'd been deep in Obama's speeches. The agency had come in considering <em>We Are The One</em> — singular. One read of the source material told me it needed the plural. <em>We are the ones we've been waiting for.</em> That was Obama's line, and it belonged to the young men the campaign was built to serve. Warren read the manifesto that afternoon and wrote: <em>"The manifesto works really well. I could hear Obama's voice as I read it."</em></p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">The next morning, July 31, Warren sent a first mockup at 11:12 AM — the image without the line. Four minutes later: <em>"A thought: When we shoot this we should make it an event, have lots of the right people there, live music, the media, etc., some of it we will incorporate into the spots."</em> At 11:56 AM, the second version arrived — with the line typeset.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Norah Tahiri, Matter Unlimited's designer, had been building in parallel. Her version projected five young people of color onto the columns of the Lincoln Memorial, drawn from the client's image library — a stronger, more representative selection than Warren's personal library had offered. Her typography was the brand's own typeface: clean, all-caps, on-brand. Warren's was a departure — lowercase, expressive, grounded low in the frame, the same visual sensibility he'd brought to I AM WHAT I AM. He saw Norah's version and agreed: her image selection and brand consistency gave the campaign what it needed. They didn't have time to marry the two approaches. They went with hers. Warren knew his eye was still in the room, even when his hand wasn't on the page.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">The presentation cover read: <em>_matter unlimited / _mbk alliance / _omar &amp; warren.</em> Two names. Equal billing.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">When the account/strategy notes came back asking to avoid the word "playbook," Warren had one question: <em>"Why? Doesn't she know ESPN is a sports brand and is bank rolling this project?"</em></p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">We went on to hand off a full campaign. Warren and I said as much to each other when we wrapped. He wrote back: <em>"Thanks Omar, it was my pleasure, you're great to work with. I think your smart and way ahead of the game by staying independent."</em></p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">No budget, no time for Dave Meyers. Matter Unlimited brought in Shabazz Larkin to work on the storyboard. Jason J.M. Harper directed. They trusted the architecture and rebuilt on a smaller scale — one kid, a park, a microphone, a spoken-word speech that felt like it could have been filmed on a phone. The Lincoln Memorial became everywhere. Obama's words became one kid's voice.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">The spot launched Christmas Day 2017 on ABC/ESPN during the NBA Christmas Day games, under the title <em>My Brother's Keeper</em>. Fifty million impressions. Zero paid media. Adweek, USA Today, The Washington Post, People, Esquire, and Campaign US all covered it the following morning. The Keeper's Code launched first — community events, social, digital — exactly as Warren and I had designed it. The conversations it sparked shaped the spot that followed.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Warren's key art — the image he made on the morning of the presentation — never officially ran. Three young people projected onto the columns of the Lincoln Memorial, asking for what was already theirs. In the summer of 2020, hundreds of thousands of people stood at those same columns and demanded the same thing, with the whole world watching.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Warren saw the architecture of that moment before the first brick was thrown.</p>
+                </section>
+
+                <!-- Section V: Closing -->
+                <section class="mb-24">
+                    <div class="border-t border-white/10 pt-12 mb-16">
+                        <figure>
+                            <a href="https://www.warreneakins.com/room-with-a-view" target="_blank" rel="noopener">
+                                <img alt="A Room With A View — Warren Eakins" class="w-full object-cover shadow-2xl" src="https://omarthecreative.com/wp-content/uploads/2026/02/A-ROOM-WITH-A-VIEW.png"/>
+                            </a>
+                            <figcaption class="font-mono text-[11px] text-white/30 tracking-wide mt-3">A Room With A View — warreneakins.com</figcaption>
+                        </figure>
+                    </div>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8 dropcap-red">Right after the MBK presentation, Warren told me about London. He was matter-of-fact about it the way he was about everything.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">The London plan — becoming a partner at Leagas Delaney, helping the agency grow, building something for the future — had been an unmitigated disaster of the highest degree. He ended up back in New York. By the time we worked together on MBK, he was renting a room from someone in the Lower East Side. Then that person died. He mentioned he was looking for a place — wanted to stay downtown. He posted on NextDoor looking for a sublet. I didn't know where he landed until I read his site recently: "A room with a view." He said he'd been as happy as he'd been in years. Instead of money he had time and he didn't have to answer to anyone.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">He didn't need a title. He'd never needed a title.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">After we presented and they liked our thinking — and wanted us to build the campaign out — the agency said they might find five hundred dollars somewhere. It became a thousand. I sent Warren half. The memo read: <em>thank you for teaming up with me to help Obama!!</em> I noted a bunch of time put into the work as a tax write-off.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">He'd already sent me a Times piece on Rubén Darío on Thanksgiving — the inescapable poet of Nicaragua. Warren had never heard of him. He wrote:</p>
+                    <blockquote class="my-12 px-8 py-8 border-l-4" style="border-color: rgba(160, 31, 36, 0.85);">
+                        <p style="font-family: 'dalliance-script-display', cursive; font-size: clamp(28px, 3vw, 44px); line-height: 1.5; color: rgba(250, 243, 141, 0.92);">"Now I know why you are a poet. I must say I wasn't aware of Ruben Dario, wow, what a man."</p>
+                    </blockquote>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">That was Warren. Campaign done, pressure off, and he's sending you a poet.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Two months later, two days after my birthday, a Guardian piece arrived about a man in Southampton who'd turned his love of cycling and engineering into a career building custom steel-frame road bikes. <em>"Thought you might enjoy this article in The Guardian online."</em> No occasion mentioned. Just: here is a thing worth knowing about.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">That was also Warren.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Life after that got complicated in ways I wasn't going to advertise. Family in Florida. Kayla in Arizona. Work in Miami and NYC. I kept dropping his name when I pitched agencies — he'd be a great partner on this. They weren't interested. I don't know what they were looking for. Their loss.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Back in the day, Warren opened Weiden's Amsterdam office. Then Fallon's LA office — with Arty Tan, Greg Hahn, Mike Smith, and Mike Folino — for David Lubars. And helped open McGarryBowen.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">There's another version of this story where he and I open a shop together. I've thought about it. If he'd had the stomach for it.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">On December 26, 2025, I sent him a note with the subject line: <em>A pocket-full of Bernbach.</em> He didn't reply.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Warren Eakins died in February 2026.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">He'd taken his advertising work off the internet. All of it — the Nike spots, the Reebok campaign, <em>Sign Language</em> in MoMA's Design Study Collection, <em>The Wall</em> in their Film &amp; Video Collection, group exhibitions at the Centre Pompidou, a Gold Lion at Cannes. Gone. What was left was photography. The Art Underfoot series: arrows and X marks and pedestrian icons painted on asphalt, shot from above, perfectly framed. The guy couldn't stop being an art director even when he was being a photographer. That's not a limitation. That's a gift. He'd adopted a line from photographer Stephen Shore as his frame:</p>
+                    <blockquote class="my-12 px-8 py-8 border-l-4" style="border-color: rgba(160, 31, 36, 0.85);">
+                        <p style="font-family: 'dalliance-script-display', cursive; font-size: clamp(28px, 3vw, 44px); line-height: 1.5; color: rgba(250, 243, 141, 0.92);">"To see something ordinary, something you'd see every day, and recognize it as a photographic possibility. That's what I'm interested in."</p>
+                    </blockquote>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Warren had been doing that his whole career. He just changed what he was pointing the camera at.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Row after row of self-portraits. His face blurred, grainy, shot in low light, almost disappearing into the frame. A man looking hard at himself. That's not vanity. That's an artist doing the work.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">His portfolio bio said:</p>
+                    <blockquote class="my-12 px-8 py-8 border-l-4" style="border-color: rgba(160, 31, 36, 0.85);">
+                        <p style="font-family: 'dalliance-script-display', cursive; font-size: clamp(28px, 3vw, 44px); line-height: 1.5; color: rgba(250, 243, 141, 0.92);">I lost interest, and turned my attention to photography full time.</p>
+                    </blockquote>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">No explanation. No justification. He just did it.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">The Johnny Cash of Advertising cashed out.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">On his contact page there was a drawing — dense, intricate pen work, a self-portrait in a sea of fish. The rest of the page was untouched template copy: <em>Contact us. email@example.com. (555) 555-5555. 123 Demo Street, New York, NY 12345. Facebook. Instagram. Twitter.</em> Click any of those links and they go nowhere — defaults. He had actual Facebook and Instagram accounts. He just never updated the page. The only way to reach Warren Eakins was to look at his work. I chuckled. Felt exactly right.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">In 2015, the Exposure Award International Photography selected his work for <em>The Body Collection</em> exhibition at the Louvre. Of course it did. His Instagram was a mix of photography, selfies, and genuinely funny memes:
+                    </p>
+                    <blockquote class="my-12 px-8 py-8 border-l-4" style="border-color: rgba(160, 31, 36, 0.85);">
+                        <p style="font-size: 1.15rem; line-height: 1.8; color: rgba(250, 243, 141, 0.92); margin: 0;">"Well you see, Norm, it's like this . . . A herd of buffalo can only move as fast as the slowest buffalo; and when the herd is hunted, it is the slowest and weakest ones at the back that are killed first. This natural selection is good for the herd as a whole, because the general speed and health of the whole group keeps improving by the regular killing of the weakest members. In much the same way, the human brain can only operate as fast as the slowest brain cells. Now, as we know, excessive intake of alcohol kills brain cells. But naturally, it attacks the slowest and weakest brain cells first. In this way, regular consumption of beer eliminates the weaker brain cells, making the brain a faster and more efficient machine. And that, Norm, is why you always feel smarter after a few."</p>
+                    </blockquote>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">He posted when his work was recognized — a Silver for OverDose Vodka in Graphis Packaging 10 in 2021; all ten of his entries juried into the Graphis Photography Annual 2022, a Silver medal and nine honorable mentions; a Graphis medal for the poster "My Lungs Hate Me — No. 1" in 2023.</p>
+                    <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">He set the bar so high that every creative I worked with after him had to answer to it. Most of them didn't know they were being compared. Working with Warren gave me the confidence to go on and make spots for Google and Samsung. More than any ad school ever could. He's probably why I work solo these days.</p>
+                    
+                    <div class="my-16 flex gap-12 items-center">
+                        <figure class="w-1/2 flex-shrink-0">
+                            <a href="https://www.warreneakins.com" target="_blank" rel="noopener">
+                                <img alt="Warren Eakins — last Instagram photo" class="w-full object-cover shadow-2xl" src="https://omarthecreative.com/wp-content/uploads/2026/02/Warren_Last_Photo_IG.png"/>
+                            </a>
+                            <figcaption class="font-mono text-[11px] text-white/30 tracking-wide mt-3">Warren Eakins. His last IG selfie.</figcaption>
+                            <span style="display:block; font-family: 'Courier New', monospace; font-size: 10px; color: rgba(255,255,255,0.2); letter-spacing: 0.05em; margin-top: 6px;">↑ Back-to-top image: Art Under Foot series — Warren Eakins</span>
+                        </figure>
+                        <div class="w-1/2 flex items-center">
+                            <blockquote class="border-l-4 pl-8" style="border-color: rgba(160, 31, 36, 0.85);">
+                                <p style="font-family: 'dalliance-script-display', cursive; font-size: clamp(32px, 4vw, 64px); line-height: 1.4; color: rgba(250, 243, 141, 0.92);">Take care, Dude.</p>
+                            </blockquote>
+                        </div>
+                    </div>
                     
                     <p class="text-[27px] leading-[1.8] text-slate-300 mb-8">Me. WE. Indeed.</p>
                 </section>
+
+                <!-- Footer Nav -->
+                <div class="flex justify-between items-center border-t border-white/10 pt-16 mt-32">
+                    <div class="group cursor-pointer">
+                        <span class="font-mono text-[10px] text-slate-500 block mb-2 uppercase">Previous</span>
+                        <span class="text-lg group-hover:text-primary transition-colors">Brief Lies</span>
+                    </div>
+                    <div class="group cursor-pointer text-right">
+                        <span class="font-mono text-[10px] text-slate-500 block mb-2 uppercase">Next</span>
+                        <span class="text-lg group-hover:text-primary transition-colors">Smart, Stupid</span>
+                    </div>
+                </div>
             </article>
 
             <footer class="mt-24 pt-12 border-t border-white/10">
