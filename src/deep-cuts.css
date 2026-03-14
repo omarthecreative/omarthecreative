@@ -74,7 +74,7 @@
     text-transform: uppercase;
     letter-spacing: -0.05em;
     color: var(--color-white);
-    margin: 0 0 2rem 0;
+    margin: 0 0 4rem 0; /* Doubled from 2rem */
 }
 
 .page-subtitle-meta {
