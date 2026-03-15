@@ -12,8 +12,8 @@
   status = 200
 
 [[redirects]]
-  from = "/deep-cuts"
-  to = "/deep-cuts.html"
+  from = "/choice-cuts"
+  to = "/choice-cuts.html"
   status = 200
 
 [[redirects]]

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deep Cuts | Omar, the Creative</title>
+    <title>Choice Cuts | Omar, the Creative</title>
     <meta name="description" content="Bits and bobs, and the occasionally useful manifesto or script.">
     
     <!-- Social Metadata -->
@@ -14,7 +14,7 @@
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="600">
     <meta property="og:image:type" content="image/jpeg">
-    <meta property="og:url" content="https://omarthecreative.com/deep-cuts.html">
+    <meta property="og:url" content="https://omarthecreative.com/choice-cuts.html">
     <meta property="og:type" content="website">
     
     <meta name="twitter:card" content="summary_large_image">
@@ -35,7 +35,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@300;400&family=Playfair+Display:wght@900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">
     <link rel="stylesheet" href="base.css">
-    <link rel="stylesheet" href="deep-cuts.css">
+    <link rel="stylesheet" href="choice-cuts.css">
     <style>
         /* Apex Nav Integration */
         .apex-nav {
@@ -105,12 +105,13 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            padding-top: 10rem;
+            pointer-events: none;
         }
         .menu-link {
+            position: relative;
             font-family: "Anton", sans-serif;
             font-size: clamp(60px, 18vw, 350px);
-            line-height: 0.75;
+            line-height: 0.8;
             text-transform: uppercase;
             color: #FFFFFF;
             text-decoration: none;
@@ -118,8 +119,19 @@
             transition: all 0.3s ease;
             opacity: 0.1;
             display: block;
-            width: 100%;
+            width: fit-content;
             text-align: center;
+            pointer-events: none;
+        }
+        .menu-link::before {
+            content: "";
+            position: absolute;
+            top: 20%;
+            bottom: 20%;
+            left: 0;
+            right: 0;
+            pointer-events: auto;
+            z-index: 1;
         }
         .menu-link:hover {
             opacity: 1;
@@ -143,12 +155,12 @@
         }
     </style>
 </head>
-<body class="deep-cuts-body">
+<body class="choice-cuts-body">
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
         <div class="menu-links">
-            <a href="index.html" class="menu-link">THE WORK</a>
-            <a href="deep-cuts.html" class="menu-link active">DEEP CUTS</a>
+            <a href="index.html" class="menu-link">EXHIBITS</a>
+            <a href="choice-cuts.html" class="menu-link active">CHOICE CUTS</a>
             <a href="long-copy.html" class="menu-link">LONG COPY</a>
             <a href="info.html" class="menu-link">INFORMATION</a>
         </div>
@@ -174,16 +186,16 @@
         </div>
     </nav>
 
-    <main class="deep-cuts-wrapper">
+    <main class="choice-cuts-wrapper">
         <header class="page-header-section">
-            <h1 class="page-title-massive">DEEP CUTS</h1>
-            <div class="page-subtitle-meta">[ SOME THINGS I'VE LEARNED ]</div>
+            <h1 class="page-title-massive">CHOICE CUTS</h1>
+            <div class="page-subtitle-meta">[ THE SCALPEL IS 20:20 ]</div>
         </header>
 
-        <div class="deep-cuts-page">
+        <div class="choice-cuts-page">
             <div class="lessons-container">
                 <!-- Lesson 21 -->
-                <div class="lesson-row" data-project-url="deep-cuts/project-rock-it-takes-an-iron-will.html" data-category="social film">
+                <div class="lesson-row" data-project-url="choice-cuts/project-rock-it-takes-an-iron-will.html" data-category="social film">
                     <div class="lesson-number">21</div>
                     <div class="lesson-content">
                         <div class="lesson-text">AN IRON WILL<br>COMES IN ALL SIZES</div>
@@ -192,7 +204,7 @@
                 </div>
 
                 <!-- Lesson 20 -->
-                <div class="lesson-row" data-project-url="deep-cuts/obama-foundation-we-are-the-ones.html" data-category="broadcast social">
+                <div class="lesson-row" data-project-url="choice-cuts/obama-foundation-we-are-the-ones.html" data-category="broadcast social">
                     <div class="lesson-number">20</div>
                     <div class="lesson-content">
                         <div class="lesson-text">THE SPEECH<br>WAS ALREADY WRITTEN</div>
@@ -201,7 +213,7 @@
                 </div>
                 
                 <!-- Lesson 19 -->
-                <div class="lesson-row" data-project-url="deep-cuts/google-window-wonderland.html" data-category="action campaign">
+                <div class="lesson-row" data-project-url="choice-cuts/google-window-wonderland.html" data-category="action campaign">
                     <div class="lesson-number">19</div>
                     <div class="lesson-content">
                         <div class="lesson-text">WINDOWS<br>ARE WONDERLANDS</div>
@@ -210,7 +222,7 @@
                 </div>
                 
                 <!-- Lesson 18 -->
-                <div class="lesson-row" data-project-url="deep-cuts/skyy-west-of-expected.html" data-category="growth social">
+                <div class="lesson-row" data-project-url="choice-cuts/skyy-west-of-expected.html" data-category="growth social">
                     <div class="lesson-number">18</div>
                     <div class="lesson-content">
                         <div class="lesson-text">A SINGULAR STRATEGY<br>TWO Y<span style="text-transform: lowercase;">s</span> FORWARD</div>
@@ -219,7 +231,7 @@
                 </div>
                 
                 <!-- Lesson 17 -->
-                <div class="lesson-row" data-project-url="deep-cuts/espolon-the-instigator.html" data-category="growth social">
+                <div class="lesson-row" data-project-url="choice-cuts/espolon-the-instigator.html" data-category="growth social">
                     <div class="lesson-number">17</div>
                     <div class="lesson-content">
                         <div class="lesson-text">THE PURPOSE<br>IS THE PLATFORM</div>
@@ -228,7 +240,7 @@
                 </div>
                 
                 <!-- Lesson 16 -->
-                <div class="lesson-row" data-project-url="deep-cuts/balvenie-long-odds.html" data-category="film">
+                <div class="lesson-row" data-project-url="choice-cuts/balvenie-long-odds.html" data-category="film">
                     <div class="lesson-number">16</div>
                     <div class="lesson-content">
                         <div class="lesson-text">PATIENCE<br>IS THE PRODUCT</div>
@@ -237,7 +249,7 @@
                 </div>
                 
                 <!-- Lesson 15 -->
-                <div class="lesson-row" data-project-url="deep-cuts/glenfiddich-portal-into-1963.html" data-category="experiential">
+                <div class="lesson-row" data-project-url="choice-cuts/glenfiddich-portal-into-1963.html" data-category="experiential">
                     <div class="lesson-number">15</div>
                     <div class="lesson-content">
                         <div class="lesson-text">GIVE THE ORIGINAL<br>THE ORIGINAL LAUNCH</div>
@@ -246,7 +258,7 @@
                 </div>
                 
                 <!-- Lesson 14 -->
-                <div class="lesson-row" data-project-url="deep-cuts/bentley-visionary-experience.html" data-category="growth experiential">
+                <div class="lesson-row" data-project-url="choice-cuts/bentley-visionary-experience.html" data-category="growth experiential">
                     <div class="lesson-number">14</div>
                     <div class="lesson-content">
                         <div class="lesson-text">MAKE THE INFINITE<br>FEEL INTIMATE</div>
@@ -255,7 +267,7 @@
                 </div>
 
                 <!-- Lesson 13 -->
-                <div class="lesson-row" data-project-url="deep-cuts/guinness-amplify.html" data-category="growth campaign">
+                <div class="lesson-row" data-project-url="choice-cuts/guinness-amplify.html" data-category="growth campaign">
                     <div class="lesson-number">13</div>
                     <div class="lesson-content">
                         <div class="lesson-text">KILL THE PARTY<br>FIND MORE MEANING</div>
@@ -264,7 +276,7 @@
                 </div>
 
                 <!-- Lesson 12 -->
-                <div class="lesson-row" data-project-url="deep-cuts/stoli-night-edition.html" data-category="experiential campaign">
+                <div class="lesson-row" data-project-url="choice-cuts/stoli-night-edition.html" data-category="experiential campaign">
                     <div class="lesson-number">12</div>
                     <div class="lesson-content">
                         <div class="lesson-text">NIGHT ISN'T AN EDITION<br>IT'S THE KEY INGREDIENT</div>
@@ -273,7 +285,7 @@
                 </div>
 
                 <!-- Lesson 11 -->
-                <div class="lesson-row" data-project-url="deep-cuts/amex-shop-small.html" data-category="film experiential">
+                <div class="lesson-row" data-project-url="choice-cuts/amex-shop-small.html" data-category="film experiential">
                     <div class="lesson-number">11</div>
                     <div class="lesson-content">
                         <div class="lesson-text">WHAT IF SHAKESPEARE<br>WROTE MANIFESTOS</div>
@@ -282,7 +294,7 @@
                 </div>
 
                 <!-- Lesson 10 -->
-                <div class="lesson-row" data-project-url="deep-cuts/audi-progressive-performance.html" data-category="film growth experiential">
+                <div class="lesson-row" data-project-url="choice-cuts/audi-progressive-performance.html" data-category="film growth experiential">
                     <div class="lesson-number">10</div>
                     <div class="lesson-content">
                         <div class="lesson-text">SOLVE THE NEED<br>NOT JUST THE ASK</div>
@@ -291,7 +303,7 @@
                 </div>
 
                 <!-- Lesson 09 -->
-                <div class="lesson-row" data-project-url="deep-cuts/panasonic-lumix-luv-tokyo.html" data-category="film campaign identity growth">
+                <div class="lesson-row" data-project-url="choice-cuts/panasonic-lumix-luv-tokyo.html" data-category="film campaign identity growth">
                     <div class="lesson-number">09</div>
                     <div class="lesson-content">
                         <div class="lesson-text">TRANSFORM TECH<br>INTO FEELING</div>
@@ -300,7 +312,7 @@
                 </div>
 
                 <!-- Lesson 08 -->
-                <div class="lesson-row" data-project-url="deep-cuts/panasonic-lumix-photonista.html" data-category="campaign identity film growth">
+                <div class="lesson-row" data-project-url="choice-cuts/panasonic-lumix-photonista.html" data-category="campaign identity film growth">
                     <div class="lesson-number">08</div>
                     <div class="lesson-content">
                         <div class="lesson-text">COIN THE WORD<br>THAT NAMES THE TRIBE</div>
@@ -309,7 +321,7 @@
                 </div>
 
                 <!-- Lesson 07 -->
-                <div class="lesson-row" data-project-url="deep-cuts/honda-hybrids.html" data-category="campaign film growth">
+                <div class="lesson-row" data-project-url="choice-cuts/honda-hybrids.html" data-category="campaign film growth">
                     <div class="lesson-number">07</div>
                     <div class="lesson-content">
                         <div class="lesson-text">SELL SELF-EXPRESSION<br>NOT SACRIFICE</div>
@@ -318,7 +330,7 @@
                 </div>
 
                 <!-- Lesson 06 -->
-                <div class="lesson-row" data-project-url="deep-cuts/johnnie-walker-conquista.html" data-category="campaign action">
+                <div class="lesson-row" data-project-url="choice-cuts/johnnie-walker-conquista.html" data-category="campaign action">
                     <div class="lesson-number">06</div>
                     <div class="lesson-content">
                         <div class="lesson-text">CONQUISTADORS<br>AREN'T EXTINCT</div>
@@ -327,7 +339,7 @@
                 </div>
                 
                 <!-- Lesson 05 -->
-                <div class="lesson-row" data-project-url="deep-cuts/verizon-droid-interstellar.html" data-category="growth identity">
+                <div class="lesson-row" data-project-url="choice-cuts/verizon-droid.html" data-category="growth identity">
                     <div class="lesson-number">05</div>
                     <div class="lesson-content">
                         <div class="lesson-text">SOLVE THE UNSEXY<br>TO WIN MORE SEXY</div>
@@ -336,7 +348,7 @@
                 </div>
                 
                 <!-- Lesson 04 -->
-                <div class="lesson-row" data-project-url="deep-cuts/the-64-days-of-crayola.html" data-category="campaign film identity">
+                <div class="lesson-row" data-project-url="choice-cuts/crayola-64-days.html" data-category="campaign film identity">
                     <div class="lesson-number">04</div>
                     <div class="lesson-content">
                         <div class="lesson-text">ONE NUMBER<br>GRANTED FOUR WISHES</div>
@@ -345,7 +357,7 @@
                 </div>
                 
                 <!-- Lesson 03 -->
-                <div class="lesson-row" data-project-url="deep-cuts/chase-blue.html" data-category="identity growth">
+                <div class="lesson-row" data-project-url="choice-cuts/chase-blue.html" data-category="identity growth">
                     <div class="lesson-number">03</div>
                     <div class="lesson-content">
                         <div class="lesson-text">BLUE ISN'T A COLOR<br>IT'S A MATERIAL</div>
@@ -354,7 +366,7 @@
                 </div>
                 
                 <!-- Lesson 02 -->
-                <div class="lesson-row" data-project-url="deep-cuts/kraft-dish.html" data-category="campaign identity">
+                <div class="lesson-row" data-project-url="choice-cuts/kraft-dish.html" data-category="campaign identity">
                     <div class="lesson-number">02</div>
                     <div class="lesson-content">
                         <div class="lesson-text">MAKE STAYING IN<br>THE NEW DINING OUT</div>
@@ -363,7 +375,7 @@
                 </div>
                 
                 <!-- Lesson 01 -->
-                <div class="lesson-row" data-project-url="deep-cuts/disney-be-our-guest.html" data-category="identity campaign">
+                <div class="lesson-row" data-project-url="choice-cuts/disney-be-our-guest.html" data-category="identity campaign">
                     <div class="lesson-number">01</div>
                     <div class="lesson-content">
                         <div class="lesson-text">BUILD A VOICE<br>THAT TRAVELS</div>
@@ -448,8 +460,8 @@
 
         // Tracking
         const viewed = JSON.parse(localStorage.getItem('omar_viewed') || '[]');
-        if (!viewed.includes('deep-cuts')) {
-            viewed.push('deep-cuts');
+        if (!viewed.includes('choice-cuts')) {
+            viewed.push('choice-cuts');
             localStorage.setItem('omar_viewed', JSON.stringify(viewed));
         }
     </script>

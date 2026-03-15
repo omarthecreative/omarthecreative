@@ -105,11 +105,13 @@
             align-items: center;
             justify-content: center;
             width: 100%;
+            pointer-events: none;
         }
         .menu-link {
+            position: relative;
             font-family: "Anton", sans-serif;
             font-size: clamp(60px, 18vw, 350px);
-            line-height: 0.75;
+            line-height: 0.8;
             text-transform: uppercase;
             color: #FFFFFF;
             text-decoration: none;
@@ -117,8 +119,19 @@
             transition: all 0.3s ease;
             opacity: 0.1;
             display: block;
-            width: 100%;
+            width: fit-content;
             text-align: center;
+            pointer-events: none;
+        }
+        .menu-link::before {
+            content: "";
+            position: absolute;
+            top: 20%;
+            bottom: 20%;
+            left: 0;
+            right: 0;
+            pointer-events: auto;
+            z-index: 1;
         }
         .menu-link:hover {
             opacity: 1;
@@ -205,8 +218,8 @@
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
         <div class="menu-links">
-            <a href="index.html" class="menu-link">THE WORK</a>
-            <a href="deep-cuts.html" class="menu-link">DEEP CUTS</a>
+            <a href="index.html" class="menu-link">EXHIBITS</a>
+            <a href="choice-cuts.html" class="menu-link">CHOICE CUTS</a>
             <a href="long-copy.html" class="menu-link active">LONG COPY</a>
             <a href="info.html" class="menu-link">INFORMATION</a>
         </div>

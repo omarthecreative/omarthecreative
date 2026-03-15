@@ -8,7 +8,7 @@
     --font-mono: "IBM Plex Mono", monospace;
 }
 
-.deep-cuts-body {
+.choice-cuts-body {
     background-color: #050505;
     color: var(--color-white);
     margin: 0;
@@ -51,19 +51,22 @@
     opacity: 1;
 }
 
-.deep-cuts-wrapper {
-    min-height: 100vh;
-    padding: 15rem 4rem 8rem 4rem;
-    display: flex;
-    flex-direction: column;
+.choice-cuts-wrapper {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: block;
 }
 
 .page-header-section {
     text-align: center;
-    margin-bottom: 10rem;
+    height: 100vh; /* Fill entire viewport */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Vertical center */
+    align-items: center;
     max-width: 1800px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
     width: 100%;
 }
 
@@ -74,7 +77,11 @@
     text-transform: uppercase;
     letter-spacing: -0.05em;
     color: var(--color-white);
-    margin: 0 0 4rem 0; /* Doubled from 2rem */
+    margin: 0 0 4rem 0;
+}
+
+.choice-cuts-page {
+    padding: 0 4rem 8rem 4rem; /* Content starts after the hero */
 }
 
 .page-subtitle-meta {
@@ -239,7 +246,7 @@ a:hover {
 }
 
 @media (max-width: 768px) {
-    .apex-nav, .deep-cuts-wrapper {
+    .apex-nav, .choice-cuts-wrapper {
         left: 2rem;
         right: 2rem;
         padding-left: 2rem;
