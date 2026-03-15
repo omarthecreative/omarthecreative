@@ -382,16 +382,50 @@
             const hudToast = document.getElementById('hud-toast');
             
             if (infoTitle && hudToast) {
-                infoTitle.addEventListener('click', (e) => {
-                    navigator.clipboard.writeText('info@omarsilwany.com').then(() => {
-                        hudToast.textContent = '[ info@omarsilwany.com copied to clipboard ]';
+                infoTitle.addEventListener('click', () => {
+                    const email = 'info@omarsilwany.com';
+                    
+                    // Visual feedback for click: Pause vibration and scale down
+                    infoTitle.classList.remove('animate-vibrate');
+                    infoTitle.style.transform = 'scale(0.95)';
+                    
+                    setTimeout(() => {
+                        infoTitle.style.transform = '';
+                        infoTitle.classList.add('animate-vibrate');
+                    }, 150);
+
+                    const showToast = () => {
+                        hudToast.textContent = `[ ${email} copied to clipboard ]`;
                         hudToast.style.display = 'block';
                         hudToast.style.opacity = '1';
-                        
                         setTimeout(() => {
                             hudToast.style.display = 'none';
                         }, 3000);
-                    });
+                    };
+
+                    // Try modern API first
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(email).then(showToast).catch(err => {
+                            console.error('Modern clipboard failed, trying fallback:', err);
+                            fallbackCopy();
+                        });
+                    } else {
+                        fallbackCopy();
+                    }
+
+                    function fallbackCopy() {
+                        const textArea = document.createElement("textarea");
+                        textArea.value = email;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        try {
+                            document.execCommand('copy');
+                            showToast();
+                        } catch (err) {
+                            console.error('Fallback copy failed:', err);
+                        }
+                        document.body.removeChild(textArea);
+                    }
                 });
             }
         });
