@@ -148,14 +148,46 @@
         }
     </style>
     <script>
+        function toggleMenu(show) {
+            const menu = document.getElementById('apex-menu');
+            menu.style.display = show ? 'flex' : 'none';
+            document.body.style.overflow = show ? 'hidden' : '';
+        }
+
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                window.location.href = '../choice-cuts.html';
+                const menu = document.getElementById('apex-menu');
+                if (menu.style.display === 'flex') {
+                    toggleMenu(false);
+                } else {
+                    window.location.href = '../choice-cuts.html';
+                }
+            }
+        });
+
+        // Back to Top Visibility
+        window.addEventListener('scroll', () => {
+            const backToTop = document.getElementById('back-to-top');
+            if (window.scrollY > 600) {
+                backToTop.style.opacity = '0.6';
+                backToTop.style.pointerEvents = 'auto';
+            } else {
+                backToTop.style.opacity = '0';
+                backToTop.style.pointerEvents = 'none';
             }
         });
     </script>
 </head>
 <body class="project-body">
+    <div id="apex-menu">
+        <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
+        <div class="menu-links">
+            <a href="../index.html" class="menu-link">EXHIBITS</a>
+            <a href="../choice-cuts.html" class="menu-link">CHOICE CUTS</a>
+            <a href="../long-copy.html" class="menu-link">LONG COPY</a>
+            <a href="../info.html" class="menu-link">INFORMATION</a>
+        </div>
+    </div>
     <div class="corner-frame">
         <div class="corner tl"></div><div class="corner tr"></div>
         <div class="corner bl"></div><div class="corner br"></div>
@@ -170,8 +202,7 @@
             <a href="../index.html" class="nav-name">OMAR SILWANY</a>
         </div>
         <div class="nav-right">
-            <a href="../choice-cuts.html" class="nav-link">[ CHOICE CUTS ]</a>
-            <a href="../info.html" class="nav-link">[ INFO ]</a>
+            <div class="menu-trigger" onclick="toggleMenu(true)">[ MENU ]</div>
         </div>
     </nav>
 
@@ -289,5 +320,10 @@
             © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
         </div>
     </main>
+
+    <!-- Back to Top -->
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
+        [ TOP ]
+    </button>
 </body>
 </html>
