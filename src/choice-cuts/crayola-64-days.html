@@ -66,13 +66,20 @@
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 const menu = document.getElementById('apex-menu');
-                if (menu.style.display === 'flex') {
+                if (menu && menu.style.display === 'flex') {
                     toggleMenu(false);
                 } else {
                     window.location.href = '../choice-cuts.html';
                 }
             }
         });
+
+        // Focus hack for iframes
+        setInterval(() => {
+            if (document.activeElement.tagName === 'IFRAME') {
+                window.focus();
+            }
+        }, 1000);
 
         // Back to Top Visibility
         window.addEventListener('scroll', () => {
@@ -180,7 +187,7 @@
 
             <section class="visual-asset-item">
                 <div class="video-wrapper ratio-4-3">
-                    <iframe src="https://player.vimeo.com/video/32905970?title=0&byline=0&portrait=0&color=ffffff" allowfullscreen></iframe>
+                    <iframe src="https://player.vimeo.com/video/32905970?autoplay=1&loop=1&muted=1&background=1&title=0&byline=0&portrait=0&color=ffffff" allowfullscreen></iframe>
                 </div>
                 <p class="visual-asset-label">Broadcast End Treatment</p>
             </section>

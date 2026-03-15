@@ -54,13 +54,20 @@
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 const menu = document.getElementById('apex-menu');
-                if (menu.style.display === 'flex') {
+                if (menu && menu.style.display === 'flex') {
                     toggleMenu(false);
                 } else {
                     window.location.href = '../choice-cuts.html';
                 }
             }
         });
+
+        // Focus hack for iframes
+        setInterval(() => {
+            if (document.activeElement.tagName === 'IFRAME') {
+                window.focus();
+            }
+        }, 1000);
 
         // Back to Top Visibility
         window.addEventListener('scroll', () => {
