@@ -1,0 +1,22 @@
+[build]
+  publish = "src"
+
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/info"
+  to = "/info.html"
+  status = 200
+
+[[redirects]]
+  from = "/deep-cuts"
+  to = "/deep-cuts.html"
+  status = 200
+
+[[redirects]]
+  from = "/long-copy"
+  to = "/long-copy.html"
+  status = 200

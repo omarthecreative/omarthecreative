@@ -24,3 +24,6 @@ proactive-pitches/
 .env
 .agent/
 *.log
+
+# Local Netlify folder
+.netlify
