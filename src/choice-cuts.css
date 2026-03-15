@@ -102,55 +102,55 @@
 }
 
 .lesson-row {
-    display: grid;
-    grid-template-columns: 350px 1fr;
+    display: flex;
+    flex-direction: column;
     cursor: pointer;
     transition: all 0.4s ease;
-    padding: 80px 0;
+    padding: 100px 0;
     border-top: 1px solid rgba(255, 0, 0, 0.15);
-    gap: 80px;
+    gap: 20px;
+    text-decoration: none;
+    color: inherit;
 }
 
 .lesson-row:hover {
-    background-color: rgba(255, 0, 0, 0.03);
-    padding-left: 20px;
+    background-color: rgba(255, 0, 0, 0.02);
 }
 
 .lesson-number {
-    font-family: var(--font-display);
-    font-size: clamp(100px, 18vw, 320px);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
     font-weight: 400;
     color: var(--color-accent);
-    line-height: 0.75;
-    letter-spacing: -0.06em;
-    transition: color 0.3s ease;
-    text-align: right;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    opacity: 0.6;
 }
 
 .lesson-row:hover .lesson-number {
-    color: var(--color-white);
+    opacity: 1;
 }
 
 .lesson-content {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: 20px;
+    gap: 30px;
 }
 
 .lesson-text {
     font-family: var(--font-display);
-    font-size: clamp(40px, 7vw, 130px);
+    font-size: clamp(50px, 12vw, 280px); /* ELEVATED FOCAL POINT */
     font-weight: 400;
     line-height: 0.8;
     text-transform: uppercase;
-    letter-spacing: -0.03em;
-    transition: color 0.3s ease;
+    letter-spacing: -0.04em;
+    color: var(--color-white);
+    transition: all 0.3s ease;
 }
 
 .lesson-row:hover .lesson-text {
     color: var(--color-accent);
-    animation: vibrate-small 0.15s infinite ease-in-out;
+    transform: skewX(-2deg);
 }
 
 @keyframes vibrate-small {

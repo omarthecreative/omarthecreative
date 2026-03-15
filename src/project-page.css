@@ -54,14 +54,20 @@
 }
 
 .project-wrapper {
-    padding: 15rem 4rem 8rem 4rem;
+    padding: 0 4rem 8rem 4rem; /* Removed top padding to allow 100vh centering */
     max-width: 1600px;
     margin: 0 auto;
 }
 
 /* HERO */
 .project-hero {
-    margin-bottom: 10rem;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0;
+    text-align: center;
 }
 
 .project-meta-top {
@@ -75,7 +81,7 @@
 
 .project-title-main {
     font-family: "Anton", sans-serif;
-    font-size: clamp(60px, 12vw, 180px);
+    font-size: clamp(60px, 12vw, 220px);
     line-height: 0.85;
     text-transform: uppercase;
     letter-spacing: -0.04em;
@@ -92,8 +98,20 @@
 
 /* INTRO */
 .project-intro-section {
-    margin-bottom: 10rem;
-    max-width: 800px;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin-bottom: 0;
+    max-width: none;
+    width: 100%;
+}
+
+.project-intro-content {
+    max-width: fit-content;
+    margin: 0 auto;
+    text-align: left;
 }
 
 .project-intro-text {
@@ -106,17 +124,19 @@
 
 /* ASSETS */
 .assets-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15rem;
+    display: block; /* Switched to block for natural flow */
+    width: 100%;
     margin-bottom: 15rem;
 }
 
 .visual-asset-item {
     width: 100%;
+    margin: 0 0 30rem 0; /* Massive breathing room from Disney */
+    display: block;
+    text-align: left;
 }
 
-.visual-asset-item.half-width {
+.visual-asset-item.half-width .visual-asset-image {
     width: 60%;
     margin: 0 auto;
 }
@@ -128,6 +148,7 @@
     filter: brightness(0.9);
     transition: all 0.5s ease;
     border: 1px solid transparent;
+    margin: 0 auto;
 }
 
 @keyframes sensor-glitch {
@@ -192,28 +213,28 @@
     opacity: 0.3;
     text-transform: uppercase;
     margin-top: 1.5rem;
-    text-align: right;
+    text-align: left;
+    width: 100%;
+    display: block;
+}
+
+.visual-asset-item.half-width .visual-asset-label {
+    width: 60%;
+    margin: 1.5rem auto 0 auto;
 }
 
 .section-headline {
     font-family: var(--font-display);
-    font-size: clamp(30px, 4vw, 60px);
-    line-height: 1;
+    font-size: clamp(54px, 7.5vw, 160px); /* Massive focal point */
+    line-height: 1.1;
     text-transform: uppercase;
     margin-bottom: 4rem;
-}
-
-.section-headline-rounded {
-    font-family: "Titan One", sans-serif;
-    font-size: clamp(30px, 4vw, 60px);
-    line-height: 1;
-    margin-bottom: 4rem;
-    color: var(--color-accent);
+    color: #FFFFFF;
 }
 
 /* CAMPAIGN STORY */
 .campaign-section {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: none !important;
     padding-top: 6rem;
     margin-bottom: 10rem;
 }
@@ -221,7 +242,18 @@
 .campaign-table {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 4rem;
+    gap: 0;
+    border-top: 1px solid rgba(255, 0, 0, 0.15) !important;
+    border-bottom: 1px solid rgba(255, 0, 0, 0.15) !important;
+}
+
+.campaign-col {
+    border-right: 1px solid rgba(255, 0, 0, 0.1) !important;
+    padding: 4rem 2rem !important;
+}
+
+.campaign-col:last-child {
+    border-right: none !important;
 }
 
 .campaign-col-heading {
@@ -230,6 +262,8 @@
     letter-spacing: 0.4em;
     color: var(--color-accent);
     margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 0, 0, 0.1) !important;
 }
 
 .campaign-col-content {

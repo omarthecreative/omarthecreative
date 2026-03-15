@@ -4,11 +4,149 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Be Our Guest | Disney Resorts | Choice Cuts | Omar, the Creative</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥀</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤘🏽</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Titan+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">
     <link rel="stylesheet" href="../base.css">
     <link rel="stylesheet" href="../project-page.css">
+    <style>
+        @font-face {
+            font-family: 'Waltograph';
+            src: url('https://omarthecreative.com/wp-content/uploads/2025/12/waltograph42.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        .bg-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: #000;
+        }
+        .project-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            filter: contrast(1.2) brightness(0.6);
+        }
+        .project-wrapper {
+            padding-top: 0;
+        }
+        .project-hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 0;
+            text-align: center;
+        }
+        .project-intro-section {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4rem;
+            margin-bottom: 0;
+            max-width: none;
+            width: 100%;
+        }
+        .project-intro-content {
+            max-width: fit-content;
+            margin: 0 auto;
+            text-align: left;
+        }
+        .section-headline {
+            font-family: "freight-text-pro", Georgia, serif;
+            font-size: clamp(54px, 7.5vw, 160px);
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            text-align: left;
+            color: #FFFFFF;
+            margin: 0 0 60px 0;
+            padding: 0;
+            line-height: 1.1;
+            display: block;
+        }
+        .section-headline::before {
+            content: "W";
+            font-family: 'Waltograph', cursive !important;
+            font-size: 1.1em;
+            color: var(--color-accent);
+            margin-right: 0.02em;
+            display: inline-block;
+            vertical-align: baseline;
+            line-height: 1;
+        }
+        .section-headline-rounded {
+            font-family: 'Titan One', cursive !important;
+            font-size: clamp(64px, 8vw, 128px) !important;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            color: #FFFFFF;
+            margin: 0 0 40px 0;
+        }
+        .visual-asset-item {
+            width: 100% !important;
+            margin: 0 0 30rem 0 !important; /* MASSIVE BREATHING ROOM */
+            display: block !important;
+            text-align: left !important;
+        }
+        .visual-asset-label {
+            font-family: var(--font-mono);
+            font-size: 0.55rem;
+            letter-spacing: 0.2em;
+            opacity: 0.3;
+            text-transform: uppercase;
+            margin-top: 1.5rem;
+            text-align: left; /* Aligned with image left edge */
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+        .visual-asset-item.half-width .visual-asset-label {
+            width: 60%; /* Match the centered image width */
+        }
+        .assets-container {
+            width: 100% !important;
+            display: block !important;
+        }
+        .visual-asset-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: brightness(0.9);
+            transition: all 0.5s ease;
+            border: 1px solid transparent;
+            margin: 0 auto;
+        }
+        .visual-asset-item.half-width .visual-asset-image {
+            width: 60%;
+        }
+        .campaign-section {
+            border-top: none !important; /* Kill the redundant grey line */
+        }
+        .campaign-table {
+            border-bottom: 1px solid rgba(255, 0, 0, 0.15) !important;
+            border-top: 1px solid rgba(255, 0, 0, 0.15) !important;
+            gap: 0;
+        }
+        .campaign-col {
+            border-right: 1px solid rgba(255, 0, 0, 0.1) !important;
+            padding: 4rem 2rem !important;
+        }
+        .campaign-col:last-child {
+            border-right: none !important;
+        }
+        .campaign-col-heading {
+            border-bottom: 1px solid rgba(255, 0, 0, 0.1) !important;
+            padding-bottom: 2rem !important;
+        }
+    </style>
     <script>
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -19,10 +157,12 @@
 </head>
 <body class="project-body">
     <div class="corner-frame">
-        <div class="corner tl"></div>
-        <div class="corner tr"></div>
-        <div class="corner bl"></div>
-        <div class="corner br"></div>
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="hud-tag hud-tl">[ CUT 01 ]</div>
+        <div class="hud-tag hud-tr">[ LUT: RUBY ] [ COORDS: 40.7516° N, 74.0051° W ]</div>
+        <div class="hud-tag hud-bl">[ SENSOR: ACTIVE ] [ 24 FPS ]</div>
+        <div class="hud-tag hud-br">[ BAT: 100% ]</div>
     </div>
 
     <nav class="apex-nav">
@@ -75,19 +215,19 @@
             </section>
 
             <section class="visual-asset-item">
-                <h2 class="section-headline">Where Glass Slippers Come In All Sizes.</h2>
+                <h2 class="section-headline">HERE GLASS SLIPPERS COME IN ALL SIZES.</h2>
                 <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Disney_Banner_Ads_Cinderella.png" alt="Disney Web Banner - Cinderella Castle" class="visual-asset-image">
                 <p class="visual-asset-label">Web banner — Cinderella Castle</p>
             </section>
 
             <section class="visual-asset-item">
-                <h2 class="section-headline">Where Imagination Goes To Infinity... And Beyond.</h2>
+                <h2 class="section-headline">HERE IMAGINATION GOES TO INFINITY... AND BEYOND.</h2>
                 <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Disney_Banner_Ads_Infinity.png" alt="Disney Web Banner - Buzz Lightyear" class="visual-asset-image">
                 <p class="visual-asset-label">Web banner — Buzz Lightyear</p>
             </section>
 
             <section class="visual-asset-item">
-                <h2 class="section-headline">Where Fantasy Is Measured In Tea Cups.</h2>
+                <h2 class="section-headline">HERE FANTASY IS MEASURED IN TEA CUPS.</h2>
                 <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Disney_Banner_Ads_Tea_Cups.png" alt="Disney Web Banner - Mad Tea Party" class="visual-asset-image">
                 <p class="visual-asset-label">Web banner — Mad Tea Party</p>
             </section>
@@ -98,7 +238,7 @@
             </section>
 
             <section class="visual-asset-item half-width">
-                <h2 class="section-headline">Where Monsters Roar With Laughter.</h2>
+                <h2 class="section-headline">HERE MONSTERS ROAR WITH LAUGHTER.</h2>
                 <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Disney_Print_Monsters.png" alt="Disney Print Ad - Monsters, Inc." class="visual-asset-image">
                 <p class="visual-asset-label">Print ad — Monsters, Inc.</p>
             </section>
@@ -131,7 +271,7 @@
                     </div>
                 </div>
                 <div class="campaign-col">
-                    <h3 class="campaign-col-heading">EXHIBITS</h3>
+                    <h3 class="campaign-col-heading">THE WORK</h3>
                     <div class="campaign-col-content">
                         <p>We created "Be Our Guest" — an integrated campaign style guide that armed travel agents with everything they needed. Modular banner ads. Email templates. Direct mail layouts. Print-ready files. Every piece was designed to be assembled, not recreated. Partners could swap promotions, update offers, and launch campaigns without starting from scratch — all while maintaining the cohesive brand voice Disney demands.</p>
                     </div>
@@ -144,12 +284,6 @@
                 </div>
             </div>
         </section>
-
-        <div class="footer-metadata">
-            <a href="../long-copy.html">[ LONG COPY ]</a>
-            <span class="nav-hint" style="opacity: 0.6;">[ END OF LESSON ]</span>
-            <a href="../choice-cuts.html">[ BACK TO CHOICE CUTS ]</a>
-        </div>
 
         <div class="copyright">
             © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
