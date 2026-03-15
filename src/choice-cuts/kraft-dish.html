@@ -21,15 +21,27 @@
             line-height: 1.5;
             color: rgba(255, 255, 255, 0.9);
         }
+        .teaser-headlines {
+            width: 100%;
+            margin-bottom: 8rem;
+        }
         .teaser-headline {
             font-family: var(--font-primary);
-            font-size: clamp(64px, 10vw, 112px); /* DOUBLED SIZE */
+            font-size: clamp(51px, 8vw, 90px);
             font-weight: 300;
-            color: #FFFFFF; /* SWITCHED TO WHITE */
+            color: #FFFFFF;
             line-height: 1.1;
-            margin-bottom: 6rem; /* INCREASED PADDING */
+            margin-bottom: 2rem;
             letter-spacing: -0.01em;
             text-transform: lowercase;
+            text-align: left;
+        }
+        .teaser-body-columns {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 4rem;
+            max-width: 900px;
+            text-align: left;
         }
         .teaser-body {
             font-family: var(--font-serif);
@@ -38,8 +50,7 @@
             font-style: italic;
             line-height: 1.7;
             color: rgba(255, 255, 255, 0.5);
-            margin-top: 80px;
-            max-width: 280px;
+            text-wrap: pretty;
         }
         .drop-cap {
             float: left;
@@ -158,11 +169,14 @@
 
             <!-- TEASER SECTION -->
             <section class="visual-asset-item">
-                <div style="max-width: fit-content; margin: 0 auto; text-align: left;">
+                <div class="teaser-headlines">
                     <p class="teaser-headline">restaurants everywhere will hate&nbsp;you</p>
                     <p class="teaser-headline">delis everywhere will hate&nbsp;you</p>
                     <p class="teaser-headline">caterers everywhere will hate&nbsp;you</p>
-                    <p class="teaser-body"><span class="drop-cap">G</span>et the dish, a visual recipe style guide designed to grow your business and contemporize your brand.<br><br>Coming soon with deliciously modern&nbsp;recipes.</p>
+                </div>
+                <div class="teaser-body-columns">
+                    <p class="teaser-body"><span class="drop-cap">G</span>et the dish, a visual recipe style guide designed to grow your business and contemporize your&nbsp;brand.</p>
+                    <p class="teaser-body">Coming soon with deliciously modern&nbsp;recipes.</p>
                 </div>
             </section>
 
