@@ -20,6 +20,10 @@ long-copy/
 next-steps/
 proactive-pitches/
 
+# AI Working Files (local only)
+CLAUDE.md
+GEMINI.md
+
 # System
 .env
 .agent/
