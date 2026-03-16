@@ -271,7 +271,7 @@
     bottom: 2rem;
     border: 1px solid rgba(255, 0, 60, 0.1);
     pointer-events: none;
-    z-index: 9999;
+    z-index: 1000;
 }
 
 .corner {
@@ -290,14 +290,15 @@
 .hud-tag {
     position: fixed;
     font-family: var(--font-mono);
-    font-size: 0.5rem;
+    font-size: 0.55rem;
     letter-spacing: 0.2em;
     color: var(--color-accent);
     opacity: 0.4;
     pointer-events: none;
     text-transform: uppercase;
-    z-index: 10000;
+    z-index: 1000;
 }
+
 
 .hud-tl { top: 0.8rem; left: 2rem; }
 .hud-tr { top: 0.8rem; right: 2rem; }
