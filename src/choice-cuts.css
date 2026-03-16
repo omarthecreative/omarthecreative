@@ -10,6 +10,18 @@
 
 .choice-cuts-body {
     background-color: #050505;
+    background-image:
+        /* Major grid lines — every 5th cell */
+        linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px),
+        /* Minor grid lines */
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size:
+        200px 200px,  /* major — 5 × 40px cell */
+        200px 200px,
+        40px 40px,    /* minor — base cell */
+        40px 40px;
     color: var(--color-white);
     margin: 0;
     padding: 0;
@@ -238,6 +250,8 @@ a:hover {
 
 /* Responsive */
 @media (max-width: 1024px) {
+    .apex-nav { top: 3.5rem; left: 3.5rem; right: 3.5rem; }
+    .nav-name { font-size: 1.2rem; }
     .lesson-row {
         grid-template-columns: 150px 1fr;
         padding: 40px 0;
@@ -245,8 +259,19 @@ a:hover {
     }
 }
 
+@media (orientation: portrait) and (max-width: 1024px) {
+    .apex-nav { top: 3rem; left: 3rem; right: 3rem; }
+    .nav-name { font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
+}
+
 @media (max-width: 768px) {
-    .apex-nav, .choice-cuts-wrapper {
+    .apex-nav {
+        left: 2rem;
+        right: 2rem;
+        top: 2rem;
+    }
+    .nav-name { font-size: 1rem; }
+    .choice-cuts-wrapper {
         left: 2rem;
         right: 2rem;
         padding-left: 2rem;
@@ -268,4 +293,9 @@ a:hover {
     .lesson-text {
         font-size: 28px;
     }
+}
+
+@media (max-width: 480px) {
+    .apex-nav { top: 2.5rem; left: 2.5rem; right: 2.5rem; }
+    .nav-name { font-size: 0.8rem; max-width: 60%; line-height: 1.1; }
 }

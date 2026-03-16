@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skyy Vodka | West of Expected | Choice Cuts | Omar, the Creative</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤘🏽</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">
+    <link rel="stylesheet" href="../base.css">
+    <link rel="stylesheet" href="../project-page.css">
+    <style>
+        /* Multi-deck Slider */
+        .slider-section {
+            width: 100vw;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            position: relative;
+            height: 100vh;
+            background: #000;
+            margin-bottom: 15rem;
+        }
+        .slider-container {
+            display: flex;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            height: 100%;
+        }
+        .slider-container::-webkit-scrollbar { display: none; }
+        .slide {
+            flex: 0 0 100vw;
+            height: 100%;
+            scroll-snap-align: start;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem;
+            box-sizing: border-box;
+        }
+        .slide img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .slider-counter {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 0.2em;
+        }
+        .slider-hint {
+            position: absolute;
+            bottom: 4rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-mono);
+            font-size: 0.5rem;
+            color: var(--color-accent);
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+    </style>
+    <script>
+        function toggleMenu(show) {
+            const menu = document.getElementById('apex-menu');
+            menu.style.display = show ? 'flex' : 'none';
+            document.body.style.overflow = show ? 'hidden' : '';
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const menu = document.getElementById('apex-menu');
+                if (menu && menu.style.display === 'flex') {
+                    toggleMenu(false);
+                } else {
+                    window.location.href = '../choice-cuts.html';
+                }
+            }
+        });
+
+        // Multi-deck Slider Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const sliders = document.querySelectorAll('.slider-container');
+            sliders.forEach(slider => {
+                const counter = slider.parentElement.querySelector('.slider-counter');
+                const slides = slider.querySelectorAll('.slide');
+                const total = slides.length;
+                
+                slider.addEventListener('scroll', () => {
+                    const index = Math.round(slider.scrollLeft / window.innerWidth) + 1;
+                    counter.textContent = `${index} / ${total}`;
+                });
+            });
+        });
+
+        // Focus hack for iframes
+        setInterval(() => {
+            if (document.activeElement.tagName === 'IFRAME') {
+                window.focus();
+            }
+        }, 1000);
+
+        // Back to Top Visibility
+        window.addEventListener('scroll', () => {
+            const backToTop = document.getElementById('back-to-top');
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const bottomPosition = document.documentElement.offsetHeight - 100;
+            
+            if (scrollPosition >= bottomPosition) {
+                backToTop.style.opacity = '0.6';
+                backToTop.style.pointerEvents = 'auto';
+            } else {
+                backToTop.style.opacity = '0';
+                backToTop.style.pointerEvents = 'none';
+            }
+        });
+    </script>
+</head>
+<body class="project-body">
+    <div id="apex-menu">
+        <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
+        <div class="menu-links">
+            <a href="../index.html" class="menu-link">EXHIBITS</a>
+            <a href="../choice-cuts.html" class="menu-link">CHOICE CUTS</a>
+            <a href="../long-copy.html" class="menu-link">LONG COPY</a>
+            <a href="../info.html" class="menu-link">INFORMATION</a>
+        </div>
+    </div>
+
+    <div class="corner-frame">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="hud-tag hud-tl">[ CUT 18 ]</div>
+        <div class="hud-tag hud-tr">[ LUT: RUBY ] [ COORDS: 37.7749° N, 122.4194° W ]</div>
+        <div class="hud-tag hud-bl">[ SENSOR: ACTIVE ] [ 24 FPS ]</div>
+        <div class="hud-tag hud-br">[ BAT: 58% ]</div>
+    </div>
+
+    <nav class="apex-nav">
+        <div class="nav-left">
+            <a href="../index.html" class="nav-name">OMAR SILWANY</a>
+        </div>
+        <div class="nav-right">
+            <div class="menu-trigger" onclick="toggleMenu(true)">[ MENU ]</div>
+        </div>
+    </nav>
+
+    <main class="project-wrapper">
+        <section class="project-hero">
+            <div class="hero-content">
+                <p class="project-meta-top">SKYY VODKA</p>
+                <h1 class="project-title-main">WEST OF EXPECTED</h1>
+                <p class="project-credits">Group Creative Director<br>5 O'Clock / Momentum Worldwide</p>
+            </div>
+        </section>
+
+        <section class="project-intro-section">
+            <div class="project-intro-content">
+                <div class="project-intro-text">
+                    SKYY's tagline was strategically sound but socially stalled.
+                    West of Expected needed meaning — and a way forward.
+
+                    We found two paths hiding in plain sight.
+                    One platform. Two campaigns.
+                    Sold both.
+                </div>
+            </div>
+        </section>
+
+        <div class="assets-container">
+            <!-- CONCEPT ONE DECK -->
+            <div class="slider-section">
+                <div class="slider-hint">Scroll to view Concept One: #WESTOF</div>
+                <div class="slider-container">
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_One_1.jpg" alt="Slide 1"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_One_2.jpg" alt="Slide 2"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_One_3.jpg" alt="Slide 3"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_One_4.jpg" alt="Slide 4"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_One_5.jpg" alt="Slide 5"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_One_6.jpg" alt="Slide 6"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_One_7.jpg" alt="Slide 7"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_One_8.jpg" alt="Slide 8"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_One_9.jpg" alt="Slide 9"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_One_10.jpg" alt="Slide 10"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_One_11.jpg" alt="Slide 11"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_One_12.jpg" alt="Slide 12"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_One_13.jpg" alt="Slide 13"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_One_14.jpg" alt="Slide 14"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_One_15.jpg" alt="Slide 15"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_One_16.jpg" alt="Slide 16"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_One_17.jpg" alt="Slide 17"></div>
+                </div>
+                <div class="slider-counter">1 / 17</div>
+            </div>
+
+            <!-- CONCEPT TWO DECK -->
+            <div class="slider-section">
+                <div class="slider-hint">Scroll to view Concept Two: #WhYYes</div>
+                <div class="slider-container">
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Two_1.jpg" alt="Slide 1"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Two_2.jpg" alt="Slide 2"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Two_3.jpg" alt="Slide 3"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Two_4.jpg" alt="Slide 4"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Two_5.jpg" alt="Slide 5"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Two_6.jpg" alt="Slide 6"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Two_7.jpg" alt="Slide 7"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Two_8.jpg" alt="Slide 8"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Two_9.jpg" alt="Slide 9"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Two_10.jpg" alt="Slide 10"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Two_11.jpg" alt="Slide 11"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Two_12.jpg" alt="Slide 12"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Two_13.jpg" alt="Slide 13"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Two_14.jpg" alt="Slide 14"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Two_15.jpg" alt="Slide 15"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Two_16.jpg" alt="Slide 16"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Two_17.jpg" alt="Slide 17"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Two_18.jpg" alt="Slide 18"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/SKYY_Summary.jpg" alt="Slide 19"></div>
+                </div>
+                <div class="slider-counter">1 / 19</div>
+            </div>
+        </div>
+
+        <section class="campaign-section">
+            <div class="campaign-table">
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE CHALLENGE</h3>
+                    <div class="campaign-col-content">
+                        <p>SKYY's West of Expected campaign was strategically sound but underperforming in social. The client wanted evolution, not revolution. Our task: find the way forward without abandoning the platform.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE INSIGHT</h3>
+                    <div class="campaign-col-content">
+                        <p>Two opportunities hiding in plain sight. First: the word "expected" had no meaning. West of what, exactly? Second: SKYY's double-Y was ownable equity sitting untapped. One platform. Two paths forward.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE WORK</h3>
+                    <div class="campaign-col-content">
+                        <p>We pitched two social campaigns under a singular strategy. #WestOf gave meaning to "expected" — west of convention, west of routine, west of the status quo. #WhYYes used the double-Y as a call to action — a challenge to stop saying no and seize opportunity.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE IMPACT</h3>
+                    <div class="campaign-col-content">
+                        <p>The client bought both concepts. The win generated enough new business for the parent company to spin off an entirely new agency. One pitch. Two ideas. A whole new shop.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <nav class="next-project-nav">
+            <a href="google-wonderland.html" class="next-project-link">
+                <div class="next-project-label">NEXT CUT [ 19 ]</div>
+                <h2 class="next-project-title">MAKE SHOPPING<br>WONDERFUL AGAIN</h2>
+                <div class="next-project-brand">Google</div>
+            </a>
+        </nav>
+
+        <div class="copyright">
+            © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
+        </div>
+    </main>
+
+    <!-- Back to Top -->
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
+        [ TOP ]
+    </button>
+</body>
+</html>

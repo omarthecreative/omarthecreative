@@ -35,13 +35,29 @@
             padding-top: 0;
         }
         .project-hero {
+            position: relative;
             height: 100vh;
+            width: 100vw;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            margin-bottom: 0;
-            text-align: center;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            /* Screenshot background with soft bottom fade */
+            background-image: 
+                linear-gradient(to bottom, rgba(5, 5, 5, 0) 60%, rgba(5, 5, 5, 1) 100%),
+                linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), 
+                url('../assets/disney-hero-bg.png');
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
         }
         .project-intro-section {
             height: 100vh;
@@ -168,12 +184,32 @@
         // Back to Top Visibility
         window.addEventListener('scroll', () => {
             const backToTop = document.getElementById('back-to-top');
-            if (window.scrollY > 600) {
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const bottomPosition = document.documentElement.offsetHeight - 100;
+            
+            if (scrollPosition >= bottomPosition) {
                 backToTop.style.opacity = '0.6';
                 backToTop.style.pointerEvents = 'auto';
             } else {
                 backToTop.style.opacity = '0';
                 backToTop.style.pointerEvents = 'none';
+            }
+        });
+
+        // Hover effect for Back to Top
+        document.addEventListener('DOMContentLoaded', () => {
+            const backToTop = document.getElementById('back-to-top');
+            if (backToTop) {
+                backToTop.addEventListener('mouseenter', () => {
+                    const scrollPosition = window.innerHeight + window.pageYOffset;
+                    const bottomPosition = document.documentElement.offsetHeight - 100;
+                    if (scrollPosition >= bottomPosition) backToTop.style.opacity = '1';
+                });
+                backToTop.addEventListener('mouseleave', () => {
+                    const scrollPosition = window.innerHeight + window.pageYOffset;
+                    const bottomPosition = document.documentElement.offsetHeight - 100;
+                    if (scrollPosition >= bottomPosition) backToTop.style.opacity = '0.6';
+                });
             }
         });
     </script>
@@ -246,19 +282,19 @@
             </section>
 
             <section class="visual-asset-item">
-                <h2 class="section-headline">HERE GLASS SLIPPERS COME IN ALL SIZES.</h2>
+                <h2 class="section-headline">HERE GLASS SLIPPERS COME IN ALL&nbsp;SIZES.</h2>
                 <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Disney_Banner_Ads_Cinderella.png" alt="Disney Web Banner - Cinderella Castle" class="visual-asset-image">
                 <p class="visual-asset-label">Web banner — Cinderella Castle</p>
             </section>
 
             <section class="visual-asset-item">
-                <h2 class="section-headline">HERE IMAGINATION GOES TO INFINITY... AND BEYOND.</h2>
+                <h2 class="section-headline">HERE IMAGINATION GOES TO INFINITY...&nbsp;AND&nbsp;BEYOND.</h2>
                 <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Disney_Banner_Ads_Infinity.png" alt="Disney Web Banner - Buzz Lightyear" class="visual-asset-image">
                 <p class="visual-asset-label">Web banner — Buzz Lightyear</p>
             </section>
 
             <section class="visual-asset-item">
-                <h2 class="section-headline">HERE FANTASY IS MEASURED IN TEA CUPS.</h2>
+                <h2 class="section-headline">HERE FANTASY IS MEASURED IN TEA&nbsp;CUPS.</h2>
                 <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Disney_Banner_Ads_Tea_Cups.png" alt="Disney Web Banner - Mad Tea Party" class="visual-asset-image">
                 <p class="visual-asset-label">Web banner — Mad Tea Party</p>
             </section>
@@ -269,7 +305,7 @@
             </section>
 
             <section class="visual-asset-item half-width">
-                <h2 class="section-headline">HERE MONSTERS ROAR WITH LAUGHTER.</h2>
+                <h2 class="section-headline">HERE MONSTERS ROAR WITH&nbsp;LAUGHTER.</h2>
                 <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Disney_Print_Monsters.png" alt="Disney Print Ad - Monsters, Inc." class="visual-asset-image">
                 <p class="visual-asset-label">Print ad — Monsters, Inc.</p>
             </section>
@@ -315,6 +351,14 @@
                 </div>
             </div>
         </section>
+
+        <nav class="next-project-nav">
+            <a href="kraft-dish.html" class="next-project-link">
+                <div class="next-project-label">NEXT CUT [ 02 ]</div>
+                <h2 class="next-project-title">MAKE STAYING IN<br>THE NEW DINING OUT</h2>
+                <div class="next-project-brand">Kraft Foods</div>
+            </a>
+        </nav>
 
         <div class="copyright">
             © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.

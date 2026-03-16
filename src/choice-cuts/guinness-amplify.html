@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guinness Amplify | Choice Cuts | Omar, the Creative</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤘🏽</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">
+    <link rel="stylesheet" href="../base.css">
+    <link rel="stylesheet" href="../project-page.css">
+    <style>
+        .title-kerning-fy {
+            letter-spacing: 0.15em;
+            display: inline-block;
+        }
+        .manifesto-text {
+            font-family: "freight-sans-pro", sans-serif;
+            font-size: clamp(18px, 2.5vw, 28px);
+            font-weight: 300;
+            line-height: 1.8;
+            color: #FFFFFF;
+            text-align: center;
+            white-space: pre-line;
+            margin-bottom: 8rem;
+        }
+        .manifesto-gif {
+            width: 100%;
+            height: auto;
+            transform: scale(1.5);
+            margin: 10rem 0;
+        }
+        .video-wrapper-16x9 {
+            width: 100%;
+            aspect-ratio: 16/9;
+            position: relative;
+            background: #111;
+        }
+        .platform-title {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.4em;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            margin: 10rem 0 4rem 0;
+            text-align: center;
+        }
+        .platform-images {
+            display: flex;
+            flex-direction: column;
+            gap: 4rem;
+        }
+        .press-articles {
+            display: flex;
+            flex-direction: column;
+            gap: 10rem;
+            max-width: 1100px;
+            margin: 15rem auto;
+        }
+        .press-article {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        .press-headline {
+            font-family: "freight-text-pro", Georgia, serif;
+            font-style: italic;
+            font-size: clamp(32px, 5vw, 64px);
+            font-weight: 400;
+            line-height: 1.2;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.95);
+            transition: color 0.3s ease;
+            text-wrap: pretty;
+        }
+        .press-logo {
+            width: 140px;
+            height: auto;
+            object-fit: contain;
+        }
+    </style>
+    <script>
+        function toggleMenu(show) {
+            const menu = document.getElementById('apex-menu');
+            menu.style.display = show ? 'flex' : 'none';
+            document.body.style.overflow = show ? 'hidden' : '';
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const menu = document.getElementById('apex-menu');
+                if (menu && menu.style.display === 'flex') {
+                    toggleMenu(false);
+                } else {
+                    window.location.href = '../choice-cuts.html';
+                }
+            }
+        });
+
+        // Focus hack for iframes
+        setInterval(() => {
+            if (document.activeElement.tagName === 'IFRAME') {
+                window.focus();
+            }
+        }, 1000);
+
+        // Back to Top Visibility
+        window.addEventListener('scroll', () => {
+            const backToTop = document.getElementById('back-to-top');
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const bottomPosition = document.documentElement.offsetHeight - 100;
+            
+            if (scrollPosition >= bottomPosition) {
+                backToTop.style.opacity = '0.6';
+                backToTop.style.pointerEvents = 'auto';
+            } else {
+                backToTop.style.opacity = '0';
+                backToTop.style.pointerEvents = 'none';
+            }
+        });
+    </script>
+</head>
+<body class="project-body">
+    <div id="apex-menu">
+        <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
+        <div class="menu-links">
+            <a href="../index.html" class="menu-link">EXHIBITS</a>
+            <a href="../choice-cuts.html" class="menu-link">CHOICE CUTS</a>
+            <a href="../long-copy.html" class="menu-link">LONG COPY</a>
+            <a href="../info.html" class="menu-link">INFORMATION</a>
+        </div>
+    </div>
+
+    <div class="corner-frame">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="hud-tag hud-tl">[ CUT 13 ]</div>
+        <div class="hud-tag hud-tr">[ LUT: RUBY ] [ COORDS: 53.3498° N, 6.2603° W ]</div>
+        <div class="hud-tag hud-bl">[ SENSOR: ACTIVE ] [ 24 FPS ]</div>
+        <div class="hud-tag hud-br">[ BAT: 70% ]</div>
+    </div>
+
+    <nav class="apex-nav">
+        <div class="nav-left">
+            <a href="../index.html" class="nav-name">OMAR SILWANY</a>
+        </div>
+        <div class="nav-right">
+            <div class="menu-trigger" onclick="toggleMenu(true)">[ MENU ]</div>
+        </div>
+    </nav>
+
+    <main class="project-wrapper">
+        <section class="project-hero">
+            <div class="hero-content">
+                <p class="project-meta-top">GUINNESS</p>
+                <h1 class="project-title-main">AMPLI<span class="title-kerning-fy">F</span>Y</h1>
+                <p class="project-credits">Creative Director<br>Momentum Worldwide</p>
+            </div>
+        </section>
+
+        <section class="project-intro-section">
+            <div class="project-intro-content">
+                <div class="project-intro-text">
+                    Arthur's Day was killing them.
+                    A day invented to sell stout had become synonymous with binge drinking.
+
+                    Ambulance callouts up 30%. Front page of the Financial Times.
+                    Musicians, physicians, and politicians calling for boycotts.
+
+                    We killed the party.
+                    And found more meaning.
+                </div>
+            </div>
+        </section>
+
+        <div class="assets-container">
+            <!-- Manifesto -->
+            <section class="visual-asset-item">
+                <div class="manifesto-text">
+                    More is knowing all the words.
+                    More is feeling every chord change.
+                    More is hearing the music.
+                    Even when it's not playing.
+
+                    More is falling in love with the artist's vision.
+
+                    Let's all celebrate the build up.
+                    Let's all share the anticipation.
+                    Let's all discover more.
+
+                    More intimacy.
+                    More connections.
+                    More to remember.
+
+                    Music.
+                    Made of More.
+                </div>
+                
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/11/Guinness_Amplify_Manifesto.gif" alt="Guinness Amplify Manifesto Animation 1" class="manifesto-gif">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/11/Guinness_Amplify_Manifesto_2.gif" alt="Guinness Amplify Manifesto Animation 2" class="manifesto-gif">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/11/Guinness_Amplify_Manifesto_4.gif" alt="Guinness Amplify Logo Animation" class="manifesto-gif">
+
+                <div class="video-wrapper-16x9">
+                    <iframe src="https://player.vimeo.com/video/135521353?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" 
+                            frameborder="0" 
+                            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
+                            referrerpolicy="strict-origin-when-cross-origin" 
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;" 
+                            title="Guinness Amplify Manifesto">
+                    </iframe>
+                </div>
+                <p class="video-caption">Manifesto film</p>
+            </section>
+
+            <!-- Launch Video -->
+            <section class="visual-asset-item">
+                <div class="video-wrapper-16x9">
+                    <iframe src="https://player.vimeo.com/video/172495189?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" 
+                            frameborder="0" 
+                            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
+                            referrerpolicy="strict-origin-when-cross-origin" 
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;" 
+                            title="Introducing Guinness Amplify">
+                    </iframe>
+                </div>
+                <p class="video-caption">Official Launch</p>
+            </section>
+
+            <!-- Platform Section -->
+            <h2 class="platform-title">FROM DUBLIN TO THE WORLD</h2>
+            <div class="platform-images">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/11/Guinness_Amplify_Ireland_Website1.png" alt="Guinness Amplify Ireland Website" class="visual-asset-image">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/11/Guinness_Amplify_Malaysia_Webisite1.png" alt="Guinness Amplify Malaysia Website" class="visual-asset-image">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/11/Guinness_Amplify_Stage.jpg" alt="Guinness Amplify Artists on Stage" class="visual-asset-image">
+            </div>
+
+            <!-- Press Section -->
+            <section class="visual-asset-item">
+                <div class="press-articles">
+                    <div class="press-article">
+                        <p class="press-headline">"Day Devoted to Hoisting Guinness Starts to Leave a Bitter Taste"</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2025/11/NewYorkTimes_white.png" alt="The New York Times" class="press-logo">
+                    </div>
+                    <div class="press-article">
+                        <p class="press-headline">"Guinness faces backlash in Ireland amid binge-drinking concerns"</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2025/11/Financial_Times_2.png" alt="Financial Times" class="press-logo">
+                    </div>
+                    <div class="press-article">
+                        <p class="press-headline">"Guinness scraps Arthur's Day after five years, in favour of Amplify"</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2025/11/the_irish_independent_white.png" alt="Irish Independent" class="press-logo">
+                    </div>
+                    <div class="press-article">
+                        <p class="press-headline">"Guinness scraps Arthur's Day for new music promotion"</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2025/11/The_Irish_Times_logo_offblack-scaled.png" alt="The Irish Times" class="press-logo">
+                    </div>
+                    <div class="press-article">
+                        <p class="press-headline">"Arthur's Day celebrations scrapped from the home of the black stuff"</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2025/11/the_guardian_logo_white-scaled.png" alt="The Guardian" class="press-logo">
+                    </div>
+                    <div class="press-article">
+                        <p class="press-headline">"Guinness Amplify Replaces Arthur Guinness Day"</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2025/11/the_vincentian.jpeg" alt="The Vincentian" class="press-logo">
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <section class="campaign-section">
+            <div class="campaign-table">
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE CHALLENGE</h3>
+                    <div class="campaign-col-content">
+                        <p>Arthur's Day had become a liability. A fabricated holiday designed to sell stout had turned into a symbol of Ireland's drinking problem. Ambulance callouts spiked 30% every year. Hospital admissions for liver disease had doubled. Musicians wrote protest songs. Politicians called for boycotts. Five years in, the party was over.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE INSIGHT</h3>
+                    <div class="campaign-col-content">
+                        <p>Guinness didn't need another excuse to drink. It needed a reason to listen. The brand had always been intertwined with Irish music — but Arthur's Day had drowned out the signal. What if we could flip the equation? Instead of music serving the brand, the brand could serve the music.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE WORK</h3>
+                    <div class="campaign-col-content">
+                        <p>We killed Arthur's Day and built Guinness Amplify — a global music platform for emerging artists. 500 venues across Ireland. €1 million in funding. 60 days of free studio time. Masterclasses with industry experts. Surprise performances from Kodaline, Ellie Goulding, Hozier, Disclosure. The platform rolled out from Dublin to Malaysia to Singapore to the Caribbean.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE IMPACT</h3>
+                    <div class="campaign-col-content">
+                        <p>We took a day known for binge drinking and turned it into a global stage for emerging voices. A Marshall stack for artists made of more. Featured in The New York Times, Financial Times, The Guardian, Irish Times, and Irish Independent. The platform that replaced the party.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <nav class="next-project-nav">
+            <a href="bentley-studio.html" class="next-project-link">
+                <div class="next-project-label">NEXT CUT [ 14 ]</div>
+                <h2 class="next-project-title">MAKE THE INFINITE<br>FEEL INTIMATE</h2>
+                <div class="next-project-brand">Bentley</div>
+            </a>
+        </nav>
+
+        <div class="copyright">
+            © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
+        </div>
+    </main>
+
+    <!-- Back to Top -->
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
+        [ TOP ]
+    </button>
+</body>
+</html>

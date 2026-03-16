@@ -195,7 +195,9 @@
         // Back to Top Visibility
         const backToTop = document.getElementById('back-to-top');
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 600) {
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const bottomPosition = document.documentElement.offsetHeight - 100;
+            if (scrollPosition >= bottomPosition) {
                 backToTop.style.opacity = '0.6';
                 backToTop.style.pointerEvents = 'auto';
             } else {
@@ -204,7 +206,11 @@
             }
         });
         backToTop.addEventListener('mouseenter', () => backToTop.style.opacity = '1');
-        backToTop.addEventListener('mouseleave', () => { if(window.scrollY > 600) backToTop.style.opacity = '0.6'; });
+        backToTop.addEventListener('mouseleave', () => {
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const bottomPosition = document.documentElement.offsetHeight - 100;
+            if (scrollPosition >= bottomPosition) backToTop.style.opacity = '0.6';
+        });
 
         // Tracking
         const viewed = JSON.parse(localStorage.getItem('omar_viewed') || '[]');
@@ -230,10 +236,6 @@
         <div class="corner tr"></div>
         <div class="corner bl"></div>
         <div class="corner br"></div>
-    </div>
-
-    <div class="bg-container">
-        <div class="project-bg active" style="background-image: url('landing-mood.png'); opacity: 0.1;"></div>
     </div>
 
     <nav class="apex-nav">

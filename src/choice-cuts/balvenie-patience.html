@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Balvenie Patience | Choice Cuts | Omar, the Creative</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤘🏽</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">
+    <link rel="stylesheet" href="../base.css">
+    <link rel="stylesheet" href="../project-page.css">
+    <style>
+        .video-wrapper-16x9 {
+            width: 100%;
+            aspect-ratio: 16/9;
+            position: relative;
+            background: #111;
+        }
+        
+        .pull-quotes-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10rem;
+            max-width: 1100px;
+            margin: 15rem auto;
+        }
+        .pull-quote-text {
+            font-family: "freight-text-pro", Georgia, serif;
+            font-style: italic;
+            font-size: clamp(32px, 5vw, 64px);
+            font-weight: 400;
+            line-height: 1.2;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.95);
+            text-wrap: pretty;
+        }
+
+        .films-section-title {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.4em;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            margin: 10rem 0 4rem 0;
+            text-align: center;
+        }
+        .films-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 15rem;
+        }
+        .film-item {
+            aspect-ratio: 16/9;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: border-color 0.3s ease;
+        }
+        .film-item:hover { border-color: var(--color-accent); }
+        .film-info {
+            text-align: center;
+            padding: 2rem;
+        }
+        .film-title {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+        .film-duration {
+            font-family: var(--font-mono);
+            font-size: 0.5rem;
+            opacity: 0.4;
+        }
+
+        /* Lightbox */
+        #film-lightbox {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.98);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 2rem; right: 2rem;
+            color: white; font-family: var(--font-mono); font-size: 0.8rem;
+            cursor: pointer; z-index: 10001;
+            text-transform: uppercase; letter-spacing: 0.2em;
+        }
+        .lightbox-video-wrapper {
+            width: 80%;
+            max-width: 1200px;
+            aspect-ratio: 16/9;
+        }
+    </style>
+    <script>
+        function toggleMenu(show) {
+            const menu = document.getElementById('apex-menu');
+            menu.style.display = show ? 'flex' : 'none';
+            document.body.style.overflow = show ? 'hidden' : '';
+        }
+
+        function toggleLightbox(show, vimeoId = '') {
+            const lb = document.getElementById('film-lightbox');
+            const iframe = document.getElementById('lightbox-iframe');
+            if (show) {
+                iframe.src = `https://player.vimeo.com/video/${vimeoId}?autoplay=1`;
+                lb.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            } else {
+                iframe.src = '';
+                lb.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const lb = document.getElementById('film-lightbox');
+                const menu = document.getElementById('apex-menu');
+                if (lb && lb.style.display === 'flex') {
+                    toggleLightbox(false);
+                } else if (menu && menu.style.display === 'flex') {
+                    toggleMenu(false);
+                } else {
+                    window.location.href = '../choice-cuts.html';
+                }
+            }
+        });
+
+        // Focus hack for iframes
+        setInterval(() => {
+            if (document.activeElement.tagName === 'IFRAME') {
+                window.focus();
+            }
+        }, 1000);
+
+        // Back to Top Visibility
+        window.addEventListener('scroll', () => {
+            const backToTop = document.getElementById('back-to-top');
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const bottomPosition = document.documentElement.offsetHeight - 100;
+            
+            if (scrollPosition >= bottomPosition) {
+                backToTop.style.opacity = '0.6';
+                backToTop.style.pointerEvents = 'auto';
+            } else {
+                backToTop.style.opacity = '0';
+                backToTop.style.pointerEvents = 'none';
+            }
+        });
+    </script>
+</head>
+<body class="project-body">
+    <div id="apex-menu">
+        <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
+        <div class="menu-links">
+            <a href="../index.html" class="menu-link">EXHIBITS</a>
+            <a href="../choice-cuts.html" class="menu-link">CHOICE CUTS</a>
+            <a href="../long-copy.html" class="menu-link">LONG COPY</a>
+            <a href="../info.html" class="menu-link">INFORMATION</a>
+        </div>
+    </div>
+
+    <div id="film-lightbox">
+        <div class="lightbox-close" onclick="toggleLightbox(false)">[ CLOSE // ESC ]</div>
+        <div class="lightbox-video-wrapper">
+            <iframe id="lightbox-iframe" src="" frameborder="0" allow="autoplay; fullscreen" style="width:100%; height:100%;"></iframe>
+        </div>
+    </div>
+
+    <div class="corner-frame">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="hud-tag hud-tl">[ CUT 16 ]</div>
+        <div class="hud-tag hud-tr">[ LUT: RUBY ] [ COORDS: 57.4458° N, 3.1287° W ]</div>
+        <div class="hud-tag hud-bl">[ SENSOR: ACTIVE ] [ 24 FPS ]</div>
+        <div class="hud-tag hud-br">[ BAT: 62% ]</div>
+    </div>
+
+    <nav class="apex-nav">
+        <div class="nav-left">
+            <a href="../index.html" class="nav-name">OMAR SILWANY</a>
+        </div>
+        <div class="nav-right">
+            <div class="menu-trigger" onclick="toggleMenu(true)">[ MENU ]</div>
+        </div>
+    </nav>
+
+    <main class="project-wrapper">
+        <section class="project-hero">
+            <div class="hero-content">
+                <p class="project-meta-top">THE BALVENIE</p>
+                <h1 class="project-title-main">LONG ODDS</h1>
+                <p class="project-credits">Creative Director<br>Momentum Worldwide</p>
+            </div>
+        </section>
+
+        <section class="project-intro-section">
+            <div class="project-intro-content">
+                <div class="project-intro-text">
+                    Out of 100 casks, a rare few become a Balvenie Single Barrel.
+                    The recipe is simple. Wood, whiskey, and time.
+
+                    Seasons. Years. Decades.
+                    Time works hard. So do we.
+
+                    So we flew to Dufftown, Scotland to capture the craft.
+                </div>
+            </div>
+        </section>
+
+        <div class="assets-container">
+            <!-- Main Video -->
+            <section class="visual-asset-item">
+                <div class="video-wrapper-16x9">
+                    <iframe src="https://player.vimeo.com/video/139025841?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" 
+                            frameborder="0" 
+                            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
+                            referrerpolicy="strict-origin-when-cross-origin" 
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;" 
+                            title="Long Odds | Crafting The Balvenie Single Barrel">
+                    </iframe>
+                </div>
+                <p class="video-caption">Long Odds | Crafting The Balvenie Single Barrel</p>
+            </section>
+
+            <!-- Pull Quotes -->
+            <section class="visual-asset-item">
+                <div class="pull-quotes-container">
+                    <p class="pull-quote-text">"The Single Barrel is quite pure, really. It's the essence of what we&nbsp;do."</p>
+                    <p class="pull-quote-text">"One single ex-bourbon barrel with honey vanilla, hints of&nbsp;heather."</p>
+                    <p class="pull-quote-text">"Out of 100, we select just a few. Long&nbsp;odds."</p>
+                </div>
+            </section>
+
+            <!-- Product Films Grid -->
+            <h2 class="films-section-title">PRODUCT FILMS</h2>
+            <div class="films-grid">
+                <div class="film-item" onclick="toggleLightbox(true, '139022600')">
+                    <div class="film-info">
+                        <h3 class="film-title">Doublewood</h3>
+                        <p class="film-duration">2:54</p>
+                    </div>
+                </div>
+                <div class="film-item" onclick="toggleLightbox(true, '139021617')">
+                    <div class="film-info">
+                        <h3 class="film-title">Portwood</h3>
+                        <p class="film-duration">3:07</p>
+                    </div>
+                </div>
+                <div class="film-item" onclick="toggleLightbox(true, '139018864')">
+                    <div class="film-info">
+                        <h3 class="film-title">Single Barrel Thirty</h3>
+                        <p class="film-duration">3:08</p>
+                    </div>
+                </div>
+                <div class="film-item" onclick="toggleLightbox(true, '139013331')">
+                    <div class="film-info">
+                        <h3 class="film-title">Single Barrel</h3>
+                        <p class="film-duration">3:03</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="campaign-section">
+            <div class="campaign-table">
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE CHALLENGE</h3>
+                    <div class="campaign-col-content">
+                        <p>The Balvenie is the most handcrafted single malt — the only distillery that grows its own barley, malts on traditional floors, and keeps coopers and coppersmiths on site. But craft had become a buzzword. Every brand claimed it. We needed to show what it actually looks like.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE INSIGHT</h3>
+                    <div class="campaign-col-content">
+                        <p>Patience is the product. A Balvenie Single Barrel isn't made — it's selected. Out of 100 casks, only a few make the cut. The recipe is wood, whiskey, and time. Seasons. Years. Decades.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE WORK</h3>
+                    <div class="campaign-col-content">
+                        <p>We flew to Dufftown, Scotland and spent time with Master Distiller David Stewart and Brand Ambassador Sam Simmons. We walked the warehouses. We dipped the dog. We made five films that let the craft speak for itself.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE IMPACT</h3>
+                    <div class="campaign-col-content">
+                        <p>We ran The Balvenie Rare Craft Roadshow for two years. Then flew to Dufftown to capture the source. The following year, Anthony Bourdain signed on. Raw Craft. The Rare Craft Fellowship. A global partnership. We laid the groundwork.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <nav class="next-project-nav">
+            <a href="espolon-tequila.html" class="next-project-link">
+                <div class="next-project-label">NEXT CUT [ 17 ]</div>
+                <h2 class="next-project-title">THE PURPOSE<br>IS THE PLATFORM</h2>
+                <div class="next-project-brand">Espolón Tequila</div>
+            </a>
+        </nav>
+
+        <div class="copyright">
+            © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
+        </div>
+    </main>
+
+    <!-- Back to Top -->
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
+        [ TOP ]
+    </button>
+</body>
+</html>

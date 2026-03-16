@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bentley Studio | Choice Cuts | Omar, the Creative</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤘🏽</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">
+    <link rel="stylesheet" href="../base.css">
+    <link rel="stylesheet" href="../project-page.css">
+    <style>
+        .video-wrapper-16x9 {
+            width: 100%;
+            aspect-ratio: 16/9;
+            position: relative;
+            background: #111;
+        }
+        
+        /* Pitch Deck & Process Stills Slider */
+        .slider-section {
+            width: 100vw;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            position: relative;
+            height: 100vh;
+            background: #000;
+            margin-bottom: 15rem;
+        }
+        .slider-container {
+            display: flex;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            height: 100%;
+        }
+        .slider-container::-webkit-scrollbar { display: none; }
+        .slide {
+            flex: 0 0 100vw;
+            height: 100%;
+            scroll-snap-align: start;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem;
+            box-sizing: border-box;
+        }
+        .slide img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .slider-counter {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 0.2em;
+        }
+        .slider-hint {
+            position: absolute;
+            bottom: 4rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-mono);
+            font-size: 0.5rem;
+            color: var(--color-accent);
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .experience-gif-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 10rem;
+        }
+        .studio-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+        .studio-video-col { grid-column: span 2; margin-top: 4rem; }
+
+        .press-articles {
+            display: flex;
+            flex-direction: column;
+            gap: 10rem;
+            max-width: 1100px;
+            margin: 15rem auto;
+        }
+        .press-article {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        .press-headline {
+            font-family: "freight-text-pro", Georgia, serif;
+            font-style: italic;
+            font-size: clamp(32px, 5vw, 64px);
+            font-weight: 400;
+            line-height: 1.2;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.95);
+            transition: color 0.3s ease;
+            text-wrap: pretty;
+        }
+        .press-logo {
+            width: 140px;
+            height: auto;
+            object-fit: contain;
+        }
+    </style>
+    <script>
+        function toggleMenu(show) {
+            const menu = document.getElementById('apex-menu');
+            menu.style.display = show ? 'flex' : 'none';
+            document.body.style.overflow = show ? 'hidden' : '';
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const menu = document.getElementById('apex-menu');
+                if (menu && menu.style.display === 'flex') {
+                    toggleMenu(false);
+                } else {
+                    window.location.href = '../choice-cuts.html';
+                }
+            }
+        });
+
+        // Slider Counter Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const sliders = document.querySelectorAll('.slider-container');
+            sliders.forEach(slider => {
+                const counter = slider.parentElement.querySelector('.slider-counter');
+                const slides = slider.querySelectorAll('.slide');
+                const total = slides.length;
+                
+                slider.addEventListener('scroll', () => {
+                    const index = Math.round(slider.scrollLeft / window.innerWidth) + 1;
+                    counter.textContent = `${index} / ${total}`;
+                });
+            });
+        });
+
+        // Focus hack for iframes
+        setInterval(() => {
+            if (document.activeElement.tagName === 'IFRAME') {
+                window.focus();
+            }
+        }, 1000);
+
+        // Back to Top Visibility
+        window.addEventListener('scroll', () => {
+            const backToTop = document.getElementById('back-to-top');
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const bottomPosition = document.documentElement.offsetHeight - 100;
+            
+            if (scrollPosition >= bottomPosition) {
+                backToTop.style.opacity = '0.6';
+                backToTop.style.pointerEvents = 'auto';
+            } else {
+                backToTop.style.opacity = '0';
+                backToTop.style.pointerEvents = 'none';
+            }
+        });
+    </script>
+</head>
+<body class="project-body">
+    <div id="apex-menu">
+        <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
+        <div class="menu-links">
+            <a href="../index.html" class="menu-link">EXHIBITS</a>
+            <a href="../choice-cuts.html" class="menu-link">CHOICE CUTS</a>
+            <a href="../long-copy.html" class="menu-link">LONG COPY</a>
+            <a href="../info.html" class="menu-link">INFORMATION</a>
+        </div>
+    </div>
+
+    <div class="corner-frame">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="hud-tag hud-tl">[ CUT 14 ]</div>
+        <div class="hud-tag hud-tr">[ LUT: RUBY ] [ COORDS: 53.0994° N, 2.4408° W ]</div>
+        <div class="hud-tag hud-bl">[ SENSOR: ACTIVE ] [ 24 FPS ]</div>
+        <div class="hud-tag hud-br">[ BAT: 68% ]</div>
+    </div>
+
+    <nav class="apex-nav">
+        <div class="nav-left">
+            <a href="../index.html" class="nav-name">OMAR SILWANY</a>
+        </div>
+        <div class="nav-right">
+            <div class="menu-trigger" onclick="toggleMenu(true)">[ MENU ]</div>
+        </div>
+    </nav>
+
+    <main class="project-wrapper">
+        <section class="project-hero">
+            <div class="hero-content">
+                <p class="project-meta-top">BENTLEY</p>
+                <h1 class="project-title-main">VISIONARY EXPERIENCE</h1>
+                <p class="project-credits">Creative Director<br>Momentum Worldwide</p>
+            </div>
+        </section>
+
+        <section class="project-intro-section">
+            <div class="project-intro-content">
+                <div class="project-intro-text">
+                    1.3 billion options.
+                    Most buyers chose triple black.
+
+                    The paradox of infinite choice.
+                    When you can have anything, you default to nothing.
+
+                    So we built a new kind of showroom.
+                    One that decoded taste before it offered options.
+
+                    Photography. Psychology. Technology.
+                    A commissioning experience that found your Bentley
+                    before you knew it existed.
+                </div>
+            </div>
+        </section>
+
+        <div class="assets-container">
+            <!-- Case Study Video -->
+            <section class="visual-asset-item">
+                <div class="video-wrapper-16x9">
+                    <iframe src="https://player.vimeo.com/video/172958383?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" 
+                            frameborder="0" 
+                            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
+                            referrerpolicy="strict-origin-when-cross-origin" 
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;" 
+                            title="Bentley Visionary Experience | Cannes Case Study">
+                    </iframe>
+                </div>
+                <p class="video-caption">Cannes Case Study</p>
+            </section>
+
+            <!-- Manifesto & Video -->
+            <section class="visual-asset-item">
+                <div class="manifesto-continuation-text" style="text-align: center; margin-bottom: 8rem;">
+                    Behind our workshop's walls, nothing is standard.
+                    And luxury has no limits.
+                    There is only what you envision,
+                    awaiting to manifest as limitless experience.
+                </div>
+                <div class="video-wrapper-16x9">
+                    <iframe src="https://player.vimeo.com/video/135510860?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" 
+                            frameborder="0" 
+                            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
+                            referrerpolicy="strict-origin-when-cross-origin" 
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;" 
+                            title="Bentley Visionary Experience | Manifesto">
+                    </iframe>
+                </div>
+                <p class="video-caption">Manifesto film</p>
+            </section>
+
+            <!-- Pitch Deck Slider -->
+            <div class="slider-section">
+                <div class="slider-hint">Scroll to view pitch deck</div>
+                <div class="slider-container">
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Bentley_Pitch_01.jpg" alt="Bentley Pitch Slide 1"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Bentley_Pitch_02.jpg" alt="Bentley Pitch Slide 2"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Bentley_Pitch_03.jpg" alt="Bentley Pitch Slide 3"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Bentley_Pitch_04.jpg" alt="Bentley Pitch Slide 4"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Bentley_Pitch_05.jpg" alt="Bentley Pitch Slide 5"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Bentley_Pitch_06.jpg" alt="Bentley Pitch Slide 6"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Bentley_Pitch_07.jpg" alt="Bentley Pitch Slide 7"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Bentley_Pitch_08.jpg" alt="Bentley Pitch Slide 8"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Bentley_Pitch_09.jpg" alt="Bentley Pitch Slide 9"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Bentley_Pitch_10.jpg" alt="Bentley Pitch Slide 10"></div>
+                </div>
+                <div class="slider-counter">1 / 10</div>
+            </div>
+
+            <!-- Experience GIFs -->
+            <div class="experience-gif-grid">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/11/BentleyStudioNYC-high.gif" alt="Bentley Studio NYC 1" class="visual-asset-image">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/11/BentleyStudioNYC-high-3.gif" alt="Bentley Studio NYC 2" class="visual-asset-image">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/11/BentleyStudioNYC-high-4.gif" alt="Bentley Studio NYC 3" class="visual-asset-image">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/11/BentleyStudioCannes2015CaseStudy-high-3.gif" alt="Bentley Studio NYC 4" class="visual-asset-image">
+            </div>
+
+            <!-- Process Stills Slider -->
+            <div class="slider-section">
+                <div class="slider-hint">Scroll to view process stills</div>
+                <div class="slider-container">
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/BentleyNew_Page_1.png" alt="Process Still 1"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/BentleyNew_Page_2.png" alt="Process Still 2"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/BentleyNew_Page_3.png" alt="Process Still 3"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/BentleyNew_Page_4.png" alt="Process Still 4"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/BentleyNew_Page_5.png" alt="Process Still 5"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/BentleyNew_Page_6.png" alt="Process Still 6"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/BentleyNew_Page_7.png" alt="Process Still 7"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/BentleyNew_Page_8.png" alt="Process Still 8"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/BentleyNew_Page_9.png" alt="Process Still 9"></div>
+                </div>
+                <div class="slider-counter">1 / 9</div>
+            </div>
+
+            <!-- Studio Environment -->
+            <div class="studio-grid">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/11/bentley_studio_nyc-17.jpg" alt="Bentley Studio NYC Storefront" class="visual-asset-image">
+                <div style="display:flex; flex-direction:column; gap:2rem;">
+                    <img src="https://omarthecreative.com/wp-content/uploads/2025/11/BentleyStudioCannes2015CaseStudy-high.gif" alt="Bentley Studio 1" class="visual-asset-image">
+                    <img src="https://omarthecreative.com/wp-content/uploads/2025/11/BentleyStudioCannes2015CaseStudy-high-2.gif" alt="Bentley Studio 2" class="visual-asset-image">
+                    <img src="https://omarthecreative.com/wp-content/uploads/2025/11/BentleyStudioNYC-high-2.gif" alt="Bentley Studio 3" class="visual-asset-image">
+                </div>
+                <div class="studio-video-col">
+                    <div class="video-wrapper-16x9">
+                        <iframe src="https://player.vimeo.com/video/172957128?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" 
+                                frameborder="0" 
+                                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
+                                referrerpolicy="strict-origin-when-cross-origin" 
+                                style="position:absolute;top:0;left:0;width:100%;height:100%;" 
+                                title="Bentley Studio NYC">
+                        </iframe>
+                    </div>
+                    <p class="video-caption">Studio Walkthrough</p>
+                </div>
+            </div>
+
+            <!-- Press Section -->
+            <section class="visual-asset-item">
+                <div class="press-articles">
+                    <div class="press-article">
+                        <p class="press-headline">"What It's Like To Buy A $200K Bentley In 2014"</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2025/11/FastCompany_Logo_3.png" alt="Fast Company" class="press-logo">
+                    </div>
+                    <div class="press-article">
+                        <p class="press-headline">"Bentley Lets Consumers Build Custom Cars"</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2025/11/BizBash.png" alt="BizBash" class="press-logo">
+                    </div>
+                    <div class="press-article">
+                        <p class="press-headline">"Bentley Studio Gives Customers A Chance To Design Their Dream&nbsp;Car"</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2025/11/psfk-white-scaled.png" alt="PSFK" class="press-logo">
+                    </div>
+                    <div class="press-article">
+                        <p class="press-headline">"Bentley Studio puts a new spin on special-order cars"</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2025/11/dt_logo_horizontal_knockout-scaled-e1764448268976.png" alt="Digital Trends" class="press-logo">
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <section class="campaign-section">
+            <div class="campaign-table">
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE CHALLENGE</h3>
+                    <div class="campaign-col-content">
+                        <p>Bentley offered 1.3 billion customization options. Most buyers chose triple black. The paradox of infinite choice. When you can have anything, you default to nothing. The question wasn't what customers wanted. The question was how to help them discover it.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE INSIGHT</h3>
+                    <div class="campaign-col-content">
+                        <p>Don't show them options. Show them images. Decode their taste. Before AI-driven personalization was a buzzword, we built an algorithm that turned subconscious preferences into bespoke specifications.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE WORK</h3>
+                    <div class="campaign-col-content">
+                        <p>We built a new kind of showroom. 200 curated photographs. RFID key cards. Selections plotted on a matrix of adrenaline versus serenity, legacy versus future. Patterns emerged. Then came the consultation — Bentley designers imported from Crewe, leather swatches, color pucks — now with a roadmap drawn from the customer's own subconscious.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE IMPACT</h3>
+                    <div class="campaign-col-content">
+                        <p>A pop-up in the Meatpacking District became a three-year global platform. New York. Los Angeles. Pebble Beach. Miami. Aspen. Shanghai. London. Within months, Porsche and Mercedes opened their own experiential pop-ups. The craze had begun.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <nav class="next-project-nav">
+            <a href="glenfiddich-original.html" class="next-project-link">
+                <div class="next-project-label">NEXT CUT [ 15 ]</div>
+                <h2 class="next-project-title">GIVE THE ORIGINAL<br>THE ORIGINAL LAUNCH</h2>
+                <div class="next-project-brand">Glenfiddich</div>
+            </a>
+        </nav>
+
+        <div class="copyright">
+            © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
+        </div>
+    </main>
+
+    <!-- Back to Top -->
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
+        [ TOP ]
+    </button>
+</body>
+</html>

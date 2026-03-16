@@ -61,6 +61,30 @@
             margin-right: 8px;
             margin-top: 4px;
         }
+        .project-hero {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-image: 
+                linear-gradient(to bottom, rgba(5, 5, 5, 0) 60%, rgba(5, 5, 5, 1) 100%),
+                linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), 
+                url('../assets/kraft-hero-bg.jpg');
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
     </style>
     <script>
         function toggleMenu(show) {
@@ -83,7 +107,9 @@
         // Back to Top Visibility
         window.addEventListener('scroll', () => {
             const backToTop = document.getElementById('back-to-top');
-            if (window.scrollY > 600) {
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const bottomPosition = document.documentElement.offsetHeight - 100;
+            if (scrollPosition >= bottomPosition) {
                 backToTop.style.opacity = '0.6';
                 backToTop.style.pointerEvents = 'auto';
             } else {
@@ -240,6 +266,14 @@
                 </div>
             </div>
         </section>
+
+        <nav class="next-project-nav">
+            <a href="chase-blue.html" class="next-project-link">
+                <div class="next-project-label">NEXT CUT [ 03 ]</div>
+                <h2 class="next-project-title">BLUE ISN'T A COLOR<br>IT'S A MATERIAL</h2>
+                <div class="next-project-brand">Chase</div>
+            </a>
+        </nav>
 
         <div class="copyright">
             © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.

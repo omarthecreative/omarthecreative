@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panasonic Lumix | For Every Photonista | Choice Cuts | Omar, the Creative</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤘🏽</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">
+    <link rel="stylesheet" href="../base.css">
+    <link rel="stylesheet" href="../project-page.css">
+    <style>
+        .photonista-manifesto-text {
+            font-family: var(--font-serif);
+            font-size: clamp(20px, 3vw, 32px);
+            line-height: 1.6;
+            color: white;
+            max-width: fit-content;
+            margin: 0 auto;
+            text-align: left;
+            white-space: pre-line;
+        }
+        .video-wrapper-4x5 {
+            width: 60%;
+            margin: 0 auto;
+            aspect-ratio: 4/5;
+            background: #111;
+        }
+        .gif-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 15rem;
+        }
+        @media (max-width: 768px) {
+            .gif-grid-3 { grid-template-columns: 1fr; }
+            .video-wrapper-4x5 { width: 100%; }
+        }
+    </style>
+    <script>
+        function toggleMenu(show) {
+            const menu = document.getElementById('apex-menu');
+            menu.style.display = show ? 'flex' : 'none';
+            document.body.style.overflow = show ? 'hidden' : '';
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const menu = document.getElementById('apex-menu');
+                if (menu && menu.style.display === 'flex') {
+                    toggleMenu(false);
+                } else {
+                    window.location.href = '../choice-cuts.html';
+                }
+            }
+        });
+
+        // Focus hack for iframes
+        setInterval(() => {
+            if (document.activeElement.tagName === 'IFRAME') {
+                window.focus();
+            }
+        }, 1000);
+
+        // Back to Top Visibility
+        window.addEventListener('scroll', () => {
+            const backToTop = document.getElementById('back-to-top');
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const bottomPosition = document.documentElement.offsetHeight - 100;
+            if (scrollPosition >= bottomPosition) {
+                backToTop.style.opacity = '0.6';
+                backToTop.style.pointerEvents = 'auto';
+            } else {
+                backToTop.style.opacity = '0';
+                backToTop.style.pointerEvents = 'none';
+            }
+        });
+    </script>
+</head>
+<body class="project-body">
+    <div id="apex-menu">
+        <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
+        <div class="menu-links">
+            <a href="../index.html" class="menu-link">EXHIBITS</a>
+            <a href="../choice-cuts.html" class="menu-link">CHOICE CUTS</a>
+            <a href="../long-copy.html" class="menu-link">LONG COPY</a>
+            <a href="../info.html" class="menu-link">INFORMATION</a>
+        </div>
+    </div>
+
+    <div class="corner-frame">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="hud-tag hud-tl">[ CUT 08 ]</div>
+        <div class="hud-tag hud-tr">[ LUT: RUBY ] [ COORDS: 3.1412° N, 101.6865° E ]</div>
+        <div class="hud-tag hud-bl">[ SENSOR: ACTIVE ] [ 24 FPS ]</div>
+        <div class="hud-tag hud-br">[ BAT: 82% ]</div>
+    </div>
+
+    <nav class="apex-nav">
+        <div class="nav-left">
+            <a href="../index.html" class="nav-name">OMAR SILWANY</a>
+        </div>
+        <div class="nav-right">
+            <div class="menu-trigger" onclick="toggleMenu(true)">[ MENU ]</div>
+        </div>
+    </nav>
+
+    <main class="project-wrapper">
+        <section class="project-hero">
+            <div class="hero-content">
+                <p class="project-meta-top">PANASONIC LUMIX</p>
+                <h1 class="project-title-main">FOR EVERY PHOTONISTA</h1>
+                <p class="project-credits">Creative Director<br>Dentsu Utama</p>
+            </div>
+        </section>
+
+        <section class="project-intro-section">
+            <div class="project-intro-content">
+                <div class="project-intro-text">
+                    We pitched from opposite sides of the world.
+                    I wrote in New York. Jason designed in Kuala Lumpur.
+
+                    We won. Three months in Malaysia.
+                    Filmed in KL and Tokyo.
+
+                    The GX1 was the flagship.
+                    We needed more than a target. We needed a tribe.
+
+                    We coined the word: Photonista.
+                </div>
+            </div>
+        </section>
+
+        <div class="assets-container">
+            <!-- Photonista Definition -->
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Lumix_Photonista_Definition.png" alt="Photonista Definition" class="visual-asset-image">
+            </section>
+
+            <!-- Manifesto -->
+            <section class="visual-asset-item">
+                <div class="photonista-manifesto-text">
+                    There's a new generation of highly social and adventurous femininity: The Photonista.
+
+                    She lives to tell the world her story — frame by frame. 
+                    She captures her passions and desires in the most distinct of images. 
+                    She shares her world the way she lives and feels it.
+
+                    The foodie Photonista makes art of this evening's Indochine dish.
+                    The jet-setter updates from undiscovered beaches.
+                    The fashion hunter finds fresh streetstyles from Fifth Avenue to Ginza.
+
+                    The Photonista is taking the foreground like it's nobody's business.
+                    She composes fashionable looks and true-to-life digital images.
+                    She shares her passions and her world, in her style.
+
+                    Look Out. We're bringing the Photonista into focus.
+
+                    Lumix. For Every Photonista
+                </div>
+            </section>
+
+            <!-- GIF Grid -->
+            <div class="gif-grid-3">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Lumix_Photonista_TVC_1.gif" alt="Runway Rebel TVC GIF 1" class="visual-asset-image">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Lumix_Photonista_TVC_2.gif" alt="Runway Rebel TVC GIF 2" class="visual-asset-image">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Lumix_Photonista_TVC_3.gif" alt="Runway Rebel TVC GIF 3" class="visual-asset-image">
+            </div>
+
+            <!-- Main TVC -->
+            <section class="visual-asset-item">
+                <div class="video-wrapper-4x5">
+                    <div style="padding:125% 0 0 0;position:relative;">
+                        <iframe src="https://player.vimeo.com/video/45250198?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" 
+                                frameborder="0" 
+                                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
+                                referrerpolicy="strict-origin-when-cross-origin" 
+                                style="position:absolute;top:0;left:0;width:100%;height:100%;" 
+                                title="Runway Rebel :60 TVC">
+                        </iframe>
+                    </div>
+                </div>
+                <p class="visual-asset-label">Runway Rebel :60 TVC</p>
+            </section>
+
+            <!-- Campaign Assets -->
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Lumix_Photonista_360.png" alt="Campaign 360 Overview" class="visual-asset-image">
+                <p class="visual-asset-label">Campaign 360 Overview</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Lumix_Photonista_Print.png" alt="Print" class="visual-asset-image">
+                <p class="visual-asset-label">Print</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Lumix_Photonista_Digital.png" alt="Digital" class="visual-asset-image">
+                <p class="visual-asset-label">Digital</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Lumix_Photonista_OOH.png" alt="Out of Home" class="visual-asset-image">
+                <p class="visual-asset-label">Out of Home</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Lumix_Photonista_Microsite.png" alt="Microsite" class="visual-asset-image">
+                <p class="visual-asset-label">Microsite</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Lumix_Photonista_Step_and_Repeat.jpg" alt="Event — Step & Repeat" class="visual-asset-image">
+                <p class="visual-asset-label">Event — Step & Repeat</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Lumix_Photonista_Event.jpg" alt="Event Activation" class="visual-asset-image">
+                <p class="visual-asset-label">Event Activation</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Lumix_Photonista_BTS_Tokyo.jpg" alt="Behind the Scenes — Tokyo Shoot" class="visual-asset-image">
+                <p class="visual-asset-label">Behind the Scenes — Tokyo Shoot</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Lumix_Photonista_BTS_Tokyo_2.jpg" alt="Behind the Scenes — Tokyo Shoot 2" class="visual-asset-image">
+                <p class="visual-asset-label">Behind the Scenes — Tokyo Shoot</p>
+            </section>
+        </div>
+
+        <section class="campaign-section">
+            <div class="campaign-table">
+                <!-- THE CHALLENGE -->
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE CHALLENGE</h3>
+                    <div class="campaign-col-content">
+                        <p>Panasonic was launching the Lumix GX1 — their flagship mirrorless camera. The target: fashion-forward women. But "fashion-forward women" is a demographic, not a movement. We needed language that would make the audience recognize themselves. We needed to name the tribe before we could rally it.</p>
+                    </div>
+                </div>
+                
+                <!-- THE INSIGHT -->
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE INSIGHT</h3>
+                    <div class="campaign-col-content">
+                        <p>She wasn't just taking photos. She was composing her story, frame by frame. Sharing her world the way she lived it. From Fifth Avenue to Ginza, from Indochine dinners to undiscovered beaches — she was the author, curator, and protagonist. She needed a name that matched her confidence. We coined the word: Photonista.</p>
+                    </div>
+                </div>
+                
+                <!-- THE WORK -->
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE WORK</h3>
+                    <div class="campaign-col-content">
+                        <p>We pitched from opposite sides of the world — New York and Kuala Lumpur. We won. I flew to Malaysia for three months. We launched with "Runway Rebel" — starring Miss Universe Netherlands 2012, Nathalie Den Dekker, as a model who turns the camera on herself mid-show. Directed by New Zealand filmmaker/photographer Peter Bannan. Then rolled it out 360: print, digital, OOH, microsite, events. Filmed in KL and Tokyo. The campaign defined the tribe and gave them a platform.</p>
+                    </div>
+                </div>
+                
+                <!-- THE IMPACT -->
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE IMPACT</h3>
+                    <div class="campaign-col-content">
+                        <p>"Photonista" became the rallying cry. The word gave a generation of fashion-forward photographers their identity. The GX1 launch succeeded because we didn't just sell a camera — we named a movement. And when you name the tribe, they show up. This campaign spawned Lu.V. Tokyo and the broader "For Every Photonista" platform that ran for years.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <nav class="next-project-nav">
+            <a href="panasonic-luv.html" class="next-project-link">
+                <div class="next-project-label">NEXT CUT [ 09 ]</div>
+                <h2 class="next-project-title">LUV MOVES ME</h2>
+                <div class="next-project-brand">Panasonic Lumix</div>
+            </a>
+        </nav>
+
+        <div class="copyright">
+            © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
+        </div>
+    </main>
+
+    <!-- Back to Top -->
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
+        [ TOP ]
+    </button>
+</body>
+</html>

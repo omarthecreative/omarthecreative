@@ -162,7 +162,7 @@
         .hud-bl { bottom: 0.8rem; left: 2rem; }
         .hud-br { bottom: 0.8rem; right: 2rem; }
         
-        #lut-toggle:hover { opacity: 1; text-shadow: 0 0 10px var(--vibrant-red); }
+        #lut-toggle:hover { opacity: 0.7; text-shadow: 0 0 5px var(--vibrant-red); }
         #lut-toggle.unlocked { opacity: 0.8; font-weight: 700; border: 1px solid var(--vibrant-red); padding: 2px 5px; top: 0.6rem; }
 
         .tl { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
@@ -171,7 +171,7 @@
         .br { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
         
         .info-link {
-            position: absolute;
+            position: fixed;
             top: 4rem;
             right: 4rem;
             font-family: var(--mono);
@@ -181,6 +181,7 @@
             opacity: 0.6;
             text-decoration: none;
             text-transform: uppercase;
+            z-index: 10000;
         }
         .info-link:hover { color: var(--vibrant-red); opacity: 1; }
 
@@ -225,7 +226,7 @@
         }
 
         .header-name {
-            position: absolute;
+            position: fixed;
             top: 4rem;
             left: 4rem;
             color: white;
@@ -235,7 +236,7 @@
             letter-spacing: 0.05em;
             text-transform: uppercase;
             font-weight: 900;
-            z-index: 100;
+            z-index: 10000;
             text-decoration: none;
         }
         .header-name:hover { color: white; } /* Remove red hover */

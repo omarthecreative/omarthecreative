@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Under Armour | Project Rock | Choice Cuts | Omar, the Creative</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤘🏽</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">
+    <link rel="stylesheet" href="../base.css">
+    <link rel="stylesheet" href="../project-page.css">
+    <style>
+        .manifesto-text {
+            font-family: var(--font-serif);
+            font-size: clamp(20px, 3vw, 32px);
+            line-height: 1.6;
+            color: white;
+            max-width: fit-content;
+            margin: 0 auto 4rem auto;
+            text-align: left;
+            white-space: pre-line;
+        }
+        .manifesto-final {
+            font-family: "Anton", sans-serif;
+            font-size: clamp(40px, 8vw, 120px);
+            text-transform: uppercase;
+            text-align: center;
+            margin-top: 8rem;
+            color: var(--color-accent);
+        }
+
+        .athlete-section { margin: 15rem 0; }
+        .athlete-name {
+            font-family: "Anton", sans-serif;
+            font-size: clamp(32px, 6vw, 80px);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        .athlete-tagline {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.3em;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            margin-bottom: 4rem;
+        }
+        .athlete-copy {
+            font-family: var(--font-serif);
+            font-size: clamp(18px, 2.5vw, 28px);
+            line-height: 1.6;
+            margin-bottom: 6rem;
+            max-width: 800px;
+        }
+
+        /* Vertical Video Grid */
+        .dj-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        .video-wrapper-4x5 {
+            width: 100%;
+            aspect-ratio: 4/5;
+            background: #111;
+            position: relative;
+        }
+        .video-wrapper-4x5 iframe {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+        }
+
+        .athlete-media-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .workouts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .product-media {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .dj-grid, .athlete-media-grid, .workouts-grid, .product-media {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <script>
+        function toggleMenu(show) {
+            const menu = document.getElementById('apex-menu');
+            menu.style.display = show ? 'flex' : 'none';
+            document.body.style.overflow = show ? 'hidden' : '';
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const menu = document.getElementById('apex-menu');
+                if (menu && menu.style.display === 'flex') {
+                    toggleMenu(false);
+                } else {
+                    window.location.href = '../choice-cuts.html';
+                }
+            }
+        });
+
+        // Focus hack for iframes
+        setInterval(() => {
+            if (document.activeElement.tagName === 'IFRAME') {
+                window.focus();
+            }
+        }, 1000);
+
+        // Back to Top Visibility
+        window.addEventListener('scroll', () => {
+            const backToTop = document.getElementById('back-to-top');
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const bottomPosition = document.documentElement.offsetHeight - 100;
+            
+            if (scrollPosition >= bottomPosition) {
+                backToTop.style.opacity = '0.6';
+                backToTop.style.pointerEvents = 'auto';
+            } else {
+                backToTop.style.opacity = '0';
+                backToTop.style.pointerEvents = 'none';
+            }
+        });
+    </script>
+</head>
+<body class="project-body">
+    <div id="apex-menu">
+        <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
+        <div class="menu-links">
+            <a href="../index.html" class="menu-link">EXHIBITS</a>
+            <a href="../choice-cuts.html" class="menu-link">CHOICE CUTS</a>
+            <a href="../long-copy.html" class="menu-link">LONG COPY</a>
+            <a href="../info.html" class="menu-link">INFORMATION</a>
+        </div>
+    </div>
+
+    <div class="corner-frame">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="hud-tag hud-tl">[ CUT 21 ]</div>
+        <div class="hud-tag hud-tr">[ LUT: RUBY ] [ COORDS: 34.0522° N, 118.2437° W ]</div>
+        <div class="hud-tag hud-bl">[ SENSOR: ACTIVE ] [ 24 FPS ]</div>
+        <div class="hud-tag hud-br">[ BAT: 50% ]</div>
+    </div>
+
+    <nav class="apex-nav">
+        <div class="nav-left">
+            <a href="../index.html" class="nav-name">OMAR SILWANY</a>
+        </div>
+        <div class="nav-right">
+            <div class="menu-trigger" onclick="toggleMenu(true)">[ MENU ]</div>
+        </div>
+    </nav>
+
+    <main class="project-wrapper">
+        <section class="project-hero">
+            <div class="hero-content">
+                <p class="project-meta-top">PROJECT ROCK × UNDER ARMOUR</p>
+                <h1 class="project-title-main">IT TAKES AN IRON WILL</h1>
+                <p class="project-credits">
+                    Executive Creative Director: Sasha Shor<br>
+                    Creative Director, Writer: Omar Silwany<br>
+                    Seven Bucks Creative
+                </p>
+            </div>
+        </section>
+
+        <section class="manifesto-section">
+            <div class="manifesto-text">
+                Building your body takes a gym full of iron.
+                But building belief, in yourself and others, takes so much more.
+
+                It takes blood. It takes sweat. 
+                It takes discipline to fight forward when your back's against the wall.
+
+                It takes all you've got to build the muscle to stand your ground.
+                It takes your indestructible sense of purpose and drive.
+            </div>
+            <div class="manifesto-final">IT TAKES AN IRON WILL.</div>
+        </section>
+
+        <!-- DJ Section -->
+        <section class="athlete-section">
+            <h2 class="athlete-name">DWAYNE JOHNSON</h2>
+            <p class="athlete-tagline">7 Bucks Left. No F's Given.</p>
+            <div class="athlete-copy">
+                Cut from the CFL in 1995. Wrestled his way to highest-paid actor. 
+                Fourteen billion earned later, he shares the path to paradise: 
+                Everything you've got.
+            </div>
+            <div class="dj-grid">
+                <div class="dj-item"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/DJ_Black.png" alt="DJ Black" class="visual-asset-image"></div>
+                <div class="dj-item video-item">
+                    <div class="video-wrapper-4x5">
+                        <iframe src="https://player.vimeo.com/video/371195997?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" frameborder="0" allow="autoplay; fullscreen"></iframe>
+                    </div>
+                    <p class="video-caption">Teaser :15</p>
+                </div>
+                <div class="dj-item"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/DJ_Black_2b.png" alt="DJ Launch" class="visual-asset-image"></div>
+                <div class="dj-item video-item">
+                    <div class="video-wrapper-4x5">
+                        <iframe src="https://player.vimeo.com/video/371198451?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" frameborder="0" allow="autoplay; fullscreen"></iframe>
+                    </div>
+                    <p class="video-caption">Launch Black :45</p>
+                </div>
+                <div class="dj-item"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/DJ_Red.png" alt="DJ Red" class="visual-asset-image"></div>
+                <div class="dj-item video-item">
+                    <div class="video-wrapper-4x5">
+                        <iframe src="https://player.vimeo.com/video/371180839?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" frameborder="0" allow="autoplay; fullscreen"></iframe>
+                    </div>
+                    <p class="video-caption">Launch Red :54</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lindsey Vonn -->
+        <section class="athlete-section">
+            <h2 class="athlete-name">LINDSEY VONN</h2>
+            <p class="athlete-tagline">82 Wins. Countless Comebacks.</p>
+            <div class="athlete-copy">
+                One Olympic gold. Four knee reconstructions. 
+                She turned ACL surgery into training, and retirement into intermission.
+            </div>
+            <div class="athlete-media-grid">
+                <div class="athlete-media-item"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/LV.png" alt="LV 1" class="visual-asset-image"></div>
+                <div class="athlete-media-item">
+                    <div class="video-wrapper-4x5">
+                        <iframe src="https://player.vimeo.com/video/1138993803?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" frameborder="0" allow="autoplay; fullscreen"></iframe>
+                    </div>
+                    <p class="video-caption">Launch :15</p>
+                </div>
+                <div class="athlete-media-item"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/LV2.jpg" alt="LV 2" class="visual-asset-image"></div>
+            </div>
+        </section>
+
+        <!-- Flash -->
+        <section class="athlete-section">
+            <h2 class="athlete-name">DASHAUN "FLASH" MORRIS II</h2>
+            <p class="athlete-tagline">Hardest Working Kid in America.</p>
+            <div class="athlete-copy">
+                Started training at three years old. Viral by seven for footwork nobody could match. 
+                College scouts already calling. Speed is a gift. Work ethic is a choice.
+            </div>
+            <div class="athlete-media-grid">
+                <div class="athlete-media-item"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Flash.png" alt="Flash 1" class="visual-asset-image"></div>
+                <div class="athlete-media-item">
+                    <div class="video-wrapper-4x5">
+                        <iframe src="https://player.vimeo.com/video/1138994798?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" frameborder="0" allow="autoplay; fullscreen"></iframe>
+                    </div>
+                    <p class="video-caption">Flash :30</p>
+                </div>
+                <div class="athlete-media-item"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Flash_2-1-scaled.png" alt="Flash 2" class="visual-asset-image"></div>
+            </div>
+        </section>
+
+        <!-- Jojo -->
+        <section class="athlete-section">
+            <h2 class="athlete-name">JOHAUNNA "JOJO" MARTINEZ</h2>
+            <p class="athlete-tagline">Future Champion. Present Threat.</p>
+            <div class="athlete-copy">
+                Eleven years old. National champion at eighty-five pounds. 
+                Studies her fights like a scholar. Throws punches like a veteran.
+            </div>
+            <div class="athlete-media-grid">
+                <div class="athlete-media-item"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Jojo.png" alt="Jojo 1" class="visual-asset-image"></div>
+                <div class="athlete-media-item">
+                    <div class="video-wrapper-4x5">
+                        <iframe src="https://player.vimeo.com/video/1138995531?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" frameborder="0" allow="autoplay; fullscreen"></iframe>
+                    </div>
+                    <p class="video-caption">Jojo :30</p>
+                </div>
+                <div class="athlete-media-item"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Jojo_2.png" alt="Jojo 2" class="visual-asset-image"></div>
+            </div>
+        </section>
+
+        <!-- Workouts -->
+        <section class="athlete-section">
+            <h2 class="athlete-name">THE WORK</h2>
+            <p class="athlete-tagline">Discipline when nobody's watching.</p>
+            <div class="workouts-grid">
+                <div class="workout-item">
+                    <div class="video-wrapper-4x5">
+                        <iframe src="https://player.vimeo.com/video/371197119?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" frameborder="0" allow="autoplay; fullscreen"></iframe>
+                    </div>
+                    <p class="video-caption">Barbell Row</p>
+                </div>
+                <div class="workout-item">
+                    <div class="video-wrapper-4x5">
+                        <iframe src="https://player.vimeo.com/video/1138991095?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" frameborder="0" allow="autoplay; fullscreen"></iframe>
+                    </div>
+                    <p class="video-caption">Dumbbell Incline Press</p>
+                </div>
+                <div class="workout-item">
+                    <div class="video-wrapper-4x5">
+                        <iframe src="https://player.vimeo.com/video/1138991145?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" frameborder="0" allow="autoplay; fullscreen"></iframe>
+                    </div>
+                    <p class="video-caption">Overhand Lat Pulldown</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="campaign-section">
+            <div class="campaign-table">
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE CHALLENGE</h3>
+                    <div class="campaign-col-content">
+                        <p>Project Rock belonged to The Rock. His gym. His ritual. His audience. Under Armour wanted to open the doors — to women, to kids, to anyone willing to work. The question wasn't who could wear it. The question was who deserved to earn it.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE INSIGHT</h3>
+                    <div class="campaign-col-content">
+                        <p>Iron builds muscle. But what builds champions? Not equipment. Not genetics. Belief. Drive. Refusal to quit when your body begs you to stop. That's not iron. That's iron will.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE WORK</h3>
+                    <div class="campaign-col-content">
+                        <p>We named it The Iron Will Collection. Wrote a manifesto that became the anthem. Found the proof in four athletes: The Rock, Lindsey Vonn, Flash (age 8), and Jojo (age 11). Vertical videos on Instagram Stories. No scripts. No sets. Just sweat, chalk, and truth.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE IMPACT</h3>
+                    <div class="campaign-col-content">
+                        <p>Every product sold out. 100+ million views on Instagram. An iron will dropped in all sizes.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <nav class="next-project-nav">
+            <a href="disney-be-our-guest.html" class="next-project-link">
+                <div class="next-project-label">NEXT CUT [ 01 ]</div>
+                <h2 class="next-project-title">DISNEY DOESN'T DO<br>LAST-MINUTE</h2>
+                <div class="next-project-brand">Walt Disney World</div>
+            </a>
+        </nav>
+
+        <div class="copyright">
+            © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
+        </div>
+    </main>
+
+    <!-- Back to Top -->
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
+        [ TOP ]
+    </button>
+</body>
+</html>

@@ -10,32 +10,63 @@
     <link rel="stylesheet" href="../base.css">
     <link rel="stylesheet" href="../project-page.css">
     <style>
+        .project-hero {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-size: cover;
+            background-position: center 30%;
+            background-repeat: no-repeat;
+            background-image: 
+                linear-gradient(to bottom, rgba(5, 5, 5, 0) 60%, rgba(5, 5, 5, 1) 100%),
+                linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), 
+                url('../assets/chase-hero-bg.jpg');
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
         .press-articles {
             display: flex;
             flex-direction: column;
-            gap: 8rem;
-            max-width: 1000px;
+            gap: 10rem;
+            max-width: 1100px;
             margin: 0 auto;
         }
         .press-article {
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
         }
         .press-headline {
-            font-family: var(--font-serif);
+            font-family: "freight-text-pro", Georgia, serif;
+            font-style: italic;
             font-size: clamp(32px, 5vw, 64px);
-            font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: 2rem;
-            color: white;
+            font-weight: 400;
+            line-height: 1.2;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.95);
             transition: color 0.3s ease;
+            text-wrap: pretty;
         }
-        .press-article a { text-decoration: none; }
+        .press-article a { text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 2rem; }
         .press-article a:hover .press-headline { color: var(--color-accent); }
         .press-logo {
-            width: 120px;
+            width: 140px;
             height: auto;
-            opacity: 0.8;
-            filter: grayscale(1) invert(1);
+            opacity: 1;
+            filter: none;
+            object-fit: contain;
         }
     </style>
     <script>
@@ -59,7 +90,9 @@
         // Back to Top Visibility
         window.addEventListener('scroll', () => {
             const backToTop = document.getElementById('back-to-top');
-            if (window.scrollY > 600) {
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const bottomPosition = document.documentElement.offsetHeight - 100;
+            if (scrollPosition >= bottomPosition) {
                 backToTop.style.opacity = '0.6';
                 backToTop.style.pointerEvents = 'auto';
             } else {
@@ -175,7 +208,7 @@
             <section class="visual-asset-item">
                 <div class="press-articles">
                     <div class="press-article">
-                        <a href="http://www.adweek.com/news/advertising-branding/chase-kicks-push-sapphire-100248" target="_blank">
+                        <a href="http://www.adweek.com/news/advertising-branding/chase-kicks-push-sapphire-100248" target="_blank" rel="noopener noreferrer">
                             <p class="press-headline">"Chase Kicks Off Push for&nbsp;Sapphire"</p>
                             <img src="https://omarthecreative.com/wp-content/uploads/2025/11/Adweek_Logo_4.png" alt="Adweek" class="press-logo">
                         </a>
@@ -185,21 +218,27 @@
                         <img src="https://omarthecreative.com/wp-content/uploads/2025/12/associated_press-scaled.png" alt="Associated Press" class="press-logo">
                     </div>
                     <div class="press-article">
-                        <a href="https://thefinancialbrand.com/news/millennial-banking/chase-sapphire-reserve-millennial-travel-rewards-credit-card-61696" target="_blank">
+                        <a href="https://thefinancialbrand.com/news/millennial-banking/chase-sapphire-reserve-millennial-travel-rewards-credit-card-61696" target="_blank" rel="noopener noreferrer">
                             <p class="press-headline">"Millennials Go Bananas For Super Cool, Very Pricey Metal&nbsp;Credit&nbsp;Card"</p>
                             <img src="https://omarthecreative.com/wp-content/uploads/2025/12/The_Financial_Brand.png" alt="The Financial Brand" class="press-logo">
                         </a>
                     </div>
                     <div class="press-article">
-                        <a href="https://www.nytimes.com/wirecutter/money/chase-sapphire-reserve-oral-history/" target="_blank">
+                        <a href="https://www.nytimes.com/wirecutter/money/chase-sapphire-reserve-oral-history/" target="_blank" rel="noopener noreferrer">
                             <p class="press-headline">"An Oral History of the World's First Viral Credit&nbsp;Card"</p>
                             <img src="https://omarthecreative.com/wp-content/uploads/2025/11/NewYorkTimes_white.png" alt="The New York Times" class="press-logo">
                         </a>
                     </div>
                     <div class="press-article">
-                        <a href="https://www.harpersbazaar.com/fashion/a65103743/new-chase-sapphire-reserve-credit-card-2025/" target="_blank">
+                        <a href="https://www.harpersbazaar.com/fashion/a65103743/new-chase-sapphire-reserve-credit-card-2025/" target="_blank" rel="noopener noreferrer">
                             <p class="press-headline">"Chase's New Sapphire Reserve Credit Card — Benefits and Fashion Details&nbsp;Explained"</p>
                             <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Harpers_Bazaar_Logo.png" alt="Harper's Bazaar" class="press-logo">
+                        </a>
+                    </div>
+                    <div class="press-article">
+                        <a href="https://www.adweek.com/creativity/hailey-bieber-gives-chase-sapphire-reserve-a-hollywood-glow-up/" target="_blank" rel="noopener noreferrer">
+                            <p class="press-headline">"Hailey Bieber Gives Chase Sapphire Reserve a Hollywood Glow&nbsp;Up"</p>
+                            <img src="https://omarthecreative.com/wp-content/uploads/2025/11/Adweek_Logo_4.png" alt="Adweek" class="press-logo">
                         </a>
                     </div>
                 </div>
@@ -235,6 +274,14 @@
                 </div>
             </div>
         </section>
+
+        <nav class="next-project-nav">
+            <a href="crayola-64-days.html" class="next-project-link">
+                <div class="next-project-label">NEXT CUT [ 04 ]</div>
+                <h2 class="next-project-title">THE 64 DAYS OF CRAYOLA</h2>
+                <div class="next-project-brand">Crayola</div>
+            </a>
+        </nav>
 
         <div class="copyright">
             © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.

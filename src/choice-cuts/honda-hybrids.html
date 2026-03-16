@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Honda Hybrids | Naturally Driven | Choice Cuts | Omar, the Creative</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤘🏽</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">
+    <link rel="stylesheet" href="../base.css">
+    <link rel="stylesheet" href="../project-page.css">
+    <style>
+        .honda-manifesto-text {
+            font-family: var(--font-serif);
+            font-size: clamp(20px, 3vw, 32px);
+            line-height: 1.6;
+            color: white;
+            max-width: fit-content;
+            margin: 0 auto;
+            text-align: left;
+            white-space: pre-line;
+        }
+        .video-wrapper-16x9 {
+            width: 100%;
+            aspect-ratio: 16/9;
+            position: relative;
+            background: #111;
+        }
+        .gif-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 15rem;
+        }
+        @media (max-width: 768px) {
+            .gif-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    <script>
+        function toggleMenu(show) {
+            const menu = document.getElementById('apex-menu');
+            menu.style.display = show ? 'flex' : 'none';
+            document.body.style.overflow = show ? 'hidden' : '';
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const menu = document.getElementById('apex-menu');
+                if (menu && menu.style.display === 'flex') {
+                    toggleMenu(false);
+                } else {
+                    window.location.href = '../choice-cuts.html';
+                }
+            }
+        });
+
+        // Focus hack for iframes
+        setInterval(() => {
+            if (document.activeElement.tagName === 'IFRAME') {
+                window.focus();
+            }
+        }, 1000);
+
+        // Back to Top Visibility
+        window.addEventListener('scroll', () => {
+            const backToTop = document.getElementById('back-to-top');
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const bottomPosition = document.documentElement.offsetHeight - 100;
+            if (scrollPosition >= bottomPosition) {
+                backToTop.style.opacity = '0.6';
+                backToTop.style.pointerEvents = 'auto';
+            } else {
+                backToTop.style.opacity = '0';
+                backToTop.style.pointerEvents = 'none';
+            }
+        });
+    </script>
+</head>
+<body class="project-body">
+    <div id="apex-menu">
+        <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
+        <div class="menu-links">
+            <a href="../index.html" class="menu-link">EXHIBITS</a>
+            <a href="../choice-cuts.html" class="menu-link">CHOICE CUTS</a>
+            <a href="../long-copy.html" class="menu-link">LONG COPY</a>
+            <a href="../info.html" class="menu-link">INFORMATION</a>
+        </div>
+    </div>
+
+    <div class="corner-frame">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="hud-tag hud-tl">[ CUT 07 ]</div>
+        <div class="hud-tag hud-tr">[ LUT: RUBY ] [ COORDS: 3.1577° N, 101.7119° E ]</div>
+        <div class="hud-tag hud-bl">[ SENSOR: ACTIVE ] [ 24 FPS ]</div>
+        <div class="hud-tag hud-br">[ BAT: 85% ]</div>
+    </div>
+
+    <nav class="apex-nav">
+        <div class="nav-left">
+            <a href="../index.html" class="nav-name">OMAR SILWANY</a>
+        </div>
+        <div class="nav-right">
+            <div class="menu-trigger" onclick="toggleMenu(true)">[ MENU ]</div>
+        </div>
+    </nav>
+
+    <main class="project-wrapper">
+        <section class="project-hero">
+            <div class="hero-content">
+                <p class="project-meta-top">HONDA</p>
+                <h1 class="project-title-main">NATURALLY DRIVEN</h1>
+                <p class="project-credits">Creative Director<br>Dentsu Utama</p>
+            </div>
+        </section>
+
+        <section class="project-intro-section">
+            <div class="project-intro-content">
+                <div class="project-intro-text">
+                    Dentsu was pitching Honda Hybrids.
+                    They brought me in as freelance CD.
+
+                    The insight: hybrids weren't about sacrifice.
+                    They were about self-expression.
+
+                    We won.
+                </div>
+            </div>
+        </section>
+
+        <div class="assets-container">
+            <!-- Hero GIF -->
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_TVC_3.gif" alt="Naturally Driven TVC GIF 3" class="visual-asset-image">
+            </section>
+
+            <!-- Manifesto -->
+            <section class="visual-asset-item">
+                <div class="honda-manifesto-text">
+                    Who says green can't be mean?
+                    Who says saving the planet is only for superheroes?
+                    Who says you can't turn a leaf with every turn of the key?
+
+                    They'll tell you hybrid means compromise.
+                    Pick a lane. Performance or planet.
+                    Fun or responsibility.
+
+                    Nature doesn't choose.
+                    The sun doesn't apologize for burning bright.
+                    Birds of prey don't sacrifice taking flight.
+
+                    Why should you?
+
+                    You're naturally progressive.
+                    Naturally intelligent.
+                    Downright naturally awesome.
+
+                    And now there's a car that's for you, naturally.
+
+                    Honda Hybrid.
+                    Naturally Driven.
+                </div>
+            </section>
+
+            <!-- Main TVC -->
+            <section class="visual-asset-item">
+                <div class="video-wrapper-16x9">
+                    <iframe src="https://player.vimeo.com/video/40528270?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" 
+                            frameborder="0" 
+                            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
+                            referrerpolicy="strict-origin-when-cross-origin" 
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;" 
+                            title="Naturally Driven :30 TVC">
+                    </iframe>
+                </div>
+                <p class="visual-asset-label">Naturally Driven :30 TVC</p>
+            </section>
+
+            <!-- GIF Grid -->
+            <div class="gif-grid">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_TVC_1.gif" alt="Naturally Driven TVC GIF 1" class="visual-asset-image">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_TVC_4.gif" alt="Naturally Driven TVC GIF 4" class="visual-asset-image">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_TVC_5.gif" alt="Naturally Driven TVC GIF 5" class="visual-asset-image">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_TVC_2.gif" alt="Naturally Driven TVC GIF 2" class="visual-asset-image">
+            </div>
+
+            <!-- Campaign Assets -->
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_Headlines.png" alt="Headlines" class="visual-asset-image">
+                <p class="visual-asset-label">Headlines</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_Teaser.png" alt="Teaser" class="visual-asset-image">
+                <p class="visual-asset-label">Teaser</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_Print.png" alt="Print" class="visual-asset-image">
+                <p class="visual-asset-label">Print</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_Print_Spread.png" alt="Print Spread" class="visual-asset-image">
+                <p class="visual-asset-label">Print Spread</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_Retail_Posters.png" alt="Retail Posters" class="visual-asset-image">
+                <p class="visual-asset-label">Retail Posters</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_Microsite.png" alt="Microsite" class="visual-asset-image">
+                <p class="visual-asset-label">Microsite</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_Petronas_Tower_Artist_Mural.png" alt="Petronas Tower Artist Mural" class="visual-asset-image">
+                <p class="visual-asset-label">Petronas Tower Artist Mural</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_Event.png" alt="Event" class="visual-asset-image">
+                <p class="visual-asset-label">Event</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_Brochure.png" alt="Brochure" class="visual-asset-image">
+                <p class="visual-asset-label">Brochure</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_App.png" alt="App" class="visual-asset-image">
+                <p class="visual-asset-label">App</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_Giveaways.png" alt="Giveaways" class="visual-asset-image">
+                <p class="visual-asset-label">Giveaways</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_360_Summary.png" alt="Campaign 360 Summary" class="visual-asset-image">
+                <p class="visual-asset-label">Campaign 360 Summary</p>
+            </section>
+        </div>
+
+        <section class="campaign-section">
+            <div class="campaign-table">
+                <!-- THE CHALLENGE -->
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE CHALLENGE</h3>
+                    <div class="campaign-col-content">
+                        <p>Honda Hybrids faced the sacrifice narrative. Every competitor positioned hybrids as compromise — less power, less fun, less you. The category had boxed itself into guilt-driven messaging. "Do the right thing. Save the planet." But Malaysian drivers didn't want to feel guilty. They wanted to feel good.</p>
+                    </div>
+                </div>
+                
+                <!-- THE INSIGHT -->
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE INSIGHT</h3>
+                    <div class="campaign-col-content">
+                        <p>Nature doesn't compromise. The sun burns bright without apology. Birds of prey don't sacrifice flight. Hybrids weren't about giving something up — they were about expressing who you already are. Naturally progressive. Naturally intelligent. Naturally awesome. The car should match the driver, not change them.</p>
+                    </div>
+                </div>
+                
+                <!-- THE WORK -->
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE WORK</h3>
+                    <div class="campaign-col-content">
+                        <p>We built the campaign around confrontation: "Who says green can't be gorgeous?" "Who says speed demons can't be guardian angels?" Every touchpoint challenged the sacrifice narrative. TVC, print, OOH, microsite, retail, events — even a Petronas Tower artist mural. The "Naturally Driven" platform made hybrids aspirational, not apologetic. Dentsu won the pitch. The campaign ran 360.</p>
+                    </div>
+                </div>
+                
+                <!-- THE IMPACT -->
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE IMPACT</h3>
+                    <div class="campaign-col-content">
+                        <p>Honda Hybrids became a statement, not a compromise. By selling self-expression instead of sacrifice, we repositioned the entire category. The campaign proved that environmental messaging doesn't have to be preachy — it just has to be honest about who's already driving these cars. When you stop asking people to change and start celebrating who they are, they show up.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <nav class="next-project-nav">
+            <a href="panasonic-photonista.html" class="next-project-link">
+                <div class="next-project-label">NEXT CUT [ 08 ]</div>
+                <h2 class="next-project-title">FOR EVERY PHOTONISTA</h2>
+                <div class="next-project-brand">Panasonic Lumix</div>
+            </a>
+        </nav>
+
+        <div class="copyright">
+            © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
+        </div>
+    </main>
+
+    <!-- Back to Top -->
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
+        [ TOP ]
+    </button>
+</body>
+</html>

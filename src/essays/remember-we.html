@@ -492,10 +492,13 @@
 
     <script>
         const backToTop = document.getElementById('back-to-top');
-        window.addEventListener('scroll', function() {
-            backToTop.style.opacity = window.scrollY > 600 ? '1' : '0';
-            backToTop.style.pointerEvents = window.scrollY > 600 ? 'auto' : 'none';
+        window.addEventListener('scroll', () => {
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const bottomPosition = document.documentElement.offsetHeight - 100;
+            backToTop.style.opacity = scrollPosition >= bottomPosition ? '1' : '0';
+            backToTop.style.pointerEvents = scrollPosition >= bottomPosition ? 'auto' : 'none';
         });
+
 
         function shareArticle() {
             if (navigator.share) {

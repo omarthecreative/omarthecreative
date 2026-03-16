@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espolón Tequila | The Instigator | Choice Cuts | Omar, the Creative</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤘🏽</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">
+    <link rel="stylesheet" href="../base.css">
+    <link rel="stylesheet" href="../project-page.css">
+    <style>
+        .deck-section-title {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.4em;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            margin: 15rem 0 2rem 0;
+            text-align: center;
+        }
+        .deck-subtitle {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: clamp(18px, 2.5vw, 32px);
+            opacity: 0.4;
+            text-align: center;
+            margin-bottom: 4rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Multi-deck Slider */
+        .slider-section {
+            width: 100vw;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            position: relative;
+            height: 100vh;
+            background: #000;
+            margin-bottom: 10rem;
+        }
+        .slider-container {
+            display: flex;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            height: 100%;
+        }
+        .slider-container::-webkit-scrollbar { display: none; }
+        .slide {
+            flex: 0 0 100vw;
+            height: 100%;
+            scroll-snap-align: start;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem;
+            box-sizing: border-box;
+        }
+        .slide img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .slider-counter {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 0.2em;
+        }
+        .slider-hint {
+            position: absolute;
+            bottom: 4rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-mono);
+            font-size: 0.5rem;
+            color: var(--color-accent);
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+    </style>
+    <script>
+        function toggleMenu(show) {
+            const menu = document.getElementById('apex-menu');
+            menu.style.display = show ? 'flex' : 'none';
+            document.body.style.overflow = show ? 'hidden' : '';
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const menu = document.getElementById('apex-menu');
+                if (menu && menu.style.display === 'flex') {
+                    toggleMenu(false);
+                } else {
+                    window.location.href = '../choice-cuts.html';
+                }
+            }
+        });
+
+        // Multi-deck Slider Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const sliders = document.querySelectorAll('.slider-container');
+            sliders.forEach(slider => {
+                const counter = slider.parentElement.querySelector('.slider-counter');
+                const slides = slider.querySelectorAll('.slide');
+                const total = slides.length;
+                
+                slider.addEventListener('scroll', () => {
+                    const index = Math.round(slider.scrollLeft / window.innerWidth) + 1;
+                    counter.textContent = `${index} / ${total}`;
+                });
+            });
+        });
+
+        // Focus hack for iframes
+        setInterval(() => {
+            if (document.activeElement.tagName === 'IFRAME') {
+                window.focus();
+            }
+        }, 1000);
+
+        // Back to Top Visibility
+        window.addEventListener('scroll', () => {
+            const backToTop = document.getElementById('back-to-top');
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const bottomPosition = document.documentElement.offsetHeight - 100;
+            
+            if (scrollPosition >= bottomPosition) {
+                backToTop.style.opacity = '0.6';
+                backToTop.style.pointerEvents = 'auto';
+            } else {
+                backToTop.style.opacity = '0';
+                backToTop.style.pointerEvents = 'none';
+            }
+        });
+    </script>
+</head>
+<body class="project-body">
+    <div id="apex-menu">
+        <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
+        <div class="menu-links">
+            <a href="../index.html" class="menu-link">EXHIBITS</a>
+            <a href="../choice-cuts.html" class="menu-link">CHOICE CUTS</a>
+            <a href="../long-copy.html" class="menu-link">LONG COPY</a>
+            <a href="../info.html" class="menu-link">INFORMATION</a>
+        </div>
+    </div>
+
+    <div class="corner-frame">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="hud-tag hud-tl">[ CUT 17 ]</div>
+        <div class="hud-tag hud-tr">[ LUT: RUBY ] [ COORDS: 20.6597° N, 103.3496° W ]</div>
+        <div class="hud-tag hud-bl">[ SENSOR: ACTIVE ] [ 24 FPS ]</div>
+        <div class="hud-tag hud-br">[ BAT: 60% ]</div>
+    </div>
+
+    <nav class="apex-nav">
+        <div class="nav-left">
+            <a href="../index.html" class="nav-name">OMAR SILWANY</a>
+        </div>
+        <div class="nav-right">
+            <div class="menu-trigger" onclick="toggleMenu(true)">[ MENU ]</div>
+        </div>
+    </nav>
+
+    <main class="project-wrapper">
+        <section class="project-hero">
+            <div class="hero-content">
+                <p class="project-meta-top">ESPOLÓN TEQUILA</p>
+                <h1 class="project-title-main">THE INSTIGATOR</h1>
+                <p class="project-credits">Group Creative Director<br>5 O'Clock / Momentum Worldwide</p>
+            </div>
+        </section>
+
+        <section class="project-intro-section">
+            <div class="project-intro-content">
+                <div class="project-intro-text">
+                    Espolón Tequila needed a purpose before a platform.
+                    A single idea to unify its digital presence.
+
+                    We looked inside.
+                    Reconnected with a brand built to Stir Things Up.
+
+                    We found The Instigator.
+                </div>
+            </div>
+        </section>
+
+        <div class="assets-container">
+            <!-- PITCH DECK -->
+            <h2 class="deck-section-title">THE PITCH</h2>
+            <p class="deck-subtitle">A single organizing idea to unify Espolón's social & digital ecosystem.</p>
+            <div class="slider-section">
+                <div class="slider-hint">Scroll to view pitch deck</div>
+                <div class="slider-container">
+                    <!-- Loop for 41 slides -->
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_01.jpg" alt="Slide 1"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_02.jpg" alt="Slide 2"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_03.jpg" alt="Slide 3"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_04.jpg" alt="Slide 4"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_05.jpg" alt="Slide 5"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_06.jpg" alt="Slide 6"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_07.jpg" alt="Slide 7"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_08.jpg" alt="Slide 8"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_09.jpg" alt="Slide 9"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_10.jpg" alt="Slide 10"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_11.jpg" alt="Slide 11"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_12.jpg" alt="Slide 12"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_13.jpg" alt="Slide 13"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_14.jpg" alt="Slide 14"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_15.jpg" alt="Slide 15"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_16.jpg" alt="Slide 16"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_17.jpg" alt="Slide 17"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_18.jpg" alt="Slide 18"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_19.jpg" alt="Slide 19"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_20.jpg" alt="Slide 20"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_21.jpg" alt="Slide 21"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_22.jpg" alt="Slide 22"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_23.jpg" alt="Slide 23"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_24.jpg" alt="Slide 24"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_25.jpg" alt="Slide 25"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_26.jpg" alt="Slide 26"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_27.jpg" alt="Slide 27"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_28.jpg" alt="Slide 28"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_29.jpg" alt="Slide 29"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_30.jpg" alt="Slide 30"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_31.jpg" alt="Slide 31"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_32.jpg" alt="Slide 32"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_33.jpg" alt="Slide 33"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_34.jpg" alt="Slide 34"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_36.jpg" alt="Slide 35"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_37.jpg" alt="Slide 36"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_39.jpg" alt="Slide 37"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_40.jpg" alt="Slide 38"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_42.jpg" alt="Slide 39"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_43.jpg" alt="Slide 40"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Pitch_44.jpg" alt="Slide 41"></div>
+                </div>
+                <div class="slider-counter">1 / 41</div>
+            </div>
+
+            <!-- THE WORK -->
+            <h2 class="deck-section-title">THE WORK</h2>
+            <p class="deck-subtitle">Actionable creative guidelines for Facebook & Twitter.</p>
+            <div class="slider-section">
+                <div class="slider-hint">Scroll to view guidelines</div>
+                <div class="slider-container">
+                    <!-- Loop for 27 slides -->
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_01.jpg" alt="Slide 1"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_02.jpg" alt="Slide 2"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_03.jpg" alt="Slide 3"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_04.jpg" alt="Slide 4"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_05.jpg" alt="Slide 5"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_06.jpg" alt="Slide 6"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_07.jpg" alt="Slide 7"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_08.jpg" alt="Slide 8"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_09.jpg" alt="Slide 9"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_10.jpg" alt="Slide 10"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_11.jpg" alt="Slide 11"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_12.jpg" alt="Slide 12"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_13.jpg" alt="Slide 13"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_14.jpg" alt="Slide 14"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_15.jpg" alt="Slide 15"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_16.jpg" alt="Slide 16"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_17.jpg" alt="Slide 17"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_18.jpg" alt="Slide 18"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_19.jpg" alt="Slide 19"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_20.jpg" alt="Slide 20"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_21.jpg" alt="Slide 21"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_22.jpg" alt="Slide 22"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_23.jpg" alt="Slide 23"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_24.jpg" alt="Slide 24"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_25.jpg" alt="Slide 25"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_26.jpg" alt="Slide 26"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_Social_27.jpg" alt="Slide 27"></div>
+                </div>
+                <div class="slider-counter">1 / 27</div>
+            </div>
+
+            <!-- ART NEVER DIES -->
+            <h2 class="deck-section-title">ART NEVER DIES</h2>
+            <p class="deck-subtitle">The never-ending mural project on Instagram.</p>
+            <div class="slider-section">
+                <div class="slider-hint">Scroll to view mural concept</div>
+                <div class="slider-container">
+                    <!-- Loop for 16 slides -->
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_ArtNeverDies_01.jpg" alt="Slide 1"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_ArtNeverDies_02.jpg" alt="Slide 2"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_ArtNeverDies_03.jpg" alt="Slide 3"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_ArtNeverDies_04.jpg" alt="Slide 4"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_ArtNeverDies_05.jpg" alt="Slide 5"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_ArtNeverDies_06.jpg" alt="Slide 6"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_ArtNeverDies_07.jpg" alt="Slide 7"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_ArtNeverDies_08.jpg" alt="Slide 8"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_ArtNeverDies_09.jpg" alt="Slide 9"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_ArtNeverDies_10.jpg" alt="Slide 10"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_ArtNeverDies_11.jpg" alt="Slide 11"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_ArtNeverDies_12.jpg" alt="Slide 12"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_ArtNeverDies_13.jpg" alt="Slide 13"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_ArtNeverDies_14.jpg" alt="Slide 14"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_ArtNeverDies_15.jpg" alt="Slide 15"></div>
+                    <div class="slide"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Espolon_ArtNeverDies_16.jpg" alt="Slide 16"></div>
+                </div>
+                <div class="slider-counter">1 / 16</div>
+            </div>
+        </div>
+
+        <section class="campaign-section">
+            <div class="campaign-table">
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE CHALLENGE</h3>
+                    <div class="campaign-col-content">
+                        <p>Espolón Tequila needed to clarify its purpose online — then follow through across all digital and social channels. Before we could build anything, we needed soul searching. We had to look inside and reconnect with a brand whose core purpose is to Stir Things Up.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE INSIGHT</h3>
+                    <div class="campaign-col-content">
+                        <p>Purpose before platform. Espolón wasn't just a tequila — it was an instigator of courageous creativity. Every channel, every post, every picture, every tag, every follow needed to ladder up to that single organizing idea.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE WORK</h3>
+                    <div class="campaign-col-content">
+                        <p>We pitched The Instigator — a unifying concept for Espolón's entire social and digital ecosystem. Once awarded, we built actionable creative guidelines for Facebook and Twitter. Then we designed Art Never Dies: a never-ending mural on Instagram, one tile at a time.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE IMPACT</h3>
+                    <div class="campaign-col-content">
+                        <p>The client bought everything. Then brought in Vice's agency to collaborate. Art Never Dies never launched. The strategy did. "Fast Track" Growth Brand, 2016. U.S. sales doubled by 2017. Today: top three premium tequilas worldwide. The Instigator is still stirring things up.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <nav class="next-project-nav">
+            <a href="skyy-vodka.html" class="next-project-link">
+                <div class="next-project-label">NEXT CUT [ 18 ]</div>
+                <h2 class="next-project-title">A SINGULAR STRATEGY<br>TWO Ys FORWARD</h2>
+                <div class="next-project-brand">Skyy Vodka</div>
+            </a>
+        </nav>
+
+        <div class="copyright">
+            © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
+        </div>
+    </main>
+
+    <!-- Back to Top -->
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
+        [ TOP ]
+    </button>
+</body>
+</html>

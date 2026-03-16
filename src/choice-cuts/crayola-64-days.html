@@ -31,29 +31,67 @@
         .press-articles {
             display: flex;
             flex-direction: column;
-            gap: 8rem;
-            max-width: 1000px;
+            gap: 10rem;
+            max-width: 1100px;
             margin: 0 auto;
         }
         .press-article {
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
         }
         .press-headline {
-            font-family: var(--font-serif);
+            font-family: "freight-text-pro", Georgia, serif;
+            font-style: italic;
             font-size: clamp(32px, 5vw, 64px);
-            font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: 2rem;
-            color: white;
+            font-weight: 400;
+            line-height: 1.2;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.95);
             transition: color 0.3s ease;
+            text-wrap: pretty;
         }
-        .press-article a { text-decoration: none; }
+        .press-article a { text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 2rem; }
         .press-article a:hover .press-headline { color: var(--color-accent); }
         .press-logo {
-            width: 120px;
+            width: 140px;
             height: auto;
-            opacity: 0.8;
-            filter: grayscale(1) invert(1);
+            opacity: 1;
+            filter: none;
+            object-fit: contain;
+        }
+        .project-hero {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding-left: 6vw;
+            background-size: cover;
+            background-position: right center;
+            background-repeat: no-repeat;
+            background-image:
+                linear-gradient(to bottom, rgba(5, 5, 5, 0) 60%, rgba(5, 5, 5, 1) 100%),
+                linear-gradient(to right, rgba(5,5,5,0.7) 50%, rgba(5,5,5,0) 75%),
+                url('../assets/crayola-hero-bg.jpg');
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: left;
+        }
+        .project-intro-section {
+            height: auto;
+            padding-top: 28rem;
+            padding-bottom: 28rem;
         }
     </style>
     <script>
@@ -84,7 +122,9 @@
         // Back to Top Visibility
         window.addEventListener('scroll', () => {
             const backToTop = document.getElementById('back-to-top');
-            if (window.scrollY > 600) {
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const bottomPosition = document.documentElement.offsetHeight - 100;
+            if (scrollPosition >= bottomPosition) {
                 backToTop.style.opacity = '0.6';
                 backToTop.style.pointerEvents = 'auto';
             } else {
@@ -128,7 +168,7 @@
         <section class="project-hero">
             <div class="hero-content">
                 <p class="project-meta-top">CRAYOLA</p>
-                <h1 class="project-title-main">THE 64 DAYS OF CRAYOLA</h1>
+                <h1 class="project-title-main">THE 64 DAYS<br>OF CRAYOLA</h1>
                 <p class="project-credits">Rogue Writer & Design Project Director<br>mcgarrybowen</p>
             </div>
         </section>
@@ -269,6 +309,14 @@
                 </div>
             </div>
         </section>
+
+        <nav class="next-project-nav">
+            <a href="verizon-droid.html" class="next-project-link">
+                <div class="next-project-label">NEXT CUT [ 05 ]</div>
+                <h2 class="next-project-title">INTERSTELLAR</h2>
+                <div class="next-project-brand">Verizon</div>
+            </a>
+        </nav>
 
         <div class="copyright">
             © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.

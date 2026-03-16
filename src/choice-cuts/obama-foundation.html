@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Obama Foundation | We Are The Ones | Choice Cuts | Omar, the Creative</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤘🏽</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">
+    <link rel="stylesheet" href="../base.css">
+    <link rel="stylesheet" href="../project-page.css">
+    <style>
+        .quote-section {
+            margin: 15rem 0;
+            text-align: center;
+        }
+        .quote-text {
+            font-family: "freight-text-pro", Georgia, serif;
+            font-style: italic;
+            font-size: clamp(24px, 3.5vw, 42px);
+            line-height: 1.5;
+            color: #FFFFFF;
+            max-width: 900px;
+            margin: 0 auto 3rem auto;
+            white-space: pre-line;
+        }
+        .quote-attribution {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        .manifesto-section {
+            margin: 15rem 0;
+            text-align: left;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .manifesto-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.3em;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            margin-bottom: 4rem;
+        }
+        .manifesto-prose {
+            font-family: "freight-text-pro", Georgia, serif;
+            font-size: clamp(18px, 2.5vw, 28px);
+            line-height: 1.7;
+            color: #FFFFFF;
+            margin-bottom: 3rem;
+        }
+        .manifesto-verse {
+            margin: 4rem 0;
+            padding-left: 3rem;
+            border-left: 1px solid var(--color-accent);
+        }
+        .manifesto-verse p {
+            font-family: "freight-text-pro", Georgia, serif;
+            font-style: italic;
+            font-size: clamp(18px, 2.5vw, 28px);
+            line-height: 1.7;
+            color: var(--color-accent);
+            margin-bottom: 1.5rem;
+        }
+
+        .video-wrapper-16x9 {
+            width: 100%;
+            aspect-ratio: 16/9;
+            position: relative;
+            background: #111;
+        }
+
+        .press-articles {
+            display: flex;
+            flex-direction: column;
+            gap: 10rem;
+            max-width: 1100px;
+            margin: 15rem auto;
+        }
+        .press-article {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        .press-headline {
+            font-family: "freight-text-pro", Georgia, serif;
+            font-style: italic;
+            font-size: clamp(32px, 5vw, 64px);
+            font-weight: 400;
+            line-height: 1.2;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.95);
+            transition: color 0.3s ease;
+            text-wrap: pretty;
+        }
+        .press-logo {
+            width: 120px;
+            height: auto;
+            object-fit: contain;
+        }
+    </style>
+    <script>
+        function toggleMenu(show) {
+            const menu = document.getElementById('apex-menu');
+            menu.style.display = show ? 'flex' : 'none';
+            document.body.style.overflow = show ? 'hidden' : '';
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const menu = document.getElementById('apex-menu');
+                if (menu && menu.style.display === 'flex') {
+                    toggleMenu(false);
+                } else {
+                    window.location.href = '../choice-cuts.html';
+                }
+            }
+        });
+
+        // Focus hack for iframes
+        setInterval(() => {
+            if (document.activeElement.tagName === 'IFRAME') {
+                window.focus();
+            }
+        }, 1000);
+
+        // Back to Top Visibility
+        window.addEventListener('scroll', () => {
+            const backToTop = document.getElementById('back-to-top');
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const bottomPosition = document.documentElement.offsetHeight - 100;
+            
+            if (scrollPosition >= bottomPosition) {
+                backToTop.style.opacity = '0.6';
+                backToTop.style.pointerEvents = 'auto';
+            } else {
+                backToTop.style.opacity = '0';
+                backToTop.style.pointerEvents = 'none';
+            }
+        });
+    </script>
+</head>
+<body class="project-body">
+    <div id="apex-menu">
+        <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
+        <div class="menu-links">
+            <a href="../index.html" class="menu-link">EXHIBITS</a>
+            <a href="../choice-cuts.html" class="menu-link">CHOICE CUTS</a>
+            <a href="../long-copy.html" class="menu-link">LONG COPY</a>
+            <a href="../info.html" class="menu-link">INFORMATION</a>
+        </div>
+    </div>
+
+    <div class="corner-frame">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="hud-tag hud-tl">[ CUT 20 ]</div>
+        <div class="hud-tag hud-tr">[ LUT: RUBY ] [ COORDS: 41.8781° N, 87.6298° W ]</div>
+        <div class="hud-tag hud-bl">[ SENSOR: ACTIVE ] [ 24 FPS ]</div>
+        <div class="hud-tag hud-br">[ BAT: 52% ]</div>
+    </div>
+
+    <nav class="apex-nav">
+        <div class="nav-left">
+            <a href="../index.html" class="nav-name">OMAR SILWANY</a>
+        </div>
+        <div class="nav-right">
+            <div class="menu-trigger" onclick="toggleMenu(true)">[ MENU ]</div>
+        </div>
+    </nav>
+
+    <main class="project-wrapper">
+        <section class="project-hero">
+            <div class="hero-content">
+                <p class="project-meta-top">The Obama Foundation</p>
+                <h1 class="project-title-main">WE ARE THE ONES</h1>
+                <p class="project-credits">
+                    Creative Director, Copy: Omar Silwany<br>
+                    Creative Director, Art: Warren Eakins<br>
+                    Designer: Norah Tahiri<br>
+                    Additional Creative: Shabazz Larkin<br>
+                    Director: Jason J.M. Harper<br>
+                    Matter Unlimited
+                </p>
+            </div>
+        </section>
+
+        <section class="project-intro-section">
+            <div class="project-intro-content">
+                <div class="project-intro-text">
+                    Things heated up quickly. Obama's last year in office: 2015. 
+                    The next year: Trump.
+
+                    By 2017, we knew another side never set hatred aside.
+                    This is what happened before the torches were lit.
+                </div>
+            </div>
+        </section>
+
+        <div class="assets-container">
+            <!-- Obama Quote -->
+            <section class="quote-section">
+                <p class="quote-text">"Change will not come if we wait for some other person or if we wait for some other time. We are the ones we've been waiting for. We are the change that we seek. We are the hope of those boys who have so little, who've been told that they cannot have what they dream, that they cannot be what they imagine. Yes, they can."</p>
+                <p class="quote-attribution">— Senator Barack Obama, February 5, 2008</p>
+            </section>
+
+            <!-- Manifesto -->
+            <section class="manifesto-section">
+                <p class="manifesto-label">Manifesto</p>
+                <div class="manifesto-prose">Our country was defined by great battles. Such was the case in 1814 when brave soldiers both black and white fought side-by-side to keep our star-spangled banner in the sky. And such is the case today when the bravery of all races faces the perilous fight of inequality, yet keeps faith in our shared humanity as the other's keeper.</div>
+                <div class="manifesto-verse">
+                    <p>When we look up and ask for light: We Are The Ones.</p>
+                    <p>When we listen for the words that keep our spirits high: We Are The Ones.</p>
+                    <p>And when we sing of bravery's home and freedom's land: We Are The Ones.</p>
+                </div>
+                <div class="manifesto-prose">We all have that dream, don't we? Young Americans locked arm-in-arm and never raising arms. Perfectly united and free, with the inextinguishable hope to be judged not by the color of our skin but by the color of our hearts.</div>
+                <div class="manifesto-prose">My friends, we are each other's keepers. We Are The Ones.</div>
+            </section>
+
+            <!-- Main Video -->
+            <section class="visual-asset-item">
+                <div class="video-wrapper-16x9">
+                    <iframe src="https://player.vimeo.com/video/267027000?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" 
+                            frameborder="0" 
+                            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
+                            referrerpolicy="strict-origin-when-cross-origin" 
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;" 
+                            title="We Are The Ones">
+                    </iframe>
+                </div>
+                <p class="video-caption">We Are The Ones — Christmas Day 2017 | ABC/ESPN | NBA Christmas Day Games</p>
+            </section>
+
+            <!-- GIFs -->
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2026/02/we-are-the-ones-spot.gif" alt="The Spot" class="visual-asset-image">
+                <p class="video-caption">We Are The Ones Spot — Obama, Chance, Steph</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2026/02/speech-on-phone.gif" alt="Viral Speech" class="visual-asset-image">
+                <p class="video-caption">The Speech — Going Viral</p>
+            </section>
+
+            <!-- Keeper's Code -->
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2026/02/keepers-code-01.png" alt="The Keeper's Code 1" class="visual-asset-image">
+                <p class="video-caption">The Keeper's Code — iambmbk.org</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2026/02/keepers-code-02.png" alt="The Keeper's Code 2" class="visual-asset-image">
+                <p class="video-caption">The Keeper's Code — Six Principles</p>
+            </section>
+
+            <!-- MBKA Site -->
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2026/02/mbka-site.png" alt="MBKA Site" class="visual-asset-image">
+                <p class="video-caption">My Brother's Keeper Alliance — iambmbk.org</p>
+            </section>
+
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2026/02/mbka-instagram.png" alt="MBKA Instagram" class="visual-asset-image">
+                <p class="video-caption">My Brother's Keeper Alliance — Instagram</p>
+            </section>
+
+            <!-- Press Section -->
+            <section class="visual-asset-item">
+                <div class="press-articles">
+                    <div class="press-article">
+                        <p class="press-headline">"The film aims to re-engage the public with the mission of MBKA and to encourage young Americans to become allies..."</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2026/02/adweek.svg" alt="Adweek" class="press-logo">
+                    </div>
+                    <div class="press-article">
+                        <p class="press-headline">"Stephen Curry and Chance the Rapper joined forces with former President Barack Obama..."</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2026/02/usa-today.png" alt="USA Today" class="press-logo">
+                    </div>
+                    <div class="press-article">
+                        <p class="press-headline">"The spot is the first major public service announcement released by the Obama Foundation..."</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2026/02/washington-post.png" alt="The Washington Post" class="press-logo">
+                    </div>
+                    <div class="press-article">
+                        <p class="press-headline">"The video concludes with Curry and Chance watching as a group of young men join in..."</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2026/02/people.png" alt="People" class="press-logo">
+                    </div>
+                    <div class="press-article">
+                        <p class="press-headline">"The PSA highlights the importance of mentorship and the idea that the future of the country depends on the success of its youth."</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2026/02/esquire.svg" alt="Esquire" class="press-logo">
+                    </div>
+                    <div class="press-article">
+                        <p class="press-headline">"The campaign is part of a broader effort to ensure that all young people... have the opportunity to succeed."</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2026/02/campaign-us.png" alt="Campaign US" class="press-logo">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Closing Image -->
+            <section class="visual-asset-item">
+                <img src="https://omarthecreative.com/wp-content/uploads/2026/02/obama-oval-office.jpg" alt="Obama Oval Office" class="visual-asset-image">
+                <p class="video-caption">Barack Obama — Oval Office</p>
+            </section>
+        </div>
+
+        <section class="campaign-section">
+            <div class="campaign-table">
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE CHALLENGE</h3>
+                    <div class="campaign-col-content">
+                        <p>Matter Unlimited had been developing a campaign for the Obama Foundation's My Brother's Keeper Alliance for over a year when their concept was shelved. They had one week before a donated ABC/ESPN Christmas Day media buy went dark.</p>
+                        <p>The stakes were higher than a deadline: Obama was out. Trump was in. Four months after Charlottesville, torches were still burning.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE INSIGHT</h3>
+                    <div class="campaign-col-content">
+                        <p>The concept was called THE SPEECH. The campaign line had been sitting in a 2008 Obama speech for nine years: "We are the ones we've been waiting for."</p>
+                        <p>By 2017, it didn't need a politician to deliver it. It needed one kid. A park. A microphone.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE WORK</h3>
+                    <div class="campaign-col-content">
+                        <p>Omar Silwany and Warren Eakins developed the foundational architecture: the "We Are The Ones" line, the speech format, and The Keeper's Code. Matter Unlimited launched the Keeper's Code first — a digital peer-to-peer social contract. The final spot featured one kid, spoken word, and a park. Christmas Day 2017. ABC/ESPN. NBA Christmas games.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE IMPACT</h3>
+                    <div class="campaign-col-content">
+                        <p>50 million impressions. Zero paid media. Covered by Adweek, USA Today, The Washington Post, People, Esquire, and Campaign US. The Obama Foundation's first major post-presidency public push — built on a concept developed in one week, from a title that had been waiting nine years.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <nav class="next-project-nav">
+            <a href="project-rock.html" class="next-project-link">
+                <div class="next-project-label">NEXT CUT [ 21 ]</div>
+                <h2 class="next-project-title">IT TAKES AN IRON WILL<br>TO BUILD AN EMPIRE</h2>
+                <div class="next-project-brand">Under Armour | Project Rock</div>
+            </a>
+        </nav>
+
+        <div class="copyright">
+            © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
+        </div>
+    </main>
+
+    <!-- Back to Top -->
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
+        [ TOP ]
+    </button>
+</body>
+</html>

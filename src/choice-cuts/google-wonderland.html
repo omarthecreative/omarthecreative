@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Window Wonderland | Choice Cuts | Omar, the Creative</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤘🏽</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">
+    <link rel="stylesheet" href="../base.css">
+    <link rel="stylesheet" href="../project-page.css">
+    <style>
+        .hero-video-background {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: #000;
+            pointer-events: none;
+        }
+        .hero-bg-video {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 100vw; height: 56.25vw;
+            min-height: 100vh; min-width: 177.78vh;
+            transform: translate(-50%, -50%);
+        }
+        .project-hero { background: transparent !important; }
+
+        .video-wrapper-16x9 {
+            width: 100%;
+            aspect-ratio: 16/9;
+            position: relative;
+            background: #111;
+        }
+
+        .experience-gallery-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 15rem;
+        }
+        .gallery-item img { width: 100%; display: block; }
+
+        .press-articles {
+            display: flex;
+            flex-direction: column;
+            gap: 10rem;
+            max-width: 1100px;
+            margin: 15rem auto;
+        }
+        .press-article {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        .press-headline {
+            font-family: "freight-text-pro", Georgia, serif;
+            font-style: italic;
+            font-size: clamp(32px, 5vw, 64px);
+            font-weight: 400;
+            line-height: 1.2;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.95);
+            transition: color 0.3s ease;
+            text-wrap: pretty;
+        }
+        .press-logo {
+            width: 140px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .recognition-section {
+            margin: 15rem 0;
+            text-align: center;
+        }
+        .recognition-title {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.4em;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            margin-bottom: 4rem;
+        }
+        .awards-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6rem;
+            flex-wrap: wrap;
+        }
+        .award-logo {
+            width: 180px;
+            height: auto;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+        .award-logo:hover { opacity: 1; }
+
+        @media (max-width: 768px) {
+            .experience-gallery-grid { grid-template-columns: 1fr; }
+            .awards-logos { gap: 3rem; }
+            .award-logo { width: 120px; }
+        }
+    </style>
+    <script>
+        function toggleMenu(show) {
+            const menu = document.getElementById('apex-menu');
+            menu.style.display = show ? 'flex' : 'none';
+            document.body.style.overflow = show ? 'hidden' : '';
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const menu = document.getElementById('apex-menu');
+                if (menu && menu.style.display === 'flex') {
+                    toggleMenu(false);
+                } else {
+                    window.location.href = '../choice-cuts.html';
+                }
+            }
+        });
+
+        // Focus hack for iframes
+        setInterval(() => {
+            if (document.activeElement.tagName === 'IFRAME') {
+                window.focus();
+            }
+        }, 1000);
+
+        // Back to Top Visibility
+        window.addEventListener('scroll', () => {
+            const backToTop = document.getElementById('back-to-top');
+            const scrollPosition = window.innerHeight + window.pageYOffset;
+            const bottomPosition = document.documentElement.offsetHeight - 100;
+            
+            if (scrollPosition >= bottomPosition) {
+                backToTop.style.opacity = '0.6';
+                backToTop.style.pointerEvents = 'auto';
+            } else {
+                backToTop.style.opacity = '0';
+                backToTop.style.pointerEvents = 'none';
+            }
+        });
+    </script>
+</head>
+<body class="project-body">
+    <div id="apex-menu">
+        <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
+        <div class="menu-links">
+            <a href="../index.html" class="menu-link">EXHIBITS</a>
+            <a href="../choice-cuts.html" class="menu-link">CHOICE CUTS</a>
+            <a href="../long-copy.html" class="menu-link">LONG COPY</a>
+            <a href="../info.html" class="menu-link">INFORMATION</a>
+        </div>
+    </div>
+
+    <div class="hero-video-background">
+        <iframe src="https://player.vimeo.com/video/204383532?autoplay=1&loop=1&muted=1&controls=0&background=1&responsive=1&byline=0&title=0" 
+                frameborder="0" 
+                allow="autoplay; fullscreen" 
+                class="hero-bg-video"></iframe>
+    </div>
+
+    <div class="corner-frame">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="hud-tag hud-tl">[ CUT 19 ]</div>
+        <div class="hud-tag hud-tr">[ LUT: RUBY ] [ COORDS: 40.7128° N, 74.0060° W ]</div>
+        <div class="hud-tag hud-bl">[ SENSOR: ACTIVE ] [ 24 FPS ]</div>
+        <div class="hud-tag hud-br">[ BAT: 55% ]</div>
+    </div>
+
+    <nav class="apex-nav">
+        <div class="nav-left">
+            <a href="../index.html" class="nav-name">OMAR SILWANY</a>
+        </div>
+        <div class="nav-right">
+            <div class="menu-trigger" onclick="toggleMenu(true)">[ MENU ]</div>
+        </div>
+    </nav>
+
+    <main class="project-wrapper">
+        <section class="project-hero">
+            <div class="hero-content">
+                <p class="project-meta-top">GOOGLE SHOPPING</p>
+                <h1 class="project-title-main">WINDOW WONDER<span style="letter-spacing: 0.05em;">L</span>AND</h1>
+                <p class="project-credits">Creative Director, Writer<br>GROW in partnership with Google&nbsp;Art,&nbsp;Copy&nbsp;&&nbsp;Code</p>
+            </div>
+        </section>
+
+        <section class="project-intro-section">
+            <div class="project-intro-content">
+                <div class="project-intro-text">
+                    For nearly 150 years, New York City's holiday windows have been a December pilgrimage. Magic behind glass.
+
+                    But you had to be there.
+                    You had to stand in the cold.
+
+                    Google Shopping asked: What if windows could travel?
+                    What if everyone, everywhere could experience the wonder?
+                </div>
+            </div>
+        </section>
+
+        <div class="assets-container">
+            <!-- Opener Video -->
+            <section class="visual-asset-item">
+                <div class="video-wrapper-16x9">
+                    <iframe src="https://player.vimeo.com/video/843963298?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" 
+                            frameborder="0" 
+                            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
+                            referrerpolicy="strict-origin-when-cross-origin" 
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;" 
+                            title="Window Wonderland">
+                    </iframe>
+                </div>
+                <p class="video-caption">Window Wonderland :60</p>
+            </section>
+
+            <!-- Experience Gallery -->
+            <div class="experience-gallery-grid">
+                <div class="gallery-item"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Google_Window_Wonderland_1.gif" alt="Experience 1"></div>
+                <div class="gallery-item"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Google_Window_Wonderland_2.gif" alt="Experience 2"></div>
+                <div class="gallery-item"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Google_Window_Wonderland_3.gif" alt="Experience 3"></div>
+                <div class="gallery-item"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Google_Window_Wonderland_4.gif" alt="Experience 4"></div>
+                <div class="gallery-item"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Google_Window_Wonderland_Headset.png" alt="VR Headset"></div>
+                <div class="gallery-item"><img src="https://omarthecreative.com/wp-content/uploads/2025/11/Google_Window_Wonderland_Laptop.png" alt="Laptop Experience"></div>
+            </div>
+
+            <!-- Case Study -->
+            <section class="visual-asset-item">
+                <div class="video-wrapper-16x9">
+                    <iframe src="https://player.vimeo.com/video/1139480008?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" 
+                            frameborder="0" 
+                            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
+                            referrerpolicy="strict-origin-when-cross-origin" 
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;" 
+                            title="Window Wonderland Case Study">
+                    </iframe>
+                </div>
+                <p class="video-caption">Case Study :120</p>
+            </section>
+
+            <!-- Press Section -->
+            <section class="visual-asset-item">
+                <div class="press-articles">
+                    <div class="press-article">
+                        <p class="press-headline">"Google's 'Window Wonderland' Brings New&nbsp;York's Holiday Retail Extravaganzas To&nbsp;The&nbsp;Web"</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2025/11/FastCompany_Logo_3.png" alt="Fast Company" class="press-logo">
+                    </div>
+                    <div class="press-article">
+                        <p class="press-headline">"Thanks to Google, You Can Now Take a&nbsp;VR&nbsp;Tour of New&nbsp;York's Holiday Window&nbsp;Displays"</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2025/11/Adweek_Logo_4.png" alt="Adweek" class="press-logo">
+                    </div>
+                    <div class="press-article">
+                        <p class="press-headline">"See all of New&nbsp;York's extravagantly designed holiday windows using Google&nbsp;VR"</p>
+                        <img src="https://omarthecreative.com/wp-content/uploads/2025/11/Mashable_Logo.png" alt="Mashable" class="press-logo">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recognition -->
+            <section class="recognition-section">
+                <h2 class="recognition-title">RECOGNITION</h2>
+                <div class="awards-logos">
+                    <img src="https://omarthecreative.com/wp-content/uploads/2025/11/FWA_Logo.png" alt="FWA Site of the Day" class="award-logo">
+                    <img src="https://omarthecreative.com/wp-content/uploads/2025/11/Awwwards_Logo_3.png" alt="Awwwards Site of the Day" class="award-logo">
+                    <img src="https://omarthecreative.com/wp-content/uploads/2025/11/Webby_Awards_Logo_4.png" alt="Webby Awards Honoree" class="award-logo">
+                </div>
+            </section>
+        </div>
+
+        <section class="campaign-section">
+            <div class="campaign-table">
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE CHALLENGE</h3>
+                    <div class="campaign-col-content">
+                        <p>For 150 years, New York's holiday windows existed in one place, for one season, for those who could make the journey. Five million people annually crowd Fifth Avenue sidewalks to see them. The spectacle was exclusive by geography. Google Shopping wanted to democratize the experience — to bring these windows to the world.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE INSIGHT</h3>
+                    <div class="campaign-col-content">
+                        <p>Windows aren't just displays. They're portals. Retailers spend millions creating worlds behind glass — fantasy, craft, imagination compressed into a few feet of storefront. But most of the world never sees them. What if we could turn those portals into passages anyone could walk through?</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE WORK</h3>
+                    <div class="campaign-col-content">
+                        <p>We partnered with 18 of New York's most iconic retailers to capture their 2017 holiday windows in virtual reality. Each window became an immersive VR experience, accessible to anyone with a browser, smartphone, or VR headset. The platform launched globally in December 2016, turning a New York tradition into a worldwide cultural moment.</p>
+                    </div>
+                </div>
+                <div class="campaign-col">
+                    <h3 class="campaign-col-heading">THE IMPACT</h3>
+                    <div class="campaign-col-content">
+                        <p>FWA Site of the Day. Awwwards Site of the Day. 2017 Webby Awards Honoree. Featured in Fast Company, Adweek and Mashable. Windows became wonderlands. And wonderlands became limitless.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <nav class="next-project-nav">
+            <a href="obama-foundation.html" class="next-project-link">
+                <div class="next-project-label">NEXT CUT [ 20 ]</div>
+                <h2 class="next-project-title">THE SPEECH<br>WAS ALREADY WRITTEN</h2>
+                <div class="next-project-brand">The Obama Foundation</div>
+            </a>
+        </nav>
+
+        <div class="copyright">
+            © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
+        </div>
+    </main>
+
+    <!-- Back to Top -->
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
+        [ TOP ]
+    </button>
+</body>
+</html>

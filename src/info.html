@@ -322,11 +322,34 @@
         }
         .still-here:hover { color: var(--vibrant-red); }
 
+        @media (max-width: 1024px) {
+            .apex-nav { top: 3.5rem; left: 3.5rem; right: 3.5rem; }
+            .nav-name { font-size: 1.2rem; }
+        }
+
+        @media (orientation: portrait) and (max-width: 1024px) {
+            .apex-nav { top: 3rem; left: 3rem; right: 3rem; }
+            .nav-name { font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
+        }
+
         @media (max-width: 768px) {
+            .apex-nav {
+                left: 2rem;
+                right: 2rem;
+                top: 2rem;
+            }
+            .nav-name { font-size: 1rem; }
+            .menu-close { top: 2rem; right: 2rem; }
+            .menu-link { font-size: 15vw; }
             .animate-vibrate {
                 animation: vibrate-mobile 0.15s infinite ease-in-out;
             }
             .bio-section, .dossier { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .apex-nav { top: 2.5rem; left: 2.5rem; right: 2.5rem; }
+            .nav-name { font-size: 0.8rem; max-width: 60%; line-height: 1.1; }
         }
     </style>
     <!-- Back to Top -->
@@ -445,7 +468,7 @@
 
     <nav class="apex-nav">
         <div class="nav-left">
-            <!-- Name removed for redundancy with marquee -->
+            <a href="index.html" class="nav-name">OMAR SILWANY</a>
         </div>
         <div class="nav-right">
             <div class="menu-trigger" onclick="toggleMenu(true)">[ MENU ]</div>
