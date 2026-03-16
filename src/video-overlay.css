@@ -124,7 +124,7 @@
     position: absolute;
     bottom: 180px;
     left: 40px;
-    background: #FFFFFF;
+    background: #050505;
     border: 1px solid #FFFFFF;
     padding: 12px;
     min-width: 250px;
@@ -143,13 +143,13 @@
     font-size: 8px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #000000;
+    color: #FFFFFF;
     line-height: 1.6;
 }
 
 .details-table td { padding: 2px 0; }
-.details-table .label { color: #666666; padding-right: 15px; }
-.details-table .value { color: #000000; font-weight: 600; }
+.details-table .label { color: rgba(255,255,255,0.45); padding-right: 15px; }
+.details-table .value { color: #FFFFFF; font-weight: 600; }
 
 /* BOTTOM UI BAR */
 .bottom-section {
