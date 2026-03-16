@@ -1,0 +1,467 @@
+
+/* American Haiku Video Viewfinder Overlay - 1:1 Samsung Restoration */
+
+:root {
+    --ui-color: #FFFFFF;
+    --ui-border-color: #FFFFFF;
+    --ui-hover-bg: #FFFFFF;
+    --ui-hover-text: #050505;
+    --ui-muted: rgba(255, 255, 255, 0.3);
+    --progress-track: rgba(255, 255, 255, 0.3);
+    --progress-fill: #FFFFFF;
+}
+
+#video-modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #000;
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.viewfinder-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 1;
+    transition: opacity 0.6s ease;
+}
+
+.viewfinder-overlay.controls-hidden {
+    opacity: 0;
+    pointer-events: none !important;
+}
+
+#video-modal:hover .viewfinder-overlay:not(.controls-hidden) {
+    pointer-events: all;
+}
+
+
+#close-video {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    pointer-events: all;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: #FFFFFF;
+    border: 1px solid #FFFFFF;
+    padding: 4px 8px;
+    text-transform: uppercase;
+    z-index: 100;
+    transition: all 0.1s ease;
+}
+
+#close-video:hover {
+    background: #FFFFFF;
+    color: #000000;
+}
+
+/* CENTER CONTROLS - Shifted Down */
+.center-controls {
+    position: absolute;
+    bottom: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    pointer-events: all;
+}
+
+.ctrl {
+    background: transparent;
+    border: 1px solid #FFFFFF;
+    color: #FFFFFF;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.1s ease;
+    min-width: 60px;
+}
+
+.ctrl:hover {
+    background: #FFFFFF;
+    color: #000000;
+}
+
+.ctrl .symbol { font-size: 12px; }
+.ctrl .text { font-size: 8px; }
+
+/* TIME DISPLAY — vertically centered, far right */
+.time-display {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 40px;
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    color: #FFFFFF;
+    letter-spacing: 0.5px;
+    background: transparent;
+    padding: 4px 8px;
+    border: 1px solid #FFFFFF;
+    line-height: 1.2;
+    pointer-events: all;
+}
+
+/* PROJECT DETAILS BOX */
+.project-details-box {
+    position: absolute;
+    bottom: 180px;
+    left: 40px;
+    background: #FFFFFF;
+    border: 1px solid #FFFFFF;
+    padding: 12px;
+    min-width: 250px;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 150;
+    display: none;
+    pointer-events: all;
+}
+
+.project-details-box.active { display: block; }
+
+.details-table {
+    width: 100%;
+    font-family: 'freight-sans-pro', sans-serif;
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #000000;
+    line-height: 1.6;
+}
+
+.details-table td { padding: 2px 0; }
+.details-table .label { color: #666666; padding-right: 15px; }
+.details-table .value { color: #000000; font-weight: 600; }
+
+/* BOTTOM UI BAR */
+.bottom-section {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    right: 40px;
+    pointer-events: all;
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.progress-track {
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.3);
+    position: relative;
+    cursor: pointer;
+}
+
+.progress-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0%;
+    background: #FFFFFF;
+}
+
+.duration-info {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    color: #FFFFFF;
+    min-width: 80px;
+    text-align: right;
+}
+
+.project-info {
+    text-align: center;
+    font-family: 'freight-sans-pro', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    margin-bottom: 10px;
+}
+
+/* NAV HINTS & NAVIGATION */
+.nav-hints {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    gap: 15px;
+}
+
+.hint {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #FFFFFF;
+    border: 1px solid #FFFFFF;
+    padding: 2px 6px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+}
+
+.hint:hover { background: #FFFFFF; color: #000000; }
+.key { border: 1px solid currentColor; padding: 1px 4px; font-size: 8px; }
+
+/* PROJECT NAV — rightmost of the pair */
+.project-nav-unified {
+    position: absolute;
+    right: 0;
+    left: auto;
+    transform: none;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    border: 1px solid #FFFFFF;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: #FFFFFF;
+    height: 24px;
+}
+
+.nav-prev, .nav-next {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 100%;
+    color: #FFFFFF;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+}
+
+.nav-prev { border-right: 1px solid #FFFFFF; }
+.nav-next { border-left: 1px solid #FFFFFF; }
+.nav-prev:hover, .nav-next:hover { background: #FFFFFF; color: #000000; }
+.nav-counter { padding: 0 10px; letter-spacing: 0.5px; }
+
+/* AUDIO — vertically centered, far left */
+.audio-toggle {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 40px;
+    background: transparent;
+    border: 1px solid #FFFFFF;
+    padding: 4px 8px;
+    cursor: pointer;
+    max-height: 24px;
+    display: flex;
+    align-items: center;
+    pointer-events: all;
+}
+
+.audio-toggle:hover { background: #FFFFFF; }
+.audio-toggle svg path { stroke: white; }
+.audio-toggle:hover svg path { stroke: black; }
+.audio-toggle svg path:first-child { fill: white; }
+.audio-toggle:hover svg path:first-child { fill: black; }
+
+.frame-counter {
+    position: absolute;
+    bottom: 0;
+    right: 92px; /* nav-unified width ~88px + 4px gap */
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    color: #FFFFFF;
+    padding: 2px 6px;
+    border: 1px solid #FFFFFF;
+    height: 24px;
+    min-width: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+    pointer-events: all;
+}
+
+.frame-counter:hover { background: #FFFFFF; color: #000000; }
+
+/* OVERRIDE BOTTOM SECTION FOR ABSOLUTE PLACEMENT */
+.bottom-ui-wrapper {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    right: 40px;
+    height: 60px;
+    pointer-events: none;
+}
+
+.bottom-ui-wrapper > * { pointer-events: all; }
+
+/* ============================================================
+   RESPONSIVE — MOBILE PORTRAIT
+   Controls collapse to a single row. Time display hidden.
+   ============================================================ */
+@media (max-width: 767px) and (orientation: portrait) {
+
+    /* Progress bar — pinned above control row */
+    .bottom-ui-wrapper {
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        height: auto;
+    }
+
+    .progress-container {
+        position: absolute;
+        bottom: 170px;
+        left: 0;
+        right: 0;
+        margin-bottom: 0;
+    }
+
+    .duration-info {
+        font-size: 8px;
+        min-width: 60px;
+    }
+
+    /* Project name tag — hidden on mobile, too much noise */
+    .project-info {
+        display: none;
+    }
+
+    /* ENTER / ESC hints — hidden on mobile */
+    .nav-hints {
+        display: none;
+    }
+
+    /* Audio toggle — left side of control row */
+    .audio-toggle {
+        position: absolute;
+        bottom: 130px;
+        left: 0;
+        top: auto;
+        transform: none;
+    }
+
+    /* Center playback controls — same row as audio */
+    .center-controls {
+        bottom: 130px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .center-controls .ctrl {
+        width: 32px;
+        height: 24px;
+        min-width: unset;
+        padding: 2px;
+    }
+
+    .center-controls .ctrl .symbol { font-size: 8px; }
+    .center-controls .ctrl .text   { font-size: 5px; }
+
+    /* Time display — hidden on mobile portrait */
+    .time-display {
+        display: none;
+    }
+
+    /* Project nav — smaller, bottom right */
+    .project-nav-unified {
+        position: absolute;
+        bottom: 0;
+        right: 55px;
+        left: auto;
+        transform: none;
+        width: 60px;
+        height: 20px;
+        font-size: 8px;
+        border: 1px solid #FFFFFF;
+    }
+
+    .nav-prev, .nav-next {
+        width: 20px;
+        height: 20px;
+        font-size: 8px;
+    }
+
+    .nav-counter { padding: 0 6px; }
+
+    /* Frame counter — bottom right, compact */
+    .frame-counter {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        left: auto;
+        width: 35px;
+        min-width: unset;
+        height: 20px;
+        font-size: 8px;
+        padding: 2px 4px;
+    }
+
+    /* Project details box — full width */
+    .project-details-box {
+        bottom: 200px;
+        left: 10px;
+        min-width: calc(100% - 20px);
+    }
+
+    /* Close button — tighter on mobile */
+    #close-video {
+        top: 20px;
+        right: 20px;
+        font-size: 8px;
+        padding: 3px 6px;
+    }
+}
+
+/* ============================================================
+   RESPONSIVE — MOBILE LANDSCAPE
+   Fullscreen video. All controls hidden.
+   ============================================================ */
+@media (max-width: 926px) and (orientation: landscape) and (max-height: 428px) {
+    .viewfinder-overlay > *:not(#vimeo-wrap) {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+}
+
+/* ============================================================
+   RESPONSIVE — TABLET PORTRAIT
+   Controls visible but scaled down. Time display kept.
+   ============================================================ */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+
+    .center-controls { bottom: 100px; }
+    .audio-toggle    { bottom: 100px; }
+    .time-display    { bottom: 100px; }
+
+    .bottom-ui-wrapper {
+        bottom: 30px;
+        left: 30px;
+        right: 30px;
+    }
+
+    #close-video { top: 30px; right: 30px; }
+}

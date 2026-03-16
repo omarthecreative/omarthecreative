@@ -39,7 +39,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;700&family=Playfair+Display:wght@900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">                                                                 
+    <link rel="stylesheet" href="https://use.typekit.net/shz5hny.css">
     <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="video-overlay.css">
+    <script src="https://player.vimeo.com/api/player.js"></script>
     <style>
         :root {
             --vibrant-red: #FF0000;
@@ -209,23 +213,6 @@
         }
         .btn:hover { background: var(--vibrant-red); color: white; }
 
-        #video-modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            z-index: 1000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-        #close-video {
-            position: absolute;
-            top: 2rem; right: 2rem;
-            color: white; font-family: var(--mono); font-size: 0.8rem;
-            cursor: pointer; z-index: 1001;
-            text-transform: uppercase; letter-spacing: 0.2em;
-        }
-
         .header-name {
             position: fixed;
             top: 4rem;
@@ -318,6 +305,16 @@
         }
         .script-close { position: fixed; top: 2rem; right: 2rem; font-family: var(--mono); font-size: 0.8rem; color: var(--vibrant-red); cursor: pointer; letter-spacing: 0.2em; z-index: 2100; }
         
+        /* Production Header */
+        .sc-header { text-align: center; margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 2px solid #1a1a1a; }
+        .sc-brand { font-size: 1.1em; font-weight: 700; letter-spacing: 0.15em; margin-bottom: 0.4rem; }
+        .sc-campaign { font-size: 0.95em; margin-bottom: 1.5rem; font-style: normal; }
+        .sc-format { font-size: 0.75em; letter-spacing: 0.08em; color: #444; margin-bottom: 1.8rem; }
+        .sc-byline { font-size: 0.82em; line-height: 2; margin-bottom: 0.4rem; font-weight: 700; }
+        .sc-byline-role { font-weight: 400; font-size: 0.82em; letter-spacing: 0.05em; color: #444; }
+        .sc-agency { font-size: 0.75em; color: #666; margin-top: 0.8rem; letter-spacing: 0.05em; }
+        .sc-rule { border: none; border-top: 1px solid #1a1a1a; margin: 2rem 0 0 0; }
+
         /* Screenplay Elements */
         .sc-slug { font-weight: bold; margin: 2rem 0 1rem 0; }
         .sc-action { margin-bottom: 1.5rem; }
@@ -424,8 +421,87 @@
 </head>
 <body>
     <div id="video-modal" tabindex="0" style="outline: none;">
-        <div id="close-video">[ ESC // CLOSE ]</div>
         <div id="vimeo-wrap" style="width: 100%; height: 100%;"></div>
+        
+        <div class="viewfinder-overlay">
+            <div id="close-video">[ ESC // CLOSE ]</div>
+
+            <!-- PROJECT DETAILS -->
+            <div class="project-details-box" id="video-details-drawer">
+                <table class="details-table" id="video-details-table">
+                    <!-- Populated by JS -->
+                </table>
+            </div>
+
+            <!-- CENTER CONTROLS -->
+            <div class="center-controls">
+                <button class="ctrl" id="video-rewind">
+                    <span class="symbol">◄◄</span>
+                    <span class="text">-15S</span>
+                </button>
+                <button class="ctrl" id="video-pause">
+                    <span class="symbol" id="play-pause-symbol">║</span>
+                    <span class="text" id="play-pause-text">PAUSE</span>
+                </button>
+                <button class="ctrl" id="video-forward">
+                    <span class="symbol">►►</span>
+                    <span class="text">+15S</span>
+                </button>
+            </div>
+
+            <!-- TIME DISPLAY -->
+            <div class="time-display">
+                <span class="timecode">00:00:00:00</span>
+            </div>
+
+            <!-- AUDIO TOGGLE — at center-controls height, far left -->
+            <button class="audio-toggle" id="video-audio-toggle" title="Toggle Sound [M]">
+                <span class="muted-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                        <path d="M11 5L6 9H2v6h4l5 4V5z" fill="white"/>
+                    </svg>
+                </span>
+                <span class="unmuted-icon" style="display:none">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                        <path d="M11 5L6 9H2v6h4l5 4V5z" fill="white"/>
+                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07" stroke-linecap="round"/>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14" stroke-linecap="round"/>
+                    </svg>
+                </span>
+            </button>
+
+            <!-- BOTTOM UI WRAPPER -->
+            <div class="bottom-ui-wrapper">
+                <!-- Progress -->
+                <div class="progress-container">
+                    <div class="progress-track" id="video-progress-track">
+                        <div class="progress-fill" id="video-progress-fill"></div>
+                    </div>
+                    <div class="duration-info" id="video-duration">00:00 / 00:00</div>
+                </div>
+                
+                <!-- Center Info -->
+                <div class="project-info" id="video-project-tag">
+                    PROJECT NAME — 2026
+                </div>
+                
+                <!-- Bottom Elements -->
+                <div class="nav-hints">
+                    <span class="hint clickable" id="video-enter-btn"><span class="key">↵</span> ENTER</span>
+                    <span class="hint clickable" id="video-restart-btn"><span class="key">R</span> RESTART</span>
+                </div>
+
+                <div class="project-nav-unified">
+                    <button class="nav-prev" id="video-prev-btn">←</button>
+                    <span class="nav-counter" id="video-counter">1/1</span>
+                    <button class="nav-next" id="video-next-btn">→</button>
+                </div>
+
+                <div class="frame-counter" id="video-frame-counter">
+                    F 001
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="script-overlay">
@@ -439,7 +515,7 @@
         </div>
     </div>
 
-    <div id="intel-overlay">
+    <div id="intel-overlay" tabindex="-1">
         <div class="intel-close" id="close-intel">[ ESC // CLOSE ]</div>
         <div class="intel-content">
             <div class="intel-scroll-area" id="intel-scroll-area">
@@ -511,27 +587,236 @@
 
     <script>
         const projects = [
-            { 
-                title: "SAMSUNG", 
-                subtitle: "Study Is Better With Play", 
-                vimeoId: "637229831", 
-                img: "01-samsung-study-better-play-scaled.png", 
-                role: "CREATIVE DIRECTOR, WRITER", 
+            {
+                title: "GOOGLE",
+                subtitle: "Lose The Flash",
+                vimeoId: "306235541",
+                img: "03-google-pixel-lose-the-flash-scaled-e1772256909967.png",
+                role: "CREATIVE DIRECTOR, WRITER",
+                desc: "Dracula sells cameras now.<br>Queen provides the soundtrack.<br>The flash is officially dead.<br><br>We turned Pixel's Night Sight<br>from a spec into a cultural moment.<br>No technical jargon.<br>Just vampires doing<br>what they do best.",
+                script: `
+                    <div class="sc-header">
+                        <div class="sc-brand">GOOGLE PIXEL 3</div>
+                        <div class="sc-campaign">"LOSE THE FLASH"</div>
+                        <div class="sc-format">TELEVISION COMMERCIAL — :60 · PRODUCTION DRAFT</div>
+                        <div class="sc-byline-role">CREATIVE DIRECTOR, COPY</div>
+                        <div class="sc-byline">OMAR SILWANY</div>
+                        <div class="sc-agency">JOAN NY</div>
+                        <hr class="sc-rule">
+                    </div>
+                    <div class="sc-action">[ SCRIPT SOURCE FILE NEEDED — DROP IN src/assets/script-storyboard-artifacts/03-google/ ]</div>
+                `,
+                credits: [
+                    {l: "Client", v: "Google"},
+                    {l: "Creative Director, Copy", v: "Omar Silwany"},
+                    {l: "Creative Director, Art", v: "Lars Mars Jorgensen"},
+                    {l: "Chief Creative Officer", v: "Jaime Robinson"},
+                    {l: "Agency", v: "JOAN NY"},
+                    {l: "Director", v: "Terri Timely"},
+                    {l: "Production", v: "Park Pictures"},
+                    {l: "Edit", v: "Exile"},
+                    {l: "Post/Color", v: "The Mill"}
+                ]
+            },
+            {
+                title: "SAMSUNG",
+                subtitle: "Stay Ahead Of Tomorrow",
+                vimeoId: "442857172",
+                img: "04-samsung-stay-ahead-tomorrow.png",
+                role: "CREATIVE DIRECTOR, WRITER",
+                desc: "Samsung wanted to sell 5G devices.<br>We sold Gen Z<br>their own skepticism instead.<br><br>Let our hero argue with her future.<br>Made global markets copy our playbook.<br>Turns out that little 5G icon<br>changes everything.",
+                script: `
+                    <div class="sc-header">
+                        <div class="sc-brand">SAMSUNG GALAXY</div>
+                        <div class="sc-campaign">"STAY AHEAD OF TOMORROW"</div>
+                        <div class="sc-format">GLOBAL TELEVISION COMMERCIAL — :60 · PRODUCTION DRAFT</div>
+                        <div class="sc-byline-role">CREATIVE DIRECTOR, COPY</div>
+                        <div class="sc-byline">OMAR SILWANY</div>
+                        <div class="sc-agency">PUBLICIS NYC</div>
+                        <hr class="sc-rule">
+                    </div>
+                    <div class="sc-action">[ SCRIPT SOURCE FILE NEEDED — DROP IN src/assets/script-storyboard-artifacts/04-samsung-stay-ahead-of-tomorrow/ ]</div>
+                `,
+                credits: [
+                    {l: "Client", v: "Samsung Global"},
+                    {l: "Creative Director, Copy", v: "Omar Silwany"},
+                    {l: "Creative Director, Art", v: "Joakim Saul"},
+                    {l: "Chief Creative Officer", v: "Louis-Philippe Tremblay"},
+                    {l: "Agency", v: "Publicis NYC"},
+                    {l: "Director", v: "Sara Dunlop"},
+                    {l: "Editor", v: "Maury Loeb / PS 260"},
+                    {l: "Color", v: "Fergus McCall / The Mill"}
+                ]
+            },
+            {
+                title: "BUD LIGHT",
+                subtitle: "Home Advantage",
+                vimeoId: "154384335",
+                img: "07-bud-light-home-advantage.png",
+                role: "CREATIVE DIRECTOR, COPY",
+                desc: "Super Bowl 50 needed a bottle.<br>We gave it a time machine.<br><br>Bud Light doesn't just sell beer;<br>it sells heritage.<br><br>We reminded fans<br>that the home field advantage<br>starts long before kickoff.",
+                script: `
+                    <div class="sc-header">
+                        <div class="sc-brand">BUD LIGHT</div>
+                        <div class="sc-campaign">"HOME ADVANTAGE"</div>
+                        <div class="sc-format">TELEVISION COMMERCIAL — :60 · SUPER BOWL 50 · PRODUCTION DRAFT</div>
+                        <div class="sc-byline-role">CREATIVE DIRECTOR, COPY</div>
+                        <div class="sc-byline">OMAR SILWANY</div>
+                        <div class="sc-agency">VAYNERX</div>
+                        <hr class="sc-rule">
+                    </div>
+                    <div class="sc-action">[ SCRIPT SOURCE FILE NEEDED — DROP IN src/assets/script-storyboard-artifacts/06-bud-light/ ]</div>
+                `,
+                credits: [
+                    {l: "Client", v: "Bud Light"},
+                    {l: "Creative Director, Copy", v: "Omar Silwany"},
+                    {l: "GCD", v: "Chris Bradley"},
+                    {l: "Creative Director, Art", v: "Andy Cummings"},
+                    {l: "Agency", v: "VaynerX"},
+                    {l: "Director", v: "Lucy Tcherniak"},
+                    {l: "Production", v: "Radical Media"},
+                    {l: "Editor", v: "Charlie Harvey / Whitehouse Post"}
+                ]
+            },
+            {
+                title: "LEGENCE",
+                subtitle: "Built For Building",
+                vimeoId: "1080884698",
+                img: "06-legence-built-for-building.png",
+                role: "CREATIVE DIRECTOR, ART",
+                desc: "We made infrastructure sexy.<br>$5 billion sexy, to be exact.<br><br>Turned mechanical, electrical, and plumbing<br>into a rallying cry.<br>Made engineers feel like astronauts.<br><br>Helped a company nobody heard of<br>become essential overnight.",
+                script: `
+                    <div class="sc-header">
+                        <div class="sc-brand">LEGENCE × BLACKSTONE</div>
+                        <div class="sc-campaign">"BUILT FOR BUILDING"</div>
+                        <div class="sc-format">BRAND FILM — 2:30 · PRODUCTION DRAFT</div>
+                        <div class="sc-byline-role">CREATIVE DIRECTOR, ART</div>
+                        <div class="sc-byline">OMAR SILWANY</div>
+                        <div class="sc-agency">FUNDAMENTALCO</div>
+                        <hr class="sc-rule">
+                    </div>
+                    <div class="sc-slug">FADE IN:</div>
+                    <div class="sc-slug">VARIOUS — DATA CENTERS, CONSTRUCTION SITES, FACILITIES</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">BUSINESSES, INSTITUTIONS AND GOVERNMENTS ARE INVESTING MORE IN THEIR FACILITIES THAN AT ANY OTHER TIME IN U.S. HISTORY — AS THEY BUILD DIGITAL INFRASTRUCTURE, RESHORE MANUFACTURING, AND EXPAND TO MEET GROWING DEMAND.</div>
+                    <div class="sc-action">CUT TO: ENGINEERS IN A SERVER ROOM. A SEMICONDUCTOR FAB. AN OPERATING THEATER. THESE ARE THE PLACES THAT RUN THE WORLD.</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">AT THE SAME TIME, THEY'RE FACING RISING POWER PRICES AND INCREASING PRESSURE FROM STAKEHOLDERS TO MAKE THEIR OPERATIONS MORE ENERGY EFFICIENT AND SUSTAINABLE.</div>
+                    <div class="sc-transition">CUT TO:</div>
+                    <div class="sc-slug">WIDE SHOT — LEGENCE FIELD TEAMS AT WORK</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">WE ARE LEGENCE — AND WE'RE HELPING THE WORLD'S LEADING BUSINESSES AND INSTITUTIONS CREATE MODERN, EFFICIENT, AND HEALTHY BUILDINGS THAT ARE LESS COSTLY TO OPERATE AND MORE SUSTAINABLE.</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">LEGENCE IS ONE OF THE MOST EXPERIENCED AND CAPABLE PROVIDERS OF ENGINEERING, INSTALLATION, AND MAINTENANCE SERVICES FOR MEP SYSTEMS IN THE UNITED STATES.</div>
+                    <div class="sc-action">GRAPHICS: A MAP OF THE U.S. — DOTS LIGHTING UP ACROSS 20 STATES.</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">WE EMPLOY MORE THAN 5,700 ENGINEERS, ENERGY CONSULTANTS, AND CRAFT WORKERS ACROSS OFFICES IN 20 STATES, AND WE GO TO MARKET UNDER WELL-KNOWN BRANDS THAT HAVE LONGSTANDING REPUTATIONS FOR EXCEPTIONAL SERVICE AND QUALITY.</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">WE ARE THE PREFERRED PARTNER FOR HIGH-GROWTH INDUSTRIES WITH TECHNICALLY DEMANDING BUILDINGS — INCLUDING RESEARCH LABS, DATA CENTERS, SEMICONDUCTOR FABS, PHARMACEUTICAL PRODUCTION FACILITIES, AND HOSPITALS.</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">WE COUNT MORE THAN 60% OF THE COMPANIES IN THE NASDAQ 100 AS CLIENTS.</div>
+                    <div class="sc-action">GRAPHICS: REVENUE GROWTH CHART — 2021 THROUGH 2024.</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">FROM 2021 THROUGH 2024, WE MORE THAN DOUBLED OUR REVENUES THROUGH A COMBINATION OF ORGANIC AND ACQUISITION GROWTH. AT THE END OF 2024, WE HAD MORE THAN TWO AND A HALF BILLION IN BACKLOG — REFLECTING STRONG DEMAND GOING INTO 2025.</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">AND WE'RE JUST GETTING STARTED. THERE'S NO LIMIT TO WHAT WE CAN BUILD FOR OUR CUSTOMERS AND SHAREHOLDERS.</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">WE ARE LEGENCE.</div>
+                    <div class="sc-action">SUPER: "LEGENCE. BUILT FOR BUILDING." LOGO. FADE OUT.</div>
+                `,
+                credits: [
+                    {l: "Client", v: "Legence"},
+                    {l: "Creative Director, Art", v: "Omar Silwany"},
+                    {l: "Agency", v: "Fundamentalco"},
+                    {l: "Edit", v: "Whitehouse Post"},
+                    {l: "Post & GFX", v: "Carbon"},
+                    {l: "Sound", v: "Sounds Good"}
+                ]
+            },
+            {
+                title: "CITI",
+                subtitle: "RISE",
+                vimeoId: "812285745",
+                videoScale: 1.35,
+                img: "08-citi-rise.png",
+                role: "CREATIVE DIRECTOR, COPY",
+                desc: "$1 trillion in sustainable finance<br>is complex.<br>We gave it one simple direction. Up.<br><br>We turned global capital into local impact,<br>proving that profit and purpose<br>aren't just compatible—they're powerful.",
+                script: `
+                    <div class="sc-header">
+                        <div class="sc-brand">CITI</div>
+                        <div class="sc-campaign">"RISE"</div>
+                        <div class="sc-format">TELEVISION COMMERCIAL — :30 · PRODUCTION DRAFT</div>
+                        <div class="sc-byline-role">CREATIVE DIRECTOR, COPY</div>
+                        <div class="sc-byline">OMAR SILWANY</div>
+                        <div class="sc-agency">PUBLICIS NY</div>
+                        <hr class="sc-rule">
+                    </div>
+                    <div class="sc-slug">FADE IN:</div>
+                    <div class="sc-slug">VARIOUS — MONTAGE</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">STRIVING TO REACH THE ULTIMATE GOAL OF ZERO POVERTY TAKES MORE THAN EVERYONE'S HOPES AND DREAMS.</div>
+                    <div class="sc-action">WIDE SHOTS: COMMUNITIES. SMALL BUSINESSES. FAMILIES. THE SCALE OF THE PROBLEM AND THE SCALE OF THE POSSIBLE.</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">CITI: IT TAKES A FINANCIAL COMMITMENT TO COMPANIES WHO EMPOWER PEOPLE TO LIFT THEMSELVES UP.</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">IT TAKES FUNDING AND BUILDING ON OUR KNOW-HOW TO HELP COMMUNITIES GROW.</div>
+                    <div class="sc-action">MONTAGE CONTINUES: RENEWABLE ENERGY INFRASTRUCTURE. A WOMAN OPENING A BUSINESS. A SCHOOL BEING BUILT. EACH IMAGE MOVING UPWARD IN FRAME.</div>
+                    <div class="sc-char">VOICEOVER</div>
+                    <div class="sc-dialogue">THAT'S HOW CITI IS HELPING CREATE A BETTER FUTURE — BY COMMITTING ONE TRILLION DOLLARS IN SUSTAINABLE FINANCE BY 2030. BECAUSE IT TAKES EVERYTHING TO REACH ZERO POVERTY.</div>
+                    <div class="sc-action">SUPER: "CITI." LOGO. FADE OUT.</div>
+                `,
+                credits: [
+                    {l: "Client", v: "Citi"},
+                    {l: "Creative Director, Copy", v: "Omar Silwany"},
+                    {l: "Creative Director, Art", v: "Kim Davies"},
+                    {l: "Chief Creative Officer", v: "Erica Roberts"},
+                    {l: "Agency", v: "Publicis NY"}
+                ]
+            },
+            {
+                title: "SAMSUNG",
+                subtitle: "Study Is Better With Play",
+                vimeoId: "637229831",
+                img: "01-samsung-study-better-play-scaled.png",
+                role: "CREATIVE DIRECTOR, WRITER",
                 desc: "We told students<br>to make play work for them.<br>Then proved it<br>with pen spinning.<br><br>Turned ADHD into a superpower.<br>Made fidgeting fashionable.<br>Convinced a generation<br>that distraction is focus.",
                 script: `
-                    <div class="sc-slug">INT. COMMUNITY ROOM - DAY</div>
-                    <div class="sc-action">WE OPEN ON THE SAMSUNG LOGO ON THE MYSTIC GREEN TAB S7 FE.</div>
-                    <div class="sc-action">THE CAMERA RISES TO A TOP DOWN SHOT OF A LONG TABLE. THERE IS ACADEMIC PARAPHERNALIA LAID OUT.</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">THEY TOLD US DISTRACTION WAS THE ENEMY.</div>
-                    <div class="sc-action">THE CAMERA FRAMES FOUR TAB S7 FE IN FOUR DIFFERENT COLORS. FOUR HANDS START TWIRLING THEIR S PENS IN UNISON.</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">THEY WERE WRONG.</div>
+                    <div class="sc-header">
+                        <div class="sc-brand">SAMSUNG GALAXY TAB S7 FE</div>
+                        <div class="sc-campaign">"STUDY IS BETTER WITH PLAY"</div>
+                        <div class="sc-format">TELEVISION COMMERCIAL — :30 · PRODUCTION DRAFT</div>
+                        <div class="sc-byline-role">CREATIVE DIRECTOR, COPY</div>
+                        <div class="sc-byline">OMAR SILWANY</div>
+                        <div class="sc-agency">BBH USA</div>
+                        <hr class="sc-rule">
+                    </div>
+                    <div class="sc-slug">MUSIC UP.</div>
+                    <div class="sc-slug">OVERHEAD — TABLE, FOUR TABS</div>
+                    <div class="sc-action">OPEN FROM ABOVE: FOUR HANDS REACH IN FROM THE EDGES OF FRAME. FOUR COLORED TAB S7 FES ON THE TABLE — GREEN, PINK, SILVER, BLACK. EACH HAND PICKS UP ITS MATCHING S PEN AND BEGINS TO TWIRL.</div>
+                    <div class="sc-action">SUPER: "INTRODUCING GALAXY TAB S7 FE."</div>
                     <div class="sc-transition">CUT TO:</div>
-                    <div class="sc-slug">INT. LIBRARY - MOMENTS LATER</div>
-                    <div class="sc-action">A GIRL'S HAND - DRIED PAINT SPLATTERED ON IT - TWIRLING THE GREEN S PEN.</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">STUDY IS BETTER WITH PLAY.</div>
+                    <div class="sc-slug">INT. GYM — DAY</div>
+                    <div class="sc-action">A HAND IN THE FOREGROUND — TWIRLING AN S PEN. IN THE BACKGROUND: A SPORTS HALL, STUDENTS IN MOTION. THE S PEN IS A DIFFERENT COLOR FOR EVERY HAND. EACH ONE A MATCH FOR ITS OWNER.</div>
+                    <div class="sc-action">SUPER: "S PEN IN MATCHING COLORS."</div>
+                    <div class="sc-transition">CUT TO:</div>
+                    <div class="sc-slug">C/U — S PEN ON SCREEN</div>
+                    <div class="sc-action">EXTREME CLOSE-UP: THE TIP OF AN S PEN GLIDING ACROSS THE TAB'S DISPLAY. A COLORFUL ILLUSTRATION BLOOMS BENEATH IT. NAILS PAINTED GREEN WITH A SMILEY FACE. THE SCREEN IS VAST.</div>
+                    <div class="sc-action">SUPER: "12.4\" BIG SCREEN."</div>
+                    <div class="sc-transition">CUT TO:</div>
+                    <div class="sc-slug">EXT. STAIRCASE — DAY</div>
+                    <div class="sc-action">A STUDENT ON STEPS. THE TAB S7 FE IN ONE HAND, A GALAXY PHONE IN THE OTHER. THE S PEN MOVES BETWEEN THEM — DRAWING ON THE TAB, THE SKETCH MIRRORING ACROSS TO THE PHONE. TWO SCREENS. ONE ECOSYSTEM.</div>
+                    <div class="sc-action">SUPER: "WORK ACROSS GALAXY DEVICES WITH EASE."</div>
+                    <div class="sc-transition">CUT TO:</div>
+                    <div class="sc-slug">EXT. CAMPUS — DAY</div>
+                    <div class="sc-action">A HAND HOLDS UP A GREEN TAB S7 FE — BACK OF DEVICE TO CAMERA, S PEN SEATED IN ITS SLOT. THE CAMPUS SPRAWLS IN SOFT FOCUS BEHIND IT. STUDENTS GATHERED ON THE GRASS. GOLDEN LIGHT.</div>
+                    <div class="sc-action">SUPER: "STUDY IS BETTER WITH PLAY."</div>
+                    <div class="sc-transition">SMASH CUT TO:</div>
+                    <div class="sc-slug">PRODUCT SHOT</div>
+                    <div class="sc-action">ALL FOUR COLORS OF THE GALAXY TAB S7 FE — FANNED OUT, SCREENS FACING, S PENS BESIDE THEM. CLEAN. CONFIDENT.</div>
+                    <div class="sc-action">SUPER: "GALAXY TAB S7 FE."</div>
+                    <div class="sc-transition">CUT TO:</div>
+                    <div class="sc-slug">LOGO CARD — BLACK</div>
+                    <div class="sc-action">SAMSUNG. MUSIC OUT.</div>
                 `,
                 credits: [
                     {l: "Client", v: "Samsung"},
@@ -553,13 +838,16 @@
                 role: "CREATIVE DIRECTOR, WRITER", 
                 desc: "One voice becomes a movement.<br>Obama listens.<br>Curry takes note.<br>Chance amplifies.<br><br>And it all starts<br>when a kid decides to speak.<br>50 million impressions.<br>Zero paid media.<br><br>Just truth traveling<br>at the speed of culture.",
                 script: `
-                    <div class="sc-slug">EXT. CHICAGO STREET - DAY</div>
-                    <div class="sc-action">A YOUNG MAN STANDS ALONE. THE CITY HUMS AROUND HIM.</div>
-                    <div class="sc-char">YOUNG MAN</div>
-                    <div class="sc-dialogue">I AM NOT A STATISTIC.</div>
-                    <div class="sc-action">HE BEGINS TO WALK. OTHERS JOIN HIM. THE SILENCE IS BROKEN BY A STEADY, DRIVING BEAT.</div>
-                    <div class="sc-char">BARACK OBAMA (V.O.)</div>
-                    <div class="sc-dialogue">YOU ARE THE ONES WE HAVE BEEN WAITING FOR.</div>
+                    <div class="sc-header">
+                        <div class="sc-brand">MBK ALLIANCE</div>
+                        <div class="sc-campaign">"WE ARE THE ONES"</div>
+                        <div class="sc-format">BRAND FILM — 2:00 · PRODUCTION DRAFT</div>
+                        <div class="sc-byline-role">CREATIVE DIRECTOR, COPY</div>
+                        <div class="sc-byline">OMAR SILWANY</div>
+                        <div class="sc-agency">MATTER UNLIMITED</div>
+                        <hr class="sc-rule">
+                    </div>
+                    <div class="sc-action">[ SCRIPT SOURCE FILE NEEDED — DROP IN src/assets/script-storyboard-artifacts/02-mbk-alliance/ ]</div>
                 `,
                 credits: [
                     {l: "Client", v: "MBK Alliance"},
@@ -571,133 +859,6 @@
                     {l: "Production", v: "LonelyLeap"}
                 ]
             },
-            { 
-                title: "GOOGLE PIXEL", 
-                subtitle: "Lose The Flash", 
-                vimeoId: "306235541", 
-                img: "03-google-pixel-lose-the-flash-scaled-e1772256909967.png", 
-                role: "CREATIVE DIRECTOR, WRITER", 
-                desc: "Dracula sells cameras now.<br>Queen provides the soundtrack.<br>The flash is officially dead.<br><br>We turned Pixel's Night Sight<br>from a spec into a cultural moment.<br>No technical jargon.<br>Just vampires doing<br>what they do best.",
-                script: `
-                    <div class="sc-slug">INT. DARK MANSION - NIGHT</div>
-                    <div class="sc-action">DRACULA STEPS OUT OF THE SHADOWS. HE LOOKS ANNOYED.</div>
-                    <div class="sc-char">DRACULA</div>
-                    <div class="sc-dialogue">REALLY? A FLASH? IN THIS CENTURY?</div>
-                    <div class="sc-action">HE HOLDS UP A GOOGLE PIXEL. THE SCREEN IS BRIGHT, VIBRANT, AND FLASH-FREE.</div>
-                    <div class="sc-char">DRACULA</div>
-                    <div class="sc-dialogue">LOSE THE FLASH. KEEP THE VIBE.</div>
-                `,
-                credits: [
-                    {l: "Client", v: "Google"},
-                    {l: "Creative Director, Copy", v: "Omar Silwany"},
-                    {l: "Creative Director, Art", v: "Lars Mars Jorgensen"},
-                    {l: "Chief Creative Officer", v: "Jaime Robinson"},
-                    {l: "Agency", v: "JOAN NY"},
-                    {l: "Director", v: "Terri Timely"},
-                    {l: "Production", v: "Park Pictures"},
-                    {l: "Edit", v: "Exile"},
-                    {l: "Post/Color", v: "The Mill"}
-                ]
-            },
-            { 
-                title: "SAMSUNG", 
-                subtitle: "Stay Ahead Of Tomorrow", 
-                vimeoId: "442857172", 
-                img: "04-samsung-stay-ahead-tomorrow.png", 
-                role: "CREATIVE DIRECTOR, WRITER", 
-                desc: "Samsung wanted to sell 5G devices.<br>We sold Gen Z<br>their own skepticism instead.<br><br>Let our hero argue with her future.<br>Made global markets copy our playbook.<br>Turns out that little 5G icon<br>changes everything.",
-                script: `
-                    <div class="sc-slug">EXT. NEON CITY - NIGHT</div>
-                    <div class="sc-action">A TEENAGER STARES AT A HOLOGRAM OF HERSELF FROM TEN YEARS IN THE FUTURE.</div>
-                    <div class="sc-char">TEENAGER</div>
-                    <div class="sc-dialogue">SO... DO WE EVER GET IT TOGETHER?</div>
-                    <div class="sc-char">FUTURE SELF</div>
-                    <div class="sc-parenthetical">(SMIRKING)</div>
-                    <div class="sc-dialogue">WE STAY AHEAD. THAT'S THE POINT.</div>
-                `,
-                credits: [
-                    {l: "Client", v: "Samsung Global"},
-                    {l: "Creative Director, Copy", v: "Omar Silwany"},
-                    {l: "Creative Director, Art", v: "Joakim Saul"},
-                    {l: "Chief Creative Officer", v: "Louis-Philippe Tremblay"},
-                    {l: "Agency", v: "Publicis NYC"},
-                    {l: "Director", v: "Sara Dunlop"},
-                    {l: "Editor", v: "Maury Loeb / PS 260"},
-                    {l: "Color", v: "Fergus McCall / The Mill"}
-                ]
-            },
-            { 
-                title: "LEGENCE", 
-                subtitle: "Built For Building", 
-                vimeoId: "1080884698", 
-                img: "06-legence-built-for-building.png", 
-                role: "CREATIVE DIRECTOR, ART", 
-                desc: "We made infrastructure sexy.<br>$5 billion sexy, to be exact.<br><br>Turned mechanical, electrical, and plumbing<br>into a rallying cry.<br>Made engineers feel like astronauts.<br><br>Helped a company nobody heard of<br>become essential overnight.",
-                script: `
-                    <div class="sc-slug">INT. MASSIVE DATA CENTER - DAY</div>
-                    <div class="sc-action">AN ENGINEER IN A SLEEK BLACK JUMPSUIT WALKS THROUGH A FOREST OF GLOWING PIPES.</div>
-                    <div class="sc-char">ENGINEER</div>
-                    <div class="sc-dialogue">THIS ISN'T PLUMBING. IT'S THE PULSE OF THE WORLD.</div>
-                    <div class="sc-action">WE ZOOM INTO A VALVE. IT LOOKS LIKE A PIECE OF FINE JEWELRY.</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">LEGENCE. BUILT FOR BUILDING.</div>
-                `,
-                credits: [
-                    {l: "Client", v: "Legence"},
-                    {l: "Creative Director, Art", v: "Omar Silwany"},
-                    {l: "Agency", v: "Fundamentalco"},
-                    {l: "Edit", v: "Whitehouse Post"},
-                    {l: "Post & GFX", v: "Carbon"},
-                    {l: "Sound", v: "Sounds Good"}
-                ]
-            },
-            { 
-                title: "BUD LIGHT", 
-                subtitle: "Home Advantage", 
-                vimeoId: "154384335", 
-                img: "07-bud-light-home-advantage.png", 
-                role: "CREATIVE DIRECTOR, COPY", 
-                desc: "Super Bowl 50 needed a bottle.<br>We gave it a time machine.<br><br>Bud Light doesn't just sell beer;<br>it sells heritage.<br><br>We reminded fans<br>that the home field advantage<br>starts long before kickoff.",
-                script: `
-                    <div class="sc-slug">EXT. STADIUM PARKING LOT - DAY</div>
-                    <div class="sc-action">A FATHER AND SON OPEN A VINTAGE COOLER. A GOLDEN BUD LIGHT BOTTLE GLINTS IN THE SUN.</div>
-                    <div class="sc-char">FATHER</div>
-                    <div class="sc-dialogue">THIS WAS MY DAD'S SPOT. NOW IT'S OURS.</div>
-                    <div class="sc-action">THE SOUND OF THE CROWD ROARS IN THE DISTANCE. THE BOTTLE IS SWEATING. IT LOOKS PERFECT.</div>
-                `,
-                credits: [
-                    {l: "Client", v: "Bud Light"},
-                    {l: "Creative Director, Copy", v: "Omar Silwany"},
-                    {l: "GCD", v: "Chris Bradley"},
-                    {l: "Creative Director, Art", v: "Andy Cummings"},
-                    {l: "Agency", v: "VaynerX"},
-                    {l: "Director", v: "Lucy Tcherniak"},
-                    {l: "Production", v: "Radical Media"},
-                    {l: "Editor", v: "Charlie Harvey / Whitehouse Post"}
-                ]
-            },
-            { 
-                title: "CITI", 
-                subtitle: "RISE", 
-                vimeoId: "812285745", 
-                img: "08-citi-rise.png", 
-                role: "CREATIVE DIRECTOR, COPY", 
-                desc: "$1 trillion in sustainable finance<br>is complex.<br>We gave it one simple direction. Up.<br><br>We turned global capital into local impact,<br>proving that profit and purpose<br>aren't just compatible—they're powerful.",
-                script: `
-                    <div class="sc-slug">EXT. VARIOUS LOCATIONS - MONTAGE</div>
-                    <div class="sc-action">A WIND TURBINE SPINS. A SMALL BUSINESS OPENS ITS DOORS. A CHILD FLIPS A LIGHT SWITCH.</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">MONEY IS JUST A TOOL. IT'S WHAT YOU DO WITH IT THAT MATTERS.</div>
-                    <div class="sc-action">THE CAMERA PAN UP TO THE CITI LOGO AGAINST A CLEAR BLUE SKY.</div>
-                `,
-                credits: [
-                    {l: "Client", v: "Citi"},
-                    {l: "Creative Director, Copy", v: "Omar Silwany"},
-                    {l: "Creative Director, Art", v: "Kim Davies"},
-                    {l: "Chief Creative Officer", v: "Erica Roberts"},
-                    {l: "Agency", v: "Publicis NY"}
-                ]
-            }
         ];
 
         let currentIndex = -1;
@@ -816,24 +977,208 @@
             actionGroup.classList.add('visible');
         });
 
-        watchBtn.addEventListener('click', () => {
-            const p = projects[currentIndex];
-            vimeoWrap.innerHTML = `<iframe src="https://player.vimeo.com/video/${p.vimeoId}?autoplay=1&loop=1&background=0&muted=0&title=0&byline=0&portrait=0" style="width:100%;height:100%;border:none;" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-            modal.style.display = 'flex';
+        let vimeoPlayer = null;
+        let isPaused = false;
+        let isMuted = true;
+
+        function loadVideoProject(index) {
+            const p = projects[index];
+            const scaleStyle = p.videoScale ? `transform:scale(${p.videoScale});transform-origin:center 40%;` : '';
+            vimeoWrap.innerHTML = `<iframe src="https://player.vimeo.com/video/${p.vimeoId}?autoplay=1&loop=1&controls=0&muted=1&title=0&byline=0&portrait=0&transparent=0&dnt=1" style="width:100%;height:100%;border:none;${scaleStyle}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
             
-            // Force focus back to window so ESC works even if iframe steals it
+            // Initialize Vimeo Player API
+            const iframe = vimeoWrap.querySelector('iframe');
+            vimeoPlayer = new Vimeo.Player(iframe);
+            
+            // Set Project Metadata
+            document.getElementById('video-project-tag').textContent = `${p.title} — ${p.subtitle.toUpperCase()}`;
+            document.getElementById('video-counter').textContent = `${index + 1}/${projects.length}`;
+            
+            // Populate Details Drawer
+            const detailsTable = document.getElementById('video-details-table');
+            detailsTable.innerHTML = p.credits.map(c => `
+                <tr>
+                    <td class="label">${c.l}</td>
+                    <td class="value">${c.v}</td>
+                </tr>
+            `).join('');
+            
+            // Hide drawer initially
+            document.getElementById('video-details-drawer').classList.remove('active');
+
+            // API Handlers
+            vimeoPlayer.on('timeupdate', (data) => {
+                const percent = data.percent * 100;
+                document.getElementById('video-progress-fill').style.width = `${percent}%`;
+                
+                // Update time display
+                const mins = Math.floor(data.seconds / 60);
+                const secs = Math.floor(data.seconds % 60);
+                const durationMins = Math.floor(data.duration / 60);
+                const durationSecs = Math.floor(data.duration % 60);
+                
+                document.getElementById('video-duration').textContent = 
+                    `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')} / ${durationMins.toString().padStart(2, '0')}:${durationSecs.toString().padStart(2, '0')}`;
+                
+                // Update TC
+                document.querySelector('.timecode').textContent = `00:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}:00`;
+                
+                const frames = Math.floor(data.seconds * 24);
+                document.getElementById('video-frame-counter').textContent = `F ${frames.toString().padStart(3, '0')}`;
+            });
+
+            vimeoPlayer.on('play', () => {
+                isPaused = false;
+                document.getElementById('play-pause-symbol').textContent = '║';
+                document.getElementById('play-pause-text').textContent = 'PAUSE';
+            });
+
+            vimeoPlayer.on('pause', () => {
+                isPaused = true;
+                document.getElementById('play-pause-symbol').textContent = '►';
+                document.getElementById('play-pause-text').textContent = 'PLAY';
+            });
+        }
+
+        // AUTO-HIDE OVERLAY CONTROLS
+        const viewfinderOverlay = document.querySelector('.viewfinder-overlay');
+        let hideControlsTimer;
+
+        function showControls() {
+            viewfinderOverlay.classList.remove('controls-hidden');
+            clearTimeout(hideControlsTimer);
+            hideControlsTimer = setTimeout(() => {
+                viewfinderOverlay.classList.add('controls-hidden');
+            }, 3000);
+        }
+
+        function stopAutoHide() {
+            clearTimeout(hideControlsTimer);
+            viewfinderOverlay.classList.remove('controls-hidden');
+        }
+
+        modal.addEventListener('mousemove', showControls);
+        modal.addEventListener('touchstart', showControls, { passive: true });
+
+        watchBtn.addEventListener('click', () => {
+            modal.style.display = 'flex';
+            loadVideoProject(currentIndex);
+            showControls();
             setTimeout(() => window.focus(), 500);
-            const focusInterval = setInterval(() => {
-                if (modal.style.display === 'flex') {
-                    if (document.activeElement.tagName === 'IFRAME') {
-                        window.focus();
-                    }
-                } else {
-                    clearInterval(focusInterval);
+            startFocusLock();
+            markAsViewed(`v-${currentIndex}`);
+        });
+
+        document.getElementById('video-prev-btn').addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + projects.length) % projects.length;
+            loadVideoProject(currentIndex);
+        });
+
+        document.getElementById('video-next-btn').addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % projects.length;
+            loadVideoProject(currentIndex);
+        });
+
+        const toggleDetailsDrawer = () => {
+            const drawer = document.getElementById('video-details-drawer');
+            drawer.classList.toggle('active');
+        };
+
+        const restartVideo = () => {
+            if (vimeoPlayer) {
+                vimeoPlayer.setCurrentTime(0);
+                vimeoPlayer.play();
+            }
+        };
+
+        document.getElementById('video-enter-btn').addEventListener('click', toggleDetailsDrawer);
+        document.getElementById('video-restart-btn').addEventListener('click', restartVideo);
+
+        // Keyboard Shortcuts for Video Overlay
+        window.addEventListener('keydown', (e) => {
+            if (modal.style.display === 'flex') {
+                if (e.key === 'ArrowRight') document.getElementById('video-next-btn').click();
+                if (e.key === 'ArrowLeft') document.getElementById('video-prev-btn').click();
+                if (e.key === 'Enter') { e.preventDefault(); toggleDetailsDrawer(); }
+                if (e.key === ' ') { e.preventDefault(); document.getElementById('video-pause').click(); }
+                if (e.key === 'm' || e.key === 'M') document.getElementById('video-audio-toggle').click();
+                if (e.key === 'r' || e.key === 'R') restartVideo();
+            }
+        });
+
+        // Periodic focus lock — prevents Vimeo iframe from stealing keyboard events
+        let focusInterval;
+        function startFocusLock() {
+            focusInterval = setInterval(() => {
+                if (modal.style.display === 'flex' && document.activeElement !== document.body) {
+                    window.focus();
+                    document.body.focus();
                 }
             }, 1000);
+        }
+        function stopFocusLock() { clearInterval(focusInterval); }
 
-            markAsViewed(`v-${currentIndex}`);
+        // Overlay Control Listeners
+        document.getElementById('video-pause').addEventListener('click', () => {
+            if (isPaused) {
+                vimeoPlayer.play();
+            } else {
+                vimeoPlayer.pause();
+            }
+        });
+
+        document.getElementById('video-rewind').addEventListener('click', () => {
+            vimeoPlayer.getCurrentTime().then(time => {
+                vimeoPlayer.setCurrentTime(Math.max(0, time - 15));
+            });
+        });
+
+        document.getElementById('video-forward').addEventListener('click', () => {
+            vimeoPlayer.getCurrentTime().then(time => {
+                vimeoPlayer.setCurrentTime(time + 15);
+            });
+        });
+
+        document.getElementById('video-audio-toggle').addEventListener('click', () => {
+            isMuted = !isMuted;
+            vimeoPlayer.setVolume(isMuted ? 0 : 1);
+            document.querySelector('.muted-icon').style.display = isMuted ? 'inline' : 'none';
+            document.querySelector('.unmuted-icon').style.display = isMuted ? 'none' : 'inline';
+        });
+
+        document.getElementById('video-progress-track').addEventListener('click', (e) => {
+            const rect = e.target.getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            vimeoPlayer.getDuration().then(duration => {
+                vimeoPlayer.setCurrentTime(duration * pos);
+            });
+        });
+
+        document.getElementById('close-video').addEventListener('click', () => {
+            modal.style.display = 'none';
+            stopAutoHide();
+            stopFocusLock();
+            if (vimeoPlayer) vimeoPlayer.unload();
+            vimeoWrap.innerHTML = '';
+
+            // Return to the project's WATCH/LEARN state — not full reset
+            if (currentIndex !== -1) {
+                const p = projects[currentIndex];
+                titleEl.textContent = p.title;
+                subtitleEl.innerHTML = p.subtitle;
+                document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
+                const bg = document.getElementById(`bg-${currentIndex}`);
+                if (bg) bg.classList.add('active');
+                const initialBg = document.getElementById('initial-bg');
+                if (initialBg) { initialBg.classList.remove('active'); initialBg.style.display = 'none'; }
+                actionGroup.classList.add('visible');
+            }
+        });
+
+        intelBtn.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && intelOverlay.style.display === 'flex') {
+                e.preventDefault();
+            }
         });
 
         intelBtn.addEventListener('click', () => {
@@ -860,22 +1205,24 @@
             
             intelOverlay.style.display = 'flex';
             markAsViewed(`v-${currentIndex}`);
+            intelOverlay.focus();
         });
 
-        document.getElementById('close-video').addEventListener('click', () => { modal.style.display = 'none'; vimeoWrap.innerHTML = ''; });
-        
+        document.getElementById('close-intel').addEventListener('click', () => {
+            intelOverlay.style.display = 'none';
+        });
+
+        // Modal Cleanup
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                modal.style.display = 'none';
-                vimeoWrap.innerHTML = '';
+                document.getElementById('close-video').click();
             }
         });
 
         const handleEscape = (e) => {
             if (e.key === 'Escape') {
                 if (modal.style.display === 'flex') {
-                    modal.style.display = 'none';
-                    vimeoWrap.innerHTML = '';
+                    document.getElementById('close-video').click();
                     return;
                 }
                 if (scriptOverlay.style.display === 'flex') {
@@ -902,7 +1249,6 @@
         };
 
         window.addEventListener('keydown', handleEscape);
-        document.addEventListener('keydown', handleEscape);
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
