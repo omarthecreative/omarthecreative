@@ -51,31 +51,34 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 4rem 2rem;
+            position: relative;
+            z-index: 10;
         }
         
-        /* INFO HERO */
-        .info-hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            position: relative;
-            margin-bottom: 4rem;
-        }
-        .info-hero img {
-            position: absolute;
+        /* LOCKED BACKGROUND */
+        .hero-background {
+            position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover;
-            object-position: center center;
-            filter: grayscale(1) contrast(1.1) brightness(0.4);
             z-index: -1;
+            background: #000;
+            pointer-events: none;
         }
-        /* Cinematic Gradient Fade - Full Height Ease-In */
-        .info-hero::after {
+        .hero-bg-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url('assets/hedi-slimane-hero.webp');
+            background-size: cover;
+            background-position: center center;
+            filter: grayscale(1) contrast(1.1) brightness(0.4);
+            opacity: 1;
+            z-index: 0;
+        }
+        /* Cinematic Gradient Fade - Fixed */
+        .hero-background::after {
             content: "";
             position: absolute;
-            bottom: 0;
+            top: 0;
             left: 0;
             width: 100%;
             height: 100%;
@@ -87,9 +90,21 @@
                 rgba(5, 5, 5, 0.6) 80%,
                 rgba(5, 5, 5, 0.9) 95%,
                 #050505 100%);
-            z-index: 0;
-            pointer-events: none; /* Prevent overlay from blocking clicks */
+            z-index: 1;
         }
+
+        /* INFO HERO */
+        .info-hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            position: relative;
+            margin-bottom: 4rem;
+            background: transparent;
+        }
+        
         .info-hero .title {
             font-family: var(--display);
             font-size: 15vw;
@@ -106,6 +121,64 @@
         }
         .info-hero .title:hover {
             transform: scale(1.01);
+        }
+
+        /* HUD ELEMENTS */
+        .corner-frame {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            right: 2rem;
+            bottom: 2rem;
+            border: 1px solid rgba(255, 0, 60, 0.1);
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--vibrant-red);
+            opacity: 0.8;
+        }
+        .tl { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+        .tr { top: -1px; right: -1px; border-left: 0; border-bottom: 0; }
+        .bl { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
+        .br { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+
+        .hud-tag {
+            position: fixed;
+            font-family: var(--mono);
+            font-size: 0.5rem;
+            letter-spacing: 0.2em;
+            color: var(--vibrant-red);
+            opacity: 0.4;
+            pointer-events: none;
+            text-transform: uppercase;
+            z-index: 10000;
+        }
+        .hud-tl { top: 0.8rem; left: 2rem; }
+        .hud-tr { top: 0.8rem; right: 2rem; }
+        .hud-bl { bottom: 0.8rem; left: 2rem; }
+        .hud-br { bottom: 0.8rem; right: 2rem; }
+
+        .redacted-link {
+            background: var(--vibrant-red);
+            color: var(--vibrant-red);
+            text-decoration: none;
+            cursor: pointer;
+            padding: 0 0.2em;
+        }
+        .redacted-link:hover {
+            opacity: 0.8;
+        }
+        .redacted-bar {
+            display: inline-block;
+            background: var(--vibrant-red);
+            height: 0.8em;
+            vertical-align: middle;
+            margin: 0 0.1em;
+            opacity: 0.9;
         }
 
         /* HIGH-IMPACT VIBRATION */
@@ -180,18 +253,6 @@
             text-wrap: pretty;
         }
 
-        .nav-name {
-            color: white;
-            text-decoration: none;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            font-weight: 900;
-            z-index: 100;
-            font-style: normal;
-        }
-        .nav-name:hover { color: white; }
         .menu-trigger {
             font-family: var(--mono);
             font-size: 0.55rem;
@@ -201,6 +262,7 @@
             cursor: pointer;
             text-transform: uppercase;
             transition: opacity 0.3s ease;
+            z-index: 10001;
         }
         .menu-trigger:hover {
             opacity: 1;
@@ -303,7 +365,7 @@
             left: 4rem;
             right: 4rem;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end; /* Just the menu trigger */
             z-index: 10000;
             mix-blend-mode: difference;
         }
@@ -321,6 +383,20 @@
             text-decoration: none;
         }
         .still-here:hover { color: var(--vibrant-red); }
+
+        .copyright-tag {
+            position: fixed;
+            bottom: 0.8rem;
+            width: 100%;
+            text-align: center;
+            opacity: 0.3;
+            font-family: var(--mono);
+            font-size: 0.45rem;
+            letter-spacing: 0.1em;
+            pointer-events: none;
+            z-index: 100;
+            text-transform: uppercase;
+        }
 
         @media (max-width: 1024px) {
             .apex-nav { top: 3.5rem; left: 3.5rem; right: 3.5rem; }
@@ -455,6 +531,17 @@
     </script>
 </head>
 <body>
+    <div class="hero-background">
+        <div class="hero-bg-image"></div>
+    </div>
+    <div class="corner-frame">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="hud-tag hud-tl">[ DOSSIER: SILWANY ]</div>
+        <div class="hud-tag hud-tr">[ LUT: RUBY ] [ COORDS: 29.5844° N, 81.2081° W ]</div>
+        <div class="hud-tag hud-bl">[ STATUS: ACTIVE ] [ 24 FPS ]</div>
+        <div class="hud-tag hud-br">[ BAT: 94% ]</div>
+    </div>
     <div id="hud-toast"></div>
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
@@ -467,16 +554,12 @@
     </div>
 
     <nav class="apex-nav">
-        <div class="nav-left">
-            <a href="index.html" class="nav-name">OMAR SILWANY</a>
-        </div>
         <div class="nav-right">
             <div class="menu-trigger" onclick="toggleMenu(true)">[ MENU ]</div>
         </div>
     </nav>
 
     <div class="info-hero">
-        <img src="assets/hedi-slimane-hero.webp" alt="Observation Aesthetic">
         <h1 class="title animate-vibrate">OMAR SILWANY</h1>
     </div>
 
@@ -489,28 +572,28 @@
                 <p>I've helped a President help young men help each other, named a credit card still running 16 years later, and launched two Samsung campaigns that went global. I conspired with Dracula to kill flash photography. And convinced a generation that pen-spinning is focus. I write manifestos. One got me hired on the&nbsp;spot.</p>
                 <p>Pre-med and poetry at Cornell. Mentored by A.R. Ammons. He taught me that science and art aren't that far&nbsp;apart.</p>
                 <p>Born in Nicaragua's highlands. Grown under Miami Beach's sun. Forged in New&nbsp;York.</p>
-                <p>Now operating globally as <a href="https://meanwhileinjupiter.com" target="_blank">Meanwhile In&nbsp;Jupiter</a>.</p>
+                <p>Now operating globally as <a href="https://meanwhileinjupiter.com" target="_blank" class="redacted-link">Meanwhile In&nbsp;Jupiter</a>.</p>
             </div>
         </section>
 
         <section class="dossier">
             <div class="dossier-label">Agencies</div>
-            <div class="dossier-content">Ogilvy, BBH, Grey, Publicis, Dentsu, McGarryBowen, Momentum Worldwide, VaynerX, JOAN, Erich & Kallman, Seven Bucks Creative, Matter Unlimited, GROW, Fundamentalco, 5 O'Clock.</div>
+            <div class="dossier-content">Ogilvy, BBH, Grey, <span class="redacted-bar" style="width: 80px;"></span>, Publicis, Dentsu, McGarryBowen, Momentum Worldwide, VaynerX, JOAN, <span class="redacted-bar" style="width: 40px;"></span>, Erich & Kallman, Seven Bucks Creative, Matter Unlimited, GROW, Fundamentalco, 5 O'Clock.</div>
         </section>
 
         <section class="dossier">
             <div class="dossier-label">Client Collaborators</div>
-            <div class="dossier-content">Google, Samsung, Chase, American Express, Verizon, Bentley, Under Armour, Guinness, Johnnie Walker, Honda, Panasonic, Disney, Kraft, Citi, Glenfiddich, Balvenie, Stoli, SKYY, Espolón, Crayola, Bud Light, Legence, MBK Alliance.</div>
+            <div class="dossier-content">Google, Samsung, Chase, <span class="redacted-bar" style="width: 60px;"></span>, American Express, Verizon, Bentley, Under Armour, Guinness, <span class="redacted-bar" style="width: 90px;"></span>, Johnnie Walker, Honda, Panasonic, Disney, Kraft, Citi, Glenfiddich, Balvenie, Stoli, SKYY, Espolón, Crayola, Bud Light, Legence, MBK Alliance.</div>
         </section>
 
         <section class="dossier">
             <div class="dossier-label">Notably</div>
-            <div class="dossier-content">Cooked in Google's kitchen. Robert McKee Story Seminar graduate. One Page Poetry, Founding Editor. Published Science Journal Author.<br><br>Triathlete. Bike Builder. Certified Scuba Diver.<br><br>Child Cancer Awareness&nbsp;Advocate.</div>
+            <div class="dossier-content">Cooked in Google's kitchen. Robert McKee Story Seminar graduate. One Page Poetry, Founding Editor. Published Science Journal Author.<br><br>Triathlete. Bike Builder. <span class="redacted-bar" style="width: 110px;"></span>, Certified Scuba Diver.<br><br>Child Cancer Awareness&nbsp;Advocate.</div>
         </section>
 
         <section class="dossier">
             <div class="dossier-label">Wins</div>
-            <div class="dossier-content">J.P. Morgan, Bentley, Under Armour, United States Olympic Committee, Guinness, Verizon DROID, Verizon FiOS, Honda Hybrids, Uniqlo, Panasonic Lumix, Newscorp, USGA, Patrón, SKYY Vodka, Espolón Tequila, Montenegro, Oxygen.</div>
+            <div class="dossier-content">J.P. Morgan, Bentley, Under Armour, <span class="redacted-bar" style="width: 50px;"></span>, United States Olympic Committee, Guinness, Verizon DROID, Verizon FiOS, Honda Hybrids, Uniqlo, Panasonic Lumix, <span class="redacted-bar" style="width: 130px;"></span>, Newscorp, USGA, Patrón, SKYY Vodka, Espolón Tequila, Montenegro, Oxygen.</div>
         </section>
 
         <footer>
@@ -520,10 +603,12 @@
             </div>
             <a href="https://www.youtube.com/watch?v=GKY--qaHWSw" target="_blank" class="still-here">still here?</a>
             <div style="margin-top: 2rem; opacity: 0.2; font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase;">
-                © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.<br>
                 DESIGNED & MAINTAINED BY <a href="https://meanwhileinjupiter.com" target="_blank" style="color: inherit; text-decoration: none;">MEANWHILE IN JUPITER LLC</a>.
             </div>
         </footer>
+    </div>
+    <div class="copyright-tag">
+        © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
     </div>
 </body>
 </html>
