@@ -90,6 +90,8 @@
             color: var(--vibrant-red);
             letter-spacing: -0.04em;
             text-shadow: 0 0 20px var(--glow);
+            text-align: left;
+            min-height: 0.8em;
         }
 
         /* HIGH-IMPACT VIBRATION */
@@ -116,6 +118,36 @@
             opacity: 1;
             z-index: 5;
             line-height: 1.1;
+            text-align: left;
+        }
+        .rotating-wrap {
+            position: relative;
+            display: inline-block;
+        }
+        #rotating-word {
+            display: inline-block;
+        }
+        .type-cursor {
+            position: absolute;
+            left: 100%;
+            top: 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-style: normal;
+            font-size: 0.85em;
+            font-weight: 400;
+            color: var(--vibrant-red);
+            opacity: 0;
+            margin-left: 2px;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        .type-cursor.active {
+            opacity: 1;
+            animation: cursor-blink 0.6s step-end infinite;
+        }
+        @keyframes cursor-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
         }
         .footer-metadata {
             position: absolute;
@@ -564,8 +596,8 @@
             OMAR SILWANY
         </a>
         
-        <div class="project-display">
-            <div class="subtitle" id="project-subtitle">I craft copy<br> into ideas into<br> scripts into films into culture.</div>
+        <div class="project-display" id="project-display">
+            <div class="subtitle" id="project-subtitle">I craft copy<br> into ideas into<br> scripts into <span class="rotating-wrap"><span id="rotating-word">films</span><span class="type-cursor" id="type-cursor">|</span></span> into culture.</div>
             <h1 class="title animate-vibrate" id="project-title">BROUHAHAHA</h1>
         </div>
         
@@ -598,13 +630,74 @@
                     <div class="sc-header">
                         <div class="sc-brand">GOOGLE PIXEL 3</div>
                         <div class="sc-campaign">"LOSE THE FLASH"</div>
-                        <div class="sc-format">TELEVISION COMMERCIAL — :60 · PRODUCTION DRAFT</div>
+                        <div class="sc-format">TELEVISION COMMERCIAL — :35 · PRODUCTION DRAFT</div>
                         <div class="sc-byline-role">CREATIVE DIRECTOR, COPY</div>
                         <div class="sc-byline">OMAR SILWANY</div>
                         <div class="sc-agency">JOAN NY</div>
                         <hr class="sc-rule">
                     </div>
-                    <div class="sc-action">[ SCRIPT SOURCE FILE NEEDED — DROP IN src/assets/script-storyboard-artifacts/03-google/ ]</div>
+
+                    <div class="sc-action">MUSIC: "Flash" — Queen / Flash Gordon OST (1980)</div>
+
+                    <div class="sc-slug">OPEN — INTERCUT: UGC STILLS + DRACULA</div>
+
+                    <p>Bass line. We cut through a rapid series of flash-ruined still photographs — faces washed out, eyes red, moments flattened to white noise. Real. Grainy. User-generated.</p>
+
+                    <div class="sc-action">MUSIC: bass line builds</div>
+
+                    <p>DRACULA. In his element. Camera flash fires in his face.</p>
+
+                    <div class="sc-action">MUSIC (in sync with flash): FREDDIE MERCURY — "FLASH! AH! AHHH!"</div>
+
+                    <p>He recoils. More stills. Another flash. DRACULA again — different angle, same indignity.</p>
+
+                    <div class="sc-action">MUSIC: "FLASH! AH! AHHH!"</div>
+
+                    <p>Then: a still of two women on a plane. One is asleep — mouth open, completely gone. Her friend leans in to sneak a selfie with her. Flash fires. The sleeper jolts awake. The prank is over before it started. The prankster is busted.</p>
+
+                    <div class="sc-slug">BEAT TWO — INT. RESTAURANT — NIGHT</div>
+
+                    <p>Two foodies lean over a candlelit table, phones raised, firing flash after flash at their food. Their neighbors wince. A couple at the next table shares a look. A waiter passes, completely unfazed. He's seen this every night.</p>
+
+                    <div class="sc-action">MUSIC: chorus builds</div>
+
+                    <div class="sc-slug">BEAT THREE — INT. SMALL MUSIC VENUE — NIGHT</div>
+
+                    <p>A male guitarist performs on a small, warmly lit stage. Intimate. Something real is happening here. An audience member raises a phone — flash fires. The guitarist flinches mid-song. The spell breaks.</p>
+
+                    <div class="sc-action">MUSIC: heroic orchestral swell begins</div>
+
+                    <p>The same stage. The same man. The same amber light. Two versions of the same shot:</p>
+
+                    <p>First — with flash. Blown out. Overexposed. The face obliterated.</p>
+
+                    <div class="sc-action">SUPER: "Lose the flash"</div>
+
+                    <p>Then — Night Sight. The same frame, perfectly rendered. Warm. Alive. Every detail intact.</p>
+
+                    <div class="sc-action">SUPER: "Not the moment"</div>
+
+                    <div class="sc-slug">PRODUCT INTRODUCTION — PIXEL 3</div>
+
+                    <p>The Pixel 3. The answer.</p>
+
+                    <div class="sc-slug">CLOSER — INT. PLANE — NIGHT (CALLBACK)</div>
+
+                    <p>The two women from the plane. The prankster leans in again — this time no flash. Her friend is still out cold, mouth open, completely unaware. The shot is perfect. The prankster is delighted. The prank finally lands.</p>
+
+                    <div class="sc-action">SUPER: "Night Sight"</div>
+
+                    <p>The same super holds as we reveal the photo glowing on a Pixel 3 screen.</p>
+
+                    <div class="sc-action">SUPER: "Night Sight" (continuous — over scene and over device)</div>
+
+                    <p>The Pixel 3 rotates. Back panel. Clean. Dark.</p>
+
+                    <div class="sc-action">SUPER: "Pixel 3"</div>
+
+                    <div class="sc-slug">END CARD — WHITE</div>
+
+                    <div class="sc-action">Google G logo. :35.</div>
                 `,
                 credits: [
                     {l: "Client", v: "Google"},
@@ -967,6 +1060,8 @@
                 initialBg.style.display = 'none'; // HARD REMOVE
             }
 
+            subtitleCycle.pause();
+            projectDisplay.style.width = '';
             currentIndex = (currentIndex + 1) % projects.length;
             const p = projects[currentIndex];
             titleEl.textContent = p.title;
@@ -1164,6 +1259,7 @@
             // Return to the project's WATCH/LEARN state — not full reset
             if (currentIndex !== -1) {
                 const p = projects[currentIndex];
+                projectDisplay.style.width = '';
                 titleEl.textContent = p.title;
                 subtitleEl.innerHTML = p.subtitle;
                 document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
@@ -1235,8 +1331,6 @@
                 }
                 if (actionGroup.classList.contains('visible')) {
                     currentIndex = -1;
-                    titleEl.textContent = "BROUHAHAHA";
-                    subtitleEl.innerHTML = "I craft copy<br> into ideas into<br> scripts into films into culture.";
                     document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
                     const initialBg = document.getElementById('initial-bg');
                     if (initialBg) {
@@ -1244,9 +1338,105 @@
                         setTimeout(() => initialBg.classList.add('active'), 10);
                     }
                     actionGroup.classList.remove('visible');
+                    fitLockup(nextHeadlineWord());
+                    subtitleCycle.resume();
                 }
             }
         };
+
+        // — SUBTITLE WORD ROTATION —
+        const subtitleCycle = (function() {
+            const SUBTITLE_HTML = (word) =>
+                `I craft copy<br> into ideas into<br> scripts into <span class="rotating-wrap"><span id="rotating-word">${word}</span><span class="type-cursor" id="type-cursor">|</span></span> into culture.`;
+
+            const words = ['films', 'actions', 'sites', 'campaigns'];
+            let current = 0;
+            let running = false;
+            let timer = null;
+
+            const DELETE_SPEED  = 60;
+            const TYPE_SPEED    = 90;
+            const PAUSE_BETWEEN = 220;
+            const HOLD_DURATION = 3200;
+
+            const wordEl  = () => document.getElementById('rotating-word');
+            const cursor  = () => document.getElementById('type-cursor');
+
+            function deleteWord(word, cb) {
+                cursor().classList.add('active');
+                let i = word.length;
+                const iv = setInterval(() => {
+                    if (!running) { clearInterval(iv); return; }
+                    wordEl().textContent = word.slice(0, --i);
+                    if (i === 0) { clearInterval(iv); setTimeout(cb, PAUSE_BETWEEN); }
+                }, DELETE_SPEED);
+            }
+
+            function typeWord(word, cb) {
+                let i = 0;
+                const iv = setInterval(() => {
+                    if (!running) { clearInterval(iv); return; }
+                    wordEl().textContent = word.slice(0, ++i);
+                    if (i === word.length) {
+                        clearInterval(iv);
+                        cursor().classList.remove('active');
+                        timer = setTimeout(cb, HOLD_DURATION);
+                    }
+                }, TYPE_SPEED);
+            }
+
+            function cycle() {
+                if (!running) return;
+                current = (current + 1) % words.length;
+                deleteWord(words[(current - 1 + words.length) % words.length], () => {
+                    if (running) typeWord(words[current], cycle);
+                });
+            }
+
+            return {
+                currentWord() { return words[current]; },
+                start() {
+                    running = true;
+                    timer = setTimeout(cycle, HOLD_DURATION);
+                },
+                pause() {
+                    running = false;
+                    clearTimeout(timer);
+                },
+                resume() {
+                    current = 0;
+                    subtitleEl.innerHTML = SUBTITLE_HTML(words[0]);
+                    running = true;
+                    timer = setTimeout(cycle, HOLD_DURATION);
+                }
+            };
+        })();
+
+        subtitleCycle.start();
+
+        // — HEADLINE WORD — one word per visit/return, no in-page animation
+        const HEADLINE_WORDS = ['BROUHAHAHA', 'HULLABAWHO', 'PANDEMONEYUM', 'RAZZZMATAZZZ', 'FUNISSIMO'];
+        const projectDisplay = document.getElementById('project-display');
+
+        function nextHeadlineWord() {
+            const idx = (parseInt(localStorage.getItem('omar_headline_idx') || '-1') + 1) % HEADLINE_WORDS.length;
+            localStorage.setItem('omar_headline_idx', idx);
+            return HEADLINE_WORDS[idx];
+        }
+
+        function fitLockup(word) {
+            titleEl.textContent = word;
+            // Skip width constraint on mobile portrait
+            if (window.innerWidth <= 768 && window.innerHeight > window.innerWidth) return;
+            const probe = document.createElement('span');
+            probe.style.cssText = 'position:absolute;visibility:hidden;font-family:Anton,sans-serif;font-size:15vw;letter-spacing:-0.04em;text-transform:uppercase;white-space:nowrap;';
+            probe.textContent = word;
+            document.body.appendChild(probe);
+            projectDisplay.style.width = probe.offsetWidth + 'px';
+            document.body.removeChild(probe);
+        }
+
+        document.fonts.ready.then(() => { fitLockup(nextHeadlineWord()); });
 
         window.addEventListener('keydown', handleEscape);
 
