@@ -10,6 +10,23 @@
     <link rel="stylesheet" href="../base.css">
     <link rel="stylesheet" href="../project-page.css">
     <style>
+        .hero-background {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: #000;
+            pointer-events: none;
+        }
+        .hero-bg-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.6;
+        }
+        .project-hero { background: transparent !important; }
+
         .manifesto-text {
             font-family: "freight-sans-pro", sans-serif;
             font-size: clamp(18px, 2.5vw, 28px);
@@ -82,6 +99,10 @@
     </script>
 </head>
 <body class="project-body">
+    <div class="hero-background">
+        <div class="hero-bg-image" style="background-image: url('../assets/stoli-night-bg.jpeg');"></div>
+    </div>
+
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
         <div class="menu-links">
@@ -115,18 +136,23 @@
             <div class="hero-content">
                 <p class="project-meta-top">STOLICHNAYA</p>
                 <h1 class="project-title-main">ILLUMINATE YOUR NIGHT</h1>
-                <p class="project-credits">Creative Director<br>Momentum Worldwide</p>
+                <p class="project-credits">
+                    Creative Director: Omar Silwany<br>
+                    Senior Art Director: Sam Resta<br>
+                    Senior Copywriter: Megan Treme<br>
+                    Momentum Worldwide
+                </p>
             </div>
         </section>
 
         <section class="project-intro-section">
             <div class="project-intro-content">
                 <div class="project-intro-text">
-                    For those who see better at night.
-                    Hunt at night.
-                    Love the night.
+                    For those who see better at night.<br><br>
+                    Hunt at night.<br><br>
+                    Love the night.<br><br><br>
 
-                    We created a campaign that shines brightest
+                    We created a campaign that shines brightest<br>
                     when the sun goes down.
                 </div>
             </div>
@@ -146,16 +172,12 @@
                     FOR THOSE BRILLIANT INDIVIDUALS
                     WHO COME ALIVE AT NIGHT.
 
-                    WHO SEE BETTER AT NIGHT.
-                    HUNT AT NIGHT. LOVE THE NIGHT.
+                    WHO SEE BETTER AT NIGHT.<br>HUNT AT NIGHT. LOVE THE NIGHT.
 
-                    FOR THESE NOCTURNAL ADVENTURERS
-                    STOLI PRESENTS AN EXCLUSIVE BOTTLE
-                    THAT SHINES BRIGHTEST
+                    FOR THESE NOCTURNAL ADVENTURERS<br>STOLI PRESENTS AN EXCLUSIVE BOTTLE<br>THAT SHINES BRIGHTEST
                     WHEN THE SUN GOES DOWN.
 
-                    STOLI NIGHT EDITION.
-                    <span class="manifesto-glow">ILLUMINATE YOUR NIGHT.</span>
+                    STOLI NIGHT EDITION.<br><span class="manifesto-glow">ILLUMINATE YOUR NIGHT.</span>
                 </div>
             </section>
 
@@ -180,7 +202,7 @@
                             title="Stoli Night Edition | Retail/Web Animation">
                     </iframe>
                 </div>
-                <p class="visual-asset-label">Retail/Web Animation</p>
+                <p class="video-caption">Retail/Web Animation</p>
             </section>
 
             <!-- OOH Gallery -->
@@ -213,7 +235,7 @@
                             title="Stoli Night Edition | Full Activation">
                     </iframe>
                 </div>
-                <p class="visual-asset-label">Full Activation Case Study</p>
+                <p class="video-caption">Full Activation Case Study</p>
             </section>
         </div>
 

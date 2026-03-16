@@ -10,6 +10,21 @@
     <link rel="stylesheet" href="../base.css">
     <link rel="stylesheet" href="../project-page.css">
     <style>
+        .hero-background {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: #000;
+            pointer-events: none;
+        }
+        .hero-bg-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+        }
+        .project-hero { background: transparent !important; }
         /* Project Specific Styles */
         blockquote {
             padding-left: 30px;
@@ -73,13 +88,6 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-image: 
-                linear-gradient(to bottom, rgba(5, 5, 5, 0) 60%, rgba(5, 5, 5, 1) 100%),
-                linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), 
-                url('../assets/kraft-hero-bg.jpg');
         }
         .hero-content {
             position: relative;
@@ -128,6 +136,10 @@
             <a href="../long-copy.html" class="menu-link">LONG COPY</a>
             <a href="../info.html" class="menu-link">INFORMATION</a>
         </div>
+    </div>
+
+    <div class="hero-background">
+        <img src="../assets/kraft-hero-bg.jpg" alt="Kraft Dish" class="hero-bg-image">
     </div>
 
     <div class="corner-frame">

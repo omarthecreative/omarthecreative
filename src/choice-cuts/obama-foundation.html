@@ -10,6 +10,22 @@
     <link rel="stylesheet" href="../base.css">
     <link rel="stylesheet" href="../project-page.css">
     <style>
+        .hero-background {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: #000;
+            pointer-events: none;
+        }
+        .hero-bg-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+        }
+        .project-hero { background: transparent !important; }
+
         .quote-section {
             margin: 15rem 0;
             text-align: center;
@@ -158,6 +174,10 @@
         </div>
     </div>
 
+    <div class="hero-background">
+        <img src="../assets/obama-hero-image/Lincoln_Memorial_Warren_Eakins.jpg" alt="We Are The Ones" class="hero-bg-image">
+    </div>
+
     <div class="corner-frame">
         <div class="corner tl"></div><div class="corner tr"></div>
         <div class="corner bl"></div><div class="corner br"></div>
@@ -182,8 +202,8 @@
                 <p class="project-meta-top">The Obama Foundation</p>
                 <h1 class="project-title-main">WE ARE THE ONES</h1>
                 <p class="project-credits">
-                    Creative Director, Copy: Omar Silwany<br>
                     Creative Director, Art: Warren Eakins<br>
+                    Creative Director, Copy: Omar Silwany<br>
                     Designer: Norah Tahiri<br>
                     Additional Creative: Shabazz Larkin<br>
                     Director: Jason J.M. Harper<br>

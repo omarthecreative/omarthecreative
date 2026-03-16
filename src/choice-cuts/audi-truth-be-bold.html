@@ -10,6 +10,23 @@
     <link rel="stylesheet" href="../base.css">
     <link rel="stylesheet" href="../project-page.css">
     <style>
+        .hero-background {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: #000;
+            pointer-events: none;
+        }
+        .hero-bg-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.6;
+        }
+        .project-hero { background: transparent !important; }
+
         .manifesto-text {
             font-family: var(--font-serif);
             font-size: clamp(20px, 3vw, 32px);
@@ -83,6 +100,9 @@
     </script>
 </head>
 <body class="project-body">
+    <div class="hero-background">
+        <div class="hero-bg-image" style="background-image: url('../assets/audi-big-wave-bg.jpeg'); opacity: 0.6;"></div>
+    </div>
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
         <div class="menu-links">
@@ -116,7 +136,11 @@
             <div class="hero-content">
                 <p class="project-meta-top">AUDI</p>
                 <h1 class="project-title-main">TRUTH BE BOLD</h1>
-                <p class="project-credits">Creative Director<br>Momentum Worldwide</p>
+                <p class="project-credits">
+                    Creative Director, Writer: Omar Silwany<br>
+                    Creative Director, Art: Jason Borzouyeh<br>
+                    Momentum Worldwide
+                </p>
             </div>
         </section>
 
@@ -134,7 +158,9 @@
                     Robert Downey Jr. as Tony Stark hosting the dealer meeting.
 
                     Truth Be Bold: a branded content series.
+
                     Didn't win.
+
                     VW Group invited us back for Bentley.
                 </div>
             </div>

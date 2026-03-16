@@ -10,6 +10,21 @@
     <link rel="stylesheet" href="../base.css">
     <link rel="stylesheet" href="../project-page.css">
     <style>
+        .hero-background {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: #000;
+            pointer-events: none;
+        }
+        .hero-bg-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+        }
+        .project-hero { background: transparent !important; }
         .honda-manifesto-text {
             font-family: var(--font-serif);
             font-size: clamp(20px, 3vw, 32px);
@@ -87,6 +102,10 @@
         </div>
     </div>
 
+    <div class="hero-background">
+        <img src="../assets/honda-grass-flowers-bg.png" alt="Honda Naturally Driven" class="hero-bg-image">
+    </div>
+
     <div class="corner-frame">
         <div class="corner tl"></div><div class="corner tr"></div>
         <div class="corner bl"></div><div class="corner br"></div>
@@ -110,7 +129,11 @@
             <div class="hero-content">
                 <p class="project-meta-top">HONDA</p>
                 <h1 class="project-title-main">NATURALLY DRIVEN</h1>
-                <p class="project-credits">Creative Director<br>Dentsu Utama</p>
+                <p class="project-credits">
+                    Creative Director, Writer: Omar Silwany<br>
+                    Creative Director, Art: Jason Borzouyeh<br>
+                    Dentsu Utama
+                </p>
             </div>
         </section>
 
@@ -190,8 +213,8 @@
                 <p class="visual-asset-label">Headlines</p>
             </section>
 
-            <section class="visual-asset-item">
-                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_Teaser.png" alt="Teaser" class="visual-asset-image">
+            <section class="visual-asset-item half-width">
+                <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Honda_Naturally_Driven_Teaser.png" alt="Honda Naturally Driven Teaser" class="visual-asset-image">
                 <p class="visual-asset-label">Teaser</p>
             </section>
 

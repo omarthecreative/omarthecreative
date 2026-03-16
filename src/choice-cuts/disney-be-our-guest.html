@@ -17,20 +17,21 @@
             font-style: normal;
             font-display: swap;
         }
-        .bg-container {
+        .hero-background {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
             background: #000;
+            pointer-events: none;
         }
-        .project-bg {
+        .hero-bg-image {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-size: cover;
-            background-position: center;
-            opacity: 0.15;
-            filter: contrast(1.2) brightness(0.6);
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
         }
+        .project-hero { background: transparent !important; }
         .project-wrapper {
             padding-top: 0;
         }
@@ -46,14 +47,6 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            /* Screenshot background with soft bottom fade */
-            background-image: 
-                linear-gradient(to bottom, rgba(5, 5, 5, 0) 60%, rgba(5, 5, 5, 1) 100%),
-                linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), 
-                url('../assets/disney-hero-bg.png');
         }
         .hero-content {
             position: relative;
@@ -76,7 +69,7 @@
         }
         .section-headline {
             font-family: "freight-text-pro", Georgia, serif;
-            font-size: clamp(54px, 7.5vw, 160px);
+            font-size: clamp(48px, 6vw, 120px);
             font-weight: 400;
             letter-spacing: 0.02em;
             text-transform: uppercase;
@@ -224,6 +217,11 @@
             <a href="../info.html" class="menu-link">INFORMATION</a>
         </div>
     </div>
+
+    <div class="hero-background">
+        <img src="../assets/disney-hero-bg.png" alt="Disney Resorts" class="hero-bg-image">
+    </div>
+
     <div class="corner-frame">
         <div class="corner tl"></div><div class="corner tr"></div>
         <div class="corner bl"></div><div class="corner br"></div>
@@ -288,13 +286,13 @@
             </section>
 
             <section class="visual-asset-item">
-                <h2 class="section-headline">HERE IMAGINATION GOES TO INFINITY...&nbsp;AND&nbsp;BEYOND.</h2>
+                <h2 class="section-headline">HERE IMAGINATION GOES TO INFINITY...<br>AND BEYOND.</h2>
                 <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Disney_Banner_Ads_Infinity.png" alt="Disney Web Banner - Buzz Lightyear" class="visual-asset-image">
                 <p class="visual-asset-label">Web banner — Buzz Lightyear</p>
             </section>
 
             <section class="visual-asset-item">
-                <h2 class="section-headline">HERE FANTASY IS MEASURED IN TEA&nbsp;CUPS.</h2>
+                <h2 class="section-headline">HERE FANTASY IS MEASURED IN TEA CUPS.</h2>
                 <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Disney_Banner_Ads_Tea_Cups.png" alt="Disney Web Banner - Mad Tea Party" class="visual-asset-image">
                 <p class="visual-asset-label">Web banner — Mad Tea Party</p>
             </section>
@@ -305,7 +303,7 @@
             </section>
 
             <section class="visual-asset-item half-width">
-                <h2 class="section-headline">HERE MONSTERS ROAR WITH&nbsp;LAUGHTER.</h2>
+                <h2 class="section-headline">HERE MONSTERS ROAR WITH LAUGHTER.</h2>
                 <img src="https://omarthecreative.com/wp-content/uploads/2025/12/Disney_Print_Monsters.png" alt="Disney Print Ad - Monsters, Inc." class="visual-asset-image">
                 <p class="visual-asset-label">Print ad — Monsters, Inc.</p>
             </section>

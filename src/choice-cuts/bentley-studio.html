@@ -10,6 +10,23 @@
     <link rel="stylesheet" href="../base.css">
     <link rel="stylesheet" href="../project-page.css">
     <style>
+        .hero-background {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: #000;
+            pointer-events: none;
+        }
+        .hero-bg-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.6;
+        }
+        .project-hero { background: transparent !important; }
+
         .video-wrapper-16x9 {
             width: 100%;
             aspect-ratio: 16/9;
@@ -181,6 +198,10 @@
     </script>
 </head>
 <body class="project-body">
+    <div class="hero-background">
+        <div class="hero-bg-image" style="background-image: url('../assets/bentley-infinite-grid-bg.png');"></div>
+    </div>
+
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
         <div class="menu-links">
@@ -253,12 +274,36 @@
             </section>
 
             <!-- Manifesto & Video -->
-            <section class="visual-asset-item">
-                <div class="manifesto-continuation-text" style="text-align: center; margin-bottom: 8rem;">
-                    Behind our workshop's walls, nothing is standard.
-                    And luxury has no limits.
-                    There is only what you envision,
-                    awaiting to manifest as limitless experience.
+            <section class="visual-asset-item" style="margin-top: 15rem; margin-bottom: 20rem;">
+                <div class="manifesto-continuation-text" style="text-align: center; margin-bottom: 12rem; max-width: 900px; margin-left: auto; margin-right: auto; line-height: 2; font-family: var(--font-serif); font-size: 1.2rem;">
+                    In 1919, one man set forth on a quest for perfection<br>
+                    to redefine all boundaries in a car,<br>
+                    embodying his uncompromising love of speed,<br>
+                    performance, and competitive excellence.<br><br>
+
+                    His vision pushed the limits of exhilaration.<br>
+                    And with each new model, he pushed further.<br><br>
+
+                    The passion of our artists, craftsmen, and women<br>
+                    now prepares to forge from superformed aluminum,<br>
+                    leather, and wood<br>
+                    one more vision — yours.<br><br>
+
+                    Behind our workshop's walls, nothing is standard.<br>
+                    And luxury has no limits.<br><br>
+
+                    There is only what you envision,<br>
+                    awaiting to manifest as limitless experience.<br><br>
+
+                    A ride as thrilling as the hunt and hustle to acquire it.<br>
+                    A fitting so bespoke, it's a true expression of the one who commissions it.<br>
+                    A rare opportunity to be counted among those<br>
+                    who break boundaries and defy impossibilities.<br><br>
+
+                    4,000 of us stand strong in Crewe.<br>
+                    Ready to unleash your singular vision.<br><br><br>
+
+                    <span style="font-family: 'Anton', sans-serif; font-size: 5rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent);">LUXURY UNBOUND</span>
                 </div>
                 <div class="video-wrapper-16x9">
                     <iframe src="https://player.vimeo.com/video/135510860?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" 
