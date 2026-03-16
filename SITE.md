@@ -5,24 +5,22 @@ An observation deck for brand culture. A cinematic, brutalist landing page that 
 
 ## 2. Technical Stack
 - **Framework:** Vanilla HTML/CSS
-- **Typography:** Brothers, Freight Sans Pro, Courier New (via Typekit)
-- **Palette:** Near-black (#050505), Burnt Orange (#D26446), White (#FFFFFF)
-- **CMS:** Semplice 7 (WordPress) integration target
+- **Typography:** Anton, IBM Plex Mono, Playfair Display (Google Fonts / Typekit)
+- **Palette:** Near-black (#050505), Ruby Red (#FF0000), White (#FFFFFF)
+- **Hosting:** Netlify (omarthecreative.netlify.app)
 
-## 3. Stitch Configuration
-- **Project ID:** (Pending)
+## 3. Sitemap
+- [x] `index.html` — The Observation Deck splash page (Brouhaha)
+- [x] `info.html` — The Dossier / Information Page
+- [x] `choice-cuts.html` — Choice Cuts (Exhibits) Overview
+- [x] `long-copy.html` — Long Copy Archive
 
-## 4. Sitemap
-- [ ] `landing-exploration.html` — The Observation Deck splash page
-- [x] `index.html` — Current Homepage
-- [x] `info.html` — Current Info Page
+## 4. Design Language
+- **Viewfinder UI:** Thin-line Ruby Red borders, fixed corner frames, and HUD metadata tags.
+- **Locked Plates:** Cinematic backgrounds (locked position) with scrolling content over a 100vh hero.
+- **Tactile Interaction:** Vibration animations on hover/click, custom toasts, and ESC-key modal controls.
+- **Redaction:** Tactical red bars and links to emphasize the "Dossier" vibe without obscuring copy.
 
-## 5. Roadmap
-1. **The Portal:** Create the high-impact splash page with viewfinder UI.
-2. **Integration:** Wire the splash page to the main portfolio.
-3. **Refinement:** Add interactive "observation" elements.
-
-## 6. Creative Freedom / Ideas
-- Interactive frame counters that track "cultural pulse."
-- Viewfinder overlays that react to cursor movement.
-- Staggered typographic reveals of the "I PUSH BRANDS" statement.
+## 5. Progress
+- **March 2026:** Full site-wide rebrand to the Observatory theme. Transitioned "The Work" to "Exhibits" and "Deep Cuts" to "Choice Cuts." Standardized 21 project pages with centered 100vh heroes and metadata HUDs.
+- **March 16, 2026:** Finalized INFO page transition with locked backgrounds (Cage the Elephant), viewfinder HUD, and redacted aesthetic. Refined footer credits for unified photography attribution.

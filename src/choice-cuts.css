@@ -93,7 +93,7 @@
 }
 
 .choice-cuts-page {
-    padding: 0 4rem 8rem 4rem; /* Content starts after the hero */
+    padding: 0 4rem 12rem 4rem; /* Content starts after the hero */
 }
 
 .page-subtitle-meta {
@@ -236,16 +236,6 @@ a:hover {
 .filter-btn:hover, .filter-btn.active {
     border-color: var(--color-accent);
     color: var(--color-accent);
-}
-
-.copyright {
-    margin-top: 4rem;
-    text-align: center;
-    opacity: 0.2;
-    font-family: var(--font-mono);
-    font-size: 0.4rem;
-    letter-spacing: 0.1em;
-    pointer-events: none;
 }
 
 /* Responsive */

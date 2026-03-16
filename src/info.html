@@ -384,21 +384,8 @@
         }
         .still-here:hover { color: var(--vibrant-red); }
 
-        .copyright-tag {
-            position: fixed;
-            bottom: 0.8rem;
-            width: 100%;
-            text-align: center;
-            opacity: 0.3;
-            font-family: var(--mono);
-            font-size: 0.45rem;
-            letter-spacing: 0.1em;
-            pointer-events: none;
-            z-index: 100;
-            text-transform: uppercase;
-        }
-
         @media (max-width: 1024px) {
+            .container { padding: 4rem 4rem; }
             .apex-nav { top: 3.5rem; left: 3.5rem; right: 3.5rem; }
             .nav-name { font-size: 1.2rem; }
         }
@@ -409,6 +396,7 @@
         }
 
         @media (max-width: 768px) {
+            .container { padding: 4rem 4rem; }
             .apex-nav {
                 left: 2rem;
                 right: 2rem;
@@ -424,6 +412,7 @@
         }
 
         @media (max-width: 480px) {
+            .container { padding: 4rem 2rem; }
             .apex-nav { top: 2.5rem; left: 2.5rem; right: 2.5rem; }
             .nav-name { font-size: 0.8rem; max-width: 60%; line-height: 1.1; }
         }
@@ -609,5 +598,5 @@
     <div class="copyright-tag">
         © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
     </div>
-</body>
-</html>
+    </body>
+    </html>

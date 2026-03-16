@@ -45,3 +45,18 @@ body::before {
 .animate-vibrate {
     animation: vibrate 0.2s infinite ease-in-out;
 }
+
+/* GLOBAL COPYRIGHT TAG - FIXED POSITION */
+.copyright-tag {
+    position: fixed;
+    bottom: 0.8rem;
+    width: 100%;
+    text-align: center;
+    opacity: 0.3;
+    font-family: var(--mono);
+    font-size: 0.45rem;
+    letter-spacing: 0.1em;
+    pointer-events: none;
+    z-index: 100;
+    text-transform: uppercase;
+}
