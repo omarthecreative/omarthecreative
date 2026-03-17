@@ -611,7 +611,7 @@
         </a>
         
         <div class="project-display" id="project-display">
-            <div class="subtitle" id="project-subtitle">I craft copy<br> into ideas into<br> scripts into <span class="rotating-wrap"><span id="rotating-word">films</span><span class="type-cursor" id="type-cursor">|</span></span><br class="culture-break"> into&nbsp;culture.</div>
+            <div class="subtitle" id="project-subtitle">I craft copy<br> into ideas into<span id="scripts-into"> scripts</span><br> into <span class="rotating-wrap"><span id="rotating-word">films</span><span class="type-cursor" id="type-cursor">|</span></span><br class="culture-break"> into&nbsp;entertainment.</div>
             <h1 class="title animate-vibrate" id="project-title">BROUHAHAHA</h1>
         </div>
         
@@ -1548,7 +1548,7 @@
         // — SUBTITLE WORD ROTATION —
         const subtitleCycle = (function() {
             const SUBTITLE_HTML = (word) =>
-                `I craft copy<br> into ideas into<br> scripts into <span class="rotating-wrap"><span id="rotating-word">${word}</span><span class="type-cursor" id="type-cursor">|</span></span><br class="culture-break"> into&nbsp;culture.`;
+                `I craft copy<br> into ideas into<span id="scripts-into"> scripts</span><br> into <span class="rotating-wrap"><span id="rotating-word">${word}</span><span class="type-cursor" id="type-cursor">|</span></span><br class="culture-break"> into&nbsp;entertainment.`;
 
             const words = ['films', 'actions', 'sites', 'campaigns'];
             let current = 0;
@@ -1562,6 +1562,11 @@
 
             const wordEl  = () => document.getElementById('rotating-word');
             const cursor  = () => document.getElementById('type-cursor');
+            const HIDE_SCRIPTS = ['actions', 'sites'];
+            function toggleScriptsInto(word) {
+                const el = document.getElementById('scripts-into');
+                if (el) el.style.display = HIDE_SCRIPTS.includes(word) ? 'none' : '';
+            }
 
             function deleteWord(word, cb) {
                 cursor().classList.add('active');
@@ -1581,6 +1586,7 @@
                     if (i === word.length) {
                         clearInterval(iv);
                         cursor().classList.remove('active');
+                        toggleScriptsInto(word);
                         timer = setTimeout(cb, HOLD_DURATION);
                     }
                 }, TYPE_SPEED);
@@ -1607,6 +1613,7 @@
                 resume() {
                     current = 0;
                     subtitleEl.innerHTML = SUBTITLE_HTML(words[0]);
+                    toggleScriptsInto(words[0]);
                     running = true;
                     timer = setTimeout(cycle, HOLD_DURATION);
                 }
