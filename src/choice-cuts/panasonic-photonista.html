@@ -10,6 +10,59 @@
     <link rel="stylesheet" href="../base.css">
     <link rel="stylesheet" href="../project-page.css">
     <style>
+        body.project-body {
+            background-image:
+                linear-gradient(rgba(5,5,5,0.65), rgba(5,5,5,0.65)),
+                url('../assets/panasonic-photonista-bg.png');
+            background-size: cover;
+            background-position: center top;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        @media (max-width: 768px) {
+            body.project-body { background-attachment: scroll; }
+        }
+        .photonista-definition {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .definition-header {
+            display: flex;
+            align-items: baseline;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .definition-word {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(52px, 8vw, 120px);
+            font-weight: 700;
+            font-style: italic;
+            color: white;
+            line-height: 1;
+        }
+        .definition-phonetic {
+            font-family: var(--font-mono);
+            font-size: clamp(14px, 1.5vw, 22px);
+            color: white;
+            opacity: 0.5;
+            letter-spacing: 0.05em;
+        }
+        .definition-pos {
+            font-family: var(--font-serif);
+            font-size: clamp(16px, 1.5vw, 22px);
+            opacity: 0.5;
+            margin-bottom: 2rem;
+            font-style: normal;
+        }
+        .definition-body p {
+            font-family: var(--font-serif);
+            font-size: clamp(18px, 2vw, 26px);
+            line-height: 1.6;
+            color: white;
+            opacity: 0.85;
+            margin-bottom: 1rem;
+        }
         .photonista-manifesto-text {
             font-family: var(--font-serif);
             font-size: clamp(20px, 3vw, 32px);
@@ -122,6 +175,7 @@
                 <p class="project-credits">
                     Creative Director, Writer: Omar Silwany<br>
                     Creative Director, Art: Jason Borzouyeh<br>
+                    Director & Photographer: Peter Bannan<br>
                     Dentsu Utama
                 </p>
             </div>
@@ -147,7 +201,18 @@
         <div class="assets-container">
             <!-- Photonista Definition -->
             <section class="visual-asset-item">
-                <img src="../assets/wp-uploads/Lumix_Photonista_Definition.png" alt="Photonista Definition" class="visual-asset-image">
+                <div class="photonista-definition">
+                    <div class="definition-header">
+                        <span class="definition-word">Photonista</span>
+                        <span class="definition-phonetic">| foTo'nistə |</span>
+                    </div>
+                    <div class="definition-pos">noun informal</div>
+                    <div class="definition-body">
+                        <p><strong>1</strong> a composer of fashionable looks and true-to-life digital images — passionate to tell her world, her story.</p>
+                        <p><strong>2</strong> a devoted follower of the digital photography lifestyle: <em>distinctive moments, experiences and people that press all the photonistas' buttons.</em></p>
+                        <p>ORIGIN 2010s: from <em>photography</em> + Spanish suffix <em>-ista</em>, as in <em>Sandinista, terrorista.</em></p>
+                    </div>
+                </div>
             </section>
 
             <!-- Manifesto -->
@@ -282,7 +347,7 @@
         <nav class="next-project-nav">
             <a href="panasonic-luv.html" class="next-project-link">
                 <div class="next-project-label">NEXT CUT [ 09 ]</div>
-                <h2 class="next-project-title">TRANSFORM TECH<br>INTO FEELING</h2>
+                <h2 class="next-project-title">LUV NEEDS<br>NO MIRRORS</h2>
                 <div class="next-project-brand">Panasonic Lumix</div>
             </a>
         </nav>
@@ -290,7 +355,7 @@
 
     <!-- Back to Top -->
     <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
-        [ TOP ]
+        📸
     </button>
 
 

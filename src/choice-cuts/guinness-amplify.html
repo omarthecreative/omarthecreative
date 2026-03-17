@@ -10,6 +10,18 @@
     <link rel="stylesheet" href="../base.css">
     <link rel="stylesheet" href="../project-page.css">
     <style>
+        body.project-body {
+            background-image:
+                linear-gradient(rgba(5,5,5,0.65), rgba(5,5,5,0.65)),
+                url('../assets/guinness-amplify-bg.png');
+            background-size: cover;
+            background-position: center bottom;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        @media (max-width: 768px) {
+            body.project-body { background-attachment: scroll; }
+        }
         .title-kerning-fy {
             letter-spacing: 0.15em;
             display: inline-block;
@@ -315,7 +327,7 @@
 
     <!-- Back to Top -->
     <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
-        [ TOP ]
+        🎸
     </button>
 
 

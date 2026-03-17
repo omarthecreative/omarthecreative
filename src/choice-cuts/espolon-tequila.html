@@ -10,6 +10,18 @@
     <link rel="stylesheet" href="../base.css">
     <link rel="stylesheet" href="../project-page.css">
     <style>
+        body.project-body {
+            background-image:
+                linear-gradient(rgba(5,5,5,0.70), rgba(5,5,5,0.70)),
+                url('../assets/espolon-tequila-bg.png');
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        @media (max-width: 768px) {
+            body.project-body { background-attachment: scroll; }
+        }
         .deck-section-title {
             font-family: var(--font-mono);
             font-size: 0.7rem;
@@ -368,7 +380,7 @@
 
     <!-- Back to Top -->
     <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
-        [ TOP ]
+        🐓
     </button>
 
 
