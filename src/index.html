@@ -292,7 +292,7 @@
         .intel-scroll-area::-webkit-scrollbar-thumb { background: var(--vibrant-red); }
 
         .intel-role { color: var(--vibrant-red); font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.3em; margin-bottom: 2rem; text-transform: uppercase; }
-        .intel-desc { font-size: 1.8rem; line-height: 1.4; letter-spacing: -0.01em; margin-bottom: 3rem; text-wrap: pretty; }
+        .intel-desc { font-size: 1.8rem; line-height: 1.4; letter-spacing: -0.01em; margin-bottom: 3rem; text-wrap: pretty; cursor: pointer; }
         .intel-close { position: absolute; top: 2rem; right: 2rem; font-family: var(--mono); font-size: 0.8rem; color: var(--vibrant-red); cursor: pointer; letter-spacing: 0.2em; z-index: 1100; }
         
         .credits-drawer {
@@ -578,7 +578,7 @@
             
             <div class="intel-footer">
                 <div class="intel-hint" id="intel-hint">[ ↵ // CREDITS ]</div>
-                <div class="intel-hint" id="script-hint" style="display: none; margin-top: 0.5rem; color: #FFFFFF; opacity: 0.8;">[ S // SCRIPT ]</div>
+                <div class="intel-hint" id="script-hint" style="display: none; margin-top: 0.5rem; color: #FFFFFF; opacity: 0.8; cursor: pointer;">[ S // SCRIPT ]</div>
             </div>
         </div>
     </div>
@@ -1488,6 +1488,24 @@
         document.getElementById('close-intel').addEventListener('click', () => {
             intelOverlay.style.display = 'none';
         });
+
+        // Tap copy to reveal Credits on mobile (mirrors Enter key)
+        document.getElementById('intel-desc').addEventListener('click', () => {
+            const creditsDrawer = document.getElementById('credits-drawer');
+            creditsDrawer.classList.toggle('active');
+            scriptHint.style.display = creditsDrawer.classList.contains('active') ? 'block' : 'none';
+            if (creditsDrawer.classList.contains('active')) {
+                setTimeout(() => creditsDrawer.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+            }
+        });
+
+        // Tap script hint to open Script on mobile (mirrors S key)
+        scriptHint.addEventListener('click', () => {
+            if (creditsDrawer.classList.contains('active')) {
+                scriptOverlay.style.display = 'flex';
+            }
+        });
+
 
         // Modal Cleanup
         modal.addEventListener('click', (e) => {
