@@ -10,7 +10,21 @@
     <link rel="stylesheet" href="../base.css">
     <link rel="stylesheet" href="../project-page.css">
     <style>
-        .anthem-manifesto-text {
+        /* LuV background — original concept art, hands + Venus bokeh */
+        body.project-body {
+            background-image:
+                linear-gradient(rgba(5,5,5,0.58), rgba(5,5,5,0.58)),
+                url('../assets/panasonic-luv-bg.png');
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        @media (max-width: 768px) {
+            body.project-body { background-attachment: scroll; }
+        }
+
+.anthem-manifesto-text {
             font-family: var(--font-serif);
             font-size: clamp(20px, 3vw, 32px);
             line-height: 1.6;
@@ -130,7 +144,7 @@
                 <h1 class="project-title-main">LUV MOVES ME</h1>
                 <p class="project-credits">
                     Creative Director, Writer & Photographer: Omar Silwany<br>
-                    Creative Director, Art: Jason Borzouyeh<br>
+                    Creative Director, Art & Photographer: Jason Borzouyeh<br>
                     Dentsu Utama
                 </p>
             </div>
@@ -148,8 +162,10 @@
 
                     This was the GF5 rollout.
                     For Every Photonista.
+
                     Where Lu.V. stood for Venus.
                     And love.
+
                 </div>
             </div>
         </section>
@@ -337,7 +353,7 @@
 
     <!-- Back to Top -->
     <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
-        [ TOP ]
+        📷
     </button>
 
 
