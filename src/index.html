@@ -46,7 +46,7 @@
     <script src="https://player.vimeo.com/api/player.js"></script>
     <style>
         :root {
-            --vibrant-red: #FF0000;
+            --vibrant-red: #A8002C;
             --glow: rgba(255, 0, 0, 0.8);
         }
         body { background: #000; margin: 0; padding: 0; overflow: hidden; }
@@ -1185,12 +1185,12 @@
         function applyRubyLUT(active) {
             const lut = document.getElementById('lut-toggle');
             if (active) {
-                document.documentElement.style.setProperty('--vibrant-red', '#FF0000');
+                document.documentElement.style.setProperty('--vibrant-red', '#A8002C');
                 document.documentElement.style.setProperty('--glow', 'rgba(255, 0, 0, 1)');
                 lut.textContent = '[ LUT: RUBY ]';
                 localStorage.setItem('omar_lut', 'RUBY');
             } else {
-                document.documentElement.style.setProperty('--vibrant-red', '#FF003C');
+                document.documentElement.style.setProperty('--vibrant-red', '#A8002C');
                 document.documentElement.style.setProperty('--glow', 'rgba(255, 0, 60, 0.8)');
                 lut.textContent = '[ LUT: REC.709 ]';
                 localStorage.setItem('omar_lut', 'REC.709');

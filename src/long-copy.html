@@ -32,11 +32,26 @@
     <meta name="robots" content="index, follow, max-image-preview:large">
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤘🏽</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@300;400&family=Playfair+Display:wght@900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@300;400&family=Playfair+Display:wght@900&family=Neonderthaw&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">
     <link rel="stylesheet" href="base.css">
     <link rel="stylesheet" href="long-copy.css">
     <style>
+        .hero-background {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: #000;
+            pointer-events: none;
+        }
+        .hero-bg-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0.35;
+        }
+
         /* Apex Nav Integration */
         .apex-nav {
             position: fixed;
@@ -72,7 +87,7 @@
         }
         .menu-trigger:hover {
             opacity: 1;
-            color: #FF0000;
+            color: #A8002C;
         }
 
         /* Full Screen Menu Overlay */
@@ -93,7 +108,7 @@
             font-family: var(--font-mono);
             font-size: 0.55rem;
             letter-spacing: 0.2em;
-            color: #FF0000;
+            color: #A8002C;
             cursor: pointer;
             opacity: 0.6;
         }
@@ -135,12 +150,12 @@
         }
         .menu-link:hover {
             opacity: 1;
-            color: #FF0000;
+            color: #A8002C;
             text-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
         }
         .menu-link.active {
             opacity: 1;
-            color: #FF0000;
+            color: #A8002C;
             text-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
         }
 
@@ -152,6 +167,38 @@
             }
             .menu-close { top: 2rem; right: 2rem; }
             .menu-link { font-size: 15vw; }
+        }
+
+        /* Bourbon Glass */
+        #bourbon-glass {
+            position: fixed;
+            bottom: 10vh;
+            right: 3vw;
+            transform: rotate(-10deg);
+            width: clamp(220px, 24vw, 400px);
+            z-index: 10;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+            filter: drop-shadow(0 12px 40px rgba(0,0,0,0.7));
+            transition: filter 0.2s ease;
+        }
+        #bourbon-glass:active {
+            cursor: grabbing;
+            filter: drop-shadow(0 20px 60px rgba(0,0,0,0.85));
+        }
+        #bourbon-glass img {
+            width: 100%;
+            height: auto;
+            display: block;
+            pointer-events: none;
+        }
+        @media (max-width: 768px) {
+            #bourbon-glass {
+                width: clamp(140px, 38vw, 220px);
+                bottom: 5vh;
+                left: 4vw;
+            }
         }
     </style>
     <!-- Back to Top -->
@@ -184,7 +231,7 @@
             navigator.clipboard.writeText('info@omarsilwany.com').then(() => {
                 const originalText = navName.textContent;
                 navName.textContent = 'COPIED';
-                navName.style.color = '#FF0000';
+                navName.style.color = '#A8002C';
                 setTimeout(() => {
                     navName.textContent = originalText;
                     navName.style.color = '';
@@ -221,6 +268,14 @@
     </script>
     </body>
 <body class="long-copy-body">
+    <!-- Bourbon Glass — drag to reposition on the table -->
+    <div id="bourbon-glass">
+        <img src="assets/bourbon-glass.png" alt="">
+    </div>
+
+    <div class="hero-background">
+        <img src="assets/mahogany-dramatic-grain.jpeg" alt="Long Copy" class="hero-bg-image">
+    </div>
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
         <div class="menu-links">
@@ -290,5 +345,51 @@
             © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
         </div>
     </main>
+    <script>
+        (function() {
+            const glass = document.getElementById('bourbon-glass');
+            let dragging = false, startX, startY, originLeft, originTop;
+
+            function getPos() {
+                const rect = glass.getBoundingClientRect();
+                return { left: rect.left, top: rect.top };
+            }
+
+            function startDrag(x, y) {
+                dragging = true;
+                const pos = getPos();
+                glass.style.left = pos.left + 'px';
+                glass.style.top = pos.top + 'px';
+                glass.style.bottom = 'auto';
+                glass.style.right = 'auto';
+                startX = x;
+                startY = y;
+                originLeft = pos.left;
+                originTop = pos.top;
+            }
+
+            function moveDrag(x, y) {
+                if (!dragging) return;
+                glass.style.left = (originLeft + (x - startX)) + 'px';
+                glass.style.top  = (originTop  + (y - startY)) + 'px';
+            }
+
+            function endDrag() { dragging = false; }
+
+            glass.addEventListener('mousedown',  e => { e.preventDefault(); startDrag(e.clientX, e.clientY); });
+            window.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
+            window.addEventListener('mouseup',   endDrag);
+
+            glass.addEventListener('touchstart', e => {
+                const t = e.touches[0];
+                startDrag(t.clientX, t.clientY);
+            }, { passive: true });
+            window.addEventListener('touchmove', e => {
+                const t = e.touches[0];
+                moveDrag(t.clientX, t.clientY);
+            }, { passive: true });
+            window.addEventListener('touchend', endDrag);
+        })();
+    </script>
 </body>
 </html>
