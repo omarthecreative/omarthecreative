@@ -1,7 +1,7 @@
 /* PROJECT PAGE - APEX VERSION */
 
 :root {
-    --color-accent: #FF0000;
+    --color-accent: #A8002C;
     --color-white: #FFFFFF;
     --font-primary: "freight-sans-pro", sans-serif;
     --font-display: "brothers", sans-serif;
@@ -53,7 +53,7 @@
 
 .menu-trigger:hover {
     opacity: 1;
-    color: #FF0000;
+    color: #A8002C;
 }
 
 /* Full Screen Menu Overlay */
@@ -75,7 +75,7 @@
     font-family: var(--font-mono);
     font-size: 0.55rem;
     letter-spacing: 0.2em;
-    color: #FF0000;
+    color: #A8002C;
     cursor: pointer;
     opacity: 0.6;
 }
@@ -121,7 +121,7 @@
 
 .menu-link:hover {
     opacity: 1;
-    color: #FF0000;
+    color: #A8002C;
     text-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
 }
 

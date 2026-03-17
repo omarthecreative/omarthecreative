@@ -1,7 +1,7 @@
 /* DEEP CUTS - APEX VERSION */
 
 :root {
-    --color-accent: #FF0000;
+    --color-accent: #A8002C;
     --color-white: #FFFFFF;
     --font-primary: "freight-sans-pro", sans-serif;
     --font-display: "Anton", sans-serif;
@@ -88,7 +88,14 @@
     line-height: 0.75;
     text-transform: uppercase;
     letter-spacing: -0.05em;
-    color: var(--color-white);
+    background:
+        linear-gradient(135deg, rgba(200,0,30,0.15) 0%, rgba(255,20,50,0.1) 50%, rgba(180,0,20,0.15) 100%),
+        url('assets/choice-cuts-texture.jpg') center/cover;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: brightness(1.1) saturate(1.2) contrast(1.05);
+    padding: 0.15em 0.1em;
     margin: 0 0 4rem 0;
 }
 
@@ -100,7 +107,7 @@
     font-family: var(--font-mono);
     font-size: 0.7rem;
     letter-spacing: 0.4em;
-    color: var(--color-accent);
+    color: #8B0020;
     text-transform: uppercase;
 }
 
