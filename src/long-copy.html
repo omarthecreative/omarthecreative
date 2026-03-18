@@ -406,14 +406,16 @@
 <script src="nav-name-reveal.js"></script>
 <script>
     (function () {
-        function pourOnArrival() {
+        var glass = document.getElementById('bourbon-glass');
+        if (!glass) return;
+        function pourOnGrab() {
             ApexSound.init();
             ApexSound.play('bourbon', 0.6);
-            document.removeEventListener('click', pourOnArrival);
-            document.removeEventListener('touchstart', pourOnArrival);
+            glass.removeEventListener('mousedown', pourOnGrab);
+            glass.removeEventListener('touchstart', pourOnGrab);
         }
-        document.addEventListener('click', pourOnArrival);
-        document.addEventListener('touchstart', pourOnArrival, { passive: true });
+        glass.addEventListener('mousedown', pourOnGrab);
+        glass.addEventListener('touchstart', pourOnGrab, { passive: true });
     })();
 </script>
 </body>
