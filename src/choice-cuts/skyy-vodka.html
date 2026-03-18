@@ -109,11 +109,29 @@
                 const counter = slider.parentElement.querySelector('.slider-counter');
                 const slides = slider.querySelectorAll('.slide');
                 const total = slides.length;
-                
+
                 slider.addEventListener('scroll', () => {
                     const index = Math.round(slider.scrollLeft / window.innerWidth) + 1;
                     counter.textContent = `${index} / ${total}`;
                 });
+            });
+
+            // Keyboard arrow navigation — targets most visible slider
+            document.addEventListener('keydown', (e) => {
+                if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+                const sections = document.querySelectorAll('.slider-section');
+                let activeSlider = null;
+                let minDist = Infinity;
+                const mid = window.innerHeight / 2;
+                sections.forEach(section => {
+                    const r = section.getBoundingClientRect();
+                    if (r.top < window.innerHeight && r.bottom > 0) {
+                        const dist = Math.abs((r.top + r.bottom) / 2 - mid);
+                        if (dist < minDist) { minDist = dist; activeSlider = section.querySelector('.slider-container'); }
+                    }
+                });
+                if (!activeSlider) return;
+                activeSlider.scrollBy({ left: (e.key === 'ArrowRight' ? 1 : -1) * window.innerWidth, behavior: 'smooth' });
             });
         });
 
