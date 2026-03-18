@@ -28,6 +28,7 @@ const ApexSound = (function () {
         projector: 'assets/sound-effects/07004203',
         hum:       'assets/sound-effects/07004188',
         bourbon:   'assets/sound-effects/563231__ammorts__pouring-whisky-in-the-glass',
+        knife:     'assets/sound-effects/07001020',
     };
 
     // Fetch all buffers on page load — no gesture required

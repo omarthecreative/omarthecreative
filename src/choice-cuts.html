@@ -529,5 +529,19 @@
     </script>
 <script src="apex-sound.js"></script>
 <script src="nav-name-reveal.js"></script>
+<script>
+    (function () {
+        var knife = document.getElementById('knife');
+        if (!knife) return;
+        function sharpenOnGrab() {
+            ApexSound.init();
+            ApexSound.play('knife', 0.8);
+            knife.removeEventListener('mousedown', sharpenOnGrab);
+            knife.removeEventListener('touchstart', sharpenOnGrab);
+        }
+        knife.addEventListener('mousedown', sharpenOnGrab);
+        knife.addEventListener('touchstart', sharpenOnGrab, { passive: true });
+    })();
+</script>
 </body>
 </html>
