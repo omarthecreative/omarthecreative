@@ -404,16 +404,28 @@
 <script src="nav-name-reveal.js"></script>
 <script>
     (function () {
-        var glass = document.getElementById('bourbon-glass');
-        if (!glass) return;
-        function pourOnGrab() {
-            ApexSound.init();
-            ApexSound.play('bourbon', 0.6);
-            glass.removeEventListener('mousedown', pourOnGrab);
-            glass.removeEventListener('touchstart', pourOnGrab);
+        var poured = false;
+        function pour() {
+            if (poured) return;
+            poured = true;
+            if (typeof ApexSound !== 'undefined') {
+                ApexSound.init();
+                ApexSound.play('bourbon', 0.6);
+            }
         }
-        glass.addEventListener('mousedown', pourOnGrab);
-        glass.addEventListener('touchstart', pourOnGrab, { passive: true });
+
+        // First scroll
+        window.addEventListener('scroll', function onFirstScroll() {
+            pour();
+            window.removeEventListener('scroll', onFirstScroll);
+        }, { passive: true });
+
+        // Glass grab (one-time, belt-and-suspenders)
+        var glass = document.getElementById('bourbon-glass');
+        if (glass) {
+            glass.addEventListener('mousedown', pour);
+            glass.addEventListener('touchstart', pour, { passive: true });
+        }
     })();
 </script>
 </body>
