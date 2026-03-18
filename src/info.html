@@ -458,13 +458,9 @@
             // Back to Top Visibility
             const backToTop = document.getElementById('back-to-top');
             window.addEventListener('scroll', () => {
-                if (window.scrollY > window.innerHeight) {
-                    backToTop.style.opacity = '0.6';
-                    backToTop.style.pointerEvents = 'auto';
-                } else {
-                    backToTop.style.opacity = '0';
-                    backToTop.style.pointerEvents = 'none';
-                }
+                const atBottom = (window.innerHeight + window.pageYOffset) >= (document.documentElement.offsetHeight - 100);
+                backToTop.style.opacity = atBottom ? '0.6' : '0';
+                backToTop.style.pointerEvents = atBottom ? 'auto' : 'none';
             });
             backToTop.addEventListener('mouseenter', () => backToTop.style.opacity = '1');
             backToTop.addEventListener('mouseleave', () => { if(window.scrollY > window.innerHeight) backToTop.style.opacity = '0.6'; });
@@ -612,8 +608,28 @@
     <script src="apex-sound.js"></script>
 <script>
 (function(){
-  var t=document.querySelector(".menu-trigger");
-  if(t) t.addEventListener("click",function(){ApexSound.init();ApexSound.play("door");});
+    // Menu vault sound
+    var t = document.querySelector('.menu-trigger');
+    if (t) t.addEventListener('click', function () {
+        if (typeof ApexSound !== 'undefined') { ApexSound.init(); ApexSound.play('door'); }
+    });
+
+    // Western whistle — starts on title click or first scroll, then loops forever
+    var whistleStarted = false;
+    function startWhistle() {
+        if (whistleStarted) return;
+        whistleStarted = true;
+        ApexSound.init();
+        ApexSound.startLoop('whistle', 0.35);
+    }
+
+    var infoTitle = document.querySelector('.info-hero .title');
+    if (infoTitle) infoTitle.addEventListener('click', startWhistle);
+
+    window.addEventListener('scroll', function onFirstScroll() {
+        startWhistle();
+        window.removeEventListener('scroll', onFirstScroll);
+    }, { passive: true });
 })();
 </script>
 </body>

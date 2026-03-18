@@ -29,6 +29,7 @@ const ApexSound = (function () {
         hum:       'assets/sound-effects/07004188',
         bourbon:   'assets/sound-effects/563231__ammorts__pouring-whisky-in-the-glass',
         knife:     'assets/sound-effects/07001020',
+        whistle:   'assets/sound-effects/the-whistle',
     };
 
     // Fetch all buffers on page load — no gesture required
@@ -89,6 +90,42 @@ const ApexSound = (function () {
         }
     }
 
+    var _loopNodes = {};
+
+    function startLoop(name, volume) {
+        if (_loopNodes[name]) return; // already running
+        if (!ctx) return;
+        var vol = (volume !== undefined) ? volume : 1;
+
+        function _fireLoop(buf) {
+            var gain = ctx.createGain();
+            gain.gain.value = vol;
+            var source = ctx.createBufferSource();
+            source.buffer = buf;
+            source.loop = true;
+            source.connect(gain);
+            gain.connect(ctx.destination);
+            source.start(0);
+            _loopNodes[name] = source;
+        }
+
+        function _dispatch() {
+            if (_decoded[name]) {
+                _fireLoop(_decoded[name]);
+            } else if (_raw[name]) {
+                ctx.decodeAudioData(_raw[name].slice(0))
+                    .then(function (buf) { _decoded[name] = buf; _fireLoop(buf); })
+                    .catch(function () {});
+            }
+        }
+
+        if (ctx.state === 'suspended') {
+            ctx.resume().then(_dispatch).catch(function () {});
+        } else {
+            _dispatch();
+        }
+    }
+
     // Kick off fetching immediately
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', load);
@@ -96,6 +133,6 @@ const ApexSound = (function () {
         load();
     }
 
-    return { init: init, play: play };
+    return { init: init, play: play, startLoop: startLoop };
 
 })();
