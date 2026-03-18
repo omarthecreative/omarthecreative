@@ -261,6 +261,14 @@
             text-decoration: none;
         }
         .header-name:hover { color: white; } /* Remove red hover */
+        #name-last {
+            transition: opacity 0.6s ease;
+        }
+        #name-suffix {
+            opacity: 0;
+            transform: translateX(-12px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
 
         #intel-overlay {
             position: fixed;
@@ -615,7 +623,7 @@
         <a href="info.html" class="info-link">[ INFO ]</a>
         
         <a href="index.html" class="header-name">
-            OMAR SILWANY
+            OMAR<span id="name-space"> </span><span id="name-last">SILWANY</span><span id="name-suffix">, THE CREATIVE</span>
         </a>
         
         <div class="project-display" id="project-display">
@@ -1232,6 +1240,35 @@
         }
 
         updateHUD();
+
+        // Nav Name Reveal — tease or permanent swap based on exploration state
+        (function() {
+            const space  = document.getElementById('name-space');
+            const last   = document.getElementById('name-last');
+            const suffix = document.getElementById('name-suffix');
+            const viewed = JSON.parse(localStorage.getItem('omar_viewed') || '[]');
+            if (viewed.length > 0) {
+                // Unlocked — instant final state, no flash of SILWANY
+                last.style.transition   = 'none';
+                suffix.style.transition = 'none';
+                last.style.display  = 'none';
+                space.style.display = 'none';
+                suffix.style.opacity   = '1';
+                suffix.style.transform = 'translateX(0)';
+            } else {
+                // Tease — ghost in then back out, no layout shift
+                setTimeout(() => {
+                    last.style.opacity   = '0.15';
+                    suffix.style.opacity = '0.15';
+                    suffix.style.transform = 'translateX(0)';
+                    setTimeout(() => {
+                        last.style.opacity   = '1';
+                        suffix.style.opacity = '0';
+                        suffix.style.transform = 'translateX(-12px)';
+                    }, 1800);
+                }, 800);
+            }
+        })();
 
         projects.forEach((p, i) => {
             const div = document.createElement('div');
