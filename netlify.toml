@@ -17,6 +17,16 @@
   status = 200
 
 [[redirects]]
-  from = "/long-copy"
-  to = "/long-copy.html"
+  from = "/long-pour"
+  to = "/long-pour.html"
   status = 200
+
+[[redirects]]
+  from = "/long-copy"
+  to = "/long-pour.html"
+  status = 301
+
+[[redirects]]
+  from = "/long-copy.html"
+  to = "/long-pour.html"
+  status = 301
