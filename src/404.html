@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No Signal | Omar, the Creative</title>
+    <meta name="robots" content="noindex">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤘🏽</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,900;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="base.css">
+    <style>
+        :root {
+            --color-accent: #A8002C;
+            --font-mono: 'IBM Plex Mono', monospace;
+        }
+
+        body {
+            background-color: #050505;
+            color: white;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* STATIC CANVAS */
+        #static-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            opacity: 0.08;
+            pointer-events: none;
+        }
+
+        /* CORNER FRAME */
+        .corner-frame {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            right: 2rem;
+            bottom: 2rem;
+            border: 1px solid rgba(255, 0, 60, 0.1);
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--color-accent);
+            opacity: 0.8;
+        }
+        .tl { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+        .tr { top: -1px; right: -1px; border-left: 0; border-bottom: 0; }
+        .bl { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
+        .br { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+        .hud-tag {
+            position: fixed;
+            font-family: var(--font-mono);
+            font-size: 0.55rem;
+            letter-spacing: 0.2em;
+            color: var(--color-accent);
+            opacity: 0.4;
+            pointer-events: none;
+            text-transform: uppercase;
+            z-index: 1000;
+        }
+        .hud-tl { top: 0.8rem; left: 2rem; }
+        .hud-tr { top: 0.8rem; right: 2rem; }
+        .hud-bl { bottom: 0.8rem; left: 2rem; }
+        .hud-br { bottom: 0.8rem; right: 2rem; }
+
+        /* HUD NAV */
+        .apex-nav {
+            position: fixed;
+            top: 4rem;
+            left: 4rem;
+            right: 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10000;
+            mix-blend-mode: difference;
+        }
+        .nav-name {
+            color: white;
+            text-decoration: none;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            font-weight: 900;
+            font-style: normal;
+        }
+        .nav-name:hover { color: white; }
+        .menu-trigger {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 0.25em;
+            color: white;
+            opacity: 0.4;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: opacity 0.3s ease, color 0.3s ease;
+        }
+        .menu-trigger:hover {
+            opacity: 1;
+            color: #A8002C;
+        }
+
+        /* MENU OVERLAY */
+        #apex-menu {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 20000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5vw;
+        }
+        .menu-close {
+            position: absolute;
+            top: 4rem; right: 4rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.55rem;
+            letter-spacing: 0.2em;
+            color: #A8002C;
+            cursor: pointer;
+            opacity: 0.6;
+        }
+        .menu-close:hover { opacity: 1; }
+        .menu-links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            pointer-events: none;
+        }
+        .menu-link {
+            position: relative;
+            font-family: "Anton", sans-serif;
+            font-size: clamp(60px, 18vw, 350px);
+            line-height: 0.8;
+            text-transform: uppercase;
+            color: #FFFFFF;
+            text-decoration: none;
+            letter-spacing: -0.05em;
+            transition: all 0.3s ease;
+            opacity: 0.1;
+            display: block;
+            width: fit-content;
+            text-align: center;
+            pointer-events: none;
+        }
+        .menu-link::before {
+            content: "";
+            position: absolute;
+            top: 20%;
+            bottom: 20%;
+            left: 0;
+            right: 0;
+            pointer-events: auto;
+            z-index: 1;
+        }
+        .menu-link:hover {
+            opacity: 1;
+            color: #A8002C;
+            text-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+        }
+
+        /* SIGNAL STAGE — centered, full height */
+        .signal-stage {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            z-index: 1;
+        }
+
+        /* STATUS READOUT */
+        .signal-readout {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 400;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: white;
+            opacity: 0.35;
+        }
+
+        /* COPY LINE */
+        .signal-copy {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: clamp(1rem, 2vw, 1.4rem);
+            font-weight: 400;
+            color: white;
+            opacity: 0.5;
+            letter-spacing: 0.02em;
+        }
+
+        /* ACTIONS */
+        .signal-actions {
+            position: fixed;
+            bottom: 3.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.2rem;
+            z-index: 1001;
+        }
+        .signal-action {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: white;
+            text-decoration: none;
+            opacity: 0.4;
+            transition: opacity 0.3s ease, color 0.3s ease;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+        .signal-action:hover {
+            opacity: 1;
+            color: #A8002C;
+        }
+
+        @media (max-width: 768px) {
+            .apex-nav {
+                top: 2rem;
+                left: 2rem;
+                right: 2rem;
+            }
+            .nav-name { font-size: 0.9rem; }
+            .menu-close { top: 2rem; right: 2rem; }
+            .menu-link { font-size: 15vw; }
+            .signal-copy { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- STATIC -->
+    <canvas id="static-canvas"></canvas>
+
+    <!-- CORNER FRAME + HUD -->
+    <div class="corner-frame">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="hud-tag hud-tl">[ ERR: 404 ]</div>
+        <div class="hud-tag hud-tr">[ INPUT: NONE ] [ FREQ: ---.--- ]</div>
+        <div class="hud-tag hud-bl">[ SENSOR: ACTIVE ] [ 24 FPS ]</div>
+        <div class="hud-tag hud-br">[ BAT: 98% ]</div>
+    </div>
+
+    <!-- MENU OVERLAY -->
+    <div id="apex-menu">
+        <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
+        <div class="menu-links">
+            <a href="index.html" class="menu-link">EXHIBITS</a>
+            <a href="choice-cuts.html" class="menu-link">CHOICE CUTS</a>
+            <a href="long-pour.html" class="menu-link">LONG POUR</a>
+            <a href="info.html" class="menu-link">INFORMATION</a>
+        </div>
+    </div>
+
+    <!-- HUD NAV -->
+    <nav class="apex-nav">
+        <div class="nav-left">
+            <a href="index.html" class="nav-name">OMAR SILWANY</a>
+        </div>
+        <div class="nav-right">
+            <div class="menu-trigger" onclick="toggleMenu(true)">[ NO SIGNAL ]</div>
+        </div>
+    </nav>
+
+    <!-- SIGNAL STAGE -->
+    <div class="signal-stage">
+        <p class="signal-copy">Transmission over.</p>
+    </div>
+
+    <div class="signal-actions">
+        <button class="signal-action" id="stay-btn">[ STAY ]</button>
+        <a class="signal-action" href="index.html">[ CHANGE CHANNEL ]</a>
+    </div>
+
+    <script>
+        function toggleMenu(show) {
+            const menu = document.getElementById('apex-menu');
+            menu.style.display = show ? 'flex' : 'none';
+            document.body.style.overflow = show ? 'hidden' : '';
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const menu = document.getElementById('apex-menu');
+                if (menu.style.display === 'flex') {
+                    toggleMenu(false);
+                } else {
+                    window.location.href = 'index.html';
+                }
+            }
+        });
+
+        // Contact Clipboard logic for Nav Name
+        const navName = document.querySelector('.nav-name');
+        navName.addEventListener('click', (e) => {
+            e.preventDefault();
+            navigator.clipboard.writeText('info@omarsilwany.com').then(() => {
+                const originalText = navName.textContent;
+                navName.textContent = 'COPIED';
+                navName.style.color = '#A8002C';
+                setTimeout(() => {
+                    navName.textContent = originalText;
+                    navName.style.color = '';
+                }, 2000);
+            });
+        });
+    </script>
+    <script>
+        (function () {
+            const canvas = document.getElementById('static-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Draw at 1/4 resolution, scale up for coarse CRT grain
+            const SCALE = 4;
+            let w, h, iw, ih;
+
+            function resize() {
+                w = window.innerWidth;
+                h = window.innerHeight;
+                canvas.width  = w;
+                canvas.height = h;
+                iw = Math.ceil(w / SCALE);
+                ih = Math.ceil(h / SCALE);
+            }
+
+            function drawFrame() {
+                const imageData = ctx.createImageData(iw, ih);
+                const data = imageData.data;
+                for (let i = 0; i < data.length; i += 4) {
+                    const v = Math.random() * 255 | 0;
+                    data[i]     = v;
+                    data[i + 1] = v;
+                    data[i + 2] = v;
+                    data[i + 3] = 255;
+                }
+                ctx.putImageData(imageData, 0, 0);
+                // Scale up to fill viewport
+                ctx.drawImage(canvas, 0, 0, iw, ih, 0, 0, w, h);
+            }
+
+            let last = 0;
+            const FPS = 24;
+            const INTERVAL = 1000 / FPS;
+
+            function loop(ts) {
+                if (ts - last >= INTERVAL) {
+                    drawFrame();
+                    last = ts;
+                }
+                requestAnimationFrame(loop);
+            }
+
+            resize();
+            window.addEventListener('resize', resize);
+            requestAnimationFrame(loop);
+        })();
+    </script>
+
+    <script src="apex-sound.js"></script>
+    <script src="nav-name-reveal.js"></script>
+    <script>
+        (function () {
+            var played = false;
+            var audio = new Audio();
+            audio.src = 'assets/sound-effects/star-spangled-banner.mp3';
+            audio.volume = 0.7;
+            audio.preload = 'auto';
+
+            document.getElementById('stay-btn').addEventListener('click', function () {
+                if (played) return;
+                played = true;
+                audio.play().catch(function () {});
+            });
+        })();
+    </script>
+</body>
+</html>

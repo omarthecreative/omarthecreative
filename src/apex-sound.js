@@ -30,6 +30,7 @@ const ApexSound = (function () {
         bourbon:   'assets/sound-effects/563231__ammorts__pouring-whisky-in-the-glass',
         knife:     'assets/sound-effects/07001020',
         whistle:   'assets/sound-effects/the-whistle',
+        anthem:    'assets/sound-effects/star-spangled-banner',
     };
 
     // Fetch all buffers on page load — no gesture required
