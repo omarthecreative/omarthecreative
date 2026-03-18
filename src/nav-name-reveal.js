@@ -16,7 +16,7 @@
         var trigger = document.querySelector('.menu-trigger');
         if (!trigger) return;
         trigger.addEventListener('click', function () {
-            if (window.ApexSound) {
+            if (typeof ApexSound !== 'undefined') {
                 ApexSound.init();
                 ApexSound.play('door');
             }

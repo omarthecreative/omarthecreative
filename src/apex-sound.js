@@ -59,7 +59,6 @@ const ApexSound = (function () {
 
     function play(name, volume) {
         if (!ctx) return;
-        if (ctx.state === 'suspended') ctx.resume();
 
         var vol = (volume !== undefined) ? volume : 1;
 
@@ -73,13 +72,20 @@ const ApexSound = (function () {
             source.start(0);
         }
 
-        if (_decoded[name]) {
-            _fire(_decoded[name]);
-        } else if (_raw[name]) {
-            // Decode on demand then play — covers first-gesture edge case
-            ctx.decodeAudioData(_raw[name].slice(0))
-                .then(function (buf) { _decoded[name] = buf; _fire(buf); })
-                .catch(function () {});
+        function _dispatch() {
+            if (_decoded[name]) {
+                _fire(_decoded[name]);
+            } else if (_raw[name]) {
+                ctx.decodeAudioData(_raw[name].slice(0))
+                    .then(function (buf) { _decoded[name] = buf; _fire(buf); })
+                    .catch(function () {});
+            }
+        }
+
+        if (ctx.state === 'suspended') {
+            ctx.resume().then(_dispatch).catch(function () {});
+        } else {
+            _dispatch();
         }
     }
 
