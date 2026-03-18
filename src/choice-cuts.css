@@ -263,9 +263,9 @@ a:hover {
 
 @media (max-width: 768px) {
     .apex-nav {
-        left: 2rem;
-        right: 2rem;
-        top: 2rem;
+        left: 3.5rem;
+        right: 3.5rem;
+        top: 3.5rem;
     }
     .nav-name { font-size: 1rem; }
     .choice-cuts-wrapper {
@@ -275,20 +275,17 @@ a:hover {
         padding-right: 2rem;
     }
     .lesson-row {
-        grid-template-columns: 1fr;
         padding: 40px 0;
         gap: 20px;
-        text-align: center;
     }
     .lesson-row:hover {
         padding-left: 0;
     }
     .lesson-number {
-        font-size: 80px;
-        text-align: center;
+        font-size: 0.7rem;
     }
     .lesson-text {
-        font-size: 28px;
+        font-size: clamp(36px, 9vw, 60px);
     }
 }
 

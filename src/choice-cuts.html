@@ -63,9 +63,9 @@
         .menu-trigger {
             font-family: var(--font-mono);
             font-size: 0.55rem;
-            letter-spacing: 0.2em;
+            letter-spacing: 0.3em;
             color: white;
-            opacity: 0.6;
+            opacity: 0.8;
             cursor: pointer;
             text-transform: uppercase;
             transition: opacity 0.3s ease;
@@ -87,14 +87,25 @@
             cursor: grab;
             user-select: none;
             -webkit-user-select: none;
-            transform: rotate(-90deg) scaleY(-1) scale(2);
-            filter: drop-shadow(0 16px 40px rgba(0,0,0,0.8));
-            transition: filter 0.2s ease;
+            transform: rotate(-55deg) scaleY(-1) scale(2);
+            transform-origin: 50% 70%;
         }
-        #knife:active { cursor: grabbing; filter: drop-shadow(0 24px 60px rgba(0,0,0,0.9)); }
-        #knife img { width: 100%; height: auto; display: block; pointer-events: none; }
+        #knife:active { cursor: grabbing; }
+        #knife { transition: opacity 0.3s ease; }
+        #knife img {
+            width: 100%;
+            height: auto;
+            display: block;
+            pointer-events: none;
+        }
         @media (max-width: 768px) {
-            #knife { width: clamp(180px, 50vw, 280px); bottom: 3vh; right: 2vw; }
+            #knife { top: auto; left: auto; width: clamp(180px, 50vw, 280px); bottom: 10vh; right: 2vw; }
+        }
+        @media (orientation: portrait) and (min-width: 600px) and (max-width: 1024px) {
+            #knife { top: 40vh; bottom: auto; left: 42vw; right: auto; width: clamp(200px, 28vw, 360px); }
+        }
+        @media (orientation: landscape) and (min-width: 768px) {
+            #knife { left: 42vw; right: auto; }
         }
 
         /* Full Screen Menu Overlay */
@@ -166,11 +177,21 @@
             text-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
         }
 
+        @media (max-width: 1024px) {
+            .apex-nav { top: 3.5rem; left: 3.5rem; right: 3.5rem; }
+            .nav-name { font-size: 1.2rem; }
+            .menu-trigger { font-size: 0.7rem; }
+        }
+        @media (orientation: portrait) and (max-width: 1024px) {
+            .apex-nav { top: 3rem; left: 3rem; right: 3rem; }
+            .nav-name { font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
+            .menu-trigger { font-size: 0.7rem; }
+        }
         @media (max-width: 768px) {
             .apex-nav {
-                left: 2rem;
-                right: 2rem;
-                top: 2rem;
+                left: 3.5rem;
+                right: 3.5rem;
+                top: 3.5rem;
             }
             .menu-close { top: 2rem; right: 2rem; }
             .menu-link { font-size: 15vw; }
@@ -192,7 +213,8 @@
 
     <!-- Knife — drag to reposition on the block -->
     <div id="knife">
-        <img src="assets/knife.png" alt="">
+        <img src="assets/knife-shadow.png" alt="" aria-hidden="true" style="position:absolute;top:0;left:0;width:100%;height:auto;pointer-events:none;">
+        <img src="assets/knife.png" alt="" style="position:relative;">
     </div>
 
     <div id="apex-menu">
@@ -464,6 +486,21 @@
             }
             });
 
+            // Knife — fade out as user scrolls past hero
+            (function() {
+                var knife = document.getElementById('knife');
+                if (!knife) return;
+                window.addEventListener('scroll', function() {
+                    var scrollY = window.scrollY || window.pageYOffset;
+                    var heroH = window.innerHeight;
+                    var progress = Math.max(0, Math.min(1, (scrollY - heroH * 0.5) / (heroH * 0.4)));
+                    knife.style.opacity = progress <= 0 ? '' : 1 - progress;
+                }, { passive: true });
+                window.addEventListener('pageshow', function(e) {
+                    if (e.persisted) knife.style.opacity = '';
+                });
+            })();
+
             // Back to Top Visibility
             const backToTop = document.getElementById('back-to-top');
             window.addEventListener('scroll', () => {
@@ -531,7 +568,7 @@
             window.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
             window.addEventListener('mouseup',   endDrag);
             el.addEventListener('touchstart', e => { const t = e.touches[0]; startDrag(t.clientX, t.clientY); }, { passive: true });
-            window.addEventListener('touchmove', e => { const t = e.touches[0]; moveDrag(t.clientX, t.clientY); }, { passive: true });
+            window.addEventListener('touchmove', e => { if (dragging) e.preventDefault(); const t = e.touches[0]; moveDrag(t.clientX, t.clientY); }, { passive: false });
             window.addEventListener('touchend', endDrag);
         })();
     </script>
@@ -540,6 +577,16 @@
 <script>
     (function () {
         var sliced = false;
+        var touchStarted = false;
+
+        // First touch anywhere unlocks AudioContext from within a gesture.
+        // Also sets touchStarted so the scroll listener knows a real gesture
+        // has occurred and it's safe to play audio.
+        document.addEventListener('touchstart', function () {
+            touchStarted = true;
+            if (typeof ApexSound !== 'undefined') ApexSound.init();
+        }, { passive: true, once: true });
+
         function slice() {
             if (sliced) return;
             sliced = true;
@@ -549,13 +596,19 @@
             }
         }
 
-        // First scroll
+        // First scroll — on touch devices, only plays after a real touchstart
+        // has already unlocked the AudioContext. This prevents the page-load
+        // scroll event from burning sliced=true while ctx is still suspended.
+        // On desktop, AudioContext auto-unlocks so no guard needed.
         window.addEventListener('scroll', function onFirstScroll() {
-            slice();
-            window.removeEventListener('scroll', onFirstScroll);
+            var isTouch = navigator.maxTouchPoints > 0;
+            if (!isTouch || touchStarted) {
+                slice();
+                window.removeEventListener('scroll', onFirstScroll);
+            }
         }, { passive: true });
 
-        // Knife grab (belt-and-suspenders)
+        // Knife grab — authoritative trigger on all platforms
         var knife = document.getElementById('knife');
         if (knife) {
             knife.addEventListener('mousedown', slice);

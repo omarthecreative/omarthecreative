@@ -22,6 +22,20 @@
     overflow: hidden;
 }
 
+/* Transparent capture layer — activates when controls hide to catch
+   mouse/touch events over the cross-origin Vimeo iframe */
+#mouse-capture {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 9;
+    pointer-events: none;
+}
+
+#mouse-capture.active {
+    pointer-events: all;
+    cursor: default;
+}
+
 .viewfinder-overlay {
     position: absolute;
     top: 0;
@@ -39,6 +53,12 @@
     pointer-events: none !important;
 }
 
+/* Tap-block: briefly applied on modal open to prevent ghost clicks from WATCH tap */
+.viewfinder-overlay.tap-block,
+.viewfinder-overlay.tap-block * {
+    pointer-events: none !important;
+}
+
 #video-modal:hover .viewfinder-overlay:not(.controls-hidden) {
     pointer-events: all;
 }
@@ -52,13 +72,15 @@
     cursor: pointer;
     font-family: 'Courier New', monospace;
     font-size: 9px;
+    font-weight: 600;
     letter-spacing: 0.2em;
     color: #FFFFFF;
+    background: transparent;
     border: 1px solid #FFFFFF;
     padding: 4px 8px;
     text-transform: uppercase;
     z-index: 100;
-    transition: all 0.1s ease;
+    transition: background 0.1s ease, color 0.1s ease;
 }
 
 #close-video:hover {
@@ -96,6 +118,12 @@
 .ctrl:hover {
     background: #FFFFFF;
     color: #000000;
+}
+
+.ctrl:focus {
+    outline: none;
+    background: transparent;
+    color: #FFFFFF;
 }
 
 .ctrl .symbol { font-size: 12px; }
@@ -194,6 +222,10 @@
 }
 
 .project-info {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
     text-align: center;
     font-family: 'freight-sans-pro', sans-serif;
     font-size: 9px;
@@ -201,7 +233,8 @@
     letter-spacing: 1px;
     text-transform: uppercase;
     color: #FFFFFF;
-    margin-bottom: 10px;
+    white-space: nowrap;
+    line-height: 24px;
 }
 
 /* NAV HINTS & NAVIGATION */
@@ -283,6 +316,31 @@
 .audio-toggle:hover svg path { stroke: black; }
 .audio-toggle svg path:first-child { fill: white; }
 .audio-toggle:hover svg path:first-child { fill: black; }
+
+/* Mute attention pulse — 3 cycles on modal open, stops on unmute */
+@keyframes mute-pulse {
+    0%, 100% {
+        border-color: rgba(255, 255, 255, 1);
+        box-shadow: none;
+    }
+    50% {
+        border-color: #FF0000;
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    }
+}
+
+@keyframes mute-pulse-icon {
+    0%, 100% { stroke: white; fill: white; }
+    50%       { stroke: #FF0000; fill: #FF0000; }
+}
+
+.audio-toggle.mute-pulse {
+    animation: mute-pulse 0.85s ease-in-out 3;
+}
+
+.audio-toggle.mute-pulse .muted-icon svg path:first-child {
+    animation: mute-pulse-icon 0.85s ease-in-out 3;
+}
 
 .frame-counter {
     position: absolute;
@@ -439,11 +497,18 @@
    Fullscreen video. All controls hidden.
    ============================================================ */
 @media (max-width: 926px) and (orientation: landscape) and (max-height: 428px) {
-    .viewfinder-overlay > *:not(#vimeo-wrap) {
+    .viewfinder-overlay > *:not(#vimeo-wrap):not(#close-video) {
         display: none !important;
         visibility: hidden !important;
         opacity: 0 !important;
         pointer-events: none !important;
+    }
+    /* Compact close button — only visible control in landscape */
+    #close-video {
+        top: 12px;
+        right: 12px;
+        font-size: 7px;
+        padding: 2px 5px;
     }
 }
 
@@ -454,8 +519,19 @@
 @media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
 
     .center-controls { bottom: 100px; }
-    .audio-toggle    { bottom: 100px; }
-    .time-display    { bottom: 100px; }
+
+    .audio-toggle {
+        bottom: 100px;
+        top: auto;
+        transform: none;
+    }
+
+    .time-display {
+        bottom: 100px;
+        top: auto;
+        transform: none;
+        right: 30px;
+    }
 
     .bottom-ui-wrapper {
         bottom: 30px;

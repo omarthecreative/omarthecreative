@@ -78,9 +78,9 @@
         .menu-trigger {
             font-family: var(--font-mono);
             font-size: 0.55rem;
-            letter-spacing: 0.2em;
+            letter-spacing: 0.3em;
             color: white;
-            opacity: 0.6;
+            opacity: 0.8;
             cursor: pointer;
             text-transform: uppercase;
             transition: opacity 0.3s ease;
@@ -161,9 +161,9 @@
 
         @media (max-width: 768px) {
             .apex-nav {
-                left: 2rem;
-                right: 2rem;
-                top: 2rem;
+                left: 3.5rem;
+                right: 3.5rem;
+                top: 3.5rem;
             }
             .nav-name { font-size: 0.9rem; }
             .menu-close { top: 2rem; right: 2rem; }
@@ -181,25 +181,34 @@
             cursor: grab;
             user-select: none;
             -webkit-user-select: none;
-            filter: drop-shadow(0 12px 40px rgba(0,0,0,0.7));
-            transition: filter 0.2s ease;
         }
-        #bourbon-glass:active {
-            cursor: grabbing;
-            filter: drop-shadow(0 20px 60px rgba(0,0,0,0.85));
-        }
+        #bourbon-glass:active { cursor: grabbing; }
         #bourbon-glass img {
             width: 100%;
             height: auto;
             display: block;
             pointer-events: none;
+            filter: drop-shadow(0 12px 40px rgba(0,0,0,0.7));
+            will-change: opacity;
+            transition: opacity 0.3s ease;
         }
+        #bourbon-glass:active img { filter: drop-shadow(0 20px 60px rgba(0,0,0,0.85)); }
         @media (max-width: 768px) {
             #bourbon-glass {
                 width: clamp(140px, 38vw, 220px);
                 bottom: 5vh;
                 left: 4vw;
             }
+        }
+        @media (max-width: 1024px) {
+            .apex-nav { top: 3.5rem; left: 3.5rem; right: 3.5rem; }
+            .nav-name { font-size: 1.2rem; }
+            .menu-trigger { font-size: 0.7rem; }
+        }
+        @media (orientation: portrait) and (max-width: 1024px) {
+            .apex-nav { top: 3rem; left: 3rem; right: 3rem; }
+            .nav-name { font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
+            .menu-trigger { font-size: 0.7rem; }
         }
     </style>
     <!-- Back to Top -->
@@ -253,6 +262,7 @@
                 backToTop.style.pointerEvents = 'none';
             }
         });
+
         backToTop.addEventListener('mouseenter', () => backToTop.style.opacity = '1');
         backToTop.addEventListener('mouseleave', () => {
             const scrollPosition = window.innerHeight + window.pageYOffset;
@@ -394,10 +404,26 @@
                 startDrag(t.clientX, t.clientY);
             }, { passive: true });
             window.addEventListener('touchmove', e => {
+                if (dragging) e.preventDefault();
                 const t = e.touches[0];
                 moveDrag(t.clientX, t.clientY);
-            }, { passive: true });
+            }, { passive: false });
             window.addEventListener('touchend', endDrag);
+        })();
+
+        // Bourbon glass — fade out as user scrolls past hero
+        (function() {
+            var glassImg = document.querySelector('#bourbon-glass img');
+            if (!glassImg) return;
+            window.addEventListener('scroll', function() {
+                var scrollY = window.scrollY || window.pageYOffset;
+                var heroH = window.innerHeight;
+                var progress = Math.max(0, Math.min(1, (scrollY - heroH * 0.5) / (heroH * 0.4)));
+                glassImg.style.opacity = progress <= 0 ? '' : 1 - progress;
+            }, { passive: true });
+            window.addEventListener('pageshow', function(e) {
+                if (e.persisted) glassImg.style.opacity = '';
+            });
         })();
     </script>
 <script src="apex-sound.js"></script>
@@ -405,6 +431,13 @@
 <script>
     (function () {
         var poured = false;
+        var touchStarted = false;
+
+        document.addEventListener('touchstart', function () {
+            touchStarted = true;
+            if (typeof ApexSound !== 'undefined') ApexSound.init();
+        }, { passive: true, once: true });
+
         function pour() {
             if (poured) return;
             poured = true;
@@ -414,10 +447,12 @@
             }
         }
 
-        // First scroll
         window.addEventListener('scroll', function onFirstScroll() {
-            pour();
-            window.removeEventListener('scroll', onFirstScroll);
+            var isTouch = navigator.maxTouchPoints > 0;
+            if (!isTouch || touchStarted) {
+                pour();
+                window.removeEventListener('scroll', onFirstScroll);
+            }
         }, { passive: true });
 
         // Glass grab (one-time, belt-and-suspenders)

@@ -150,7 +150,7 @@
             50% { opacity: 0; }
         }
         .footer-metadata {
-            position: absolute;
+            position: fixed;
             bottom: 4rem;
             width: 100%;
             display: flex;
@@ -213,9 +213,9 @@
             right: 4rem;
             font-family: var(--mono);
             font-size: 0.55rem;
-            letter-spacing: 0.2em;
+            letter-spacing: 0.3em;
             color: white;
-            opacity: 0.6;
+            opacity: 0.8;
             text-decoration: none;
             text-transform: uppercase;
             z-index: 10000;
@@ -234,6 +234,7 @@
         .culture-break { display: none; }
 
         .btn {
+            outline: none;
             padding: 1rem 2rem;
             border: 1px solid var(--vibrant-red);
             font-family: var(--mono);
@@ -400,7 +401,7 @@
         @media (orientation: landscape) and (max-width: 1366px) {
             .header-name { top: 3.5rem; left: 3.5rem; font-size: 1.2rem; }
             .info-link { top: 3.5rem; right: 3.5rem; font-size: 0.7rem; }
-            .footer-metadata { bottom: 8rem; padding: 0 4rem; font-size: 0.7rem; }
+            .footer-metadata { bottom: 4rem; padding: 0 4rem; font-size: 0.7rem; }
             .subtitle { font-size: 4vw; margin-top: -1vw; }
             .copyright-tag { bottom: 0.8rem; display: block !important; }
             
@@ -436,29 +437,29 @@
             .info-link { top: 3rem; right: 3rem; font-size: 0.7rem; opacity: 1; }
             
             .title { font-size: 18vw; }
-            .subtitle { font-size: 6vw; margin-top: 1.5rem; width: 100%; max-width: 320px; margin-left: auto; margin-right: auto; }
+            .subtitle { font-size: 4vw; margin-top: 1rem; }
             
             .action-group { flex-direction: column; gap: 0.5rem; margin-top: 3rem; }
             .btn { padding: 0.8rem 1.5rem; font-size: 0.7rem; }
 
-            .footer-metadata { 
-                bottom: 6rem;
-                padding: 0 3rem; 
+            .footer-metadata {
+                bottom: 3rem;
+                padding: 0 3rem;
                 flex-direction: row; 
                 justify-content: space-between;
                 font-size: 0.7rem; 
                 letter-spacing: 0.1em;
             }
             .copyright-tag { bottom: 0.4rem; font-size: 0.4rem; opacity: 0.4; display: block !important; }
-            .corner-frame { top: 1.5rem; left: 1.5rem; right: 1.5rem; bottom: 1.5rem; }
+            .corner-frame { top: 2rem; left: 2rem; right: 2rem; bottom: 2rem; }
 
             /* Fixed HUD for Portrait */
             .hud-tag { font-size: 0.45rem; opacity: 0.5; letter-spacing: 0.05em; }
-            .hud-tl { top: 1.8rem; left: 2rem; }
-            .hud-tr { top: 1.8rem; right: 2rem; }
-            .hud-bl { bottom: 2rem; left: 2rem; }
-            .hud-br { bottom: 2rem; right: 2rem; }
-            #lut-toggle.unlocked { top: 1.8rem; padding: 1px 3px; }
+            .hud-tl { top: 0.8rem; left: 2rem; }
+            .hud-tr { top: 0.8rem; right: 2rem; }
+            .hud-bl { bottom: 0.8rem; left: 2rem; }
+            .hud-br { bottom: 0.8rem; right: 2rem; }
+            #lut-toggle.unlocked { top: 0.8rem; padding: 1px 3px; }
 
             .intel-content { max-height: 90vh; }
             .intel-desc { font-size: 1.3rem; margin-bottom: 2rem; }
@@ -484,9 +485,10 @@
 <body>
     <div id="video-modal" tabindex="0" style="outline: none;">
         <div id="vimeo-wrap" style="width: 100%; height: 100%;"></div>
-        
+        <div id="mouse-capture"></div>
+
         <div class="viewfinder-overlay">
-            <div id="close-video">[ ESC // CLOSE ]</div>
+            <div id="close-video" role="button" tabindex="0">[ ESC // CLOSE ]</div>
 
             <!-- PROJECT DETAILS -->
             <div class="project-details-box" id="video-details-drawer">
@@ -1366,26 +1368,79 @@
                 document.getElementById('play-pause-symbol').textContent = '►';
                 document.getElementById('play-pause-text').textContent = 'PLAY';
             });
+
+            // Restore mute state from previous video
+            vimeoPlayer.setVolume(isMuted ? 0 : 1);
+            document.querySelector('.muted-icon').style.display = isMuted ? 'inline' : 'none';
+            document.querySelector('.unmuted-icon').style.display = isMuted ? 'none' : 'inline';
+
+            // Re-trigger pulse reminder only if still muted
+            if (isMuted) {
+                const audioToggle = document.getElementById('video-audio-toggle');
+                audioToggle.classList.remove('mute-pulse');
+                void audioToggle.offsetWidth; // reset animation
+                audioToggle.classList.add('mute-pulse');
+            }
+
+            // Reclaim focus from new iframe so keyboard shortcuts work immediately
+            setTimeout(() => { window.focus(); document.body.focus(); }, 300);
         }
 
         // AUTO-HIDE OVERLAY CONTROLS
         const viewfinderOverlay = document.querySelector('.viewfinder-overlay');
+        const mouseCapture = document.getElementById('mouse-capture');
         let hideControlsTimer;
+
+        function getVimeoIframe() {
+            return vimeoWrap.querySelector('iframe');
+        }
 
         function showControls() {
             viewfinderOverlay.classList.remove('controls-hidden');
+            mouseCapture.classList.remove('active');
+            const iframe = getVimeoIframe();
+            if (iframe) iframe.style.pointerEvents = 'auto';
             clearTimeout(hideControlsTimer);
             hideControlsTimer = setTimeout(() => {
                 viewfinderOverlay.classList.add('controls-hidden');
+                mouseCapture.classList.add('active');
+                const iframe = getVimeoIframe();
+                if (iframe) iframe.style.pointerEvents = 'none';
+                window.focus();
+                document.body.focus();
             }, 3000);
         }
 
         function stopAutoHide() {
             clearTimeout(hideControlsTimer);
             viewfinderOverlay.classList.remove('controls-hidden');
+            mouseCapture.classList.remove('active');
+            const iframe = getVimeoIframe();
+            if (iframe) iframe.style.pointerEvents = 'auto';
         }
 
         modal.addEventListener('mousemove', showControls);
+        mouseCapture.addEventListener('mousemove', showControls);
+        mouseCapture.addEventListener('touchstart', showControls, { passive: true });
+        mouseCapture.addEventListener('touchend', (e) => {
+            const touch = e.changedTouches[0];
+            const controlIds = [
+                'video-audio-toggle', 'close-video',
+                'video-pause', 'video-rewind', 'video-forward',
+                'video-prev-btn', 'video-next-btn',
+                'video-enter-btn', 'video-restart-btn'
+            ];
+            for (const id of controlIds) {
+                const el = document.getElementById(id);
+                if (!el) continue;
+                const r = el.getBoundingClientRect();
+                if (touch.clientX >= r.left - 8 && touch.clientX <= r.right + 8 &&
+                    touch.clientY >= r.top - 8 && touch.clientY <= r.bottom + 8) {
+                    el.click();
+                    break;
+                }
+            }
+        }, { passive: true });
         modal.addEventListener('touchstart', showControls, { passive: true });
 
         watchBtn.addEventListener('click', () => {
@@ -1393,7 +1448,9 @@
             modal.style.display = 'flex';
             loadVideoProject(currentIndex);
             showControls();
-            setTimeout(() => window.focus(), 500);
+            viewfinderOverlay.classList.add('tap-block');
+            setTimeout(() => { viewfinderOverlay.classList.remove('tap-block'); }, 400);
+            setTimeout(() => { if (document.activeElement) document.activeElement.blur(); window.focus(); }, 500);
             startFocusLock();
             markAsViewed(`v-${currentIndex}`);
         });
@@ -1424,14 +1481,23 @@
         document.getElementById('video-restart-btn').addEventListener('click', restartVideo);
 
         // Keyboard Shortcuts for Video Overlay
-        window.addEventListener('keydown', (e) => {
+        // Also fires on document to catch events when iframe has focus
+        function handleVideoKeydown(e) {
+            if (modal.style.display !== 'flex') return;
+            showControls(); // any keypress wakes the controls
+            if (e.key === 'ArrowRight') document.getElementById('video-next-btn').click();
+            if (e.key === 'ArrowLeft') document.getElementById('video-prev-btn').click();
+            if (e.key === 'Enter') { e.preventDefault(); toggleDetailsDrawer(); }
+            if (e.key === ' ') { e.preventDefault(); document.getElementById('video-pause').click(); }
+            if (e.key === 'm' || e.key === 'M') document.getElementById('video-audio-toggle').click();
+            if (e.key === 'r' || e.key === 'R') restartVideo();
+        }
+        window.addEventListener('keydown', handleVideoKeydown);
+
+        // Reclaim focus immediately if iframe steals it while modal is open
+        window.addEventListener('blur', () => {
             if (modal.style.display === 'flex') {
-                if (e.key === 'ArrowRight') document.getElementById('video-next-btn').click();
-                if (e.key === 'ArrowLeft') document.getElementById('video-prev-btn').click();
-                if (e.key === 'Enter') { e.preventDefault(); toggleDetailsDrawer(); }
-                if (e.key === ' ') { e.preventDefault(); document.getElementById('video-pause').click(); }
-                if (e.key === 'm' || e.key === 'M') document.getElementById('video-audio-toggle').click();
-                if (e.key === 'r' || e.key === 'R') restartVideo();
+                setTimeout(() => { window.focus(); document.body.focus(); }, 50);
             }
         });
 
@@ -1443,7 +1509,7 @@
                     window.focus();
                     document.body.focus();
                 }
-            }, 1000);
+            }, 500);
         }
         function stopFocusLock() { clearInterval(focusInterval); }
 
@@ -1473,6 +1539,7 @@
             vimeoPlayer.setVolume(isMuted ? 0 : 1);
             document.querySelector('.muted-icon').style.display = isMuted ? 'inline' : 'none';
             document.querySelector('.unmuted-icon').style.display = isMuted ? 'none' : 'inline';
+            if (!isMuted) document.getElementById('video-audio-toggle').classList.remove('mute-pulse');
         });
 
         document.getElementById('video-progress-track').addEventListener('click', (e) => {

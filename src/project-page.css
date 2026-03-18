@@ -43,9 +43,9 @@
 .menu-trigger {
     font-family: var(--font-mono);
     font-size: 0.55rem;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.3em;
     color: white;
-    opacity: 0.6;
+    opacity: 0.8;
     cursor: pointer;
     text-transform: uppercase;
     transition: opacity 0.3s ease;
@@ -128,18 +128,20 @@
 @media (max-width: 1024px) {
     .apex-nav { top: 3.5rem; left: 3.5rem; right: 3.5rem; }
     .nav-name { font-size: 1.2rem; }
+    .menu-trigger { font-size: 0.7rem; }
 }
 
 @media (orientation: portrait) and (max-width: 1024px) {
     .apex-nav { top: 3rem; left: 3rem; right: 3rem; }
     .nav-name { font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
+    .menu-trigger { font-size: 0.7rem; }
 }
 
 @media (max-width: 768px) {
     .apex-nav {
-        left: 2rem;
-        right: 2rem;
-        top: 2rem;
+        left: 3.5rem;
+        right: 3.5rem;
+        top: 3.5rem;
     }
     .nav-name { font-size: 1rem; }
     .menu-close { top: 2rem; right: 2rem; }
@@ -147,7 +149,7 @@
 }
 
 @media (max-width: 480px) {
-    .apex-nav { top: 2.5rem; left: 2.5rem; right: 2.5rem; }
+    .apex-nav { top: 3rem; left: 3rem; right: 3rem; }
     .nav-name { font-size: 0.8rem; max-width: 60%; line-height: 1.1; }
 }
 

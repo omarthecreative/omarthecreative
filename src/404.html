@@ -233,11 +233,21 @@
             text-shadow: 0 0 16px rgba(168, 0, 44, 0.8);
         }
 
+        @media (max-width: 1024px) {
+            .apex-nav { top: 3.5rem; left: 3.5rem; right: 3.5rem; }
+            .nav-name { font-size: 1.2rem; }
+            .menu-trigger { font-size: 0.7rem; }
+        }
+        @media (orientation: portrait) and (max-width: 1024px) {
+            .apex-nav { top: 3rem; left: 3rem; right: 3rem; }
+            .nav-name { font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
+            .menu-trigger { font-size: 0.7rem; }
+        }
         @media (max-width: 768px) {
             .apex-nav {
-                top: 2rem;
-                left: 2rem;
-                right: 2rem;
+                top: 3.5rem;
+                left: 3.5rem;
+                right: 3.5rem;
             }
             .nav-name { font-size: 0.9rem; }
             .menu-close { top: 2rem; right: 2rem; }

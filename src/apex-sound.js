@@ -47,6 +47,11 @@ const ApexSound = (function () {
     function init() {
         if (ctx) return;
         ctx = new (window.AudioContext || window.webkitAudioContext)();
+        // Resume immediately while still inside the gesture handler —
+        // iOS requires ctx.resume() to be called synchronously within
+        // a user gesture (touchstart/click). If we wait until play(),
+        // the gesture window may have closed.
+        if (ctx.state === 'suspended') ctx.resume().catch(function () {});
         Object.keys(_raw).forEach(function (name) {
             _decodeOne(name);
         });
