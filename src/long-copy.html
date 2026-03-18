@@ -275,7 +275,8 @@
         gtag('js', new Date());
         gtag('config', 'G-DCVBRB1LW6');
     </script>
-    <script src="nav-name-reveal.js"></script>
+    <script src="apex-sound.js"></script>
+<script src="nav-name-reveal.js"></script>
 </body>
 <body class="long-copy-body">
     <!-- Bourbon Glass — drag to reposition on the table -->
@@ -401,6 +402,19 @@
             window.addEventListener('touchend', endDrag);
         })();
     </script>
+<script src="apex-sound.js"></script>
 <script src="nav-name-reveal.js"></script>
+<script>
+    (function () {
+        function pourOnArrival() {
+            ApexSound.init();
+            ApexSound.play('bourbon', 0.6);
+            document.removeEventListener('click', pourOnArrival);
+            document.removeEventListener('touchstart', pourOnArrival);
+        }
+        document.addEventListener('click', pourOnArrival);
+        document.addEventListener('touchstart', pourOnArrival, { passive: true });
+    })();
+</script>
 </body>
 </html>

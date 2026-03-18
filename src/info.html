@@ -609,5 +609,12 @@
     <div class="copyright-tag fixed">
         © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
     </div>
-    </body>
+    <script src="apex-sound.js"></script>
+<script>
+(function(){
+  var t=document.querySelector(".menu-trigger");
+  if(t) t.addEventListener("click",function(){ApexSound.init();ApexSound.play("door");});
+})();
+</script>
+</body>
     </html>

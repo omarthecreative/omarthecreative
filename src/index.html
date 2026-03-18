@@ -1192,7 +1192,7 @@
                 const lut = document.getElementById('lut-toggle');
                 const wasLocked = !lut.classList.contains('unlocked');
                 lut.classList.add('unlocked');
-                if (wasLocked) ApexSound.play('projector', 0.7);
+                if (wasLocked) ApexSound.play('shutter', 0.5);
                 if (localStorage.getItem('omar_lut') === 'RUBY') {
                     applyRubyLUT(true);
                 }
@@ -1389,7 +1389,7 @@
         modal.addEventListener('touchstart', showControls, { passive: true });
 
         watchBtn.addEventListener('click', () => {
-            ApexSound.play('film');
+            ApexSound.play('projector');
             modal.style.display = 'flex';
             loadVideoProject(currentIndex);
             showControls();
@@ -1484,7 +1484,7 @@
         });
 
         document.getElementById('close-video').addEventListener('click', () => {
-            ApexSound.play('door');
+            ApexSound.play('film');
             modal.style.display = 'none';
             stopAutoHide();
             stopFocusLock();

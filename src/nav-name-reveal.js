@@ -1,4 +1,4 @@
-// nav-name-reveal.js — Apply OMAR, THE CREATIVE unlock on all sub-pages
+// nav-name-reveal.js — Nav name unlock + menu sound on all sub-pages
 (function () {
     function applyNavReveal() {
         var el = document.querySelector('.nav-name');
@@ -12,9 +12,24 @@
         el.textContent = 'OMAR, THE CREATIVE';
     }
 
+    function wireMenuSound() {
+        var trigger = document.querySelector('.menu-trigger');
+        if (!trigger) return;
+        trigger.addEventListener('click', function () {
+            if (window.ApexSound) {
+                ApexSound.init();
+                ApexSound.play('door');
+            }
+        });
+    }
+
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', applyNavReveal);
+        document.addEventListener('DOMContentLoaded', function () {
+            applyNavReveal();
+            wireMenuSound();
+        });
     } else {
         applyNavReveal();
+        wireMenuSound();
     }
 })();
