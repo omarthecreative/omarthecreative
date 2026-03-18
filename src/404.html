@@ -306,20 +306,6 @@
             }
         });
 
-        // Contact Clipboard logic for Nav Name
-        const navName = document.querySelector('.nav-name');
-        navName.addEventListener('click', (e) => {
-            e.preventDefault();
-            navigator.clipboard.writeText('info@omarsilwany.com').then(() => {
-                const originalText = navName.textContent;
-                navName.textContent = 'COPIED';
-                navName.style.color = '#A8002C';
-                setTimeout(() => {
-                    navName.textContent = originalText;
-                    navName.style.color = '';
-                }, 2000);
-            });
-        });
     </script>
     <script>
         (function () {
