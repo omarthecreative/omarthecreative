@@ -181,7 +181,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 2rem;
+            gap: 0.75rem;
             z-index: 1;
         }
 
@@ -207,18 +207,12 @@
             letter-spacing: 0.02em;
         }
 
-        /* ACTIONS */
-        .signal-actions {
-            position: fixed;
-            bottom: 3.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.2rem;
-            z-index: 1001;
+        /* STAY ANYWAY */
+        @keyframes signal-pulse {
+            0%, 100% { opacity: 0.4; text-shadow: none; }
+            50% { opacity: 0.9; text-shadow: 0 0 12px rgba(168, 0, 44, 0.6), 0 0 30px rgba(168, 0, 44, 0.25); }
         }
+
         .signal-action {
             font-family: 'IBM Plex Mono', monospace;
             font-size: 0.6rem;
@@ -226,16 +220,17 @@
             text-transform: uppercase;
             color: white;
             text-decoration: none;
-            opacity: 0.4;
-            transition: opacity 0.3s ease, color 0.3s ease;
             background: none;
             border: none;
             cursor: pointer;
             padding: 0;
+            animation: signal-pulse 2.8s ease-in-out infinite;
         }
         .signal-action:hover {
+            animation: none;
             opacity: 1;
             color: #A8002C;
+            text-shadow: 0 0 16px rgba(168, 0, 44, 0.8);
         }
 
         @media (max-width: 768px) {
@@ -290,11 +285,7 @@
     <!-- SIGNAL STAGE -->
     <div class="signal-stage">
         <p class="signal-copy">Transmission over.</p>
-    </div>
-
-    <div class="signal-actions">
-        <button class="signal-action" id="stay-btn">[ STAY ]</button>
-        <a class="signal-action" href="index.html">[ CHANGE CHANNEL ]</a>
+        <button class="signal-action" id="stay-btn">[ STAY ANYWAY ]</button>
     </div>
 
     <script>
@@ -386,15 +377,12 @@
     <script>
         (function () {
             var played = false;
-            var audio = new Audio();
-            audio.src = 'assets/sound-effects/star-spangled-banner.mp3';
-            audio.volume = 0.7;
-            audio.preload = 'auto';
-
             document.getElementById('stay-btn').addEventListener('click', function () {
                 if (played) return;
                 played = true;
-                audio.play().catch(function () {});
+                var audio = new Audio('assets/sound-effects/star-spangled-banner.mp3');
+                audio.volume = 0.7;
+                audio.play().catch(function (e) { console.error('[ANTHEM]', e); played = false; });
             });
         })();
     </script>
