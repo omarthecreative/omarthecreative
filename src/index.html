@@ -647,6 +647,7 @@
         © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
     </div>
 
+    <script src="apex-sound.js"></script>
     <script>
         const projects = [
             {
@@ -1189,7 +1190,9 @@
             // Check Unlock
             if (count > 0) {
                 const lut = document.getElementById('lut-toggle');
+                const wasLocked = !lut.classList.contains('unlocked');
                 lut.classList.add('unlocked');
+                if (wasLocked) ApexSound.play('projector', 0.7);
                 if (localStorage.getItem('omar_lut') === 'RUBY') {
                     applyRubyLUT(true);
                 }
@@ -1280,7 +1283,9 @@
 
         portal.addEventListener('click', (e) => {
             if (e.target.closest('.btn') || e.target.closest('.info-link') || e.target.closest('.header-name') || e.target.closest('.footer-metadata a')) return;
-            
+            ApexSound.init();
+            ApexSound.play('shutter');
+
             // Kill initial background
             const initialBg = document.getElementById('initial-bg');
             if (initialBg) {
@@ -1384,6 +1389,7 @@
         modal.addEventListener('touchstart', showControls, { passive: true });
 
         watchBtn.addEventListener('click', () => {
+            ApexSound.play('film');
             modal.style.display = 'flex';
             loadVideoProject(currentIndex);
             showControls();
@@ -1478,6 +1484,7 @@
         });
 
         document.getElementById('close-video').addEventListener('click', () => {
+            ApexSound.play('door');
             modal.style.display = 'none';
             stopAutoHide();
             stopFocusLock();
