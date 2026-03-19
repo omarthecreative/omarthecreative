@@ -420,7 +420,7 @@
                 .subtitle { font-size: clamp(10px, 2.5vh, 18px); margin-top: 0; }
                 .action-group { margin-top: 1rem; flex-direction: row; gap: 1rem; }
                 .btn { padding: 0.5rem 1.5rem; }
-                .footer-metadata { bottom: 2rem; padding: 0 2rem; font-size: 0.6rem; }
+                .footer-metadata { bottom: 1.5rem; padding: 0 2rem; font-size: 0.6rem; }
                 .copyright-tag { display: none !important; }
                 .corner-frame { top: 1rem; left: 1.5rem; right: 1.5rem; bottom: 1rem; }
                 .portal-wrapper { padding-bottom: 10%; }
@@ -1769,6 +1769,13 @@
             // Mobile portrait: skip width constraint, but scale down font for long words
             if (window.innerWidth <= 768 && window.innerHeight > window.innerWidth) {
                 titleEl.style.fontSize = word.length >= 12 ? '15vw' : '';
+                return;
+            }
+            // Mobile landscape: title renders at clamp(12vh,72px) not 15vw —
+            // probe measurement would set wrong container width, skip it
+            if (window.innerHeight <= 600 && window.innerWidth > window.innerHeight) {
+                titleEl.style.fontSize = '';
+                projectDisplay.style.width = '';
                 return;
             }
             const probe = document.createElement('span');
