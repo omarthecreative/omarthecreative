@@ -444,8 +444,7 @@
         }
 
         window.addEventListener('scroll', function onFirstScroll() {
-            var isTouch = navigator.maxTouchPoints > 0;
-            if (!isTouch || touchStarted) {
+            if (window.scrollY > 50) {
                 pour();
                 window.removeEventListener('scroll', onFirstScroll);
             }

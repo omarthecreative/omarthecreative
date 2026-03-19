@@ -5,6 +5,7 @@
 const ApexSound = (function () {
 
     let ctx = null;
+    let _resumePromise = null; // Promise from gesture-initiated ctx.resume()
     const _raw = {};      // ArrayBuffers from fetch (no gesture needed)
     const _decoded = {};  // Decoded AudioBuffers (requires AudioContext)
 
@@ -47,11 +48,12 @@ const ApexSound = (function () {
     function init() {
         if (ctx) return;
         ctx = new (window.AudioContext || window.webkitAudioContext)();
-        // Resume immediately while still inside the gesture handler —
-        // iOS requires ctx.resume() to be called synchronously within
-        // a user gesture (touchstart/click). If we wait until play(),
-        // the gesture window may have closed.
-        if (ctx.state === 'suspended') ctx.resume().catch(function () {});
+        // Resume synchronously within the gesture handler and store the promise.
+        // play() chains on _resumePromise rather than calling ctx.resume() again
+        // from outside a gesture — iOS blocks that second call (scroll/async).
+        _resumePromise = ctx.state === 'suspended'
+            ? ctx.resume().catch(function () {})
+            : Promise.resolve();
         Object.keys(_raw).forEach(function (name) {
             _decodeOne(name);
         });
@@ -89,11 +91,8 @@ const ApexSound = (function () {
             }
         }
 
-        if (ctx.state === 'suspended') {
-            ctx.resume().then(_dispatch).catch(function () {});
-        } else {
-            _dispatch();
-        }
+        var rp = _resumePromise || Promise.resolve();
+        rp.then(_dispatch).catch(function () {});
     }
 
     var _loopNodes = {};
@@ -125,11 +124,8 @@ const ApexSound = (function () {
             }
         }
 
-        if (ctx.state === 'suspended') {
-            ctx.resume().then(_dispatch).catch(function () {});
-        } else {
-            _dispatch();
-        }
+        var rp = _resumePromise || Promise.resolve();
+        rp.then(_dispatch).catch(function () {});
     }
 
     // Kick off fetching immediately
