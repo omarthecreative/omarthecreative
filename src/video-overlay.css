@@ -22,6 +22,19 @@
     overflow: hidden;
 }
 
+/* Caption mask — covers burned-in CC on Citi video (lower 25%) */
+#cc-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 25%;
+    background: #000;
+    z-index: 5;
+    display: none;
+    pointer-events: none;
+}
+
 /* Transparent capture layer — activates when controls hide to catch
    mouse/touch events over the cross-origin Vimeo iframe */
 #mouse-capture {

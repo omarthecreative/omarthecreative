@@ -485,6 +485,7 @@
 <body>
     <div id="video-modal" tabindex="0" style="outline: none;">
         <div id="vimeo-wrap" style="width: 100%; height: 100%;"></div>
+        <div id="cc-bar"></div>
         <div id="mouse-capture"></div>
 
         <div class="viewfinder-overlay">
@@ -1010,6 +1011,7 @@
                 subtitle: "RISE",
                 vimeoId: "812285745",
                 videoScale: 1.35,
+                captionBar: true,
                 img: "08-citi-rise.png",
                 role: "CREATIVE DIRECTOR, COPY",
                 desc: "$1 trillion in sustainable finance<br>is complex.<br>We gave it one simple direction. Up.<br><br>We turned global capital into local impact,<br>proving that profit and purpose<br>aren't just compatible—they're powerful.",
@@ -1314,6 +1316,7 @@
         function loadVideoProject(index) {
             const p = projects[index];
             const scaleStyle = p.videoScale ? `transform:scale(${p.videoScale});transform-origin:center 40%;` : '';
+            document.getElementById('cc-bar').style.display = p.captionBar ? 'block' : 'none';
             vimeoWrap.innerHTML = `<iframe src="https://player.vimeo.com/video/${p.vimeoId}?autoplay=1&loop=1&controls=0&muted=1&title=0&byline=0&portrait=0&transparent=0&dnt=1" style="width:100%;height:100%;border:none;${scaleStyle}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
             
             // Initialize Vimeo Player API
