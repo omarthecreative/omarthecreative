@@ -17,18 +17,13 @@
     overflow-x: hidden;
 }
 
-.apex-nav {
+/* Nav — independent fixed elements, exact match to landing/choice-cuts/long-pour */
+.apex-nav { pointer-events: none; }
+
+.nav-name {
     position: fixed;
     top: 4rem;
     left: 4rem;
-    right: 4rem;
-    display: flex;
-    justify-content: space-between;
-    z-index: 10000;
-    mix-blend-mode: difference;
-}
-
-.nav-name {
     color: white;
     text-decoration: none;
     font-family: 'Playfair Display', serif;
@@ -36,11 +31,17 @@
     letter-spacing: 0.05em;
     text-transform: uppercase;
     font-weight: 900;
-    z-index: 100;
     font-style: normal;
+    z-index: 10000;
+    pointer-events: auto;
 }
 
+.nav-name:hover { color: white; }
+
 .menu-trigger {
+    position: fixed;
+    top: 4rem;
+    right: 4rem;
     font-family: var(--font-mono);
     font-size: 0.55rem;
     letter-spacing: 0.3em;
@@ -49,12 +50,11 @@
     cursor: pointer;
     text-transform: uppercase;
     transition: opacity 0.3s ease;
+    z-index: 10000;
+    pointer-events: auto;
 }
 
-.menu-trigger:hover {
-    opacity: 1;
-    color: #A8002C;
-}
+.menu-trigger:hover { opacity: 1; color: #A8002C; }
 
 /* Full Screen Menu Overlay */
 #apex-menu {
@@ -125,36 +125,32 @@
     text-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
 }
 
-/* Matches landing/info/long-pour breakpoint structure exactly */
+/* Nav breakpoints — exact match to landing/choice-cuts/long-pour */
 @media (orientation: landscape) and (max-width: 1366px) {
-    .apex-nav { top: 3.5rem; left: 3.5rem; right: 3.5rem; }
-    .nav-name { font-size: 1.2rem; }
-    .menu-trigger { font-size: 0.7rem; }
+    .nav-name { top: 3.5rem; left: 3.5rem; font-size: 1.2rem; }
+    .menu-trigger { top: 3.5rem; right: 3.5rem; }
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+    .nav-name { top: 1.5rem; left: 2rem; font-size: 1rem; }
+    .menu-trigger { top: 1.5rem; right: 2rem; }
+    .project-intro-section { padding-top: 6rem; padding-bottom: 6rem; }
+    .project-title-main { font-size: clamp(32px, 9vh, 90px); }
+    .project-wrapper { padding: 0 2rem 4rem 2rem; }
 }
 
 @media (orientation: portrait) and (max-width: 1024px) {
-    .apex-nav { top: 3rem; left: 3rem; right: 3rem; }
-    .nav-name { font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
-    .menu-trigger { font-size: 0.7rem; }
+    .nav-name { top: 2.5rem; left: 2rem; font-size: 0.9rem; max-width: 50%; line-height: 1.2; }
+    .menu-trigger { top: 2.5rem; right: 2rem; font-size: 0.7rem; opacity: 1; }
 }
 
 @media (max-width: 768px) {
-    /* Nav handled by portrait rule above — keep only menu overlay styles */
     .menu-close { top: 2rem; right: 2rem; }
     .menu-link { font-size: 15vw; }
 }
 
 @media (max-width: 480px) {
-    .apex-nav { top: 2.5rem; left: 2.5rem; right: 2.5rem; }
-    .nav-name { font-size: 0.8rem; max-width: 60%; line-height: 1.1; }
-}
-
-@media (orientation: landscape) and (max-height: 600px) {
-    .apex-nav { top: 1.5rem; left: 2rem; right: 2rem; }
-    .nav-name { font-size: 1rem; }
-    .project-intro-section { padding-top: 6rem; padding-bottom: 6rem; }
-    .project-title-main { font-size: clamp(32px, 9vh, 90px); }
-    .project-wrapper { padding: 0 2rem 4rem 2rem; }
+    .nav-name { font-size: 0.8rem; }
 }
 
 /* Hide HUD frame and tags on mobile — content too crowded */
