@@ -125,7 +125,8 @@
     text-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
 }
 
-@media (max-width: 1024px) {
+/* Matches landing/info/long-pour breakpoint structure exactly */
+@media (orientation: landscape) and (max-width: 1366px) {
     .apex-nav { top: 3.5rem; left: 3.5rem; right: 3.5rem; }
     .nav-name { font-size: 1.2rem; }
     .menu-trigger { font-size: 0.7rem; }
@@ -138,27 +139,28 @@
 }
 
 @media (max-width: 768px) {
-    .apex-nav {
-        left: 3.5rem;
-        right: 3.5rem;
-        top: 3.5rem;
-    }
-    .nav-name { font-size: 1rem; }
+    /* Nav handled by portrait rule above — keep only menu overlay styles */
     .menu-close { top: 2rem; right: 2rem; }
     .menu-link { font-size: 15vw; }
 }
 
 @media (max-width: 480px) {
-    .apex-nav { top: 3rem; left: 3rem; right: 3rem; }
+    .apex-nav { top: 2.5rem; left: 2.5rem; right: 2.5rem; }
     .nav-name { font-size: 0.8rem; max-width: 60%; line-height: 1.1; }
 }
 
-@media (orientation: landscape) and (max-height: 500px) {
+@media (orientation: landscape) and (max-height: 600px) {
     .apex-nav { top: 1.5rem; left: 2rem; right: 2rem; }
     .nav-name { font-size: 1rem; }
     .project-intro-section { padding-top: 6rem; padding-bottom: 6rem; }
     .project-title-main { font-size: clamp(32px, 9vh, 90px); }
     .project-wrapper { padding: 0 2rem 4rem 2rem; }
+}
+
+/* Hide HUD frame and tags on mobile — content too crowded */
+@media (max-width: 767px) {
+    .corner-frame,
+    .hud-tag { display: none !important; }
 }
 
 .project-wrapper {
