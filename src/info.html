@@ -669,13 +669,14 @@
 
     var infoTitle = document.querySelector('.info-hero .title');
     if (infoTitle) {
-        // touchstart fires before click — start audio here on mobile so iOS gesture
-        // token isn't consumed by the clipboard writeText that runs on click
+        // touchstart: unlock AudioContext within the gesture (ctx.resume() fires here)
+        // touchend: by now ctx.resume() has resolved — safe to start the loop
+        // click: desktop fallback (no touchstart/touchend on mouse)
         infoTitle.addEventListener('touchstart', function () {
             ApexSound.init();
-            startWhistle();
         }, { passive: true });
-        infoTitle.addEventListener('click', startWhistle); // desktop fallback
+        infoTitle.addEventListener('touchend', startWhistle, { passive: true });
+        infoTitle.addEventListener('click', startWhistle);
     }
 })();
 </script>
