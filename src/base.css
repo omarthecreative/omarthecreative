@@ -5,9 +5,9 @@
     --vibrant-red: #A8002C; /* Cooler, deeper cinematic red */
     --glow: rgba(255, 0, 51, 0.3); /* Subtler glow to prevent orange haze */
     --text: #FFFFFF;
-    --mono: 'IBM Plex Mono', monospace;
-    --display: 'Anton', sans-serif;
-    --serif: 'Playfair Display', serif;
+    --mono: 'auger-mono', monospace;
+    --display: 'griffith-gothic-condensed', sans-serif;
+    --serif: 'lust-display', serif;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }

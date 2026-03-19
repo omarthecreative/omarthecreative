@@ -5,7 +5,7 @@
     --color-white: #FFFFFF;
     --font-primary: "freight-sans-pro", sans-serif;
     --font-display: "brothers", sans-serif;
-    --font-mono: "IBM Plex Mono", monospace;
+    --font-mono: var(--mono);
     --font-serif: 'Newsreader', serif;
 }
 
@@ -26,7 +26,7 @@
     left: 4rem;
     color: white;
     text-decoration: none;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--serif);
     font-size: 1.5rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -93,7 +93,7 @@
 
 .menu-link {
     position: relative;
-    font-family: "Anton", sans-serif;
+    font-family: var(--display);
     font-size: clamp(60px, 18vw, 350px);
     line-height: 0.8;
     text-transform: uppercase;
@@ -186,7 +186,7 @@
 }
 
 .project-title-main {
-    font-family: "Anton", sans-serif;
+    font-family: var(--display);
     font-size: clamp(60px, 12vw, 220px);
     line-height: 0.85;
     text-transform: uppercase;
@@ -451,7 +451,7 @@
 }
 
 .next-project-title {
-    font-family: "Anton", sans-serif;
+    font-family: var(--display);
     font-size: clamp(40px, 10vw, 180px);
     line-height: 0.85;
     text-transform: uppercase;

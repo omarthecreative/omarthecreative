@@ -7,12 +7,13 @@
     <meta name="robots" content="noindex">
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤘🏽</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,900;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://use.typekit.net/niv4qrq.css">
     <link rel="stylesheet" href="base.css">
     <style>
         :root {
             --color-accent: #A8002C;
-            --font-mono: 'IBM Plex Mono', monospace;
+            --font-mono: var(--mono);
         }
 
         body {
@@ -86,7 +87,7 @@
         .nav-name {
             color: white;
             text-decoration: none;
-            font-family: 'Playfair Display', serif;
+            font-family: var(--serif);
             font-size: 1.5rem;
             letter-spacing: 0.05em;
             text-transform: uppercase;
@@ -95,7 +96,7 @@
         }
         .nav-name:hover { color: white; }
         .menu-trigger {
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: var(--mono);
             font-size: 0.6rem;
             letter-spacing: 0.25em;
             color: white;
@@ -124,7 +125,7 @@
         .menu-close {
             position: absolute;
             top: 4rem; right: 4rem;
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: var(--mono);
             font-size: 0.55rem;
             letter-spacing: 0.2em;
             color: #A8002C;
@@ -142,7 +143,7 @@
         }
         .menu-link {
             position: relative;
-            font-family: "Anton", sans-serif;
+            font-family: var(--display);
             font-size: clamp(60px, 18vw, 350px);
             line-height: 0.8;
             text-transform: uppercase;
@@ -187,7 +188,7 @@
 
         /* STATUS READOUT */
         .signal-readout {
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: var(--mono);
             font-size: 0.65rem;
             font-weight: 400;
             letter-spacing: 0.35em;
@@ -198,7 +199,7 @@
 
         /* COPY LINE */
         .signal-copy {
-            font-family: 'Playfair Display', serif;
+            font-family: var(--serif);
             font-style: italic;
             font-size: clamp(1rem, 2vw, 1.4rem);
             font-weight: 400;
@@ -214,7 +215,7 @@
         }
 
         .signal-action {
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: var(--mono);
             font-size: 0.6rem;
             letter-spacing: 0.25em;
             text-transform: uppercase;

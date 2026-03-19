@@ -5,7 +5,7 @@
     --color-white: #FFFFFF;
     --font-primary: "freight-sans-pro", sans-serif;
     --font-display: "brothers", sans-serif;
-    --font-mono: "IBM Plex Mono", monospace;
+    --font-mono: var(--mono);
     --font-serif: 'Newsreader', serif;
 }
 
@@ -31,7 +31,7 @@
 .nav-name {
     color: white;
     text-decoration: none;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--serif);
     font-size: 1.5rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -82,7 +82,7 @@
 }
 
 .hero-text {
-    font-family: "Anton", sans-serif;
+    font-family: var(--display);
     font-size: clamp(80px, 18vw, 350px);
     line-height: 0.75;
     text-transform: uppercase;
@@ -177,7 +177,7 @@
 }
 
 .post-title-text {
-    font-family: "Anton", sans-serif;
+    font-family: var(--display);
     font-size: clamp(40px, 8vw, 120px);
     line-height: 0.85;
     text-transform: uppercase;

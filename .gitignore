@@ -6,19 +6,15 @@ node_modules/
 # Legacy Semplice/WordPress Archive (Keep local only)
 archive:omarthecreative-prd-v3.md
 archive:omarthecreative-prd.md
-/semplice-deploy/
-/pages/
-/project-pages/
-/deep-cuts-project-pages/
+/semplice-archive/
 /assets/
-/global/
 /BESOS/
 /DISHEVELED/
-/holiday\ 2025/
 /home/
-/long-copy/
 /next-steps/
 /proactive-pitches/
+
+typeface-exploratory.html
 
 # AI Working Files (local only)
 CLAUDE.md

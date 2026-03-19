@@ -4,8 +4,8 @@
     --color-accent: #A8002C;
     --color-white: #FFFFFF;
     --font-primary: "freight-sans-pro", sans-serif;
-    --font-display: "Anton", sans-serif;
-    --font-mono: "IBM Plex Mono", monospace;
+    --font-display: var(--display);
+    --font-mono: var(--mono);
 }
 
 .choice-cuts-body {
@@ -41,7 +41,7 @@
 .nav-name {
     color: white;
     text-decoration: none;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--serif);
     font-size: 1.5rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -158,11 +158,11 @@
 
 .lesson-text {
     font-family: var(--font-display);
-    font-size: clamp(50px, 12vw, 280px); /* ELEVATED FOCAL POINT */
+    font-size: clamp(44px, 9.5vw, 200px); /* ELEVATED FOCAL POINT */
     font-weight: 400;
-    line-height: 0.8;
+    line-height: 0.9;
     text-transform: uppercase;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.02em;
     color: var(--color-white);
     transition: all 0.3s ease;
 }

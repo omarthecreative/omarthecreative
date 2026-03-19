@@ -38,9 +38,10 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤘🏽</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;700&family=Playfair+Display:wght@900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">                                                                 
     <link rel="stylesheet" href="https://use.typekit.net/shz5hny.css">
+    <link rel="stylesheet" href="https://use.typekit.net/niv4qrq.css">
     <link rel="stylesheet" href="base.css">
     <link rel="stylesheet" href="video-overlay.css">
     <script src="https://player.vimeo.com/api/player.js"></script>
@@ -92,7 +93,7 @@
             font-family: var(--display);
             font-size: 15vw;
             line-height: 0.8;
-            font-weight: 400;
+            font-weight: 900;
             text-transform: uppercase;
             color: var(--vibrant-red);
             letter-spacing: -0.04em;
@@ -138,7 +139,7 @@
             position: absolute;
             left: 100%;
             top: 0;
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: var(--mono);
             font-style: normal;
             font-size: 0.85em;
             font-weight: 400;
@@ -260,7 +261,7 @@
             left: 4rem;
             color: white;
             opacity: 1;
-            font-family: 'Playfair Display', serif;
+            font-family: var(--serif);
             font-size: 1.5rem;
             letter-spacing: 0.05em;
             text-transform: uppercase;
@@ -1123,7 +1124,7 @@
                 role: "CREATIVE DIRECTOR, WRITER", 
                 desc: "One voice becomes a movement.<br>Obama listens.<br>Curry takes note.<br>Chance amplifies.<br><br>And it all starts<br>when a kid decides to speak.<br>50 million impressions.<br>Zero paid media.<br><br>Just truth traveling<br>at the speed of culture.",
                 script: `
-                    <div class="sc-dark" style="background:#050505;color:#fff;margin:-12px;padding:0;font-family:'IBM Plex Mono',monospace;">
+                    <div class="sc-dark" style="background:#050505;color:#fff;margin:-12px;padding:0;font-family:var(--mono);">
 
                         <img src="assets/obama-hero-image/Lincoln_Memorial_Warren_Eakins.jpg"
                              alt="We Are The Ones — Lincoln Memorial"
@@ -1133,7 +1134,7 @@
                             <div style="font-size:7px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:20px;">ORIGIN</div>
 
                             <blockquote style="margin:0 0 12px;padding:0;border:none;">
-                                <p style="font-family:'Playfair Display',serif;font-style:italic;font-size:13px;line-height:1.8;color:#fff;margin:0 0 16px;">
+                                <p style="font-family:var(--serif);font-style:italic;font-size:13px;line-height:1.8;color:#fff;margin:0 0 16px;">
                                     "Change will not come if we wait for some other person or if we wait for some other time. We are the ones we've been waiting for. We are the change that we seek. We are the hope of those boys who have so little, who've been told that they cannot have what they dream, that they cannot be what they imagine. Yes, they can."
                                 </p>
                                 <cite style="font-size:8px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.55);font-style:normal;">— Senator Barack Obama &nbsp;·&nbsp; February 5, 2008</cite>
@@ -1654,7 +1655,6 @@
             }
         });
 
-
         // Modal Cleanup
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
@@ -1786,7 +1786,7 @@
                 return;
             }
             const probe = document.createElement('span');
-            probe.style.cssText = 'position:absolute;visibility:hidden;font-family:Anton,sans-serif;font-size:15vw;letter-spacing:-0.04em;text-transform:uppercase;white-space:nowrap;';
+            probe.style.cssText = 'position:absolute;visibility:hidden;font-family:griffith-gothic-condensed,sans-serif;font-weight:900;font-size:15vw;letter-spacing:-0.04em;text-transform:uppercase;white-space:nowrap;';
             probe.textContent = word;
             document.body.appendChild(probe);
             projectDisplay.style.width = probe.offsetWidth + 'px';
