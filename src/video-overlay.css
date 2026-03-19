@@ -22,7 +22,8 @@
     overflow: hidden;
 }
 
-/* Caption mask — covers burned-in CC on Citi video (lower 25%) */
+/* Caption mask — covers burned-in CC on Citi video (lower 25%).
+   Portrait only — hidden on desktop and all landscape orientations. */
 #cc-bar {
     position: absolute;
     bottom: 0;
@@ -33,6 +34,22 @@
     z-index: 5;
     display: none;
     pointer-events: none;
+}
+
+/* Desktop: always hidden */
+@media (min-width: 1025px) {
+    #cc-bar { display: none !important; }
+}
+
+/* Landscape (any width): always hidden */
+@media (orientation: landscape) {
+    #cc-bar { display: none !important; }
+}
+
+/* Mobile portrait: video bottom lands at ~71% viewport height with scale(1.35).
+   height: 32% from bottom covers from 68% upward, reaching the caption area. */
+@media (max-width: 767px) and (orientation: portrait) {
+    #cc-bar { height: 32%; }
 }
 
 /* Transparent capture layer — activates when controls hide to catch
@@ -521,6 +538,7 @@
         font-size: 8px;
         padding: 3px 6px;
     }
+
 }
 
 /* ============================================================

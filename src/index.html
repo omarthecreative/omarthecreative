@@ -484,9 +484,8 @@
 </head>
 <body>
     <div id="video-modal" tabindex="0" style="outline: none;">
-        <div id="vimeo-wrap" style="width: 100%; height: 100%; position: relative;">
-            <div id="cc-bar"></div>
-        </div>
+        <div id="vimeo-wrap" style="width: 100%; height: 100%;"></div>
+        <div id="cc-bar"></div>
         <div id="mouse-capture"></div>
 
         <div class="viewfinder-overlay">
@@ -1382,7 +1381,10 @@
 
             // Restore mute state from previous video
             vimeoPlayer.ready().then(() => {
-                vimeoPlayer.setVolume(isMuted ? 0 : 1);
+                if (!isMuted) {
+                    vimeoPlayer.setMuted(false);
+                    vimeoPlayer.setVolume(1);
+                }
             });
             document.querySelector('.muted-icon').style.display = isMuted ? 'inline' : 'none';
             document.querySelector('.unmuted-icon').style.display = isMuted ? 'none' : 'inline';
@@ -1549,6 +1551,7 @@
 
         document.getElementById('video-audio-toggle').addEventListener('click', () => {
             isMuted = !isMuted;
+            vimeoPlayer.setMuted(isMuted);
             vimeoPlayer.setVolume(isMuted ? 0 : 1);
             document.querySelector('.muted-icon').style.display = isMuted ? 'inline' : 'none';
             document.querySelector('.unmuted-icon').style.display = isMuted ? 'none' : 'inline';
