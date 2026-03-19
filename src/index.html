@@ -484,8 +484,9 @@
 </head>
 <body>
     <div id="video-modal" tabindex="0" style="outline: none;">
-        <div id="vimeo-wrap" style="width: 100%; height: 100%;"></div>
-        <div id="cc-bar"></div>
+        <div id="vimeo-wrap" style="width: 100%; height: 100%; position: relative;">
+            <div id="cc-bar"></div>
+        </div>
         <div id="mouse-capture"></div>
 
         <div class="viewfinder-overlay">
@@ -1317,10 +1318,17 @@
             const p = projects[index];
             const scaleStyle = p.videoScale ? `transform:scale(${p.videoScale});transform-origin:center 40%;` : '';
             document.getElementById('cc-bar').style.display = p.captionBar ? 'block' : 'none';
-            vimeoWrap.innerHTML = `<iframe src="https://player.vimeo.com/video/${p.vimeoId}?autoplay=1&loop=1&controls=0&muted=1&title=0&byline=0&portrait=0&transparent=0&dnt=1" style="width:100%;height:100%;border:none;${scaleStyle}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-            
+            // Remove existing iframe (leave #cc-bar in place)
+            const existingIframe = vimeoWrap.querySelector('iframe');
+            if (existingIframe) existingIframe.remove();
+            const iframe = document.createElement('iframe');
+            iframe.src = `https://player.vimeo.com/video/${p.vimeoId}?autoplay=1&loop=1&controls=0&muted=1&title=0&byline=0&portrait=0&transparent=0&dnt=1`;
+            iframe.style.cssText = `width:100%;height:100%;border:none;${scaleStyle}`;
+            iframe.allow = 'autoplay; fullscreen';
+            iframe.allowFullscreen = true;
+            vimeoWrap.insertBefore(iframe, vimeoWrap.firstChild);
+
             // Initialize Vimeo Player API
-            const iframe = vimeoWrap.querySelector('iframe');
             vimeoPlayer = new Vimeo.Player(iframe);
             
             // Set Project Metadata
@@ -1373,7 +1381,9 @@
             });
 
             // Restore mute state from previous video
-            vimeoPlayer.setVolume(isMuted ? 0 : 1);
+            vimeoPlayer.ready().then(() => {
+                vimeoPlayer.setVolume(isMuted ? 0 : 1);
+            });
             document.querySelector('.muted-icon').style.display = isMuted ? 'inline' : 'none';
             document.querySelector('.unmuted-icon').style.display = isMuted ? 'none' : 'inline';
 
