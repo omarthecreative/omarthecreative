@@ -1786,7 +1786,17 @@
             document.body.removeChild(probe);
         }
 
-        document.fonts.ready.then(() => { fitLockup(nextHeadlineWord()); });
+        let currentHeadlineWord = '';
+        document.fonts.ready.then(() => {
+            currentHeadlineWord = nextHeadlineWord();
+            fitLockup(currentHeadlineWord);
+        });
+
+        // Re-run on rotation — portrait guard sets inline fontSize which
+        // survives orientation change and overrides CSS media queries
+        window.addEventListener('resize', () => {
+            if (currentHeadlineWord) fitLockup(currentHeadlineWord);
+        });
 
         window.addEventListener('keydown', handleEscape);
 
