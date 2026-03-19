@@ -1321,7 +1321,7 @@
             const existingIframe = vimeoWrap.querySelector('iframe');
             if (existingIframe) existingIframe.remove();
             const iframe = document.createElement('iframe');
-            iframe.src = `https://player.vimeo.com/video/${p.vimeoId}?autoplay=1&loop=1&controls=0&muted=1&title=0&byline=0&portrait=0&transparent=0&dnt=1`;
+            iframe.src = `https://player.vimeo.com/video/${p.vimeoId}?autoplay=1&loop=1&controls=0&muted=${isMuted ? 1 : 0}&title=0&byline=0&portrait=0&transparent=0&dnt=1`;
             iframe.style.cssText = `width:100%;height:100%;border:none;${scaleStyle}`;
             iframe.allow = 'autoplay; fullscreen';
             iframe.allowFullscreen = true;
@@ -1379,13 +1379,7 @@
                 document.getElementById('play-pause-text').textContent = 'PLAY';
             });
 
-            // Restore mute state from previous video
-            vimeoPlayer.ready().then(() => {
-                if (!isMuted) {
-                    vimeoPlayer.setMuted(false);
-                    vimeoPlayer.setVolume(1);
-                }
-            });
+            // Restore mute state — baked into iframe URL so no async API call needed
             document.querySelector('.muted-icon').style.display = isMuted ? 'inline' : 'none';
             document.querySelector('.unmuted-icon').style.display = isMuted ? 'none' : 'inline';
 
