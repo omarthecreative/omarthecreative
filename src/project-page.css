@@ -153,6 +153,14 @@
     .nav-name { font-size: 0.8rem; max-width: 60%; line-height: 1.1; }
 }
 
+@media (orientation: landscape) and (max-height: 500px) {
+    .apex-nav { top: 1.5rem; left: 2rem; right: 2rem; }
+    .nav-name { font-size: 1rem; }
+    .project-intro-section { padding-top: 6rem; padding-bottom: 6rem; }
+    .project-title-main { font-size: clamp(32px, 9vh, 90px); }
+    .project-wrapper { padding: 0 2rem 4rem 2rem; }
+}
+
 .project-wrapper {
     padding: 0 4rem 8rem 4rem; /* Removed top padding to allow 100vh centering */
     max-width: 1600px;

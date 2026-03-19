@@ -416,11 +416,11 @@
             @media (max-height: 600px) {
                 .header-name { top: 1.5rem; left: 2rem; font-size: 1rem; }
                 .info-link { top: 1.5rem; right: 2rem; }
-                .title { font-size: 12vw; }
-                .subtitle { font-size: 3.5vw; margin-top: 0; }
+                .title { font-size: clamp(28px, 12vh, 80px); }
+                .subtitle { font-size: clamp(10px, 2.5vh, 18px); margin-top: 0; }
                 .action-group { margin-top: 1rem; flex-direction: row; gap: 1rem; }
-                .footer-metadata { bottom: 4rem; }
-                
+                .footer-metadata { bottom: 2.5rem; padding: 0 2rem; font-size: 0.6rem; }
+
                 .hud-tag { font-size: 0.4rem; }
                 .hud-tl { top: 0.4rem; }
                 .hud-tr { top: 0.4rem; }

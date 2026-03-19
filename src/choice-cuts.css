@@ -257,22 +257,28 @@ a:hover {
 }
 
 @media (orientation: portrait) and (max-width: 1024px) {
-    .apex-nav { top: 3rem; left: 3rem; right: 3rem; }
+    .apex-nav { top: 2.5rem; left: 2rem; right: 2rem; }
     .nav-name { font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
 }
 
 @media (max-width: 768px) {
     .apex-nav {
-        left: 3.5rem;
-        right: 3.5rem;
-        top: 3.5rem;
+        left: 2rem;
+        right: 2rem;
+        top: 2.5rem;
     }
-    .nav-name { font-size: 1rem; }
+    .nav-name { font-size: 0.9rem; max-width: 55%; line-height: 1.2; }
+    .page-title-massive { font-size: clamp(55px, 16vw, 100px); white-space: nowrap; }
+    .page-subtitle-meta { color: #ffffff; text-shadow: 0 2px 10px rgba(0,0,0,0.9); }
     .choice-cuts-wrapper {
         left: 2rem;
         right: 2rem;
         padding-left: 2rem;
         padding-right: 2rem;
+    }
+    .choice-cuts-page {
+        padding-left: 0;
+        padding-right: 0;
     }
     .lesson-row {
         padding: 40px 0;
@@ -283,13 +289,15 @@ a:hover {
     }
     .lesson-number {
         font-size: 0.7rem;
+        color: #FF0015;
+        opacity: 0.8;
     }
     .lesson-text {
-        font-size: clamp(36px, 9vw, 60px);
+        font-size: clamp(44px, 12vw, 80px);
     }
 }
 
 @media (max-width: 480px) {
-    .apex-nav { top: 2.5rem; left: 2.5rem; right: 2.5rem; }
-    .nav-name { font-size: 0.8rem; max-width: 60%; line-height: 1.1; }
+    .apex-nav { top: 2.5rem; left: 2rem; right: 2rem; }
+    .nav-name { font-size: 0.8rem; max-width: 55%; line-height: 1.1; }
 }
