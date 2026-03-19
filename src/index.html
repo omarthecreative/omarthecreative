@@ -73,9 +73,16 @@
             top: 0; left: 0; width: 100%; height: 100%;
             background-size: cover;
             background-position: center;
+            background-repeat: no-repeat;
             opacity: 0;
             transition: opacity 1s ease;
-            filter: contrast(1.2) brightness(0.4); 
+            filter: contrast(1.2) brightness(0.4);
+        }
+        @media (max-width: 480px) {
+            #initial-bg {
+                background-size: auto 150% !important;
+                background-position: 49% 75% !important;
+            }
         }
         .project-bg.active {
             opacity: 0.6; /* Increased visibility */
