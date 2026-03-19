@@ -46,10 +46,10 @@
     #cc-bar { display: none !important; }
 }
 
-/* Mobile portrait: video bottom lands at ~71% viewport height with scale(1.35).
-   height: 32% from bottom covers from 68% upward, reaching the caption area. */
+/* Mobile portrait: video bottom lands at ~73% viewport height.
+   height: 30% from bottom covers from 70% upward, covering the caption area. */
 @media (max-width: 767px) and (orientation: portrait) {
-    #cc-bar { height: 32%; }
+    #cc-bar { height: 30.5%; }
 }
 
 /* Transparent capture layer — activates when controls hide to catch
