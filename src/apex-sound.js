@@ -44,9 +44,17 @@ const ApexSound = (function () {
         });
     }
 
-    // Create AudioContext on first gesture and decode all fetched buffers
+    // Create AudioContext on first gesture and decode all fetched buffers.
+    // Call from within any user gesture handler — safe to call repeatedly.
+    // If ctx already exists but iOS re-suspended it, refreshes _resumePromise
+    // so play()/startLoop() chains correctly on the new resume.
     function init() {
-        if (ctx) return;
+        if (ctx) {
+            if (ctx.state === 'suspended') {
+                _resumePromise = ctx.resume().catch(function () {});
+            }
+            return;
+        }
         ctx = new (window.AudioContext || window.webkitAudioContext)();
         // Resume synchronously within the gesture handler and store the promise.
         // play() chains on _resumePromise rather than calling ctx.resume() again
