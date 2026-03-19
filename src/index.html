@@ -1315,25 +1315,16 @@
 
         function loadVideoProject(index) {
             const p = projects[index];
-            const scaleStyle = p.videoScale ? `transform:scale(${p.videoScale});transform-origin:center 40%;` : '';
-            document.getElementById('cc-bar').style.display = p.captionBar ? 'block' : 'none';
-            // Remove existing iframe (leave #cc-bar in place)
-            const existingIframe = vimeoWrap.querySelector('iframe');
-            if (existingIframe) existingIframe.remove();
-            const iframe = document.createElement('iframe');
-            iframe.src = `https://player.vimeo.com/video/${p.vimeoId}?autoplay=1&loop=1&controls=0&muted=${isMuted ? 1 : 0}&title=0&byline=0&portrait=0&transparent=0&dnt=1`;
-            iframe.style.cssText = `width:100%;height:100%;border:none;${scaleStyle}`;
-            iframe.allow = 'autoplay; fullscreen';
-            iframe.allowFullscreen = true;
-            vimeoWrap.insertBefore(iframe, vimeoWrap.firstChild);
+            const scaleStyle = p.videoScale
+                ? `transform:scale(${p.videoScale});transform-origin:center 40%;`
+                : 'transform:none;transform-origin:unset;';
 
-            // Initialize Vimeo Player API
-            vimeoPlayer = new Vimeo.Player(iframe);
-            
+            document.getElementById('cc-bar').style.display = p.captionBar ? 'block' : 'none';
+
             // Set Project Metadata
             document.getElementById('video-project-tag').textContent = `${p.title} — ${p.subtitle.toUpperCase()}`;
             document.getElementById('video-counter').textContent = `${index + 1}/${projects.length}`;
-            
+
             // Populate Details Drawer
             const detailsTable = document.getElementById('video-details-table');
             detailsTable.innerHTML = p.credits.map(c => `
@@ -1342,44 +1333,57 @@
                     <td class="value">${c.v}</td>
                 </tr>
             `).join('');
-            
+
             // Hide drawer initially
             document.getElementById('video-details-drawer').classList.remove('active');
 
-            // API Handlers
-            vimeoPlayer.on('timeupdate', (data) => {
-                const percent = data.percent * 100;
-                document.getElementById('video-progress-fill').style.width = `${percent}%`;
-                
-                // Update time display
-                const mins = Math.floor(data.seconds / 60);
-                const secs = Math.floor(data.seconds % 60);
-                const durationMins = Math.floor(data.duration / 60);
-                const durationSecs = Math.floor(data.duration % 60);
-                
-                document.getElementById('video-duration').textContent = 
-                    `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')} / ${durationMins.toString().padStart(2, '0')}:${durationSecs.toString().padStart(2, '0')}`;
-                
-                // Update TC
-                document.querySelector('.timecode').textContent = `00:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}:00`;
-                
-                const frames = Math.floor(data.seconds * 24);
-                document.getElementById('video-frame-counter').textContent = `F ${frames.toString().padStart(3, '0')}`;
-            });
+            if (!vimeoPlayer) {
+                // First load: create iframe + player, attach event handlers once
+                const iframe = document.createElement('iframe');
+                iframe.src = `https://player.vimeo.com/video/${p.vimeoId}?autoplay=1&loop=1&controls=0&muted=1&title=0&byline=0&portrait=0&transparent=0&dnt=1`;
+                iframe.style.cssText = `width:100%;height:100%;border:none;${scaleStyle}`;
+                iframe.allow = 'autoplay; fullscreen';
+                iframe.allowFullscreen = true;
+                vimeoWrap.insertBefore(iframe, vimeoWrap.firstChild);
+                vimeoPlayer = new Vimeo.Player(iframe);
 
-            vimeoPlayer.on('play', () => {
-                isPaused = false;
-                document.getElementById('play-pause-symbol').textContent = '║';
-                document.getElementById('play-pause-text').textContent = 'PAUSE';
-            });
+                vimeoPlayer.on('timeupdate', (data) => {
+                    const percent = data.percent * 100;
+                    document.getElementById('video-progress-fill').style.width = `${percent}%`;
+                    const mins = Math.floor(data.seconds / 60);
+                    const secs = Math.floor(data.seconds % 60);
+                    const durationMins = Math.floor(data.duration / 60);
+                    const durationSecs = Math.floor(data.duration % 60);
+                    document.getElementById('video-duration').textContent =
+                        `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')} / ${durationMins.toString().padStart(2, '0')}:${durationSecs.toString().padStart(2, '0')}`;
+                    document.querySelector('.timecode').textContent = `00:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}:00`;
+                    const frames = Math.floor(data.seconds * 24);
+                    document.getElementById('video-frame-counter').textContent = `F ${frames.toString().padStart(3, '0')}`;
+                });
 
-            vimeoPlayer.on('pause', () => {
-                isPaused = true;
-                document.getElementById('play-pause-symbol').textContent = '►';
-                document.getElementById('play-pause-text').textContent = 'PLAY';
-            });
+                vimeoPlayer.on('play', () => {
+                    isPaused = false;
+                    document.getElementById('play-pause-symbol').textContent = '║';
+                    document.getElementById('play-pause-text').textContent = 'PAUSE';
+                });
 
-            // Restore mute state — baked into iframe URL so no async API call needed
+                vimeoPlayer.on('pause', () => {
+                    isPaused = true;
+                    document.getElementById('play-pause-symbol').textContent = '►';
+                    document.getElementById('play-pause-text').textContent = 'PLAY';
+                });
+            } else {
+                // Subsequent loads: update scale on existing iframe, load new video
+                // Same player instance — mute/volume state persists automatically
+                const iframe = vimeoWrap.querySelector('iframe');
+                if (iframe) iframe.style.cssText = `width:100%;height:100%;border:none;${scaleStyle}`;
+                vimeoPlayer.loadVideo(p.vimeoId).then(() => {
+                    vimeoPlayer.setLoop(true);
+                    vimeoPlayer.play();
+                });
+            }
+
+            // Sync mute icon to current state
             document.querySelector('.muted-icon').style.display = isMuted ? 'inline' : 'none';
             document.querySelector('.unmuted-icon').style.display = isMuted ? 'none' : 'inline';
 
@@ -1387,11 +1391,11 @@
             if (isMuted) {
                 const audioToggle = document.getElementById('video-audio-toggle');
                 audioToggle.classList.remove('mute-pulse');
-                void audioToggle.offsetWidth; // reset animation
+                void audioToggle.offsetWidth;
                 audioToggle.classList.add('mute-pulse');
             }
 
-            // Reclaim focus from new iframe so keyboard shortcuts work immediately
+            // Reclaim focus from iframe so keyboard shortcuts work immediately
             setTimeout(() => { window.focus(); document.body.focus(); }, 300);
         }
 
