@@ -8,6 +8,7 @@ const ApexSound = (function () {
     let _resumePromise = null; // Promise from gesture-initiated ctx.resume()
     const _raw = {};      // ArrayBuffers from fetch (no gesture needed)
     const _decoded = {};  // Decoded AudioBuffers (requires AudioContext)
+    const _fetchQueue = {}; // name → [fn] — callbacks waiting for _raw to arrive
 
     // Format detection — Safari doesn't support OGG/Opus
     const _ext = (function () {
@@ -34,12 +35,25 @@ const ApexSound = (function () {
         anthem:    'assets/sound-effects/star-spangled-banner',
     };
 
-    // Fetch all buffers on page load — no gesture required
+    // Fetch all buffers on page load — no gesture required.
+    // When a buffer arrives, pre-decode if ctx exists, then flush any
+    // play/startLoop calls that were queued while the fetch was in flight.
     function load() {
         Object.keys(_sounds).forEach(function (name) {
             fetch(_base + _sounds[name] + '.' + _ext)
                 .then(function (r) { return r.arrayBuffer(); })
-                .then(function (ab) { _raw[name] = ab; })
+                .then(function (ab) {
+                    _raw[name] = ab;
+                    if (ctx) _decodeOne(name);
+                    // Fire any sounds queued before this buffer arrived.
+                    // ctx is already running at this point (init() was called
+                    // from a prior gesture), so source.start() is safe here.
+                    var cbs = _fetchQueue[name];
+                    if (cbs) {
+                        delete _fetchQueue[name];
+                        cbs.forEach(function (fn) { fn(); });
+                    }
+                })
                 .catch(function () {});
         });
     }
@@ -96,6 +110,14 @@ const ApexSound = (function () {
                 ctx.decodeAudioData(_raw[name].slice(0))
                     .then(function (buf) { _decoded[name] = buf; _fire(buf); })
                     .catch(function () {});
+            } else {
+                // Fetch still in flight — queue; will fire when buffer arrives
+                if (!_fetchQueue[name]) _fetchQueue[name] = [];
+                _fetchQueue[name].push(function () {
+                    ctx.decodeAudioData(_raw[name].slice(0))
+                        .then(function (buf) { _decoded[name] = buf; _fire(buf); })
+                        .catch(function () {});
+                });
             }
         }
 
@@ -129,6 +151,15 @@ const ApexSound = (function () {
                 ctx.decodeAudioData(_raw[name].slice(0))
                     .then(function (buf) { _decoded[name] = buf; _fireLoop(buf); })
                     .catch(function () {});
+            } else {
+                // Fetch still in flight — queue; will fire when buffer arrives
+                if (!_fetchQueue[name]) _fetchQueue[name] = [];
+                _fetchQueue[name].push(function () {
+                    if (_loopNodes[name]) return; // started by another path already
+                    ctx.decodeAudioData(_raw[name].slice(0))
+                        .then(function (buf) { _decoded[name] = buf; _fireLoop(buf); })
+                        .catch(function () {});
+                });
             }
         }
 
