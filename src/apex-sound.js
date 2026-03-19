@@ -136,6 +136,14 @@ const ApexSound = (function () {
         rp.then(_dispatch).catch(function () {});
     }
 
+    function stopLoop(name) {
+        var node = _loopNodes[name];
+        if (node) {
+            try { node.stop(); } catch (e) {}
+            delete _loopNodes[name];
+        }
+    }
+
     // Kick off fetching immediately
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', load);
@@ -143,6 +151,6 @@ const ApexSound = (function () {
         load();
     }
 
-    return { init: init, play: play, startLoop: startLoop };
+    return { init: init, play: play, startLoop: startLoop, stopLoop: stopLoop };
 
 })();

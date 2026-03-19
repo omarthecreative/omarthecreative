@@ -645,6 +645,15 @@
         ApexSound.startLoop('whistle', 0.35);
     }
 
+    // bfcache restore — reset flag and clear stale loop node so whistle
+    // can re-trigger on next scroll/touch after navigating back to this page
+    window.addEventListener('pageshow', function (e) {
+        if (e.persisted) {
+            whistleStarted = false;
+            if (typeof ApexSound !== 'undefined') ApexSound.stopLoop('whistle');
+        }
+    });
+
     // First touch unlocks AudioContext — do NOT play yet, wait for scroll.
     document.addEventListener('touchstart', function () {
         if (typeof ApexSound !== 'undefined') ApexSound.init();
