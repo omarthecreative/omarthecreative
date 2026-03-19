@@ -407,6 +407,14 @@
             .apex-nav { top: 3rem; left: 3rem; right: 3rem; }
             .nav-name { font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
             .menu-trigger { font-size: 0.7rem; }
+            .corner-frame { top: 1.5rem; left: 1rem; right: 1rem; bottom: 1.5rem; }
+            .hud-tag { font-size: 0.4rem; opacity: 0.4; letter-spacing: 0.05em; }
+            .hud-tl { top: 0.3rem; left: 1rem; }
+            .hud-tr { top: 0.3rem; right: 1rem; }
+            .hud-bl { bottom: 0.3rem; left: 1rem; }
+            .hud-br { bottom: 0.3rem; right: 1rem; }
+            #lut-toggle.unlocked { top: 0.3rem; }
+            .copyright-tag { bottom: 0.3rem !important; font-size: 0.4rem; opacity: 0.4; }
         }
 
         @media (max-width: 768px) {
@@ -427,8 +435,10 @@
 
         @media (max-width: 480px) {
             .container { padding: 4rem 2rem; }
-            .apex-nav { top: 3rem; left: 3rem; right: 3rem; }
+            .apex-nav { top: 2.5rem; left: 2.5rem; right: 2.5rem; }
             .nav-name { font-size: 0.8rem; max-width: 60%; line-height: 1.1; }
+            .bio-text { font-size: 1.1rem; }
+            .dossier-content { font-size: 0.95rem; }
         }
     </style>
     <!-- Google Analytics -->
@@ -546,7 +556,7 @@
         <div class="corner bl"></div><div class="corner br"></div>
         <div class="hud-tag hud-tl">[ DOSSIER: SILWANY ]</div>
         <div class="hud-tag hud-tr">[ LUT: RUBY ] [ COORDS: 29.5844° N, 81.2081° W ]</div>
-        <div class="hud-tag hud-bl">[ STATUS: ACTIVE ] [ 24 FPS ]</div>
+        <div class="hud-tag hud-bl">[ 24 FPS ]</div>
         <div class="hud-tag hud-br">[ BAT: 94% ]</div>
     </div>
     <div id="hud-toast"></div>
@@ -571,11 +581,11 @@
     </div>
 
     <div class="container">
-        <div class="dossier-label" style="margin-bottom: 4rem; opacity: 0.5;">[ BIOGRAPHIA LITERARIA // v2.0 ]</div>
+        <div class="dossier-label" style="margin-bottom: 4rem; opacity: 0.5; font-size: 0.55rem;">[ BIOGRAPHIA LITERARIA // v5.0 ]</div>
         <section class="bio-section">
             <div class="bio-text">
                 <p>The other guy. Brought a knife.</p>
-                <p>I'm a Creative Director. Writer. And&nbsp;More.</p>
+                <p>I'm a Creative Director. Writer.<br>And&nbsp;More.</p>
                 <p>I've helped a President show young men how to show up for each other, named a credit card still running 16 years later, and launched two Samsung campaigns that went global. I conspired with Dracula to kill flash photography. And convinced a generation that pen-spinning is focus. I write manifestos. One got me hired on the&nbsp;spot.</p>
                 <p>Pre-med and poetry at Cornell. Mentored by A.R.&nbsp;Ammons. He taught me that science and art aren't that far&nbsp;apart.</p>
                 <p>Born in Nicaragua's highlands. Grown under Miami Beach's sun. Forged in New&nbsp;York.</p>
@@ -585,7 +595,7 @@
 
         <section class="dossier">
             <div class="dossier-label">Agencies</div>
-            <div class="dossier-content">Fundamentalco, Ogilvy, BBH, Grey, <span class="redacted-bar" style="width: 80px;"></span>, Publicis, Dentsu, McGarryBowen, Momentum Worldwide, VaynerX, JOAN, <span class="redacted-bar" style="width: 40px;"></span>, Erich & Kallman, Seven Bucks Creative, Matter Unlimited, GROW, 5 O'Clock.</div>
+            <div class="dossier-content">Fundamentalco, Ogilvy, BBH, Grey, <span style="white-space: nowrap"><span class="redacted-bar" style="width: 80px;"></span>,</span> Publicis, Dentsu, McGarryBowen, Momentum Worldwide, VaynerX, JOAN, <span class="redacted-bar" style="width: 40px;"></span>, Erich & Kallman, Seven Bucks Creative, Matter Unlimited, GROW, 5 O'Clock.</div>
         </section>
 
         <section class="dossier">
@@ -595,12 +605,12 @@
 
         <section class="dossier">
             <div class="dossier-label">Notably</div>
-            <div class="dossier-content">Cooked in Google's kitchen. Robert McKee Story Seminar graduate. One Page Poetry, Founding Editor. Published Science Journal Author.<br><br>Triathlete. Bike Builder. <span class="redacted-bar" style="width: 110px;"></span>, Certified Scuba Diver.<br><br>Child Cancer Awareness&nbsp;Advocate.</div>
+            <div class="dossier-content">Cooked in Google's kitchen. Robert McKee Story Seminar graduate. One Page Poetry, Founding Editor. Published Science Journal Author.<br><br>Triathlete. Bike Builder. <span style="white-space: nowrap;"><span class="redacted-bar" style="width: 110px;"></span>, Certified Scuba Diver.</span><br><br>Child Cancer Awareness&nbsp;Advocate.</div>
         </section>
 
         <section class="dossier">
             <div class="dossier-label">Wins</div>
-            <div class="dossier-content">J.P. Morgan, Bentley, Under Armour, <span class="redacted-bar" style="width: 50px;"></span>, United States Olympic Committee, Guinness, Verizon DROID, Verizon FiOS, Honda Hybrids, Uniqlo, Panasonic Lumix, <span class="redacted-bar" style="width: 130px;"></span>, Newscorp, USGA, Patrón, SKYY Vodka, Espolón Tequila, Montenegro, Oxygen.</div>
+            <div class="dossier-content">J.P. Morgan, Bentley, Under Armour, <span class="redacted-bar" style="width: 50px;"></span>, United States Olympic Committee, Guinness, Verizon DROID, Verizon FiOS, Honda Hybrids, Uniqlo, Panasonic Lumix, <span style="white-space: nowrap"><span class="redacted-bar" style="width: 130px;"></span>,</span> Newscorp, USGA, Patrón, SKYY Vodka, Espolón Tequila, Montenegro, Oxygen.</div>
         </section>
 
         <footer>
@@ -625,14 +635,8 @@
         if (typeof ApexSound !== 'undefined') { ApexSound.init(); ApexSound.play('door'); }
     });
 
-    // Western whistle — starts on title click or first scroll, then loops forever
+    // Western whistle — starts on first touch (mobile) or first scroll (desktop)
     var whistleStarted = false;
-    var touchStarted = false;
-
-    document.addEventListener('touchstart', function () {
-        touchStarted = true;
-        if (typeof ApexSound !== 'undefined') ApexSound.init();
-    }, { passive: true, once: true });
 
     function startWhistle() {
         if (whistleStarted) return;
@@ -641,16 +645,25 @@
         ApexSound.startLoop('whistle', 0.35);
     }
 
-    var infoTitle = document.querySelector('.info-hero .title');
-    if (infoTitle) infoTitle.addEventListener('click', startWhistle);
+    // Mobile: start within touchstart gesture so iOS AudioContext unlocks correctly.
+    // source.start() from a scroll handler's async chain is blocked on iOS.
+    document.addEventListener('touchstart', function () {
+        if (typeof ApexSound !== 'undefined') {
+            ApexSound.init();
+            startWhistle();
+        }
+    }, { passive: true, once: true });
 
+    // Desktop: start on first scroll (no gesture restriction on non-touch)
     window.addEventListener('scroll', function onFirstScroll() {
-        var isTouch = navigator.maxTouchPoints > 0;
-        if (!isTouch || touchStarted) {
+        if (navigator.maxTouchPoints === 0) {
             startWhistle();
             window.removeEventListener('scroll', onFirstScroll);
         }
     }, { passive: true });
+
+    var infoTitle = document.querySelector('.info-hero .title');
+    if (infoTitle) infoTitle.addEventListener('click', startWhistle);
 })();
 </script>
 </body>

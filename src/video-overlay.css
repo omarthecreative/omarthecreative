@@ -389,11 +389,11 @@
 
 /* ============================================================
    RESPONSIVE — MOBILE PORTRAIT
-   Controls collapse to a single row. Time display hidden.
+   Single control row: mute | rewind/pause/forward | time
+   Project title below controls. Nav hints + project-nav at bottom.
    ============================================================ */
 @media (max-width: 767px) and (orientation: portrait) {
 
-    /* Progress bar — pinned above control row */
     .bottom-ui-wrapper {
         bottom: 20px;
         left: 20px;
@@ -401,99 +401,117 @@
         height: auto;
     }
 
+    /* Progress bar — just above control row */
     .progress-container {
         position: absolute;
-        bottom: 170px;
+        bottom: 155px;
         left: 0;
         right: 0;
         margin-bottom: 0;
     }
 
+    /* Duration text in progress bar — redundant with time-display, hide */
     .duration-info {
-        font-size: 8px;
-        min-width: 60px;
+        display: none;
     }
 
-    /* Project name tag — hidden on mobile, too much noise */
+    /* Project name — centered, equidistant between play buttons and nav row */
     .project-info {
-        display: none;
+        display: block;
+        position: absolute;
+        bottom: 46px;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
     }
 
-    /* ENTER / ESC hints — hidden on mobile */
+    /* Nav hints — show at bottom left, same height as counters */
     .nav-hints {
-        display: none;
+        display: flex;
     }
 
-    /* Audio toggle — left side of control row */
+    .nav-hints .hint {
+        height: 28px;
+        font-size: 9px;
+        padding: 0 6px;
+    }
+
+    /* Audio toggle — above progress bar */
     .audio-toggle {
         position: absolute;
-        bottom: 130px;
-        left: 0;
+        bottom: 195px;
+        left: 20px;
         top: auto;
         transform: none;
     }
 
-    /* Center playback controls — same row as audio */
+    /* Center playback controls — equidistant below progress bar as mute/time are above */
     .center-controls {
-        bottom: 130px;
+        bottom: 107px;
         left: 50%;
         transform: translateX(-50%);
     }
 
     .center-controls .ctrl {
-        width: 32px;
-        height: 24px;
+        width: 64px;
+        height: 48px;
         min-width: unset;
-        padding: 2px;
+        padding: 4px;
     }
 
-    .center-controls .ctrl .symbol { font-size: 8px; }
-    .center-controls .ctrl .text   { font-size: 5px; }
+    .center-controls .ctrl .symbol { font-size: 14px; }
+    .center-controls .ctrl .text   { font-size: 8px; }
 
-    /* Time display — hidden on mobile portrait */
+    /* Time display — above progress bar, right side */
     .time-display {
-        display: none;
-    }
-
-    /* Project nav — smaller, bottom right */
-    .project-nav-unified {
-        position: absolute;
-        bottom: 0;
-        right: 55px;
-        left: auto;
+        top: auto;
         transform: none;
-        width: 60px;
-        height: 20px;
-        font-size: 8px;
-        border: 1px solid #FFFFFF;
+        bottom: 195px;
+        right: 20px;
     }
 
-    .nav-prev, .nav-next {
-        width: 20px;
-        height: 20px;
-        font-size: 8px;
-    }
-
-    .nav-counter { padding: 0 6px; }
-
-    /* Frame counter — bottom right, compact */
-    .frame-counter {
+    /* Project nav — rightmost, larger for easier pressing */
+    .project-nav-unified {
         position: absolute;
         bottom: 0;
         right: 0;
         left: auto;
-        width: 35px;
+        transform: none;
+        width: 88px;
+        height: 28px;
+        font-size: 10px;
+    }
+
+    .nav-prev, .nav-next {
+        width: 28px;
+        height: 28px;
+        font-size: 10px;
+    }
+
+    .nav-counter { padding: 0 8px; }
+
+    /* Frame counter — left of project nav */
+    .frame-counter {
+        position: absolute;
+        bottom: 0;
+        right: 98px;
+        left: auto;
+        width: 40px;
         min-width: unset;
-        height: 20px;
+        height: 28px;
         font-size: 8px;
         padding: 2px 4px;
     }
 
-    /* Project details box — full width */
+    /* Project details box — above the letterboxed video, top black bar */
     .project-details-box {
-        bottom: 200px;
+        top: 20px;
+        bottom: auto;
         left: 10px;
-        min-width: calc(100% - 20px);
+        right: 10px;
+        min-width: unset;
+        width: calc(100% - 20px);
+        max-height: 38vh;
     }
 
     /* Close button — tighter on mobile */
