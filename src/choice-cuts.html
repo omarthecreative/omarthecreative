@@ -576,6 +576,11 @@
         var sliced = false;
         var touchStarted = false;
 
+        // bfcache restore — reset flag so knife can slice again on return
+        window.addEventListener('pageshow', function (e) {
+            if (e.persisted) sliced = false;
+        });
+
         // First touch anywhere unlocks AudioContext from within a gesture.
         // Also sets touchStarted so the scroll listener knows a real gesture
         // has occurred and it's safe to play audio.

@@ -429,6 +429,11 @@
         var poured = false;
         var touchStarted = false;
 
+        // bfcache restore — reset flag so bourbon can pour again on return
+        window.addEventListener('pageshow', function (e) {
+            if (e.persisted) poured = false;
+        });
+
         document.addEventListener('touchstart', function () {
             touchStarted = true;
             if (typeof ApexSound !== 'undefined') ApexSound.init();
