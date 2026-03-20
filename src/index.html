@@ -122,7 +122,7 @@
             font-size: 3.5vw;
             color: white;
             margin-top: -1.5vw;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.01em;
             opacity: 1;
             z-index: 5;
             line-height: 1.1;
@@ -667,7 +667,8 @@
         const projects = [
             {
                 title: "GOOGLE",
-                subtitle: "Lose The Flash",
+                subtitle: "Lose the Flash",
+                letterSpacing: '-0.02em',
                 vimeoId: "306235541",
                 img: "03-google-pixel-lose-the-flash-scaled-e1772256909967.png",
                 role: "CREATIVE DIRECTOR, WRITER",
@@ -759,7 +760,8 @@
             },
             {
                 title: "SAMSUNG",
-                subtitle: "Stay Ahead Of Tomorrow",
+                subtitle: "Stay Ahead of Tomorrow",
+                letterSpacing: '-0.02em',
                 vimeoId: "442857172",
                 img: "assets/04-samsung-stay-ahead-tomorrow.jpg",
                 role: "CREATIVE DIRECTOR, WRITER",
@@ -905,6 +907,7 @@
             {
                 title: "BUD LIGHT",
                 subtitle: "Home Advantage",
+                letterSpacing: '-0.01em',
                 vimeoId: "154384335",
                 img: "07-bud-light-home-advantage.png",
                 role: "CREATIVE DIRECTOR, COPY",
@@ -965,7 +968,8 @@
             },
             {
                 title: "LEGENCE",
-                subtitle: "Built For Building",
+                subtitle: "Built for Building",
+                letterSpacing: '-0.02em',
                 vimeoId: "1080884698",
                 img: "06-legence-built-for-building.png",
                 role: "CREATIVE DIRECTOR, ART",
@@ -1020,9 +1024,10 @@
             },
             {
                 title: "CITI",
-                subtitle: "RISE",
+                subtitle: "Rise",
                 vimeoId: "812285745",
                 videoScale: 1.35,
+                letterSpacing: '-0.01em',
                 captionBar: true,
                 img: "08-citi-rise.png",
                 role: "CREATIVE DIRECTOR, COPY",
@@ -1061,7 +1066,8 @@
             },
             {
                 title: "SAMSUNG",
-                subtitle: "Study Is Better With Play",
+                subtitle: "Study Is Better with Play",
+                letterSpacing: '-0.02em',
                 vimeoId: "637229831",
                 img: "01-samsung-study-better-play-scaled.png",
                 role: "CREATIVE DIRECTOR, WRITER",
@@ -1117,9 +1123,10 @@
                 ]
             },
             { 
-                title: "MBK ALLIANCE", 
-                subtitle: "We Are The Ones", 
-                vimeoId: "267027000", 
+                title: "MBK ALLIANCE",
+                subtitle: "We Are the Ones",
+                letterSpacing: '-0.01em',
+                vimeoId: "267027000",
                 img: "02-mbk-we-are-the-ones-scaled-e1772257041527.png", 
                 role: "CREATIVE DIRECTOR, WRITER", 
                 desc: "One voice becomes a movement.<br>Obama listens.<br>Curry takes note.<br>Chance amplifies.<br><br>And it all starts<br>when a kid decides to speak.<br>50 million impressions.<br>Zero paid media.<br><br>Just truth traveling<br>at the speed of culture.",
@@ -1314,6 +1321,7 @@
             currentIndex = (currentIndex + 1) % projects.length;
             const p = projects[currentIndex];
             titleEl.textContent = p.title;
+            titleEl.style.letterSpacing = p.letterSpacing || '';
             subtitleEl.textContent = p.subtitle;
             document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
             const bg = document.getElementById(`bg-${currentIndex}`);
@@ -1591,6 +1599,7 @@
                 const p = projects[currentIndex];
                 projectDisplay.style.width = '';
                 titleEl.textContent = p.title;
+                titleEl.style.letterSpacing = p.letterSpacing || '';
                 subtitleEl.innerHTML = p.subtitle;
                 document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
                 const bg = document.getElementById(`bg-${currentIndex}`);
@@ -1774,6 +1783,7 @@
         function fitLockup(word) {
             titleEl.textContent = word;
             titleEl.style.opacity = '1';
+            titleEl.style.letterSpacing = '';
             // Mobile portrait: skip width constraint, but scale down font for long words
             if (window.innerWidth <= 768 && window.innerHeight > window.innerWidth) {
                 titleEl.style.fontSize = word.length >= 12 ? '15vw' : '';
