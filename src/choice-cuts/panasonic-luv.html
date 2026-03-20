@@ -11,18 +11,29 @@
     <link rel="stylesheet" href="../base.css">
     <link rel="stylesheet" href="../project-page.css">
     <style>
-        /* LuV background — original concept art, hands + Venus bokeh */
-        body.project-body {
+        html { background: #050505; }
+        body.project-body { background: transparent; }
+        #luv-bg {
+            position: fixed;
+            inset: 0;
             background-image:
                 linear-gradient(rgba(5,5,5,0.58), rgba(5,5,5,0.58)),
-                url('../assets/panasonic-luv-bg.png');
+                url('../assets/panasonic-luv-bg.jpg');
             background-size: cover;
             background-position: center center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
+            z-index: -1;
         }
-        @media (max-width: 768px) {
-            body.project-body { background-attachment: scroll; }
+        .project-hero { position: relative; }
+        .project-credits {
+            position: absolute;
+            bottom: 4rem;
+            right: 5rem;
+            text-align: right;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: clamp(0.8rem, 1.2vw, 1.1rem);
+            color: rgba(255,255,255,0.6);
+            line-height: 1.5;
         }
 
 .anthem-manifesto-text {
@@ -61,9 +72,9 @@
             .video-wrapper-4x5 { width: 100%; }
         }
         .project-title-main {
-            background-image: url('../assets/panasonic-luv-bg.png');
+            background-image: url('../assets/panasonic-luv-bg.jpg');
             background-size: cover;
-            background-position: center center;
+            background-position: 25% center;
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -123,6 +134,7 @@
     </script>
 </head>
 <body class="project-body">
+    <div id="luv-bg" aria-hidden="true"></div>
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
         <div class="menu-links">
@@ -156,12 +168,12 @@
             <div class="hero-content">
                 <p class="project-meta-top">PANASONIC LUMIX</p>
                 <h1 class="project-title-main">LUV MOVES ME</h1>
-                <p class="project-credits">
-                    Creative Director, Writer & Photographer: Omar Silwany<br>
-                    Creative Director, Art & Photographer: Jason Borzouyeh<br>
-                    Dentsu Utama
-                </p>
             </div>
+            <p class="project-credits">
+                Creative Director, Writer & Photographer: Omar Silwany<br>
+                Creative Director, Art & Photographer: Jason Borzouyeh<br>
+                Dentsu Utama
+            </p>
         </section>
 
         <section class="project-intro-section">

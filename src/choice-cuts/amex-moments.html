@@ -11,20 +11,36 @@
     <link rel="stylesheet" href="../base.css">
     <link rel="stylesheet" href="../project-page.css">
     <style>
-        body.project-body {
+        html { background: #050505; }
+        body.project-body { background: transparent; }
+        #amex-bg {
+            position: fixed;
+            inset: 0;
             background-image:
                 linear-gradient(rgba(5,5,5,0.60), rgba(5,5,5,0.60)),
-                url('../assets/amex-moments-bg.png');
+                url('../assets/amex-moments-bg.jpg');
             background-size: cover;
-            background-position: center center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
+            background-position: center 25%;
+            z-index: -1;
         }
-        @media (max-width: 768px) {
-            body.project-body { background-attachment: scroll; }
+        @media (orientation: portrait) and (max-width: 768px) {
+            #amex-bg { background-position: center 85%; }
+        }
+        .mobile-break { display: none; }
+        .project-hero { position: relative; }
+        .project-credits {
+            position: absolute;
+            bottom: 4rem;
+            right: 5rem;
+            text-align: right;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: clamp(0.8rem, 1.2vw, 1.1rem);
+            color: rgba(255,255,255,0.6);
+            line-height: 1.5;
         }
         .project-title-main {
-            background-image: url('../assets/amex-moments-bg.png');
+            background-image: url('../assets/amex-moments-bg.jpg');
             background-size: cover;
             background-position: center 30%;
             -webkit-background-clip: text;
@@ -35,6 +51,10 @@
             padding: 0.15em 0.1em;
             margin-top: -0.15em;
             margin-left: -0.1em;
+        }
+        @media (orientation: portrait) and (max-width: 768px) {
+            .mobile-break { display: inline; }
+            .project-title-main { background-size: auto 250%; background-position: center 0%; }
         }
         .manifesto-text {
             font-family: "freight-text-pro", Georgia, serif;
@@ -112,6 +132,7 @@
     </script>
 </head>
 <body class="project-body">
+    <div id="amex-bg" aria-hidden="true"></div>
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
         <div class="menu-links">
@@ -144,9 +165,9 @@
         <section class="project-hero">
             <div class="hero-content">
                 <p class="project-meta-top">AMERICAN EXPRESS</p>
-                <h1 class="project-title-main">FROM THIS MOMENT, ON</h1>
-                <p class="project-credits">Creative Director & Writer<br>Momentum Worldwide</p>
+                <h1 class="project-title-main">FROM THIS<br class="mobile-break"> MOMENT, ON</h1>
             </div>
+            <p class="project-credits">Creative Director & Writer<br>Momentum Worldwide</p>
         </section>
 
         <section class="project-intro-section">
