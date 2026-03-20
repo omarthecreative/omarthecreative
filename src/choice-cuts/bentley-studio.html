@@ -22,11 +22,20 @@
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
+            background-image: url('../assets/bentley-hero.jpg');
             background-size: cover;
             background-position: center;
-            opacity: 0.6;
+            opacity: 0.8; /* Increased for deeper richness */
         }
-        .project-hero { background: transparent !important; position: relative; }
+        .project-hero { 
+            height: 100vh;
+            background: transparent !important; 
+            position: relative; 
+            z-index: 2; 
+            display: block !important; /* Switch to block to kill flex-centering hop */
+            padding-top: 15vh !important; /* Static top clearance */
+            text-align: center;
+        }
         .project-credits {
             position: absolute;
             bottom: 4rem;
@@ -45,7 +54,7 @@
             position: relative;
             background: #111;
         }
-        
+
         /* Pitch Deck & Process Stills Slider */
         .slider-section {
             width: 100vw;
@@ -152,18 +161,55 @@
             height: auto;
             object-fit: contain;
         }
+        .project-meta-top {
+            opacity: 0.4; /* Dimmed to feel like HUD glare in the light beam */
+        }
         .project-title-main {
-            background-image: url('../assets/bentley-infinite-grid-bg.png');
-            background-size: cover;
-            background-position: center center;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            width: max-content;
-            white-space: nowrap;
+            color: rgba(255,255,255,0.92); /* Softened from digital white */
+            letter-spacing: 0.1em; /* Expanded for premium breathing room */
+            line-height: 0.85; /* Monolithic tight-stack */
+            font-size: clamp(50px, 9vw, 140px);
             padding: 0.15em 0.1em;
             margin-top: -0.15em;
             margin-left: -0.1em;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.5); /* Soft anchor to background */
+        }
+
+        /* Portrait / Mobile calibration */
+        @media (orientation: portrait), (max-width: 768px) {
+            .hero-bg-image {
+                background-image: url('../assets/bentley-hero-portrait.jpg');
+                background-size: cover; /* Native 9:16 portrait image */
+                background-position: center;
+            }
+            .project-hero {
+                display: block !important;
+                padding-top: 25vh !important; /* Force clearance to stop jump in portrait */
+            }
+            .project-title-main {
+                font-size: clamp(40px, 13vw, 75px); /* Adjusted for wider portrait devices */
+            }
+            .project-credits {
+                bottom: 8rem; /* Lifted to clear iPhone bottom UI */
+                right: 2rem;
+                font-size: 0.8rem;
+                z-index: 5;
+            }
+            .manifesto-continuation-text {
+                margin-bottom: 30rem !important;
+                font-size: 1.1rem !important; /* Slightly increased for readability with balance */
+                padding: 0 2rem;
+                line-height: 1.8 !important;
+                text-wrap: balance; /* Cinematic text distribution */
+            }
+            .manifesto-continuation-text span {
+                font-size: 2.2rem !important; /* Scaled down to stay on one line */
+                letter-spacing: 0.05em !important;
+            }
+            .project-intro-text {
+                text-wrap: balance;
+                padding: 0 1rem;
+            }
         }
     </style>
     <script>
@@ -191,7 +237,7 @@
                 const counter = slider.parentElement.querySelector('.slider-counter');
                 const slides = slider.querySelectorAll('.slide');
                 const total = slides.length;
-                
+
                 slider.addEventListener('scroll', () => {
                     const index = Math.round(slider.scrollLeft / window.innerWidth) + 1;
                     counter.textContent = `${index} / ${total}`;
@@ -211,7 +257,7 @@
             const backToTop = document.getElementById('back-to-top');
             const scrollPosition = window.innerHeight + window.pageYOffset;
             const bottomPosition = document.documentElement.offsetHeight - 100;
-            
+
             if (scrollPosition >= bottomPosition) {
                 backToTop.style.opacity = '0.6';
                 backToTop.style.pointerEvents = 'auto';
@@ -229,11 +275,12 @@
         gtag('js', new Date());
         gtag('config', 'G-DCVBRB1LW6');
     </script>
-</head>
-<body class="project-body">
+    </head>
+    <body class="project-body">
     <div class="hero-background">
-        <div class="hero-bg-image" style="background-image: url('../assets/bentley-infinite-grid-bg.png');"></div>
+        <div class="hero-bg-image"></div>
     </div>
+
 
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
@@ -267,7 +314,7 @@
         <section class="project-hero">
             <div class="hero-content">
                 <p class="project-meta-top">BENTLEY</p>
-                <h1 class="project-title-main">VISIONARY EXPERIENCE</h1>
+                <h1 class="project-title-main">VISIONARY<br>EXPERIENCE</h1>
             </div>
             <p class="project-credits">Creative Director<br>Momentum Worldwide</p>
         </section>
@@ -275,18 +322,18 @@
         <section class="project-intro-section">
             <div class="project-intro-content">
                 <div class="project-intro-text">
-                    1.3 billion options.
-                    Most buyers chose triple black.
+                    1.3 billion&nbsp;options.<br>
+                    Most buyers chose triple&nbsp;black.<br><br>
 
-                    The paradox of infinite choice.
-                    When you can have anything, you default to nothing.
+                    The paradox of infinite&nbsp;choice.<br>
+                    When you can have anything, you default to&nbsp;nothing.<br><br>
 
-                    So we built a new kind of showroom.
-                    One that decoded taste before it offered options.
+                    So we built a new kind of&nbsp;showroom.<br>
+                    One that decoded taste before it offered&nbsp;options.<br><br>
 
-                    Photography. Psychology. Technology.
-                    A commissioning experience that found your Bentley
-                    before you knew it existed.
+                    Photography.<br>Psychology.<br>Technology.<br>
+                    A commissioning experience that found your&nbsp;Bentley<br>
+                    before you knew it&nbsp;existed.
                 </div>
             </div>
         </section>
@@ -308,35 +355,23 @@
 
             <!-- Manifesto & Video -->
             <section class="visual-asset-item" style="margin-top: 15rem; margin-bottom: 20rem;">
-                <div class="manifesto-continuation-text" style="text-align: center; margin-bottom: 12rem; max-width: 900px; margin-left: auto; margin-right: auto; line-height: 2; font-family: var(--font-serif); font-size: 1.2rem;">
-                    In 1919, one man set forth on a quest for perfection<br>
-                    to redefine all boundaries in a car,<br>
-                    embodying his uncompromising love of speed,<br>
-                    performance, and competitive excellence.<br><br>
+                <div class="manifesto-continuation-text" style="text-align: center; margin-bottom: 40rem; max-width: 900px; margin-left: auto; margin-right: auto; line-height: 2; font-family: var(--font-serif); font-size: 1.2rem;">
+                    In 1919, one man set forth on a quest for&nbsp;perfection to redefine all boundaries in a&nbsp;car, embodying his uncompromising love of&nbsp;speed, performance, and competitive&nbsp;excellence.<br><br>
 
-                    His vision pushed the limits of exhilaration.<br>
-                    And with each new model, he pushed further.<br><br>
+                    His vision pushed the limits of&nbsp;exhilaration. And with each new model, he pushed&nbsp;further.<br><br>
 
-                    The passion of our artists, craftsmen, and women<br>
-                    now prepares to forge from superformed aluminum,<br>
-                    leather, and wood<br>
-                    one more vision — yours.<br><br>
+                    The passion of our artists, craftsmen, and&nbsp;women now prepares to forge from superformed&nbsp;aluminum, leather, and&nbsp;wood one more vision&nbsp;—&nbsp;yours.<br><br>
 
-                    Behind our workshop's walls, nothing is standard.<br>
-                    And luxury has no limits.<br><br>
+                    Behind our workshop's walls, nothing is&nbsp;standard.<br>
+                    And luxury has no&nbsp;limits.<br><br>
 
-                    There is only what you envision,<br>
-                    awaiting to manifest as limitless experience.<br><br>
+                    There is only what you&nbsp;envision, awaiting to manifest as limitless&nbsp;experience.<br><br>
 
-                    A ride as thrilling as the hunt and hustle to acquire it.<br>
-                    A fitting so bespoke, it's a true expression of the one who commissions it.<br>
-                    A rare opportunity to be counted among those<br>
-                    who break boundaries and defy impossibilities.<br><br>
+                    A ride as thrilling as the hunt and hustle to&nbsp;acquire&nbsp;it. A fitting so bespoke, it's a true expression of the one who&nbsp;commissions&nbsp;it. A rare opportunity to be counted among&nbsp;those who break boundaries and defy&nbsp;impossibilities.<br><br>
 
-                    4,000 of us stand strong in Crewe.<br>
-                    Ready to unleash your singular vision.<br><br><br>
+                    4,000 of us stand strong in&nbsp;Crewe. Ready to unleash<br>your singular&nbsp;vision.<br><br><br>
 
-                    <span style="font-family: var(--display); font-size: 5rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent);">LUXURY UNBOUND</span>
+                    <span style="font-family: var(--display); font-size: 5rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent);">LUXURY&nbsp;UNBOUND</span>
                 </div>
                 <div class="video-wrapper-16x9">
                     <iframe src="https://player.vimeo.com/video/135510860?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1" 
