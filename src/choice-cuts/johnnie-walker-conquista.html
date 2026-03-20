@@ -51,12 +51,37 @@
             margin-right: -50vw;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            justify-content: flex-start;
+            align-items: flex-end;
+            padding-top: 3.5rem;
+            padding-right: 5rem;
         }
         .hero-content {
             position: relative;
             z-index: 2;
+            text-align: right;
+        }
+        .project-title-main.title-line-2 {
+            margin-top: -0.6em;
+            transform: translateX(1em);
+        }
+        .project-meta-top {
+            text-align: left;
+            margin-bottom: 0;
+        }
+        @media (orientation: portrait) and (max-width: 1024px) {
+            .project-hero {
+                justify-content: center;
+                align-items: center;
+                padding-top: 0;
+                padding-right: 0;
+            }
+            .hero-content { text-align: center; }
+            .project-meta-top { text-align: center; }
+            .hero-bg-image { object-position: 55% center; }
+            .project-title-main.title-line-2 {
+                margin-top: -0.8em;
+            }
         }
         .project-title-main {
             background: linear-gradient(135deg, #8B4500 0%, #C87010 20%, #F0A828 45%, #D07010 65%, #9B5200 85%, #C08818 100%);
@@ -66,7 +91,7 @@
             color: transparent;
             width: max-content;
             max-width: 100%;
-            padding: 0.15em 0.1em;
+            padding: 0.15em 0.4em 0.15em 0.1em;
             margin-top: -0.15em;
             margin-left: -0.1em;
         }
@@ -156,8 +181,9 @@
         <section class="project-hero">
             <div class="hero-content">
                 <p class="project-meta-top">JOHNNIE WALKER</p>
-                <h1 class="project-title-main">CONQUISTA LA NOCHE</h1>
-                <p class="project-credits">Associate Creative Director, Copy<br>Grey NY | WING</p>
+                <h1 class="project-title-main">CONQUISTA</h1>
+                <h1 class="project-title-main title-line-2">LA NOCHE</h1>
+                <p class="project-credits">ACD, Copy — Omar Silwany<br>ACD, Art — Christine Kohler<br>CCO — Gustavo Asman<br>Grey NY | WING</p>
             </div>
         </section>
 
