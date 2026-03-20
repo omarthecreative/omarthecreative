@@ -204,6 +204,21 @@
                 padding: 0 1rem;
             }
         }
+
+        /* Mobile Landscape calibration */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .project-hero {
+                padding-top: 10vh !important;
+            }
+            .project-title-main {
+                font-size: clamp(30px, 12vh, 70px);
+            }
+            .project-credits {
+                bottom: 1.5rem;
+                right: 2rem;
+                font-size: 0.7rem;
+            }
+        }
     </style>
     <script>
         function toggleMenu(show) {
