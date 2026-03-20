@@ -26,7 +26,19 @@
             background-position: center;
             opacity: 0.6;
         }
-        .project-hero { background: transparent !important; }
+        .project-hero { background: transparent !important; position: relative; }
+        .project-credits {
+            position: absolute;
+            bottom: 4rem;
+            right: 5rem;
+            text-align: right;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: clamp(0.8rem, 1.2vw, 1.1rem);
+            color: rgba(255,255,255,0.6);
+            line-height: 1.5;
+        }
+        .mobile-break { display: none; }
 
         .manifesto-text {
             font-family: "freight-sans-pro", sans-serif;
@@ -64,11 +76,18 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            font-size: clamp(40px, 11vw, 210px);
             width: max-content;
-            white-space: nowrap;
             padding: 0.15em 0.1em;
             margin-top: -0.15em;
             margin-left: -0.1em;
+        }
+        @media (orientation: portrait) and (max-width: 768px) {
+            .mobile-break { display: inline; }
+            .project-title-main {
+                font-size: clamp(40px, 22vw, 160px);
+                background-image: url('../assets/stoli-night-bg-flipped.jpeg');
+            }
         }
     </style>
     <script>
@@ -157,14 +176,14 @@
         <section class="project-hero">
             <div class="hero-content">
                 <p class="project-meta-top">STOLICHNAYA</p>
-                <h1 class="project-title-main">ILLUMINATE YOUR NIGHT</h1>
-                <p class="project-credits">
-                    Creative Director: Omar Silwany<br>
-                    Senior Art Director: Sam Resta<br>
-                    Senior Copywriter: Megan Treme<br>
-                    Momentum Worldwide
-                </p>
+                <h1 class="project-title-main">ILLUMINATE<br class="mobile-break"> YOUR NIGHT</h1>
             </div>
+            <p class="project-credits">
+                Creative Director: Omar Silwany<br>
+                Senior Art Director: Sam Resta<br>
+                Senior Copywriter: Megan Treme<br>
+                Momentum Worldwide
+            </p>
         </section>
 
         <section class="project-intro-section">
