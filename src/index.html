@@ -1306,8 +1306,12 @@
 
         portal.addEventListener('click', (e) => {
             if (e.target.closest('.btn') || e.target.closest('.info-link') || e.target.closest('.header-name') || e.target.closest('.footer-metadata a')) return;
-            ApexSound.init();
-            ApexSound.play('shutter');
+            
+            // Only play sound if it's a real user gesture
+            if (e.isTrusted) {
+                ApexSound.init();
+                ApexSound.play('shutter');
+            }
 
             // Kill initial background
             const initialBg = document.getElementById('initial-bg');
@@ -1836,6 +1840,17 @@
                 if (intelOverlay.style.display === 'flex' && creditsDrawer.classList.contains('active')) {
                     scriptOverlay.style.display = 'flex';
                 }
+            }
+        });
+
+        // Handle ?start=true query parameter
+        window.addEventListener('load', () => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('start')) {
+                // Short delay to ensure everything is ready
+                setTimeout(() => {
+                    portal.click();
+                }, 300);
             }
         });
     </script>
