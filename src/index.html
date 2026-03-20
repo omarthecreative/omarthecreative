@@ -6,6 +6,16 @@
     <title>Omar, the Creative</title>
     <meta name="description" content="Bits and bobs, and the occasionally useful manifesto or script.">
 
+    <script>
+        // Immediate check for start parameter to avoid flash
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('start')) {
+                document.documentElement.classList.add('starting');
+            }
+        })();
+    </script>
+
     <!-- Social Metadata -->
     <meta property="og:site_name" content="Omar, the Creative">
     <meta property="og:title" content="Omar, the Creative | CD, Writer & More">
@@ -50,6 +60,14 @@
             --vibrant-red: #A8002C;
             --glow: rgba(255, 0, 0, 0.8);
         }
+        
+        /* Flash prevention for EXHIBITS menu link */
+        html.starting #initial-bg,
+        html.starting #project-title,
+        html.starting #project-subtitle { 
+            display: none !important; 
+        }
+
         body { background: #000; margin: 0; padding: 0; overflow: hidden; }
         .portal-wrapper {
             height: 100vh;
@@ -1307,6 +1325,9 @@
         portal.addEventListener('click', (e) => {
             if (e.target.closest('.btn') || e.target.closest('.info-link') || e.target.closest('.header-name') || e.target.closest('.footer-metadata a')) return;
             
+            // Clear starting guard if it exists
+            document.documentElement.classList.remove('starting');
+
             // Only play sound if it's a real user gesture
             if (e.isTrusted) {
                 ApexSound.init();
