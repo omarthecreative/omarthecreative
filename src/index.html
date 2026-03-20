@@ -643,7 +643,7 @@
         
         <div class="project-display" id="project-display">
             <div class="subtitle" id="project-subtitle">Ideas. Into Copy. Into Scripts.<br>Into <span class="rotating-wrap"><span id="rotating-word">Films</span><span class="type-cursor" id="type-cursor">|</span></span>. Into Campaigns.</div>
-            <h1 class="title animate-vibrate" id="project-title">BROUHAHAHA.</h1>
+            <h1 class="title animate-vibrate" id="project-title" style="opacity:0">BROUHAHAHA.</h1>
         </div>
         
         <div class="action-group" id="action-group">
@@ -1773,6 +1773,7 @@
 
         function fitLockup(word) {
             titleEl.textContent = word;
+            titleEl.style.opacity = '1';
             // Mobile portrait: skip width constraint, but scale down font for long words
             if (window.innerWidth <= 768 && window.innerHeight > window.innerWidth) {
                 titleEl.style.fontSize = word.length >= 12 ? '15vw' : '';
