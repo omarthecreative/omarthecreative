@@ -25,7 +25,18 @@
             object-fit: cover;
             opacity: 0.6;
         }
-        .project-hero { background: transparent !important; }
+        .project-hero { background: transparent !important; position: relative; }
+        .project-credits {
+            position: absolute;
+            bottom: 4rem;
+            right: 5rem;
+            text-align: right;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: clamp(0.8rem, 1.2vw, 1.1rem);
+            color: rgba(255,255,255,0.6);
+            line-height: 1.5;
+        }
         .honda-manifesto-text {
             font-family: var(--font-serif);
             font-size: clamp(20px, 3vw, 32px);
@@ -52,13 +63,14 @@
             .gif-grid { grid-template-columns: 1fr; }
         }
         .project-title-main {
-            background-image: linear-gradient(rgba(255,255,255,0.15), rgba(255,255,255,0.15)), url('../assets/honda-grass-flowers-bg.png');
-            background-size: 40%;
-            background-repeat: repeat;
+            background-image: url('../assets/honda-grass-flowers-bg.png');
+            background-size: 100%;
+            background-repeat: no-repeat;
             background-position: center center;
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            filter: brightness(2.5) contrast(1.1) saturate(0.85);
             width: max-content;
             white-space: nowrap;
             padding: 0.15em 0.1em;
@@ -152,12 +164,12 @@
             <div class="hero-content">
                 <p class="project-meta-top">HONDA</p>
                 <h1 class="project-title-main">NATURALLY DRIVEN</h1>
-                <p class="project-credits">
-                    Creative Director, Writer: Omar Silwany<br>
-                    Creative Director, Art: Jason Borzouyeh<br>
-                    Dentsu Utama
-                </p>
             </div>
+            <p class="project-credits">
+                Creative Director, Writer: Omar Silwany<br>
+                Creative Director, Art: Jason Borzouyeh<br>
+                Dentsu Utama
+            </p>
         </section>
 
         <section class="project-intro-section">

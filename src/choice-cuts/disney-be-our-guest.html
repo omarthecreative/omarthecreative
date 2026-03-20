@@ -46,12 +46,26 @@
             margin-right: -50vw;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            justify-content: flex-start;
+            align-items: flex-end;
+            padding-top: 10rem;
+            padding-right: 5rem;
         }
         .hero-content {
             position: relative;
             z-index: 2;
+            text-align: right;
+        }
+        .hero-credits-corner {
+            position: absolute;
+            bottom: 4rem;
+            right: 5rem;
+            text-align: right;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: clamp(0.8rem, 1.2vw, 1.1rem);
+            color: rgba(255,255,255,0.6);
+            line-height: 1.5;
         }
         .project-intro-section {
             height: 100vh;
@@ -267,9 +281,9 @@
         <section class="project-hero">
             <div class="hero-content">
                 <p class="project-meta-top">DISNEY PARKS & RESORTS</p>
-                <h1 class="project-title-main">BE OUR GUEST</h1>
-                <p class="project-credits">Rogue Writer & Design Project Director<br>mcgarrybowen</p>
+                <h1 class="project-title-main">BE OUR<br>GUEST</h1>
             </div>
+            <p class="hero-credits-corner">Rogue Writer & Design Project Director<br>mcgarrybowen</p>
         </section>
 
         <!-- PROJECT INTRO SECTION -->

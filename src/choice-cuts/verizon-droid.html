@@ -45,15 +45,32 @@
             user-select: none;
         }
         /* Machine metal — polished surface to shadow */
+        .project-hero {
+            position: relative;
+        }
+        .hero-credits-corner {
+            position: absolute;
+            bottom: 4rem;
+            right: 5rem;
+            text-align: right;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: clamp(0.8rem, 1.2vw, 1.1rem);
+            color: rgba(255,255,255,0.6);
+            line-height: 1.5;
+        }
         .project-title-main {
-            background: linear-gradient(to bottom, #D0D0D0 0%, #888888 45%, #404040 100%);
-            background-size: 100% 100%;
+            background-image: url('../assets/verizon-droid-sky.png');
+            background-size: cover;
+            background-position: center 40%;
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            filter: brightness(1.4) contrast(1.1);
+            font-size: clamp(120px, 28vw, 600px);
             width: max-content;
             white-space: nowrap;
-            padding: 0.15em 0.1em;
+            padding: 0.15em 0.4em 0.15em 0.1em;
             margin-top: -0.15em;
             margin-left: -0.1em;
         }
@@ -144,8 +161,8 @@
             <div class="hero-content">
                 <p class="project-meta-top">VERIZON</p>
                 <h1 class="project-title-main">DROIDS</h1>
-                <p class="project-credits">Freelance Copywriter<br>dentsu mcgarrybowen</p>
             </div>
+            <p class="hero-credits-corner">Freelance Copywriter<br>dentsu mcgarrybowen</p>
         </section>
 
         <section class="project-intro-section">

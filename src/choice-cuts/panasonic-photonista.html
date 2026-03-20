@@ -11,17 +11,29 @@
     <link rel="stylesheet" href="../base.css">
     <link rel="stylesheet" href="../project-page.css">
     <style>
-        body.project-body {
+        html { background: #050505; }
+        body.project-body { background: transparent; }
+        #photonista-bg {
+            position: fixed;
+            inset: 0;
             background-image:
                 linear-gradient(rgba(5,5,5,0.65), rgba(5,5,5,0.65)),
-                url('../assets/panasonic-photonista-bg.png');
+                url('../assets/panasonic-photonista-bg.jpg');
             background-size: cover;
             background-position: center top;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
+            z-index: -1;
         }
-        @media (max-width: 768px) {
-            body.project-body { background-attachment: scroll; }
+        .project-hero { position: relative; padding-bottom: 6rem; }
+        .project-credits {
+            position: absolute;
+            bottom: 4rem;
+            right: 5rem;
+            text-align: right;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: clamp(0.8rem, 1.2vw, 1.1rem);
+            color: rgba(255,255,255,0.6);
+            line-height: 1.5;
         }
         .photonista-definition {
             max-width: 900px;
@@ -91,17 +103,7 @@
             .video-wrapper-4x5 { width: 100%; }
         }
         .project-title-main {
-            background-image: url('../assets/panasonic-photonista-bg.png');
-            background-size: cover;
-            background-position: center top;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            width: max-content;
-            white-space: nowrap;
-            padding: 0.15em 0.1em;
-            margin-top: -0.15em;
-            margin-left: -0.1em;
+            color: #ffffff;
         }
     </style>
     <script>
@@ -153,6 +155,7 @@
     </script>
 </head>
 <body class="project-body">
+    <div id="photonista-bg" aria-hidden="true"></div>
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
         <div class="menu-links">
@@ -186,13 +189,13 @@
             <div class="hero-content">
                 <p class="project-meta-top">PANASONIC LUMIX</p>
                 <h1 class="project-title-main">FOR EVERY PHOTONISTA</h1>
-                <p class="project-credits">
-                    Creative Director, Writer: Omar Silwany<br>
-                    Creative Director, Art: Jason Borzouyeh<br>
-                    Director & Photographer: Peter Bannan<br>
-                    Dentsu Utama
-                </p>
             </div>
+            <p class="project-credits">
+                Creative Director, Writer: Omar Silwany<br>
+                Creative Director, Art: Jason Borzouyeh<br>
+                Director & Photographer: Peter Bannan<br>
+                Dentsu Utama
+            </p>
         </section>
 
         <section class="project-intro-section">
