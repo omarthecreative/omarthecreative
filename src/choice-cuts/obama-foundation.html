@@ -25,7 +25,18 @@
             object-fit: cover;
             opacity: 0.6;
         }
-        .project-hero { background: transparent !important; }
+        .project-hero { background: transparent !important; position: relative; }
+        .project-credits {
+            position: absolute;
+            bottom: 4rem;
+            right: 5rem;
+            text-align: right;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: clamp(0.8rem, 1.2vw, 1.1rem);
+            color: rgba(255,255,255,0.6);
+            line-height: 1.5;
+        }
 
         .quote-section {
             margin: 15rem 0;
@@ -213,15 +224,15 @@
             <div class="hero-content">
                 <p class="project-meta-top">The Obama Foundation</p>
                 <h1 class="project-title-main">WE ARE THE ONES</h1>
-                <p class="project-credits">
-                    Creative Director, Art: Warren Eakins<br>
-                    Creative Director, Copy: Omar Silwany<br>
-                    Designer: Norah Tahiri<br>
-                    Additional Creative: Shabazz Larkin<br>
-                    Director: Jason J.M. Harper<br>
-                    Matter Unlimited
-                </p>
             </div>
+            <p class="project-credits">
+                Creative Director, Art: Warren Eakins<br>
+                Creative Director, Copy: Omar Silwany<br>
+                Designer: Norah Tahiri<br>
+                Additional Creative: Shabazz Larkin<br>
+                Director: Jason J.M. Harper<br>
+                Matter Unlimited
+            </p>
         </section>
 
         <section class="project-intro-section">

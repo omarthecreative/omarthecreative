@@ -11,17 +11,17 @@
     <link rel="stylesheet" href="../base.css">
     <link rel="stylesheet" href="../project-page.css">
     <style>
-        body.project-body {
+        html { background: #050505; }
+        body.project-body { background: transparent; }
+        #espolon-bg {
+            position: fixed;
+            inset: 0;
             background-image:
                 linear-gradient(rgba(5,5,5,0.70), rgba(5,5,5,0.70)),
-                url('../assets/espolon-tequila-bg.png');
+                url('../assets/espolon-tequila-bg.jpg');
             background-size: cover;
             background-position: center center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-        }
-        @media (max-width: 768px) {
-            body.project-body { background-attachment: scroll; }
+            z-index: -1;
         }
         .project-hero {
             position: relative;
@@ -38,7 +38,7 @@
             line-height: 1.5;
         }
         .project-title-main {
-            background-image: url('../assets/espolon-tequila-bg.png');
+            background-image: url('../assets/espolon-tequila-bg.jpg');
             background-size: 95% auto;
             background-position: 85% 15%;
             -webkit-background-clip: text;
@@ -216,6 +216,7 @@
     </script>
 </head>
 <body class="project-body">
+    <div id="espolon-bg" aria-hidden="true"></div>
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
         <div class="menu-links">

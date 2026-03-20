@@ -11,22 +11,22 @@
     <link rel="stylesheet" href="../base.css">
     <link rel="stylesheet" href="../project-page.css">
     <style>
-        body.project-body {
+        html { background: #050505; }
+        body.project-body { background: transparent; }
+        #glenfiddich-bg {
+            position: fixed;
+            inset: 0;
             background-image:
                 linear-gradient(rgba(5,5,5,0.65), rgba(5,5,5,0.65)),
-                url('../assets/glenfiddich-original-bg.png');
+                url('../assets/glenfiddich-original-bg.jpg');
             background-size: cover;
             background-position: center center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-        }
-        @media (max-width: 768px) {
-            body.project-body { background-attachment: scroll; }
+            z-index: -1;
         }
         .project-title-main {
             font-size: clamp(140px, min(22vw, 30vh), 480px);
             line-height: 0.82;
-            background-image: url('../assets/glenfiddich-original-bg.png');
+            background-image: url('../assets/glenfiddich-original-bg.jpg');
             background-size: cover;
             background-position: center 12%;
             -webkit-background-clip: text;
@@ -37,6 +37,18 @@
             padding: 0.15em 0.1em;
             margin-top: -0.15em;
             margin-left: -0.1em;
+        }
+        .project-hero { position: relative; }
+        .project-credits {
+            position: absolute;
+            bottom: 4rem;
+            right: 5rem;
+            text-align: right;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: clamp(0.8rem, 1.2vw, 1.1rem);
+            color: rgba(255,255,255,0.6);
+            line-height: 1.5;
         }
         .video-wrapper-16x9 {
             width: 100%;
@@ -238,6 +250,7 @@
     </script>
 </head>
 <body class="project-body">
+    <div id="glenfiddich-bg" aria-hidden="true"></div>
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
         <div class="menu-links">
@@ -271,8 +284,8 @@
             <div class="hero-content">
                 <p class="project-meta-top">GLENFIDDICH</p>
                 <h1 class="project-title-main">PORTAL INTO 1963</h1>
-                <p class="project-credits">Creative Director<br>Momentum Worldwide</p>
             </div>
+            <p class="project-credits">Creative Director<br>Momentum Worldwide</p>
         </section>
 
         <section class="project-intro-section">
