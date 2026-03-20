@@ -23,10 +23,24 @@
         @media (max-width: 768px) {
             body.project-body { background-attachment: scroll; }
         }
+        .project-hero {
+            position: relative;
+        }
+        .hero-credits-corner {
+            position: absolute;
+            bottom: 4rem;
+            right: 5rem;
+            text-align: right;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: clamp(0.8rem, 1.2vw, 1.1rem);
+            color: rgba(255,255,255,0.6);
+            line-height: 1.5;
+        }
         .project-title-main {
             background-image: url('../assets/espolon-tequila-bg.png');
-            background-size: cover;
-            background-position: center 40%;
+            background-size: 95% auto;
+            background-position: 85% 15%;
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -235,8 +249,8 @@
             <div class="hero-content">
                 <p class="project-meta-top">ESPOLÓN TEQUILA</p>
                 <h1 class="project-title-main">THE INSTIGATOR</h1>
-                <p class="project-credits">Group Creative Director<br>5 O'Clock / Momentum Worldwide</p>
             </div>
+            <p class="hero-credits-corner">Group Creative Director<br>5 O'Clock / Momentum Worldwide</p>
         </section>
 
         <section class="project-intro-section">
