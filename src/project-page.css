@@ -155,7 +155,7 @@
 }
 
 /* Hide HUD frame and tags on mobile — content too crowded */
-@media (max-width: 767px) {
+@media (max-width: 767px), (max-height: 500px) and (orientation: landscape) {
     .corner-frame,
     .hud-tag { display: none !important; }
 }
