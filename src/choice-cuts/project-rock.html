@@ -12,25 +12,20 @@
     <link rel="stylesheet" href="../project-page.css">
     <style>
         html { background: #050505; }
-        body.project-body { background: transparent; }
+        body.project-body { background: #050505; }
         .hero-background {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
-            background: #000;
+            background: #050505;
             pointer-events: none;
-        }
-        .hero-bg-image {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            opacity: 0.25; /* Dialed back for massive white type */
         }
         .project-hero { 
             height: 100vh;
-            display: block !important;
-            padding-top: 15vh !important;
+            display: flex !important;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
             position: relative; 
         }
@@ -42,31 +37,38 @@
             font-family: var(--font-serif);
             font-style: italic;
             font-size: clamp(0.8rem, 1.2vw, 1.1rem);
-            color: rgba(255,255,255,0.6);
+            color: rgba(255,255,255,0.4);
             line-height: 1.5;
         }
         .project-title-main {
             font-size: clamp(120px, min(20vw, 30vh), 450px);
-            line-height: 0.85;
+            line-height: 0.8;
             letter-spacing: -0.02em;
-            color: rgba(255,255,255,0.95);
+            background-image: url('../assets/wp-uploads/DJ_Red.jpg');
+            background-size: cover;
+            background-position: center;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
             width: 100%;
             max-width: 100%;
             padding: 0.15em 0.1em;
             margin-top: -0.15em;
             margin-left: -0.1em;
             display: block;
-            text-shadow: 0 10px 50px rgba(0,0,0,0.8);
         }
 
         /* Portrait / Mobile calibration */
         @media (orientation: portrait), (max-width: 768px) {
             .project-hero {
-                padding-top: 28vh !important; /* Balanced for WE ARE / THE ONES feel */
+                padding-top: 0 !important;
+                justify-content: center;
             }
             .project-title-main {
-                font-size: clamp(40px, 15vw, 95px);
-                line-height: 0.9;
+                font-size: clamp(40px, 18vw, 120px);
+                line-height: 0.85;
+                background-size: 160%;
+                background-position: center 15%;
             }
             .project-credits {
                 bottom: 8rem;
@@ -219,9 +221,7 @@
     </div>
 
     <div class="hero-background">
-        <picture>
-            <img src="../assets/wp-uploads/DJ_Red.jpg" alt="Under Armour Project Rock" class="hero-bg-image">
-        </picture>
+        <!-- Background stripped to pure #050505 for restraint -->
     </div>
 
     <div class="corner-frame">
@@ -246,7 +246,7 @@
         <section class="project-hero">
             <div class="hero-content">
                 <p class="project-meta-top">PROJECT ROCK × UNDER ARMOUR</p>
-                <h1 class="project-title-main">IT TAKES AN<br>IRON WILL</h1>
+                <h1 class="project-title-main">IT TAKES<br>AN IRON WILL</h1>
             </div>
             <p class="project-credits">
                 Creative Director, Writer: Omar Silwany<br>
