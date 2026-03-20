@@ -23,9 +23,15 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             object-fit: cover;
-            opacity: 0.6;
+            opacity: 0.45;
         }
-        .project-hero { background: transparent !important; position: relative; }
+        .project-hero { 
+            height: 100vh;
+            display: block !important;
+            padding-top: 15vh !important;
+            text-align: center;
+            position: relative; 
+        }
         .project-credits {
             position: absolute;
             bottom: 4rem;
@@ -136,6 +142,23 @@
         .project-title-main {
             color: rgba(255, 255, 255, 0.18);
         }
+
+        /* Portrait / Mobile calibration */
+        @media (orientation: portrait), (max-width: 768px) {
+            .project-hero {
+                padding-top: 25vh !important;
+            }
+            .project-title-main {
+                font-size: clamp(40px, 14vw, 85px);
+                line-height: 0.9;
+            }
+            .project-credits {
+                bottom: 8rem;
+                right: 2rem;
+                font-size: 0.8rem;
+                z-index: 5;
+            }
+        }
     </style>
     <script>
         function toggleMenu(show) {
@@ -198,7 +221,9 @@
     </div>
 
     <div class="hero-background">
-        <img src="../assets/obama-hero-image/Lincoln_Memorial_Warren_Eakins.jpg" alt="We Are The Ones" class="hero-bg-image">
+        <picture>
+            <img src="../assets/obama-hero-image/Lincoln_Memorial_Warren_Eakins.jpg" alt="We Are The Ones" class="hero-bg-image">
+        </picture>
     </div>
 
     <div class="corner-frame">
@@ -223,7 +248,7 @@
         <section class="project-hero">
             <div class="hero-content">
                 <p class="project-meta-top">The Obama Foundation</p>
-                <h1 class="project-title-main">WE ARE THE ONES</h1>
+                <h1 class="project-title-main">WE ARE<br>THE ONES</h1>
             </div>
             <p class="project-credits">
                 Creative Director, Art: Warren Eakins<br>
@@ -237,12 +262,12 @@
 
         <section class="project-intro-section">
             <div class="project-intro-content">
-                <div class="project-intro-text">
-                    Things heated up quickly. Obama's last year in office: 2015. 
-                    The next year: Trump.
+                <div class="project-intro-text" style="text-wrap: balance;">
+                    Things heated up quickly. Obama's last year in office:&nbsp;2015.<br>
+                    The next year:&nbsp;Trump.<br><br>
 
-                    By 2017, we knew another side never set hatred aside.
-                    This is what happened before the torches were lit.
+                    By 2017, we knew another side never set hatred&nbsp;aside.<br>
+                    This is what happened before the torches were&nbsp;lit.
                 </div>
             </div>
         </section>
