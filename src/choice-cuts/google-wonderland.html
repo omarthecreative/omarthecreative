@@ -17,6 +17,7 @@
             z-index: -1;
             background: #000;
             pointer-events: none;
+            overflow: hidden; /* Prevent video wiggle */
         }
         .hero-bg-video {
             position: absolute;
@@ -24,8 +25,16 @@
             width: 100vw; height: 56.25vw;
             min-height: 100vh; min-width: 177.78vh;
             transform: translate(-50%, -50%);
+            object-fit: cover;
         }
-        .project-hero { background: transparent !important; position: relative; }
+        .project-hero { 
+            height: 100vh;
+            background: transparent !important; 
+            position: relative; 
+            display: block !important;
+            padding-top: 15vh !important;
+            text-align: center;
+        }
         .project-credits {
             position: absolute;
             bottom: 4rem;
@@ -123,11 +132,28 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            width: max-content;
+            width: 100%;
             max-width: 100%;
             padding: 0.15em 0.1em;
             margin-top: -0.15em;
             margin-left: -0.1em;
+            display: block;
+        }
+
+        /* Portrait / Mobile calibration */
+        @media (orientation: portrait), (max-width: 768px) {
+            .project-hero {
+                padding-top: 25vh !important;
+            }
+            .project-title-main {
+                font-size: clamp(40px, 12vw, 80px);
+            }
+            .project-credits {
+                bottom: 8rem;
+                right: 2rem;
+                font-size: 0.8rem;
+                z-index: 5;
+            }
         }
     </style>
     <script>
