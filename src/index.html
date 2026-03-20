@@ -116,7 +116,7 @@
             color: var(--vibrant-red);
             letter-spacing: -0.04em;
             text-shadow: 0 0 20px var(--glow);
-            text-align: left;
+            text-align: center;
             min-height: 0.8em;
         }
 
@@ -144,7 +144,7 @@
             opacity: 1;
             z-index: 5;
             line-height: 1.1;
-            text-align: left;
+            text-align: center;
         }
         .rotating-wrap {
             position: relative;
@@ -1342,11 +1342,9 @@
             }
 
             subtitleCycle.pause();
-            projectDisplay.style.width = '';
             currentIndex = (currentIndex + 1) % projects.length;
             const p = projects[currentIndex];
-            titleEl.textContent = p.title;
-            titleEl.style.letterSpacing = p.letterSpacing || '';
+            fitLockup(p.title, p.letterSpacing);
             subtitleEl.textContent = p.subtitle;
             document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
             const bg = document.getElementById(`bg-${currentIndex}`);
@@ -1622,9 +1620,7 @@
             // Return to the project's WATCH/LEARN state — not full reset
             if (currentIndex !== -1) {
                 const p = projects[currentIndex];
-                projectDisplay.style.width = '';
-                titleEl.textContent = p.title;
-                titleEl.style.letterSpacing = p.letterSpacing || '';
+                fitLockup(p.title, p.letterSpacing);
                 subtitleEl.innerHTML = p.subtitle;
                 document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
                 const bg = document.getElementById(`bg-${currentIndex}`);
@@ -1805,13 +1801,21 @@
             return HEADLINE_WORDS[idx];
         }
 
-        function fitLockup(word) {
+        let currentDisplayTitle = '';
+        let currentDisplaySpacing = '';
+
+        function fitLockup(word, spacing) {
+            currentDisplayTitle = word;
+            currentDisplaySpacing = spacing || '';
+            
             titleEl.textContent = word;
             titleEl.style.opacity = '1';
-            titleEl.style.letterSpacing = '';
+            titleEl.style.letterSpacing = currentDisplaySpacing;
+
             // Mobile portrait: skip width constraint, but scale down font for long words
             if (window.innerWidth <= 768 && window.innerHeight > window.innerWidth) {
                 titleEl.style.fontSize = word.length >= 12 ? '15vw' : '';
+                projectDisplay.style.width = '';
                 return;
             }
             // Mobile landscape: title renders at clamp(12vh,72px) not 15vw —
@@ -1822,23 +1826,21 @@
                 return;
             }
             const probe = document.createElement('span');
-            probe.style.cssText = 'position:absolute;visibility:hidden;font-family:griffith-gothic-condensed,sans-serif;font-weight:900;font-size:15vw;letter-spacing:-0.04em;text-transform:uppercase;white-space:nowrap;';
+            probe.style.cssText = `position:absolute;visibility:hidden;font-family:griffith-gothic-condensed,sans-serif;font-weight:900;font-size:15vw;letter-spacing:${currentDisplaySpacing || '-0.04em'};text-transform:uppercase;white-space:nowrap;`;
             probe.textContent = word;
             document.body.appendChild(probe);
             projectDisplay.style.width = probe.offsetWidth + 'px';
             document.body.removeChild(probe);
         }
 
-        let currentHeadlineWord = '';
         document.fonts.ready.then(() => {
-            currentHeadlineWord = nextHeadlineWord();
-            fitLockup(currentHeadlineWord);
+            fitLockup(nextHeadlineWord());
         });
 
         // Re-run on rotation — portrait guard sets inline fontSize which
         // survives orientation change and overrides CSS media queries
         window.addEventListener('resize', () => {
-            if (currentHeadlineWord) fitLockup(currentHeadlineWord);
+            if (currentDisplayTitle) fitLockup(currentDisplayTitle, currentDisplaySpacing);
         });
 
         window.addEventListener('keydown', handleEscape);
