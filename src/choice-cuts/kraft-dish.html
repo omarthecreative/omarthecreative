@@ -91,7 +91,10 @@
             align-items: center;
         }
         .hero-content {
-            position: relative;
+            position: absolute;
+            top: 42%;
+            left: 8%;
+            transform: translateY(-50%);
             z-index: 2;
         }
         .project-credits {
@@ -112,11 +115,26 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            font-size: clamp(180px, 24vw, 500px);
             width: max-content;
             white-space: nowrap;
             padding: 0.15em 0.1em;
             margin-top: -0.15em;
             margin-left: -0.1em;
+        }
+        @media (max-width: 767px) {
+            .hero-bg-image {
+                object-position: 32% center;
+            }
+            .hero-content {
+                top: auto;
+                bottom: 40%;
+                transform: none;
+                left: 6%;
+            }
+            .project-title-main {
+                font-size: clamp(115px, 30vw, 160px);
+            }
         }
     </style>
     <script>
@@ -200,7 +218,7 @@
                 <p class="project-meta-top">KRAFT FOODS</p>
                 <h1 class="project-title-main">DISH</h1>
             </div>
-            <p class="project-credits">Rogue Writer & Design Project Director<br>mcgarrybowen</p>
+            <p class="project-credits">Rogue Writer & Design Project Director:<br>Omar Silwany<br>Designs by Rachel Doyon<br>Design Director: Don Zinzell<br>CCO: Gordon Bowen<br>mcgarrybowen</p>
         </section>
 
         <!-- PROJECT INTRO SECTION -->
