@@ -113,6 +113,123 @@
             padding-top: 28rem;
             padding-bottom: 28rem;
         }
+        .manifesto-section {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .manifesto-lyrics {
+            text-align: left;
+            padding: 10rem 0 32rem 8vw;
+        }
+        .manifesto-opener {
+            font-family: 'lust-stencil-display', var(--serif);
+            font-style: italic;
+            font-size: clamp(0.9rem, 1.4vw, 1.2rem);
+            color: rgba(255,255,255,0.45);
+            margin-bottom: 3.5rem;
+            line-height: 1.6;
+        }
+        .verse-lines {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+        .verse-line {
+            display: flex;
+            align-items: baseline;
+            justify-content: flex-start;
+            gap: 0.7em;
+            line-height: 1.15;
+        }
+        .verse-num {
+            font-family: var(--mono);
+            color: var(--color-accent);
+            opacity: 0.55;
+            min-width: 1.8em;
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .verse-text {
+            font-family: 'lust-stencil-display', var(--serif);
+            font-style: italic;
+            color: rgba(255,255,255,0.92);
+            text-align: left;
+            white-space: nowrap;
+        }
+        .verse-line:nth-child(1)  .verse-text { font-size: clamp(12px, 0.75vw, 13px); }
+        .verse-line:nth-child(1)  .verse-num  { font-size: clamp(9px,  0.55vw, 10px); }
+        .verse-line:nth-child(2)  .verse-text { font-size: clamp(12px, 0.85vw, 14px); }
+        .verse-line:nth-child(2)  .verse-num  { font-size: clamp(9px,  0.6vw,  11px); }
+        .verse-line:nth-child(3)  .verse-text { font-size: clamp(13px, 0.95vw, 15px); }
+        .verse-line:nth-child(3)  .verse-num  { font-size: clamp(9px,  0.65vw, 11px); }
+        .verse-line:nth-child(4)  .verse-text { font-size: clamp(13px, 1.05vw, 16px); }
+        .verse-line:nth-child(4)  .verse-num  { font-size: clamp(10px, 0.7vw,  12px); }
+        .verse-line:nth-child(5)  .verse-text { font-size: clamp(14px, 1.15vw, 17px); }
+        .verse-line:nth-child(5)  .verse-num  { font-size: clamp(10px, 0.75vw, 12px); }
+        .verse-line:nth-child(6)  .verse-text { font-size: clamp(14px, 1.25vw, 18px); }
+        .verse-line:nth-child(6)  .verse-num  { font-size: clamp(10px, 0.85vw, 13px); }
+        .verse-line:nth-child(7)  .verse-text { font-size: clamp(15px, 1.4vw,  20px); }
+        .verse-line:nth-child(7)  .verse-num  { font-size: clamp(11px, 0.95vw, 14px); }
+        .verse-line:nth-child(8)  .verse-text { font-size: clamp(15px, 1.55vw, 22px); }
+        .verse-line:nth-child(8)  .verse-num  { font-size: clamp(11px, 1.05vw, 15px); }
+        .verse-line:nth-child(9)  .verse-text { font-size: clamp(16px, 1.75vw, 25px); }
+        .verse-line:nth-child(9)  .verse-num  { font-size: clamp(11px, 1.15vw, 16px); }
+        .verse-line:nth-child(10) .verse-text { font-size: clamp(17px, 2.0vw,  29px); }
+        .verse-line:nth-child(10) .verse-num  { font-size: clamp(12px, 1.3vw,  18px); }
+        .verse-line:nth-child(11) .verse-text { font-size: clamp(18px, 2.25vw, 33px); }
+        .verse-line:nth-child(11) .verse-num  { font-size: clamp(12px, 1.45vw, 20px); }
+        .verse-line:nth-child(12) .verse-text { font-size: clamp(20px, 2.5vw,  37px); }
+        .verse-line:nth-child(12) .verse-num  { font-size: clamp(13px, 1.6vw,  22px); }
+        .verse-line:nth-child(13) .verse-text { font-size: clamp(21px, 2.8vw,  40px); }
+        .verse-line:nth-child(13) .verse-num  { font-size: clamp(14px, 1.75vw, 24px); }
+        .verse-line:nth-child(14) .verse-text { font-size: clamp(23px, 3.1vw,  43px); }
+        .verse-line:nth-child(14) .verse-num  { font-size: clamp(15px, 1.9vw,  25px); }
+        .verse-line:nth-child(15) .verse-text { font-size: clamp(25px, 3.35vw, 44px); }
+        .verse-line:nth-child(15) .verse-num  { font-size: clamp(15px, 2.0vw,  26px); }
+        .verse-line:nth-child(16) .verse-text { font-size: clamp(27px, 3.6vw,  46px); }
+        .verse-line:nth-child(16) .verse-num  { font-size: clamp(16px, 2.15vw, 27px); }
+        .verse-line:nth-child(17) .verse-text { font-size: clamp(29px, 3.9vw,  48px); }
+        .verse-line:nth-child(17) .verse-num  { font-size: clamp(17px, 2.3vw,  28px); }
+        @media (max-width: 767px) {
+            .manifesto-section { max-width: 100%; }
+            .manifesto-lyrics { padding: 1rem 0; overflow-x: auto; }
+            .verse-lines { gap: 0.9rem; align-items: flex-start; padding: 0 1.5rem; }
+            .verse-line { gap: 0.5em; justify-content: flex-start; }
+            .manifesto-lyrics { padding-bottom: 24rem; }
+            .visual-asset-image {
+                width: 100vw;
+                max-width: none;
+                margin-left: 50%;
+                transform: translateX(-50%);
+            }
+            .visual-asset-image[src*="Print"] {
+                width: 120vw;
+            }
+            .visual-asset-image[src*="Billboard"] {
+                width: 115vw;
+            }
+            .press-article,
+            .press-article a,
+            .press-headline {
+                text-align: left;
+                align-items: flex-start;
+            }
+            .project-hero { justify-content: flex-start; padding-left: 2rem; }
+            .hero-content { position: absolute; top: 12rem; left: 2rem; }
+            .project-credits {
+                top: 5.5rem;
+                bottom: auto;
+                right: 2rem;
+                left: auto;
+                text-align: right;
+                font-size: 0.55rem;
+                line-height: 1.5;
+            }
+            .project-intro-text {
+                font-size: 14px;
+                text-wrap: pretty;
+            }
+        }
     </style>
     <script>
         function toggleMenu(show) {
@@ -174,7 +291,10 @@
     </div>
 
     <div class="hero-background">
-        <img src="../assets/crayola-hero-bg.jpg" alt="Crayola" class="hero-bg-image">
+        <picture>
+            <source media="(max-width: 767px)" srcset="../assets/crayola-hero-bg-mobile.jpg">
+            <img src="../assets/crayola-hero-bg.jpg" alt="Crayola" class="hero-bg-image">
+        </picture>
     </div>
 
     <div class="corner-frame">
@@ -202,7 +322,7 @@
                 <p class="project-meta-top">CRAYOLA</p>
                 <h1 class="project-title-main">THE 64 DAYS<br>OF CRAYOLA</h1>
             </div>
-            <p class="project-credits">Rogue Writer & Design Project Director<br>mcgarrybowen</p>
+            <p class="project-credits">Rogue Writer & Design Project Director:<br>Omar Silwany<br>Designs by Rachel Doyon<br>Design Director: Don Zinzell<br>CCO: Gordon Bowen<br>mcgarrybowen</p>
         </section>
 
         <!-- PROJECT INTRO SECTION -->
@@ -225,7 +345,7 @@
                     One number granted all four wishes.
                     The 64 Days of Crayola.
 
-                    The most successful holiday retail campaign in its category that year.
+                    The most successful holiday retail campaign in its&nbsp;category that&nbsp;year.
                 </div>
             </div>
         </section>
@@ -237,8 +357,80 @@
                 <p class="visual-asset-label">Campaign Identity</p>
             </section>
 
-            <section class="visual-asset-item">
-                <img src="../assets/wp-uploads/Crayola_64Days_Manifesto_Song.jpg" alt="The 64 Days of Crayola Manifesto Song" class="visual-asset-image">
+            <section class="visual-asset-item manifesto-section">
+                <div class="manifesto-lyrics">
+                    <p class="manifesto-opener">On the first day of Crayola, my parents gave to me...</p>
+                    <div class="verse-lines">
+                        <div class="verse-line">
+                            <span class="verse-num">1</span>
+                            <span class="verse-text">The gift of creativity</span>
+                        </div>
+                        <div class="verse-line">
+                            <span class="verse-num">2</span>
+                            <span class="verse-text">TaDoodles Doodling</span>
+                        </div>
+                        <div class="verse-line">
+                            <span class="verse-num">3</span>
+                            <span class="verse-text">Glow Boards Glowing</span>
+                        </div>
+                        <div class="verse-line">
+                            <span class="verse-num">4</span>
+                            <span class="verse-text">Color Surges Surging</span>
+                        </div>
+                        <div class="verse-line">
+                            <span class="verse-num">5</span>
+                            <span class="verse-text">Model Magics Fusing</span>
+                        </div>
+                        <div class="verse-line">
+                            <span class="verse-num">6</span>
+                            <span class="verse-text">Color Wonders Spraying</span>
+                        </div>
+                        <div class="verse-line">
+                            <span class="verse-num">7</span>
+                            <span class="verse-text">Pip-Squeaks A'Squeaking</span>
+                        </div>
+                        <div class="verse-line">
+                            <span class="verse-num">8</span>
+                            <span class="verse-text">Cutters A'Cutting</span>
+                        </div>
+                        <div class="verse-line">
+                            <span class="verse-num">9</span>
+                            <span class="verse-text">Color Explosions Bursting</span>
+                        </div>
+                        <div class="verse-line">
+                            <span class="verse-num">10</span>
+                            <span class="verse-text">Glow Stations Gleaming</span>
+                        </div>
+                        <div class="verse-line">
+                            <span class="verse-num">11</span>
+                            <span class="verse-text">Light Brushes Blazing</span>
+                        </div>
+                        <div class="verse-line">
+                            <span class="verse-num">12</span>
+                            <span class="verse-text">Twisty Twistables Twiddling</span>
+                        </div>
+                        <div class="verse-line">
+                            <span class="verse-num">13</span>
+                            <span class="verse-text">TaDoodles Scribbling N' Singing</span>
+                        </div>
+                        <div class="verse-line">
+                            <span class="verse-num">14</span>
+                            <span class="verse-text">Glitter Kits Glittering</span>
+                        </div>
+                        <div class="verse-line">
+                            <span class="verse-num">15</span>
+                            <span class="verse-text">Fine Line Markers Streaking</span>
+                        </div>
+                        <div class="verse-line">
+                            <span class="verse-num">16</span>
+                            <span class="verse-text">Mini Stampers Stomping</span>
+                        </div>
+                        <div class="verse-line">
+                            <span class="verse-num">17</span>
+                            <span class="verse-text">Silly Scents A'Smelling</span>
+                        </div>
+                    </div>
+                </div>
                 <p class="visual-asset-label">Song Lyrics</p>
             </section>
 
@@ -265,37 +457,37 @@
             </section>
 
             <section class="visual-asset-item">
-                <img src="../assets/wp-uploads/Crayola_64Days_Website.jpg" alt="The 64 Days of Crayola Microsite" class="visual-asset-image">
+                <img src="../assets/wp-uploads/Crayola_64Days_Website.png" alt="The 64 Days of Crayola Microsite" class="visual-asset-image">
                 <p class="visual-asset-label">Microsite</p>
             </section>
 
             <section class="visual-asset-item">
-                <img src="../assets/wp-uploads/Crayola_64Days_Print_1.jpg" alt="Print Ad" class="visual-asset-image">
+                <img src="../assets/wp-uploads/Crayola_64Days_Print_1.png" alt="Print Ad" class="visual-asset-image">
                 <p class="visual-asset-label">Print</p>
             </section>
 
             <section class="visual-asset-item">
-                <img src="../assets/wp-uploads/Crayola_64Days_Print_9.jpg" alt="Print Ad" class="visual-asset-image">
+                <img src="../assets/wp-uploads/Crayola_64Days_Print_9.png" alt="Print Ad" class="visual-asset-image">
                 <p class="visual-asset-label">Print</p>
             </section>
 
             <section class="visual-asset-item">
-                <img src="../assets/wp-uploads/Crayola_64Days_Print_10.jpg" alt="Print Ad" class="visual-asset-image">
+                <img src="../assets/wp-uploads/Crayola_64Days_Print_10.png" alt="Print Ad" class="visual-asset-image">
                 <p class="visual-asset-label">Print</p>
             </section>
 
             <section class="visual-asset-item">
-                <img src="../assets/wp-uploads/Crayola_64Days_Print_Courage.jpg" alt="Print Ad" class="visual-asset-image">
+                <img src="../assets/wp-uploads/Crayola_64Days_Print_Courage.png" alt="Print Ad" class="visual-asset-image">
                 <p class="visual-asset-label">Print</p>
             </section>
 
             <section class="visual-asset-item">
-                <img src="../assets/wp-uploads/Crayola_64Days_OOH_Bus_Shelter.jpg" alt="Bus Shelter" class="visual-asset-image">
+                <img src="../assets/wp-uploads/Crayola_64Days_OOH_Bus_Shelter.png" alt="Bus Shelter" class="visual-asset-image">
                 <p class="visual-asset-label">Bus Shelter</p>
             </section>
 
             <section class="visual-asset-item">
-                <img src="../assets/wp-uploads/Crayola_64Days_OOH_Billboard.jpg" alt="Billboard" class="visual-asset-image">
+                <img src="../assets/wp-uploads/Crayola_64Days_OOH_Billboard.png" alt="Billboard" class="visual-asset-image">
                 <p class="visual-asset-label">Billboard</p>
             </section>
 
