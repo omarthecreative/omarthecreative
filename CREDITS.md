@@ -30,9 +30,13 @@ mcgarrybowen
 ## CUT 03 — Chase
 *Blue*
 
-Omar's role: **?**
-Other credits: **?**
-Agency: **?**
+Rogue Namer & Design Project Director: Omar Silwany
+Chase Sapphire by Jason Borzouyeh
+Chase Slate by Thomas Moon
+Chase INK by Janet Lee
+Design Director: Don Zinzell
+CCO: Gordon Bowen
+mcgarrybowen
 
 ---
 
@@ -219,7 +223,6 @@ Seven Bucks Creative
 ---
 
 ## Still needed
-- CUT 03 Chase: role + full credits + agency
 - CUT 06 Johnnie Walker: role + full credits + agency
 - CUT 07 Honda: ECD/GCD names
 - CUT 08 Panasonic Photonista: ECD/GCD names
@@ -237,6 +240,7 @@ Seven Bucks Creative
 ## Complete in HTML ✓
 - CUT 01 Disney ✓
 - CUT 02 Kraft ✓
+- CUT 03 Chase ✓
 - CUT 05 Verizon ✓ (updated March 2026)
 - CUT 16 Balvenie ✓
 - CUT 17 Espolòn ✓ (Rich Tu added; 3 freelance names TBD)

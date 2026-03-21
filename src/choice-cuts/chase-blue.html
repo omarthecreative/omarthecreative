@@ -101,6 +101,22 @@
             margin-top: -0.15em;
             margin-left: -0.1em;
         }
+        .mobile-break { display: none; }
+        .desktop-break { display: block; }
+        @media (max-width: 767px) {
+            .hero-content {
+                position: absolute;
+                top: 6rem;
+                left: 2rem;
+                transform: none;
+                text-align: left;
+            }
+            .project-meta-top {
+                text-align: left;
+            }
+            .mobile-break { display: block; height: 0; }
+            .desktop-break { display: none; }
+        }
     </style>
     <script>
         function toggleMenu(show) {
@@ -155,7 +171,10 @@
     </div>
 
     <div class="hero-background">
-        <img src="../assets/chase-hero-bg.jpg" alt="Chase Blue" class="hero-bg-image">
+        <picture>
+            <source media="(max-width: 767px)" srcset="../assets/chase-hero-bg-mobile.png">
+            <img src="../assets/chase-hero-bg.jpg" alt="Chase Blue" class="hero-bg-image">
+        </picture>
     </div>
 
     <div class="corner-frame">
@@ -181,9 +200,9 @@
         <section class="project-hero">
             <div class="hero-content">
                 <p class="project-meta-top">CHASE</p>
-                <h1 class="project-title-main">SAPPHIRE, SLATE,<br>INK, LIQUID</h1>
+                <h1 class="project-title-main">SAPPHIRE.<br>SLATE.<br>INK.<br>& LIQUID.</h1>
             </div>
-            <p class="project-credits">Rogue Writer & Design Project Director<br>mcgarrybowen</p>
+            <p class="project-credits">Rogue Namer & Design Project Director:<br>Omar Silwany<br>Chase Sapphire by Jason Borzouyeh<br>Chase Slate by Thomas Moon<br>Chase INK by Janet Lee<br>Design Director: Don Zinzell<br>CCO: Gordon Bowen<br>mcgarrybowen</p>
         </section>
 
         <!-- PROJECT INTRO SECTION -->
