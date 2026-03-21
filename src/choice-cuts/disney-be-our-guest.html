@@ -144,7 +144,7 @@
             height: auto;
             display: block;
             filter: brightness(0.9);
-            transition: all 0.5s ease;
+            transition: filter 0.5s ease;
             border: 1px solid transparent;
             margin: 0 auto;
         }
@@ -170,6 +170,9 @@
             border-bottom: 1px solid rgba(255, 0, 0, 0.1) !important;
             padding-bottom: 2rem !important;
         }
+        /* Hide mobile-only breaks on desktop */
+        .mobile-break { display: none; }
+        .title-break { display: none; }
         /* Dark Cinderella blue — shadow tone of the dress */
         .project-title-main {
             background: linear-gradient(135deg, #1E4A78 0%, #3A72B0 50%, #2A5A94 100%);
@@ -182,6 +185,34 @@
             padding: 0.15em 0.1em;
             margin-top: -0.15em;
             margin-left: -0.1em;
+        }
+        /* Mobile portrait — pin BE OUR GUEST to upper-right negative space */
+        @media (max-width: 767px) {
+            .hero-bg-image {
+                object-position: 5% center;
+            }
+            .hero-content {
+                position: static;
+            }
+            .project-meta-top {
+                position: absolute;
+                top: 9rem;
+                left: 2rem;
+                transform: none;
+                text-align: left;
+                line-height: 1.2;
+            }
+            .mobile-break { display: block; height: 0; }
+            .title-break { display: block; height: 0; }
+            .project-title-main {
+                position: absolute;
+                top: 14rem;
+                left: 2rem;
+                right: auto;
+                text-align: left;
+                white-space: normal;
+                width: auto;
+            }
         }
     </style>
     <script>
@@ -280,8 +311,8 @@
         <!-- HERO SECTION -->
         <section class="project-hero">
             <div class="hero-content">
-                <p class="project-meta-top">DISNEY PARKS & RESORTS</p>
-                <h1 class="project-title-main">BE OUR<br>GUEST</h1>
+                <p class="project-meta-top">DISNEY PARKS<br class="mobile-break"> & RESORTS</p>
+                <h1 class="project-title-main">BE<br class="title-break"> OUR<br>GUEST</h1>
             </div>
             <p class="hero-credits-corner">Rogue Writer & Design Project Director<br>mcgarrybowen</p>
         </section>

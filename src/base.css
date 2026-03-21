@@ -15,6 +15,10 @@ a, button { outline: none; }
 a:focus, a:active, button:focus, button:active { outline: none; color: inherit; }
 .menu-link:active, .menu-link:focus, .menu-link:focus-visible { outline: none; color: #FFFFFF; -webkit-tap-highlight-color: transparent; }
 
+html {
+    overflow-x: hidden;
+}
+
 body {
     background-color: var(--bg);
     color: var(--text);
