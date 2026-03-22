@@ -143,6 +143,8 @@
 @media (orientation: portrait) and (max-width: 1024px) {
     .nav-name { top: 2.5rem; left: 2rem; font-size: 0.9rem; max-width: 50%; line-height: 1.2; }
     .menu-trigger { top: 2.5rem; right: 2rem; font-size: 0.7rem; opacity: 1; }
+}
+@media (max-width: 1366px) {
     .project-credits,
     .hero-credits-corner { bottom: 12rem !important; right: 4rem !important; font-size: 0.7rem !important; }
 }
