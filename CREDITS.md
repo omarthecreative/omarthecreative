@@ -196,9 +196,11 @@ Agency: 5 O'Clock / Momentum Worldwide
 ## CUT 19 — Google
 *Wonderland*
 
-Omar's role: **?**
-Other credits: **?**
-Agency: **?**
+ACD, Art & UX: Alexander Christian
+ECD: Eric Lohman
+CEO & ECD: Drew Ungvarsky
+Creative Director, Writer: Omar Silwany
+GROW in partnership with Google Art, Copy & Code
 
 ---
 
@@ -237,7 +239,6 @@ Seven Bucks Creative
 - CUT 15 Glenfiddich: full credits + agency
 - CUT 17 Espolòn: 3 freelance creative names (TBD from Omar's files)
 - CUT 18 Skyy: collaborator names (Omar to circle back)
-- CUT 19 Google: full credits + agency
 
 ## Complete in HTML ✓
 - CUT 01 Disney ✓
