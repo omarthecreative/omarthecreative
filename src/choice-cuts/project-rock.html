@@ -171,16 +171,40 @@
             gap: 2rem;
         }
 
+        @media (orientation: landscape) and (max-width: 1366px) {
+            .manifesto-final {
+                font-size: clamp(32px, 6vw, 90px);
+                padding-bottom: 12rem;
+            }
+            .manifesto-final br {
+                display: none;
+            }
+            .manifesto-text {
+                font-size: 17px;
+                line-height: 1.8;
+                text-wrap: pretty;
+                padding-top: 8rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .dj-grid, .athlete-media-grid, .workouts-grid, .product-media {
                 grid-template-columns: 1fr;
             }
             .project-intro-text,
-            .manifesto-text,
             .campaign-col-content p {
                 font-size: 14px;
                 line-height: 1.9;
                 text-wrap: pretty;
+            }
+            .manifesto-text {
+                font-size: 14px;
+                line-height: 1.9;
+                text-wrap: pretty;
+                padding-top: 10rem;
+            }
+            .manifesto-final {
+                padding-bottom: 8rem;
             }
         }
     </style>
@@ -291,7 +315,7 @@
                 It takes all you've got to build the muscle to stand your&nbsp;ground.
                 It takes your indestructible sense of purpose and&nbsp;drive.
             </div>
-            <div class="manifesto-final">IT TAKES<br>AN IRON WILL.</div>
+            <div class="manifesto-final">IT TAKES <br>AN IRON WILL.</div>
         </section>
 
         <!-- DJ Section -->
