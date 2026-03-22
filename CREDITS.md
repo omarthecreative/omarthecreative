@@ -43,9 +43,11 @@ mcgarrybowen
 ## CUT 04 — Crayola
 *64 Days of Summer*
 
-Omar's role: **?**
-Other credits: **?**
-Agency: mcgarrybowen *(mentioned in intro copy)*
+Rogue Writer & Design Project Director: Omar Silwany
+Designs by Rachel Doyon
+Design Director: Don Zinzell
+CCO: Gordon Bowen
+mcgarrybowen
 
 ---
 
@@ -175,9 +177,9 @@ Momentum Worldwide
 ## CUT 17 — Espolòn Tequila
 *Art Never Dies*
 
-Group Creative Director: Omar Silwany
+Creative Director: Omar Silwany
 Junior Art Director: Rich Tu
-Freelance Creatives: **TBD** *(3 names — Omar to locate from files)*
+Freelance Creatives: **TBD** *(remaining collaborator names — Omar to circle back)*
 5 O'Clock / Momentum Worldwide
 
 ---
@@ -241,6 +243,7 @@ Seven Bucks Creative
 - CUT 01 Disney ✓
 - CUT 02 Kraft ✓
 - CUT 03 Chase ✓
+- CUT 04 Crayola ✓
 - CUT 05 Verizon ✓ (updated March 2026)
 - CUT 16 Balvenie ✓
 - CUT 17 Espolòn ✓ (Rich Tu added; 3 freelance names TBD)
