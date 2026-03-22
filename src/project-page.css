@@ -150,6 +150,8 @@
 }
 
 @media (max-width: 768px) {
+    .project-credits,
+    .hero-credits-corner { right: 2rem !important; }
     .menu-close { top: 2rem; right: 2rem; }
     .menu-link { font-size: 15vw; line-height: 0.65; letter-spacing: -0.07em; }
 }
