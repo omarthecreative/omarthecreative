@@ -187,9 +187,9 @@ Freelance Creatives: **TBD** *(remaining collaborator names — Omar to circle b
 ## CUT 18 — Skyy Vodka
 *West of Expected*
 
-Omar's role: **?** *(pitch — client bought both concepts)*
-Other credits: **?**
-Agency: **?**
+Creative Director: Omar Silwany
+Other credits: **?** *(Omar to circle back — pitch, client bought both concepts)*
+Agency: 5 O'Clock / Momentum Worldwide
 
 ---
 
@@ -236,7 +236,7 @@ Seven Bucks Creative
 - CUT 14 Bentley: Omar's role + collaborators
 - CUT 15 Glenfiddich: full credits + agency
 - CUT 17 Espolòn: 3 freelance creative names (TBD from Omar's files)
-- CUT 18 Skyy: full credits + agency
+- CUT 18 Skyy: collaborator names (Omar to circle back)
 - CUT 19 Google: full credits + agency
 
 ## Complete in HTML ✓

@@ -35,6 +35,16 @@
             color: rgba(255,255,255,0.6);
             line-height: 1.5;
         }
+        @media (orientation: landscape) and (max-width: 1366px) {
+            .project-credits {
+                bottom: 9rem !important;
+                right: 4rem !important;
+                font-size: 0.7rem !important;
+            }
+            .slider-header {
+                padding-top: 10rem;
+            }
+        }
         /* Multi-deck Slider */
         .project-title-main {
             background-image: url('../assets/skyy-vodka-bg-flipped.jpg');
@@ -59,13 +69,69 @@
             height: 100vh;
             background: #000;
             margin-bottom: 15rem;
+            display: flex;
+            flex-direction: column;
+        }
+        .slider-header {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 8rem 4rem 2.5rem;
+            border-bottom: 1px solid rgba(255,0,0,0.15);
+        }
+        .slider-header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+        .deck-section-title {
+            font-family: var(--display);
+            font-size: clamp(36px, 5vw, 72px);
+            letter-spacing: -0.04em;
+            color: #ffffff;
+            line-height: 1;
+            margin: 0;
+            text-transform: uppercase;
+        }
+        .deck-subtitle {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: clamp(13px, 1.3vw, 18px);
+            color: rgba(255,255,255,0.4);
+            margin: 0;
+        }
+        .slider-header-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.8rem;
+        }
+        .slider-counter {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 0.2em;
+        }
+        .slider-hint {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            color: var(--color-accent);
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
         }
         .slider-container {
             display: flex;
             overflow-x: scroll;
             scroll-snap-type: x mandatory;
             scrollbar-width: none;
-            height: 100%;
+            flex: 1 1 auto;
         }
         .slider-container::-webkit-scrollbar { display: none; }
         .slide {
@@ -75,39 +141,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 4rem;
+            padding: 3rem 4rem;
             box-sizing: border-box;
         }
         .slide img {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-        }
-        .slider-counter {
-            position: absolute;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            color: rgba(255,255,255,0.4);
-            letter-spacing: 0.2em;
-        }
-        .slider-hint {
-            position: absolute;
-            bottom: 4rem;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: var(--font-mono);
-            font-size: 0.5rem;
-            color: var(--color-accent);
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
         }
         @media (max-width: 768px) {
             .project-intro-text,
@@ -236,7 +276,7 @@
                 <p class="project-meta-top">SKYY VODKA</p>
                 <h1 class="project-title-main">WEST OF EXPECTED</h1>
             </div>
-            <p class="project-credits">Group Creative Director<br>5 O'Clock / Momentum Worldwide</p>
+            <p class="project-credits">Creative Director: Omar Silwany<br>5 O'Clock / Momentum Worldwide</p>
         </section>
 
         <section class="project-intro-section">
@@ -255,7 +295,16 @@
         <div class="assets-container">
             <!-- CONCEPT ONE DECK -->
             <div class="slider-section">
-                <div class="slider-hint">Scroll to view Concept One: #WESTOF</div>
+                <div class="slider-header">
+                    <div class="slider-header-left">
+                        <h2 class="deck-section-title">#WESTOF</h2>
+                        <p class="deck-subtitle">Concept One — Giving meaning to the Expected.</p>
+                    </div>
+                    <div class="slider-header-right">
+                        <span class="slider-counter">1 / 17</span>
+                        <span class="slider-hint">[ ← SWIPE → ]</span>
+                    </div>
+                </div>
                 <div class="slider-container">
                     <div class="slide"><img src="../assets/wp-uploads/SKYY_One_1.jpg" alt="Slide 1"></div>
                     <div class="slide"><img src="../assets/wp-uploads/SKYY_One_2.jpg" alt="Slide 2"></div>
@@ -275,12 +324,21 @@
                     <div class="slide"><img src="../assets/wp-uploads/SKYY_One_16.jpg" alt="Slide 16"></div>
                     <div class="slide"><img src="../assets/wp-uploads/SKYY_One_17.jpg" alt="Slide 17"></div>
                 </div>
-                <div class="slider-counter">1 / 17</div>
+                </div>
             </div>
 
             <!-- CONCEPT TWO DECK -->
             <div class="slider-section">
-                <div class="slider-hint">Scroll to view Concept Two: #WhYYes</div>
+                <div class="slider-header">
+                    <div class="slider-header-left">
+                        <h2 class="deck-section-title">#WHYYES</h2>
+                        <p class="deck-subtitle">Concept Two — The double-Y as a call to action.</p>
+                    </div>
+                    <div class="slider-header-right">
+                        <span class="slider-counter">1 / 19</span>
+                        <span class="slider-hint">[ ← SWIPE → ]</span>
+                    </div>
+                </div>
                 <div class="slider-container">
                     <div class="slide"><img src="../assets/wp-uploads/SKYY_Two_1.jpg" alt="Slide 1"></div>
                     <div class="slide"><img src="../assets/wp-uploads/SKYY_Two_2.jpg" alt="Slide 2"></div>
@@ -302,7 +360,7 @@
                     <div class="slide"><img src="../assets/wp-uploads/SKYY_Two_18.jpg" alt="Slide 18"></div>
                     <div class="slide"><img src="../assets/wp-uploads/SKYY_Summary.jpg" alt="Slide 19"></div>
                 </div>
-                <div class="slider-counter">1 / 19</div>
+                </div>
             </div>
         </div>
 
