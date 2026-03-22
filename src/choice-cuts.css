@@ -258,7 +258,7 @@ a:hover {
 
 @media (orientation: portrait) and (max-width: 1024px) {
     .apex-nav { top: 2.5rem; left: 2rem; right: 2rem; }
-    .nav-name { font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
+    .nav-name { font-size: 1.1rem; max-width: 60%; line-height: 1.2; }
 }
 
 @media (max-width: 768px) {

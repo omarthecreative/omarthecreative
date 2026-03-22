@@ -194,7 +194,7 @@ Agency: 5 O'Clock / Momentum Worldwide
 ---
 
 ## CUT 19 — Google
-*Wonderland*
+*Wonderland* ✓ HTML complete
 
 ACD, Art & UX: Alexander Christian
 ECD: Eric Lohman
@@ -248,7 +248,8 @@ Seven Bucks Creative
 - CUT 05 Verizon ✓ (updated March 2026)
 - CUT 16 Balvenie ✓
 - CUT 17 Espolòn ✓ (Rich Tu added; 3 freelance names TBD)
+- CUT 19 Google ✓ (Alexander Christian, Eric Lohman, Drew Ungvarsky added March 2026)
 - CUT 20 Obama Foundation ✓
 - CUT 21 Project Rock ✓
 
-*Last updated: March 2026*
+*Last updated: March 22, 2026*

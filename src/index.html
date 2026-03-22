@@ -97,12 +97,7 @@
             transition: opacity 1s ease;
             filter: contrast(1.2) brightness(0.4);
         }
-        @media (max-width: 480px) {
-            #initial-bg {
-                background-size: auto 150% !important;
-                background-position: 49% 75% !important;
-            }
-        }
+        /* Mobile initial-bg positioning now handled per-word by setHeadlineBackground() */
         .project-bg.active {
             opacity: 0.6; /* Increased visibility */
             filter: contrast(1.2) brightness(0.6); /* Boosted brightness */
@@ -463,8 +458,8 @@
         /* PORTRAIT - MOBILE & TABLET */
         @media (orientation: portrait) and (max-width: 1024px) {
             .culture-break { display: block; }
-            .header-name { top: 2.5rem; left: 2rem; font-size: 0.9rem; max-width: 50%; line-height: 1.2; }
-            .info-link { top: 2.5rem; right: 2rem; font-size: 0.7rem; opacity: 1; }
+            .header-name { top: 2.5rem; left: 2rem; font-size: 1.1rem; max-width: 50%; line-height: 1.2; }
+            .info-link { top: 2.5rem; right: 2rem; font-size: 0.85rem; opacity: 1; }
 
             .title { font-size: 18vw; }
             .subtitle { font-size: 4vw; margin-top: 1rem; margin-bottom: 0.5rem; }
@@ -649,7 +644,7 @@
 
     <div class="bg-container" id="bg-container">
         <!-- Initial Mood Background -->
-        <div class="project-bg active" id="initial-bg" style="background-image: url('assets/crowd-surf-bg.jpg'); opacity: 0.44; background-size: 140%; background-position: center 72%;"></div>
+        <div class="project-bg active" id="initial-bg" style="opacity: 0; transition: opacity 0.3s ease;"></div>
     </div>
 
     <main class="portal-wrapper" id="portal">
@@ -1793,12 +1788,86 @@
 
         // — HEADLINE WORD — one word per visit/return, no in-page animation
         const HEADLINE_WORDS = ['BROUHAHAHA.', 'HULLABAWHO.', 'PANDEMONEYUM.', 'RAZZZMATAZZZ.', 'FUNISSIMO.'];
+
+        // Per-word background images — each visit loads a different world
+        const HEADLINE_BACKGROUNDS = {
+            'BROUHAHAHA.': {
+                img: 'assets/crowd-surf-bg.jpg',
+                size: '140%',
+                position: 'center 72%',
+                tabletSize: 'auto 150%',
+                tabletPosition: '49% 80%',
+                mobileSize: 'auto 150%',
+                mobilePosition: '49% 75%'
+            },
+            'HULLABAWHO.': {
+                img: 'assets/hullabawho-bg-comp.jpg',
+                size: '120%',
+                position: 'center 62%',
+                tabletSize: '120%',
+                tabletPosition: 'center 100%',
+                mobileSize: 'auto 150%',
+                mobilePosition: 'center 15%'
+            },
+            'PANDEMONEYUM.': {
+                img: 'assets/pandemoneyum-bg-comp.jpg',
+                size: '160%',
+                position: 'center 35%',
+                tabletSize: '160%',
+                tabletPosition: '20% 45%',
+                mobileSize: 'auto 160%',
+                mobilePosition: '45% 30%'
+            },
+            'RAZZZMATAZZZ.': {
+                img: 'assets/razzzmatazzz-bg-comp.jpg',
+                size: '130%',
+                position: 'center 25%',
+                tabletSize: '250% auto',
+                tabletPosition: '75% 15%',
+                mobileSize: '250% auto',
+                mobilePosition: '70% 20%'
+            },
+            'FUNISSIMO.': {
+                img: 'assets/funissimo-bg-comp.jpg',
+                size: '140%',
+                position: 'center 33%',
+                mobileSize: 'auto 150%',
+                mobilePosition: 'center 50%'
+            }
+        };
+
         const projectDisplay = document.getElementById('project-display');
 
         function nextHeadlineWord() {
-            const idx = (parseInt(localStorage.getItem('omar_headline_idx') || '-1') + 1) % HEADLINE_WORDS.length;
+            const last = parseInt(localStorage.getItem('omar_headline_idx') || '-1');
+            let idx;
+            do {
+                idx = Math.floor(Math.random() * HEADLINE_WORDS.length);
+            } while (idx === last && HEADLINE_WORDS.length > 1);
             localStorage.setItem('omar_headline_idx', idx);
             return HEADLINE_WORDS[idx];
+        }
+
+        function setHeadlineBackground(word) {
+            const bg = HEADLINE_BACKGROUNDS[word];
+            if (!bg) return;
+            const el = document.getElementById('initial-bg');
+            if (!el) return;
+            const w = window.innerWidth;
+            const isMobile = w <= 480;
+            const isTablet = w > 480 && w <= 1366;
+            el.style.backgroundImage = `url('${bg.img}')`;
+            if (isMobile) {
+                el.style.backgroundSize = bg.mobileSize;
+                el.style.backgroundPosition = bg.mobilePosition;
+            } else if (isTablet && bg.tabletSize) {
+                el.style.backgroundSize = bg.tabletSize;
+                el.style.backgroundPosition = bg.tabletPosition;
+            } else {
+                el.style.backgroundSize = bg.size;
+                el.style.backgroundPosition = bg.position;
+            }
+            el.style.opacity = '0.44';
         }
 
         let currentDisplayTitle = '';
@@ -1812,9 +1881,13 @@
             titleEl.style.opacity = '1';
             titleEl.style.letterSpacing = currentDisplaySpacing;
 
-            // Mobile portrait: skip width constraint, but scale down font for long words
-            if (window.innerWidth <= 768 && window.innerHeight > window.innerWidth) {
-                titleEl.style.fontSize = word.length >= 12 ? '15vw' : '';
+            // Portrait (mobile + tablet): skip width constraint, scale down long words
+            if (window.innerWidth <= 1024 && window.innerHeight > window.innerWidth) {
+                if (word.length >= 12) {
+                    titleEl.style.fontSize = window.innerWidth <= 768 ? '15vw' : '14vw';
+                } else {
+                    titleEl.style.fontSize = '';
+                }
                 projectDisplay.style.width = '';
                 return;
             }
@@ -1834,13 +1907,18 @@
         }
 
         document.fonts.ready.then(() => {
-            fitLockup(nextHeadlineWord());
+            const word = nextHeadlineWord();
+            setHeadlineBackground(word);
+            fitLockup(word);
         });
 
         // Re-run on rotation — portrait guard sets inline fontSize which
         // survives orientation change and overrides CSS media queries
         window.addEventListener('resize', () => {
-            if (currentDisplayTitle) fitLockup(currentDisplayTitle, currentDisplaySpacing);
+            if (currentDisplayTitle) {
+                setHeadlineBackground(currentDisplayTitle);
+                fitLockup(currentDisplayTitle, currentDisplaySpacing);
+            }
         });
 
         window.addEventListener('keydown', handleEscape);
