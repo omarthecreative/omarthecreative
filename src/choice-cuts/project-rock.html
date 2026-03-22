@@ -58,6 +58,23 @@
             display: block;
         }
 
+        @media (orientation: landscape) and (max-width: 1366px) {
+            .project-credits {
+                bottom: 10rem !important;
+                right: 2rem !important;
+            }
+        }
+
+        @media (orientation: landscape) and (max-height: 600px) {
+            .project-intro-text,
+            .manifesto-text,
+            .campaign-col-content p {
+                font-size: 14px;
+                line-height: 1.9;
+                text-wrap: pretty;
+            }
+        }
+
         /* Portrait / Mobile calibration */
         @media (orientation: portrait), (max-width: 768px) {
             .project-hero {
@@ -159,6 +176,7 @@
                 grid-template-columns: 1fr;
             }
             .project-intro-text,
+            .manifesto-text,
             .campaign-col-content p {
                 font-size: 14px;
                 line-height: 1.9;
