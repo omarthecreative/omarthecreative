@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exhibits | Omar, the Creative</title>
+    <meta name="description" content="A curated overview of brand actions, films, and campaigns.">
+    
+    <!-- Social Metadata -->
+    <meta property="og:site_name" content="Omar, the Creative">
+    <meta property="og:title" content="Exhibits | Omar, the Creative">
+    <meta property="og:description" content="A curated overview of brand actions, films, and campaigns.">
+    <meta property="og:image" content="https://omarthecreative.com/assets/og-image.jpg">
+    <meta property="og:url" content="https://omarthecreative.com/exhibits.html">
+    <meta property="og:type" content="website">
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
+    <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">
+    <link rel="stylesheet" href="https://use.typekit.net/niv4qrq.css">
+    <link rel="stylesheet" href="base.css">
+    <style>
+        :root {
+            --vibrant-red: #A8002C;
+            --glow: rgba(255, 0, 0, 0.8);
+        }
+
+        body { background: #050505; color: white; overflow: hidden; height: 100vh; width: 100vw; }
+
+        /* LOCKED BACKGROUND */
+        .hero-background {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: #000;
+            pointer-events: none;
+        }
+        .hero-bg-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url('assets/exhibits-bg.jpg');
+            background-size: cover;
+            background-position: center center;
+            filter: brightness(0.4) contrast(1.1);
+            opacity: 1;
+        }
+
+        /* HUD ELEMENTS */
+        .corner-frame {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            right: 2rem;
+            bottom: 2rem;
+            border: 1px solid rgba(255, 0, 0, 0.1);
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--vibrant-red);
+            opacity: 0.8;
+        }
+        .tl { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+        .tr { top: -1px; right: -1px; border-left: 0; border-bottom: 0; }
+        .bl { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
+        .br { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+
+        .hud-tag {
+            position: fixed;
+            font-family: var(--mono);
+            font-size: 0.5rem;
+            letter-spacing: 0.2em;
+            color: var(--vibrant-red);
+            opacity: 0.4;
+            pointer-events: none;
+            text-transform: uppercase;
+            z-index: 10000;
+        }
+        .hud-tl { top: 0.8rem; left: 2rem; }
+        .hud-tr { top: 0.8rem; right: 2rem; }
+        .hud-bl { bottom: 0.8rem; left: 2rem; }
+        .hud-br { bottom: 0.8rem; right: 2rem; }
+
+        /* Nav — standard fixed elements */
+        .nav-name {
+            position: fixed;
+            top: 4rem;
+            left: 4rem;
+            color: white;
+            text-decoration: none;
+            font-family: var(--serif);
+            font-size: 1.5rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            font-weight: 900;
+            z-index: 10000;
+        }
+        .menu-trigger {
+            position: fixed;
+            top: 4rem;
+            right: 4rem;
+            font-family: var(--mono);
+            font-size: 0.55rem;
+            letter-spacing: 0.3em;
+            color: white;
+            opacity: 0.8;
+            cursor: pointer;
+            text-transform: uppercase;
+            z-index: 10000;
+            transition: opacity 0.3s ease;
+        }
+        .menu-trigger:hover { opacity: 1; color: var(--vibrant-red); }
+
+        /* Full Screen Menu Overlay */
+        #apex-menu {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 20000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .menu-close {
+            position: absolute;
+            top: 4rem; right: 4rem;
+            font-family: var(--mono);
+            font-size: 0.55rem;
+            letter-spacing: 0.2em;
+            color: var(--vibrant-red);
+            cursor: pointer;
+        }
+        .menu-links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .menu-link {
+            font-family: var(--display);
+            font-size: clamp(60px, 15vw, 280px);
+            line-height: 0.65;
+            text-transform: uppercase;
+            color: #FFFFFF;
+            text-decoration: none;
+            letter-spacing: -0.07em;
+            transition: all 0.3s ease;
+            opacity: 0.1;
+            margin: 0.5rem 0;
+        }
+        .menu-link:hover { opacity: 1; color: var(--vibrant-red); }
+        .menu-link.active { opacity: 1; color: var(--vibrant-red); }
+
+        /* Exhibits Grid — No Scroll Layout */
+        .exhibits-container {
+            height: 100vh;
+            padding: 8rem 8rem 6rem 4rem; /* Nudged left */
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* GHOST WATERMARK — PROJECTED FEEL */
+        .exhibits-watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: var(--display);
+            font-size: 35vw;
+            line-height: 0.7;
+            letter-spacing: -0.05em;
+            color: white;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 1;
+            text-transform: uppercase;
+            white-space: nowrap;
+            text-align: center;
+            mix-blend-mode: screen;
+            filter: blur(2px);
+        }
+
+        .exhibits-grid {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: repeat(12, 1fr);
+            gap: 2.5rem;
+            min-height: 0;
+            z-index: 10;
+            margin-top: 2rem;
+        }
+
+        .exhibit-card {
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        .exhibit-card:hover {
+            transform: scale(1.025);
+            z-index: 20;
+        }
+
+        .exhibit-thumb-wrap {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+        }
+        .exhibit-thumb {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            opacity: 0.9;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            filter: contrast(1.05) brightness(1.05);
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+        .exhibit-card:hover .exhibit-thumb {
+            opacity: 0.4;
+            filter: contrast(1.1) brightness(0.5) blur(3px);
+        }
+
+        /* BOTTOM-RIGHT HOVER INFO — LOGO SIGNOFF STYLE */
+        .exhibit-info {
+            position: absolute;
+            top: 50%;
+            left: 50%; /* Anchored to horizontal center */
+            transform: translateY(-50%); /* Only vertical centering */
+            width: fit-content;
+            text-align: left;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .exhibit-card:hover .exhibit-info {
+            opacity: 1;
+        }
+        .exhibit-brand {
+            font-family: var(--display);
+            font-size: clamp(0.8rem, 2vw, 2.5rem); /* Scaled down 50% */
+            line-height: 0.8;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            color: var(--vibrant-red);
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+            margin-top: -0.2vw;
+        }
+        .exhibit-campaign {
+            font-family: var(--serif);
+            font-style: italic;
+            font-size: clamp(0.4rem, 0.5vw, 0.7rem); /* Scaled down 50% */
+            letter-spacing: 0.01em;
+            color: white;
+            text-transform: none;
+            margin-bottom: 0.1vw;
+            white-space: nowrap; /* Force one line */
+        }
+
+        /* MAXIMIZE SPACE INSIDE FRAME (12 COL × 12 ROW) — MAXIMIZED DISTRIBUTION */
+        .card-0 { grid-column: 1 / 7;  grid-row: 1 / 6; }  /* Google (Large Opener) */
+        .card-1 { grid-column: 7 / 10;  grid-row: 1 / 4; }  /* Samsung Tomorrow */
+        .card-2 { grid-column: 10 / 13; grid-row: 1 / 5; }  /* Bud Light */
+        .card-3 { grid-column: 9 / 12;  grid-row: 5 / 8; }  /* Legence (Enlarged) */
+        .card-4 { grid-column: 5 / 9;   grid-row: 4 / 8; }  /* Citi (Centered) */
+        .card-5 { grid-column: 1 / 5;   grid-row: 7 / 11; transform: translateY(2.5rem); } /* Samsung Play */
+        .card-6 { grid-column: 5 / 13;  grid-row: 8 / 13; } /* MBK Alliance (Large Closer) */
+
+        @media (max-width: 1366px) {
+            .exhibits-container { padding: 6rem 4rem 4rem 3rem; }
+            .exhibits-watermark { font-size: 40vw; }
+            .exhibits-grid { gap: 1.5rem; }
+            .exhibit-brand { font-size: clamp(1rem, 2.5vw, 3rem); }
+            .exhibit-campaign { font-size: clamp(0.5rem, 1vw, 1.2rem); }
+        }
+
+        @media (max-width: 1024px) {
+            .nav-name { top: 2.5rem; left: 2rem; font-size: 1.1rem; }
+            .menu-trigger { top: 2.5rem; right: 2rem; }
+            .corner-frame { top: 1rem; left: 1rem; right: 1rem; bottom: 1rem; }
+            .hud-tl { top: 0.4rem; left: 1rem; }
+            .hud-tr { top: 0.4rem; right: 1rem; }
+            .hud-bl { bottom: 0.4rem; left: 1rem; }
+            .hud-br { bottom: 0.4rem; right: 1rem; }
+        }
+
+        @media (max-width: 480px) {
+            body { overflow: auto; height: auto; } /* Allow scrolling on small phones */
+            .exhibits-container { height: auto; padding: 6rem 1.5rem 6rem; }
+            .exhibits-watermark { font-size: 60vw; opacity: 0.05; }
+            
+            /* MOBILE ASYMMETRICAL GRID (6 COL) */
+            .exhibits-grid { 
+                grid-template-columns: repeat(6, 1fr); 
+                grid-template-rows: auto;
+                display: grid;
+                gap: 3rem 1rem; 
+            }
+            .exhibit-card { height: auto; aspect-ratio: 16/9; transform: none !important; }
+            .exhibit-info { 
+                opacity: 1; 
+                pointer-events: auto; 
+                position: relative; 
+                transform: none; 
+                top: auto; 
+                left: auto; 
+                margin-top: 1rem; 
+                width: 100%;
+                text-align: left;
+                align-items: flex-start;
+            }
+            .exhibit-brand { font-size: 1.8rem; margin-top: 0; }
+            .exhibit-campaign { font-size: 1rem; margin-bottom: 0.2rem; }
+            
+            /* MOBILE SPANS */
+            .card-0 { grid-column: 1 / 7; } /* Google Full */
+            .card-1 { grid-column: 1 / 5; } /* Samsung Tomorrow 4/6 */
+            .card-2 { grid-column: 2 / 7; } /* Bud Light 5/6 offset */
+            .card-3 { grid-column: 1 / 4; } /* Legence 3/6 */
+            .card-4 { grid-column: 3 / 7; } /* Citi 4/6 offset */
+            .card-5 { grid-column: 1 / 5; } /* Samsung Play 4/6 */
+            .card-6 { grid-column: 1 / 7; } /* MBK Alliance Full Closer */
+            
+            .exhibit-card:hover .exhibit-thumb { opacity: 0.9; filter: none; }
+            .exhibit-thumb { opacity: 1; filter: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-background">
+        <div class="hero-bg-image"></div>
+    </div>
+    <div class="corner-frame">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+    </div>
+    <div class="hud-tag hud-tl">[ EXHIBITS: ACTIVE ]</div>
+    <div class="hud-tag hud-tr">[ GALLERY MODE ] [ COORDS: 40.7514° N, 74.0055° W ]</div>
+    <div class="hud-tag hud-bl">[ 24 FPS ]</div>
+    <div class="hud-tag hud-br">[ 7 TOTAL ]</div>
+
+    <div id="apex-menu">
+        <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
+        <div class="menu-links">
+            <a href="exhibits.html" class="menu-link active">EXHIBITS</a>
+            <a href="choice-cuts.html" class="menu-link">CHOICE CUTS</a>
+            <a href="long-pour.html" class="menu-link">LONG POUR</a>
+            <a href="info.html" class="menu-link active">INFORMATION</a>
+        </div>
+    </div>
+
+    <nav class="apex-nav">
+        <a href="index.html" class="nav-name" id="nav-name-el">OMAR SILWANY</a>
+        <div class="menu-trigger" onclick="toggleMenu(true)">[ MENU ]</div>
+    </nav>
+
+    <div class="exhibits-watermark">EXHIBITS</div>
+
+    <main class="exhibits-container">
+        <div class="exhibits-grid" id="exhibits-grid">
+            <!-- Populated via JS -->
+        </div>
+    </main>
+
+    <div class="copyright-tag fixed">
+        © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
+    </div>
+
+    <script src="apex-sound.js"></script>
+    <script src="nav-name-reveal.js"></script>
+    <script>
+        const projects = [
+            { title: "GOOGLE", subtitle: "Lose the Flash", img: "assets/03-google-pixel-lose-the-flash-scaled-e1772256909967.png" },
+            { title: "SAMSUNG", subtitle: "Stay Ahead of Tomorrow", img: "assets/04-samsung-stay-ahead-tomorrow.jpg" },
+            { title: "BUD LIGHT", subtitle: "Home Advantage", img: "assets/07-bud-light-home-advantage.png" },
+            { title: "LEGENCE", subtitle: "Built for Building", img: "assets/06-legence-built-for-building.png" },
+            { title: "CITI", subtitle: "Rise", img: "assets/08-citi-rise.png" },
+            { title: "SAMSUNG", subtitle: "Study Is Better with Play", img: "assets/01-samsung-study-better-play-scaled.png" },
+            { title: "MBK ALLIANCE", subtitle: "We Are the Ones", img: "assets/02-mbk-we-are-the-ones-scaled-e1772257041527.png" }
+        ];
+
+        function toggleMenu(show) {
+            document.getElementById('apex-menu').style.display = show ? 'flex' : 'none';
+            document.body.style.overflow = show ? 'hidden' : '';
+            if (show && typeof ApexSound !== 'undefined') ApexSound.play('door');
+        }
+
+        function populateGrid() {
+            const grid = document.getElementById('exhibits-grid');
+            projects.forEach((p, i) => {
+                const card = document.createElement('div');
+                card.className = `exhibit-card card-${i}`;
+                card.innerHTML = `
+                    <div class="exhibit-thumb-wrap">
+                        <img src="${p.img}" class="exhibit-thumb" alt="${p.title}">
+                        <div class="exhibit-info">
+                            <div class="exhibit-campaign">${p.subtitle}</div>
+                            <div class="exhibit-brand">${p.title}</div>
+                        </div>
+                    </div>
+                `;
+                card.onclick = () => window.location.href = `index.html?p=${i}`;
+                grid.appendChild(card);
+            });
+        }
+
+        window.onkeydown = (e) => {
+            if (e.key === 'Escape') {
+                if (document.getElementById('apex-menu').style.display === 'flex') toggleMenu(false);
+                else window.location.href = 'index.html';
+            }
+        };
+
+        // Cinematic Sound Trigger: Play 'projector' on load/first interaction
+        (function() {
+            let started = false;
+            function startCinematic() {
+                if (started) return;
+                started = true;
+                if (typeof ApexSound !== 'undefined') {
+                    ApexSound.init();
+                    ApexSound.play('projector', 0.8);
+                }
+                document.removeEventListener('mousedown', startCinematic);
+                document.removeEventListener('touchstart', startCinematic);
+                document.removeEventListener('scroll', startCinematic);
+            }
+            
+            // Listen for any immediate interaction
+            document.addEventListener('mousedown', startCinematic);
+            document.addEventListener('touchstart', startCinematic);
+            document.addEventListener('scroll', startCinematic);
+            
+            // Attempt auto-start (may be blocked by some browsers until first click)
+            window.addEventListener('load', () => {
+                setTimeout(startCinematic, 100); 
+            });
+        })();
+
+        populateGrid();
+    </script>
+</body>
+</html>
