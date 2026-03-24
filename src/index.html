@@ -1205,6 +1205,7 @@
         ];
 
         let currentIndex = -1;
+        let isProjectState = false;
         const portal = document.getElementById('portal');
         const titleEl = document.getElementById('project-title');
         const subtitleEl = document.getElementById('project-subtitle');
@@ -1343,12 +1344,11 @@
         portal.addEventListener('click', (e) => {
             if (e.target.closest('.btn') || e.target.closest('.info-link') || e.target.closest('.header-name') || e.target.closest('.footer-metadata a')) return;
             
-            // If we are already in a project state (from a deep-link), clicking advances the carousel as before
-            const initialBg = document.getElementById('initial-bg');
-            if (document.documentElement.classList.contains('jumped') || (initialBg && initialBg.style.display === 'none')) {
+            // If we are in a project state (from deep-link), clicking advances
+            if (isProjectState) {
                 // Restore tactile feedback
                 if (typeof ApexSound !== 'undefined') {
-                    ApexSound.init(); // Critical: Unlock/Resume context on this gesture
+                    ApexSound.init(); 
                     ApexSound.play('shutter');
                 }
                 
@@ -1961,6 +1961,7 @@
             if (pIndex !== null && projects[pIndex]) {
                 currentIndex = parseInt(pIndex);
                 const p = projects[currentIndex];
+                isProjectState = true;
                 
                 subtitleCycle.pause();
                 subtitleEl.textContent = p.subtitle;
