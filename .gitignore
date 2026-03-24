@@ -3,27 +3,54 @@ dist/
 node_modules/
 .DS_Store
 
-# Legacy Semplice/WordPress Archive (Keep local only)
-archive:omarthecreative-prd-v3.md
-archive:omarthecreative-prd.md
-/semplice-archive/
+# production files
+/public/
+
+# Keep local only - Large Binary/Asset Directories
+/Archive/
 /assets/
 /BESOS/
 /DISHEVELED/
 /home/
 /next-steps/
+/Nice Portfolio Sites - Visual Research/
+/Old-Screenshots/
+/Portfolio Assets/
+/portfolio updates/
+/Press for Portfolio/
 /proactive-pitches/
+/Promotion/
+/semplice-archive/
+/typeface-exploratories/
+/Writing/
 
-typeface-exploratory.html
+# Specific File Types (Global)
+*.psd
+*.mov
+*.mp4
+*.zip
+*.pdf
+*.psd
+*.gif
 
 # AI Working Files (local only)
 CLAUDE.md
 GEMINI.md
+CLAUDE-PROGRESS-ARCHIVE.md
+ART-BUYER-LOG.md
 
 # System
 .env
 .agent/
+.claude/
 *.log
 
 # Local Netlify folder
 .netlify
+
+# Root level miscellaneous
+wp_urls.txt
+zack's note.png
+next-prompt.md
+omarthecreative-prd-v4.md
+CALENDAR.md
