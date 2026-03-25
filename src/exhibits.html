@@ -621,19 +621,21 @@
                 started = true;
                 if (typeof ApexSound !== 'undefined') {
                     ApexSound.init();
-                    ApexSound.play('projector', 0.8);
+                    ApexSound.play('projector', 1.0); // Full volume for arrival
                 }
                 document.removeEventListener('mousedown', startCinematic);
                 document.removeEventListener('touchstart', startCinematic);
                 document.removeEventListener('scroll', startCinematic);
+                document.removeEventListener('mousemove', startCinematic);
             }
             
             // Listen for any immediate interaction
             document.addEventListener('mousedown', startCinematic);
             document.addEventListener('touchstart', startCinematic);
             document.addEventListener('scroll', startCinematic);
+            document.addEventListener('mousemove', startCinematic); // Fallback for desktop hover
             
-            // Attempt auto-start (may be blocked by some browsers until first click)
+            // Attempt auto-start
             window.addEventListener('load', () => {
                 setTimeout(startCinematic, 100); 
             });

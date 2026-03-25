@@ -1573,10 +1573,19 @@
         }
         window.addEventListener('keydown', handleVideoKeydown);
 
-        // Exhibits link transition
+        // Exhibits link transition with sound
         document.getElementById('exhibits-link').addEventListener('click', function(e) {
             e.preventDefault();
-            window.location.href = this.getAttribute('href');
+            const href = this.getAttribute('href');
+            
+            if (typeof ApexSound !== 'undefined') {
+                ApexSound.init();
+                ApexSound.play('projector', 0.6);
+            }
+            
+            setTimeout(() => {
+                window.location.href = href;
+            }, 600);
         });
 
         // Reclaim focus immediately if iframe steals it while modal is open
