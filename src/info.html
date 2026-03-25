@@ -670,13 +670,7 @@
 
     var infoTitle = document.querySelector('.info-hero .title');
     if (infoTitle) {
-        // touchstart: unlock AudioContext within the gesture (ctx.resume() fires here)
-        // touchend: by now ctx.resume() has resolved — safe to start the loop
-        // click: desktop fallback (no touchstart/touchend on mouse)
-        infoTitle.addEventListener('touchstart', function () {
-            ApexSound.init();
-        }, { passive: true });
-        infoTitle.addEventListener('touchend', startWhistle, { passive: true });
+        // click fires after touchend on iOS — init() + startLoop() in same gesture ✓
         infoTitle.addEventListener('click', startWhistle);
     }
 })();
