@@ -7,6 +7,7 @@ const ApexSound = (function () {
     let ctx = null;
     const _raw = {};      // ArrayBuffers from fetch
     const _decoded = {};  // Decoded AudioBuffers
+    const _queue = {};    // Queued play requests { name: [volume, ...] }
 
     // Format detection — Safari needs MP3
     const _ext = (function () {
@@ -15,10 +16,11 @@ const ApexSound = (function () {
         return canOgg ? 'ogg' : 'mp3';
     })();
 
-    // Self-detect base path from the script's own URL
+    // Self-detect base path
     const _base = (function () {
         var s = document.currentScript;
-        return s ? s.src.replace(/[^/]*$/, '') : '';
+        if (s && s.src) return s.src.replace(/[^/]*$/, '');
+        return '/'; // Fallback to root
     })();
 
     const _sounds = {
@@ -35,16 +37,36 @@ const ApexSound = (function () {
 
     function load() {
         Object.keys(_sounds).forEach(function (name) {
-            fetch(_base + _sounds[name] + '.' + _ext)
-                .then(function (r) { return r.arrayBuffer(); })
-                .then(function (ab) { _raw[name] = ab; })
-                .catch(function () {});
+            const url = _base + _sounds[name] + '.' + _ext;
+            fetch(url)
+                .then(function (r) { 
+                    if (!r.ok) throw new Error('Fetch failed');
+                    return r.arrayBuffer(); 
+                })
+                .then(function (ab) { 
+                    _raw[name] = ab;
+                    // If we have requests waiting for this sound, play them now
+                    if (_queue[name]) {
+                        _queue[name].forEach(function(vol) {
+                            play(name, vol);
+                        });
+                        delete _queue[name];
+                    }
+                })
+                .catch(function (err) {
+                    console.warn('ApexSound: Failed to load ' + name, err);
+                });
         });
     }
 
     function init() {
-        if (ctx) return;
-        ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (ctx && ctx.state === 'running') return;
+        if (!ctx) {
+            ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
+            ctx.resume();
+        }
         Object.keys(_raw).forEach(function (name) {
             _decodeOne(name);
         });
@@ -58,10 +80,19 @@ const ApexSound = (function () {
     }
 
     function play(name, volume) {
-        if (!ctx) return;
-        if (ctx.state === 'suspended') ctx.resume();
-
         var vol = (volume !== undefined) ? volume : 1;
+
+        // If not loaded yet, queue it
+        if (!_raw[name] && !_decoded[name]) {
+            if (!_queue[name]) _queue[name] = [];
+            _queue[name].push(vol);
+            return;
+        }
+
+        if (!ctx) init();
+        if (ctx && (ctx.state === 'suspended' || ctx.state === 'interrupted')) {
+            ctx.resume();
+        }
 
         function _fire(buf) {
             var gain = ctx.createGain();
@@ -87,10 +118,12 @@ const ApexSound = (function () {
 
     function startLoop(name, volume) {
         if (_loopNodes[name]) return;
-        if (!ctx) return;
-        if (ctx.state === 'suspended') ctx.resume();
-
         var vol = (volume !== undefined) ? volume : 1;
+
+        if (!ctx) init();
+        if (ctx && (ctx.state === 'suspended' || ctx.state === 'interrupted')) {
+            ctx.resume();
+        }
 
         function _fireLoop(buf) {
             var gain = ctx.createGain();
