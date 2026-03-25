@@ -75,7 +75,7 @@
             position: fixed;
             top: 4rem;
             right: 4rem;
-            font-family: var(--font-mono);
+            font-family: var(--mono);
             font-size: 0.55rem;
             letter-spacing: 0.3em;
             color: white;
@@ -103,7 +103,7 @@
         .menu-close {
             position: absolute;
             top: 4rem; right: 4rem;
-            font-family: var(--font-mono);
+            font-family: var(--mono);
             font-size: 0.55rem;
             letter-spacing: 0.2em;
             color: #A8002C;
@@ -222,6 +222,10 @@
             const menu = document.getElementById('apex-menu');
             menu.style.display = show ? 'flex' : 'none';
             document.body.style.overflow = show ? 'hidden' : '';
+            // Critical: Initialize sound engine on menu trigger gesture
+            if (show && typeof ApexSound !== 'undefined') {
+                ApexSound.init();
+            }
         }
 
         window.addEventListener('keydown', (e) => {
@@ -430,17 +434,22 @@
 <script>
     (function () {
         var poured = false;
-        var touchStarted = false;
+
+        // Initialize sound engine on any first interaction
+        function initOnGesture() {
+            if (typeof ApexSound !== 'undefined') {
+                ApexSound.init();
+            }
+            document.removeEventListener('mousedown', initOnGesture);
+            document.removeEventListener('touchstart', initOnGesture);
+        }
+        document.addEventListener('mousedown', initOnGesture);
+        document.addEventListener('touchstart', initOnGesture);
 
         // bfcache restore — reset flag so bourbon can pour again on return
         window.addEventListener('pageshow', function (e) {
             if (e.persisted) poured = false;
         });
-
-        document.addEventListener('touchstart', function () {
-            touchStarted = true;
-            if (typeof ApexSound !== 'undefined') ApexSound.init();
-        }, { passive: true, once: true });
 
         function pour() {
             if (poured) return;
