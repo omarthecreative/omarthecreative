@@ -435,16 +435,14 @@
     (function () {
         var poured = false;
 
-        // Initialize sound engine on any first interaction to unlock for scroll
-        function initOnGesture() {
-            if (typeof ApexSound !== 'undefined') {
-                ApexSound.init();
-            }
-            // If they scroll quickly, we might need multiple listeners to catch the unlock
+        // One-time gesture to unlock audio context for Safari
+        function wakeUp() {
+            if (typeof ApexSound !== 'undefined') ApexSound.init();
+            document.removeEventListener('mousedown', wakeUp);
+            document.removeEventListener('touchstart', wakeUp);
         }
-        document.addEventListener('mousedown', initOnGesture);
-        document.addEventListener('touchstart', initOnGesture);
-        document.addEventListener('mousemove', initOnGesture, { once: true });
+        document.addEventListener('mousedown', wakeUp);
+        document.addEventListener('touchstart', wakeUp);
 
         // bfcache restore
         window.addEventListener('pageshow', function (e) {
@@ -455,24 +453,18 @@
             if (poured) return;
             poured = true;
             if (typeof ApexSound !== 'undefined') {
-                ApexSound.init();
                 ApexSound.play('bourbon', 0.6);
             }
         }
 
         window.addEventListener('scroll', function onFirstScroll() {
-            // Safari: scroll doesn't count as a gesture, so we need a prior tap/click.
-            // But we'll try to init here too just in case.
             if (window.scrollY > 50) {
-                if (typeof ApexSound !== 'undefined') {
-                    ApexSound.init();
-                }
                 pour();
                 window.removeEventListener('scroll', onFirstScroll);
             }
         }, { passive: true });
 
-        // Glass grab (one-time, belt-and-suspenders)
+        // Glass grab
         var glass = document.getElementById('bourbon-glass');
         if (glass) {
             glass.addEventListener('mousedown', pour);
