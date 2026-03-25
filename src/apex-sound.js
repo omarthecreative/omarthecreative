@@ -20,7 +20,7 @@ const ApexSound = (function () {
     const _base = (function () {
         var s = document.currentScript;
         if (s && s.src) return s.src.replace(/[^/]*$/, '');
-        return '/'; // Fallback to root
+        return '/'; 
     })();
 
     const _sounds = {
@@ -45,7 +45,6 @@ const ApexSound = (function () {
                 })
                 .then(function (ab) { 
                     _raw[name] = ab;
-                    // If we have requests waiting for this sound, play them now
                     if (_queue[name]) {
                         _queue[name].forEach(function(vol) {
                             play(name, vol);
@@ -53,9 +52,7 @@ const ApexSound = (function () {
                         delete _queue[name];
                     }
                 })
-                .catch(function (err) {
-                    console.warn('ApexSound: Failed to load ' + name, err);
-                });
+                .catch(function () {});
         });
     }
 
@@ -81,6 +78,17 @@ const ApexSound = (function () {
 
     function play(name, volume) {
         var vol = (volume !== undefined) ? volume : 1;
+
+        // Safari/iOS/Scroll Fallback: Use direct HTMLAudioElement.
+        // We force this for 'bourbon' because it's often triggered by scroll, which WebAudio blocks.
+        if (name === 'bourbon' || _ext === 'mp3' || window.webkitAudioContext) {
+            try {
+                var audio = new Audio(_base + _sounds[name] + '.' + _ext);
+                audio.volume = vol;
+                audio.play().catch(function(e) {});
+                if (name === 'bourbon') return; // Strictly use direct path for scroll-triggered audio
+            } catch (e) {}
+        }
 
         // If not loaded yet, queue it
         if (!_raw[name] && !_decoded[name]) {
