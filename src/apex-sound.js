@@ -7,7 +7,8 @@ const ApexSound = (function () {
     let ctx = null;
     const _raw = {};      // ArrayBuffers from fetch
     const _decoded = {};  // Decoded AudioBuffers
-    const _queue = {};    // Queued play requests { name: [volume, ...] }
+    const _queue = {};    // Queued play requests
+    const _elements = {}; // HTMLAudioElement cache for Safari/iOS priming
 
     // Format detection — Safari needs MP3
     const _ext = (function () {
@@ -58,12 +59,25 @@ const ApexSound = (function () {
 
     function init() {
         if (ctx && ctx.state === 'running') return;
+        
+        // 1. Initialize WebAudio Context
         if (!ctx) {
             ctx = new (window.AudioContext || window.webkitAudioContext)();
         }
         if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
             ctx.resume();
         }
+
+        // 2. Prime HTMLAudioElements for Safari (MUST happen in a user gesture)
+        Object.keys(_sounds).forEach(function(name) {
+            if (!_elements[name]) {
+                const el = new Audio(_base + _sounds[name] + '.' + _ext);
+                el.load();
+                _elements[name] = el;
+            }
+        });
+
+        // 3. Kick off decoding for WebAudio
         Object.keys(_raw).forEach(function (name) {
             _decodeOne(name);
         });
@@ -79,18 +93,26 @@ const ApexSound = (function () {
     function play(name, volume) {
         var vol = (volume !== undefined) ? volume : 1;
 
-        // Safari/iOS/Scroll Fallback: Use direct HTMLAudioElement.
-        // We force this for 'bourbon' because it's often triggered by scroll, which WebAudio blocks.
-        if (name === 'bourbon' || _ext === 'mp3' || window.webkitAudioContext) {
+        // SAFARI/iOS SCROLL FIX: 
+        // Use the pre-primed HTMLAudioElement if available.
+        // This is the only way to play audio from a scroll event in Safari.
+        if (_elements[name]) {
             try {
-                var audio = new Audio(_base + _sounds[name] + '.' + _ext);
-                audio.volume = vol;
-                audio.play().catch(function(e) {});
-                if (name === 'bourbon') return; // Strictly use direct path for scroll-triggered audio
+                const el = _elements[name];
+                // Reset if already playing
+                if (!el.paused) {
+                    el.pause();
+                    el.currentTime = 0;
+                }
+                el.volume = vol;
+                el.play().catch(function(e) {
+                    // Fallback to WebAudio below if this failed
+                });
+                if (name === 'bourbon' || name === 'knife') return; 
             } catch (e) {}
         }
 
-        // If not loaded yet, queue it
+        // Fallback/WebAudio logic
         if (!_raw[name] && !_decoded[name]) {
             if (!_queue[name]) _queue[name] = [];
             _queue[name].push(vol);
