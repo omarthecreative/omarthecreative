@@ -1580,12 +1580,12 @@
             
             if (typeof ApexSound !== 'undefined') {
                 ApexSound.init();
-                ApexSound.play('projector', 0.6);
+                ApexSound.play('projector', 1.0); // Full volume for maximum impact
             }
             
             setTimeout(() => {
                 window.location.href = href;
-            }, 600);
+            }, 800); // Slightly more time to hear the machine build up
         });
 
         // Reclaim focus immediately if iframe steals it while modal is open
