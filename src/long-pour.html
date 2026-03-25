@@ -435,18 +435,18 @@
     (function () {
         var poured = false;
 
-        // Initialize sound engine on any first interaction
+        // Initialize sound engine on any first interaction to unlock for scroll
         function initOnGesture() {
             if (typeof ApexSound !== 'undefined') {
                 ApexSound.init();
             }
-            document.removeEventListener('mousedown', initOnGesture);
-            document.removeEventListener('touchstart', initOnGesture);
+            // If they scroll quickly, we might need multiple listeners to catch the unlock
         }
         document.addEventListener('mousedown', initOnGesture);
         document.addEventListener('touchstart', initOnGesture);
+        document.addEventListener('mousemove', initOnGesture, { once: true });
 
-        // bfcache restore — reset flag so bourbon can pour again on return
+        // bfcache restore
         window.addEventListener('pageshow', function (e) {
             if (e.persisted) poured = false;
         });
@@ -461,8 +461,9 @@
         }
 
         window.addEventListener('scroll', function onFirstScroll() {
+            // Safari: scroll doesn't count as a gesture, so we need a prior tap/click.
+            // But we'll try to init here too just in case.
             if (window.scrollY > 50) {
-                // Critical: Ensure context is unlocked before pouring
                 if (typeof ApexSound !== 'undefined') {
                     ApexSound.init();
                 }
