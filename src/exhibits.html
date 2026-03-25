@@ -633,9 +633,16 @@
             document.addEventListener('mousedown', startCinematic);
             document.addEventListener('touchstart', startCinematic);
             document.addEventListener('scroll', startCinematic);
-            document.addEventListener('mousemove', startCinematic); // Fallback for desktop hover
+            document.addEventListener('mousemove', startCinematic);
             
-            // Attempt auto-start
+            // Reset flag on pageshow (e.g. back button navigation)
+            window.addEventListener('pageshow', (e) => {
+                started = false; 
+                // Attempt auto-start on show
+                setTimeout(startCinematic, 100);
+            });
+
+            // Attempt auto-start on initial load
             window.addEventListener('load', () => {
                 setTimeout(startCinematic, 100); 
             });
