@@ -107,9 +107,24 @@ const ApexSound = (function () {
     }
 
     function play(name, volume) {
-        if (!ctx) return;
-
         var vol = (volume !== undefined) ? volume : 1;
+
+        // Safari/iOS Fallback: Use direct HTMLAudioElement for simple plays.
+        // This is significantly more reliable than Web Audio for SFX in Safari.
+        if (_ext === 'mp3' || (window.webkitAudioContext && !window.AudioContext)) {
+            try {
+                var audio = new Audio(_base + _sounds[name] + '.' + _ext);
+                audio.volume = vol;
+                audio.play().catch(function(e) {
+                    console.warn('ApexSound: Direct play fallback failed', e);
+                });
+                return;
+            } catch (e) {
+                // If direct audio fails, continue to Web Audio logic
+            }
+        }
+
+        if (!ctx) return;
 
         function _fire(buf) {
             try {
@@ -117,14 +132,11 @@ const ApexSound = (function () {
                 gain.gain.value = vol;
                 var source = ctx.createBufferSource();
                 source.buffer = buf;
-                
-                // Explicit connection chain
                 source.connect(gain);
                 gain.connect(ctx.destination);
-                
                 source.start(0);
             } catch (e) {
-                console.warn('ApexSound: play failed', e);
+                console.warn('ApexSound: WebAudio play failed', e);
             }
         }
 
