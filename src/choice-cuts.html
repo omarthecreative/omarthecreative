@@ -575,15 +575,6 @@
     (function () {
         var sliced = false;
 
-        // One-time gesture to unlock audio context for Safari
-        function wakeUp() {
-            if (typeof ApexSound !== 'undefined') ApexSound.init();
-            document.removeEventListener('mousedown', wakeUp);
-            document.removeEventListener('touchstart', wakeUp);
-        }
-        document.addEventListener('mousedown', wakeUp);
-        document.addEventListener('touchstart', wakeUp);
-
         // bfcache restore — reset flag so knife can slice again on return
         window.addEventListener('pageshow', function (e) {
             if (e.persisted) sliced = false;
@@ -596,6 +587,21 @@
                 ApexSound.play('knife', 0.8);
             }
         }
+
+        // iOS Safari: scroll events are not user gestures — AudioContext won't dispatch from them.
+        // Pattern: init in touchstart (ctx.resume within gesture), play in touchend (still within gesture).
+        document.addEventListener('touchstart', function () {
+            if (typeof ApexSound !== 'undefined') ApexSound.init();
+        }, { passive: true, once: true });
+
+        document.addEventListener('touchend', function () {
+            slice();
+        }, { passive: true, once: true });
+
+        // Desktop: init on mousedown, play on first scroll past hero
+        document.addEventListener('mousedown', function () {
+            if (typeof ApexSound !== 'undefined') ApexSound.init();
+        }, { once: true });
 
         window.addEventListener('scroll', function onFirstScroll() {
             if (window.scrollY > 50) {
