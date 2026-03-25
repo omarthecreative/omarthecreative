@@ -90,9 +90,20 @@ const ApexSound = (function () {
 
     function _decodeOne(name) {
         if (!ctx || !_raw[name] || _decoded[name]) return;
-        ctx.decodeAudioData(_raw[name].slice(0))
-            .then(function (buf) { _decoded[name] = buf; })
-            .catch(function () {});
+        
+        var data = _raw[name].slice(0);
+        
+        // Safari/Legacy compatibility: use callback syntax as fallback
+        var promise = ctx.decodeAudioData(data, function(buf) {
+            _decoded[name] = buf;
+        }, function(err) {
+            console.warn('ApexSound: decode failed for ' + name, err);
+        });
+
+        // Some browsers return a promise, some return undefined
+        if (promise && typeof promise.catch === 'function') {
+            promise.catch(function(){});
+        }
     }
 
     function play(name, volume) {
@@ -101,13 +112,20 @@ const ApexSound = (function () {
         var vol = (volume !== undefined) ? volume : 1;
 
         function _fire(buf) {
-            var gain = ctx.createGain();
-            gain.gain.value = vol;
-            var source = ctx.createBufferSource();
-            source.buffer = buf;
-            source.connect(gain);
-            gain.connect(ctx.destination);
-            source.start(0);
+            try {
+                var gain = ctx.createGain();
+                gain.gain.value = vol;
+                var source = ctx.createBufferSource();
+                source.buffer = buf;
+                
+                // Explicit connection chain
+                source.connect(gain);
+                gain.connect(ctx.destination);
+                
+                source.start(0);
+            } catch (e) {
+                console.warn('ApexSound: play failed', e);
+            }
         }
 
         function _dispatch() {
