@@ -569,7 +569,7 @@
             window.addEventListener('touchend', endDrag);
         })();
     </script>
-<script src="apex-sound.js"></script>
+<script src="apex-sound.js?v=2"></script>
 <script src="nav-name-reveal.js"></script>
 <script>
     (function () {
@@ -584,24 +584,15 @@
             if (sliced) return;
             sliced = true;
             if (typeof ApexSound !== 'undefined') {
+                ApexSound.init();
                 ApexSound.play('knife', 0.8);
             }
         }
 
-        // iOS Safari: scroll events are not user gestures — AudioContext won't dispatch from them.
-        // Pattern: init in touchstart (ctx.resume within gesture), play in touchend (still within gesture).
+        // First touch anywhere unlocks AudioContext within a gesture.
         document.addEventListener('touchstart', function () {
             if (typeof ApexSound !== 'undefined') ApexSound.init();
         }, { passive: true, once: true });
-
-        document.addEventListener('touchend', function () {
-            slice();
-        }, { passive: true, once: true });
-
-        // Desktop: init on mousedown, play on first scroll past hero
-        document.addEventListener('mousedown', function () {
-            if (typeof ApexSound !== 'undefined') ApexSound.init();
-        }, { once: true });
 
         window.addEventListener('scroll', function onFirstScroll() {
             if (window.scrollY > 50) {
