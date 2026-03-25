@@ -60,7 +60,7 @@
             position: fixed;
             top: 4rem;
             right: 4rem;
-            font-family: var(--font-mono);
+            font-family: var(--mono);
             font-size: 0.55rem;
             letter-spacing: 0.3em;
             color: white;
@@ -121,7 +121,7 @@
         .menu-close {
             position: absolute;
             top: 4rem; right: 4rem;
-            font-family: var(--font-mono);
+            font-family: var(--mono);
             font-size: 0.55rem;
             letter-spacing: 0.2em;
             color: #A8002C;
@@ -466,6 +466,10 @@
             const menu = document.getElementById('apex-menu');
             menu.style.display = show ? 'flex' : 'none';
             document.body.style.overflow = show ? 'hidden' : '';
+            // Critical: Initialize sound engine on menu trigger gesture
+            if (show && typeof ApexSound !== 'undefined') {
+                ApexSound.init();
+            }
         }
 
         window.addEventListener('keydown', (e) => {
@@ -570,20 +574,22 @@
 <script>
     (function () {
         var sliced = false;
-        var touchStarted = false;
+
+        // Initialize sound engine on any first interaction
+        function initOnGesture() {
+            if (typeof ApexSound !== 'undefined') {
+                ApexSound.init();
+            }
+            document.removeEventListener('mousedown', initOnGesture);
+            document.removeEventListener('touchstart', initOnGesture);
+        }
+        document.addEventListener('mousedown', initOnGesture);
+        document.addEventListener('touchstart', initOnGesture);
 
         // bfcache restore — reset flag so knife can slice again on return
         window.addEventListener('pageshow', function (e) {
             if (e.persisted) sliced = false;
         });
-
-        // First touch anywhere unlocks AudioContext from within a gesture.
-        // Also sets touchStarted so the scroll listener knows a real gesture
-        // has occurred and it's safe to play audio.
-        document.addEventListener('touchstart', function () {
-            touchStarted = true;
-            if (typeof ApexSound !== 'undefined') ApexSound.init();
-        }, { passive: true, once: true });
 
         function slice() {
             if (sliced) return;
@@ -600,6 +606,10 @@
         // On desktop, AudioContext auto-unlocks so no guard needed.
         window.addEventListener('scroll', function onFirstScroll() {
             if (window.scrollY > 50) {
+                // Critical: Ensure context is unlocked before slicing
+                if (typeof ApexSound !== 'undefined') {
+                    ApexSound.init();
+                }
                 slice();
                 window.removeEventListener('scroll', onFirstScroll);
             }
