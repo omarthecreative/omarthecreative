@@ -13,8 +13,9 @@ const ApexSound = (function () {
     // Format detection — Safari doesn't support OGG/Opus
     const _ext = (function () {
         var a = document.createElement('audio');
-        return (a.canPlayType('audio/ogg; codecs="opus"') || a.canPlayType('audio/ogg; codecs="vorbis"'))
-            ? 'ogg' : 'mp3';
+        // Safari can return "maybe" or "probably", but for OGG it usually returns ""
+        var canOgg = !!(a.canPlayType && a.canPlayType('audio/ogg; codecs="vorbis"').replace(/no/, ''));
+        return canOgg ? 'ogg' : 'mp3';
     })();
 
     // Self-detect base path from the script's own URL — works at any page depth
@@ -60,22 +61,28 @@ const ApexSound = (function () {
 
     // Create AudioContext on first gesture and decode all fetched buffers.
     // Call from within any user gesture handler — safe to call repeatedly.
-    // If ctx already exists but iOS re-suspended it, refreshes _resumePromise
-    // so play()/startLoop() chains correctly on the new resume.
     function init() {
-        if (ctx) {
-            if (ctx.state === 'suspended') {
-                _resumePromise = ctx.resume().catch(function () {});
-            }
-            return;
+        if (ctx && ctx.state === 'running') return;
+
+        if (!ctx) {
+            ctx = new (window.AudioContext || window.webkitAudioContext)();
         }
-        ctx = new (window.AudioContext || window.webkitAudioContext)();
-        // Resume synchronously within the gesture handler and store the promise.
-        // play() chains on _resumePromise rather than calling ctx.resume() again
-        // from outside a gesture — iOS blocks that second call (scroll/async).
-        _resumePromise = ctx.state === 'suspended'
-            ? ctx.resume().catch(function () {})
-            : Promise.resolve();
+
+        if (ctx.state === 'suspended') {
+            _resumePromise = ctx.resume().then(function() {
+                // Safari hardware wakeup: play a silent buffer
+                var buffer = ctx.createBuffer(1, 1, 22050);
+                var source = ctx.createBufferSource();
+                source.buffer = buffer;
+                source.connect(ctx.destination);
+                source.start(0);
+            }).catch(function (err) {
+                console.warn('ApexSound: resume failed', err);
+            });
+        } else {
+            _resumePromise = Promise.resolve();
+        }
+
         Object.keys(_raw).forEach(function (name) {
             _decodeOne(name);
         });
