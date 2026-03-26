@@ -109,6 +109,17 @@
             font-weight: 900;
             z-index: 10000;
         }
+
+        /* Nav Standards - Sync with Landing */
+        @media (orientation: landscape) and (max-width: 1366px) {
+            .nav-name { top: 3.5rem; left: 3.5rem; font-size: 1.2rem; }
+            .menu-trigger { top: 3.5rem; right: 3.5rem; font-size: 0.55rem; }
+        }
+        @media (orientation: landscape) and (max-height: 600px) {
+            .nav-name { top: 1.5rem; left: 2.5rem; font-size: 1rem; }
+            .menu-trigger { top: 1.5rem; right: 2.5rem; }
+        }
+
         .name-suffix { display: none; }
         .name-unlocked .name-last, .name-unlocked .name-space { display: none; }
         .name-unlocked .name-suffix { display: inline; }
@@ -177,7 +188,7 @@
 
         .exhibits-container {
             height: 100vh;
-            padding: 8rem 8rem 8rem 8rem;
+            padding: 2rem;
             display: flex;
             flex-direction: column;
             box-sizing: border-box;
@@ -203,7 +214,7 @@
             display: grid;
             grid-template-columns: repeat(12, 1fr);
             grid-template-rows: repeat(12, 1fr);
-            gap: 1.5rem;
+            gap: 1rem;
             min-height: 0;
             z-index: 10;
             transition: gap 0.6s cubic-bezier(0.23, 1, 0.32, 1);
@@ -316,8 +327,16 @@
         @media (orientation: portrait) {
             .carousel-title { font-size: 18vw; }
             .carousel-subtitle { font-size: 4vw; margin-top: 1rem; }
-            .exhibits-container { padding: 4rem 2rem; }
-            /* Mobile Grid overrides would go here if needed */
+            .exhibits-container { padding: 2rem; }
+            .exhibits-grid { gap: 0.5rem; }
+            .exhibits-watermark { font-size: 45vw; }
+            .nav-name { top: 3rem; left: 3rem; font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
+            .menu-trigger { top: 3rem; right: 3rem; font-size: 0.7rem; }
+        }
+
+        @media (max-width: 480px) {
+            .nav-name { font-size: 0.8rem; }
+            .menu-trigger { font-size: 0.65rem; }
         }
     </style>
 </head>

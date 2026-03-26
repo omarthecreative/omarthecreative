@@ -395,13 +395,16 @@
         }
         .still-here:hover { color: var(--vibrant-red-hud); }
 
-        @media (max-width: 1024px) {
-            .container { padding: 4rem 4rem; }
+        /* Nav Standards - Sync with Landing */
+        @media (orientation: landscape) and (max-width: 1366px) {
             .apex-nav { top: 3.5rem; left: 3.5rem; right: 3.5rem; }
             .nav-name { font-size: 1.2rem; }
-            .menu-trigger { font-size: 0.7rem; }
+            .menu-trigger { font-size: 0.55rem; }
         }
-
+        @media (orientation: landscape) and (max-height: 600px) {
+            .apex-nav { top: 1.5rem; left: 2.5rem; right: 2.5rem; }
+            .nav-name { font-size: 1rem; }
+        }
         @media (orientation: portrait) and (max-width: 1024px) {
             .apex-nav { top: 3rem; left: 3rem; right: 3rem; }
             .nav-name { font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
@@ -413,17 +416,11 @@
             .hud-bl { bottom: 0.3rem; left: 1rem; }
             .hud-br { bottom: 0.3rem; right: 1rem; }
             #lut-toggle.unlocked { top: 0.3rem; }
-            .copyright-tag { bottom: 0.3rem !important; font-size: 0.4rem; opacity: 0.4; }
+            .copyright-tag { bottom: 0.3rem !important; font-size: 0.4rem; opacity: 0.4; display: block !important; }
         }
 
         @media (max-width: 768px) {
             .container { padding: 4rem 4rem; }
-            .apex-nav {
-                left: 3.5rem;
-                right: 3.5rem;
-                top: 3.5rem;
-            }
-            .nav-name { font-size: 1rem; }
             .menu-close { top: 2rem; right: 2rem; }
             .menu-link { font-size: 15vw; line-height: 0.65; letter-spacing: -0.07em; }
             .animate-vibrate {
@@ -436,6 +433,7 @@
             .container { padding: 4rem 2rem; }
             .apex-nav { top: 2.5rem; left: 2.5rem; right: 2.5rem; }
             .nav-name { font-size: 0.8rem; max-width: 60%; line-height: 1.1; }
+            .menu-trigger { font-size: 0.65rem; }
             .bio-text { font-size: 1.1rem; }
             .dossier-content { font-size: 0.95rem; }
         }

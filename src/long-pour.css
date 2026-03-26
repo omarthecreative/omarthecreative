@@ -264,9 +264,28 @@
 .footer-metadata a:hover { color: var(--color-accent); }
 
 /* Responsive */
-@media (max-width: 1024px) {
+@media (orientation: landscape) and (max-width: 1366px) {
     .apex-nav { top: 3.5rem; left: 3.5rem; right: 3.5rem; }
     .nav-name { font-size: 1.2rem; }
+    .nav-link { font-size: 0.5rem; }
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+    .apex-nav { top: 1.5rem; left: 2.5rem; right: 2.5rem; }
+    .nav-name { font-size: 1rem; }
+}
+
+@media (orientation: portrait) and (max-width: 1024px) {
+    .apex-nav { top: 3rem; left: 3rem; right: 3rem; }
+    .nav-name { font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
+}
+
+@media (max-width: 480px) {
+    .apex-nav { top: 2.5rem; left: 2.5rem; right: 2.5rem; }
+    .nav-name { font-size: 0.8rem; max-width: 60%; line-height: 1.1; }
+}
+
+@media (max-width: 1024px) {
     .lc-article-row {
         grid-template-columns: 1fr;
     }
@@ -275,29 +294,11 @@
     }
 }
 
-@media (orientation: portrait) and (max-width: 1024px) {
-    .apex-nav { top: 2.5rem; left: 2rem; right: 2rem; }
-    .nav-name { font-size: 1.1rem; max-width: 60%; line-height: 1.2; }
-}
-
 @media (max-width: 768px) {
-    .apex-nav {
-        left: 2rem;
-        right: 2rem;
-        top: 2.5rem;
-    }
-    .nav-name { font-size: 0.9rem; max-width: 55%; line-height: 1.2; }
     .long-pour-wrapper {
-        left: 2rem;
-        right: 2rem;
         padding-left: 2rem;
         padding-right: 2rem;
     }
-}
-
-@media (max-width: 480px) {
-    .apex-nav { top: 2.5rem; left: 2rem; right: 2rem; }
-    .nav-name { font-size: 0.8rem; max-width: 55%; line-height: 1.1; }
 }
 
 

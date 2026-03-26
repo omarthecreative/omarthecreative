@@ -60,6 +60,17 @@
             pointer-events: auto;
         }
         .nav-name:hover { color: white; }
+
+        /* Nav Standards - Sync with Landing */
+        @media (orientation: landscape) and (max-width: 1366px) {
+            .nav-name { top: 3.5rem; left: 3.5rem; font-size: 1.2rem; }
+            .menu-trigger { top: 3.5rem; right: 3.5rem; font-size: 0.7rem; }
+        }
+        @media (orientation: landscape) and (max-height: 600px) {
+            .nav-name { top: 1.5rem; left: 2.5rem; font-size: 1rem; }
+            .menu-trigger { top: 1.5rem; right: 2rem; }
+        }
+
         .menu-trigger {
             position: fixed;
             top: 4rem;
@@ -179,20 +190,22 @@
             text-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
         }
 
+        /* Nav Standards - Sync with Landing */
         @media (orientation: landscape) and (max-width: 1366px) {
             .nav-name { top: 3.5rem; left: 3.5rem; font-size: 1.2rem; }
-            .menu-trigger { top: 3.5rem; right: 3.5rem; }
+            .menu-trigger { top: 3.5rem; right: 3.5rem; font-size: 0.7rem; }
         }
         @media (orientation: landscape) and (max-height: 600px) {
-            .nav-name { top: 1.5rem; left: 2rem; font-size: 1rem; }
+            .nav-name { top: 1.5rem; left: 2.5rem; font-size: 1rem; }
             .menu-trigger { top: 1.5rem; right: 2rem; }
         }
         @media (orientation: portrait) and (max-width: 1024px) {
-            .nav-name { top: 2.5rem; left: 2rem; font-size: 1.1rem; max-width: 50%; line-height: 1.2; }
-            .menu-trigger { top: 2.5rem; right: 2rem; font-size: 0.85rem; opacity: 1; }
+            .nav-name { top: 3rem; left: 3rem; font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
+            .menu-trigger { top: 3rem; right: 3rem; font-size: 0.7rem; opacity: 1; }
         }
         @media (max-width: 480px) {
             .nav-name { font-size: 0.8rem; }
+            .menu-trigger { font-size: 0.65rem; }
         }
         @media (max-width: 768px) {
             .menu-close { top: 2rem; right: 2rem; }
