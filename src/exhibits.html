@@ -188,6 +188,7 @@
 
         .exhibits-container {
             height: 100vh;
+            height: 100svh; /* iOS Safari: use small viewport height (chrome-adjusted) */
             padding: 2rem;
             display: flex;
             flex-direction: column;
@@ -213,7 +214,7 @@
             flex-grow: 1;
             display: grid;
             grid-template-columns: repeat(12, 1fr);
-            grid-template-rows: repeat(12, 1fr);
+            grid-template-rows: repeat(12, minmax(0, 1fr));
             gap: 1rem;
             min-height: 0;
             z-index: 10;
