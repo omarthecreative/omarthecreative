@@ -46,19 +46,18 @@
     <meta name="robots" content="index, follow, max-image-preview:large">
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤘🏽</text></svg>">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">                                                                 
-    <link rel="stylesheet" href="https://use.typekit.net/shz5hny.css">
     <link rel="stylesheet" href="https://use.typekit.net/niv4qrq.css">
     <link rel="stylesheet" href="base.css">
     <link rel="stylesheet" href="video-overlay.css">
     <script src="https://player.vimeo.com/api/player.js"></script>
     <style>
         :root {
-            --vibrant-red: #A8002C;
+            --vibrant-red: #C5002C;
+            --vibrant-red-hud: #FF0015;
             --glow: rgba(255, 0, 0, 0.8);
+            --mono: 'auger-mono', monospace;
+            --display: 'griffith-gothic-condensed', sans-serif;
+            --serif: 'lust-display', serif;
         }
         
         /* Flash prevention for EXHIBITS menu link and deep-links */
@@ -114,7 +113,7 @@
             line-height: 0.8;
             font-weight: 900;
             text-transform: uppercase;
-            color: var(--vibrant-red);
+            color: var(--vibrant-red-hud);
             letter-spacing: -0.04em;
             text-shadow: 0 0 20px var(--glow);
             text-align: left;
@@ -125,10 +124,10 @@
         /* HIGH-IMPACT VIBRATION */
         @keyframes vibrate-heavy {
             0% { transform: translate(0); text-shadow: 0 0 10px var(--glow); }
-            20% { transform: translate(-2px, 2px); text-shadow: 4px 0 15px var(--vibrant-red); }
-            40% { transform: translate(-2px, -2px); text-shadow: -4px 0 20px var(--vibrant-red); }
-            60% { transform: translate(2px, 2px); text-shadow: 0 4px 15px var(--vibrant-red); }
-            80% { transform: translate(2px, -2px); text-shadow: 0 -4px 20px var(--vibrant-red); }
+            20% { transform: translate(-2px, 2px); text-shadow: 4px 0 15px var(--vibrant-red-hud); }
+            40% { transform: translate(-2px, -2px); text-shadow: -4px 0 20px var(--vibrant-red-hud); }
+            60% { transform: translate(2px, 2px); text-shadow: 0 4px 15px var(--vibrant-red-hud); }
+            80% { transform: translate(2px, -2px); text-shadow: 0 -4px 20px var(--vibrant-red-hud); }
             100% { transform: translate(0); text-shadow: 0 0 10px var(--glow); }
         }
 
@@ -164,7 +163,7 @@
             font-style: normal;
             font-size: 0.85em;
             font-weight: 400;
-            color: var(--vibrant-red);
+            color: var(--vibrant-red-hud);
             opacity: 0;
             margin-left: 2px;
             white-space: nowrap;
@@ -194,7 +193,7 @@
             z-index: 100;
         }
         .footer-metadata a, .footer-metadata button { color: inherit; text-decoration: none; background: none; border: none; padding: 0; cursor: pointer; font: inherit; letter-spacing: inherit; }
-        .footer-metadata a:hover, .footer-metadata button:hover { color: var(--vibrant-red); }
+        .footer-metadata a:hover, .footer-metadata button:hover { color: var(--vibrant-red-hud); }
 
         .corner-frame {
             position: fixed;
@@ -206,7 +205,7 @@
         .corner {
             position: absolute;
             width: 20px; height: 20px;
-            border: 2px solid var(--vibrant-red);
+            border: 1px solid var(--vibrant-red-hud);
             opacity: 1;
         }
         
@@ -214,10 +213,10 @@
         .hud-tag {
             position: fixed;
             font-family: var(--mono);
-            font-size: 0.55rem;
+            font-size: 0.5rem;
             letter-spacing: 0.2em;
-            color: var(--vibrant-red);
-            opacity: 0.4;
+            color: var(--vibrant-red-hud);
+            opacity: 0.6;
             pointer-events: none;
             text-transform: uppercase;
             z-index: 110;
@@ -249,7 +248,17 @@
             text-transform: uppercase;
             z-index: 10000;
         }
-        .info-link:hover { color: var(--vibrant-red); opacity: 1; }
+
+        body.video-active .info-link,
+        body.video-active .apex-nav,
+        body.modal-active .info-link,
+        body.modal-active .apex-nav,
+        body.project-view .info-link,
+        body.project-view .apex-nav {
+            display: none !important;
+        }
+
+        .info-link:hover { opacity: 1; color: var(--vibrant-red-hud); }
 
         .action-group {
             margin-top: 4rem;
@@ -316,17 +325,16 @@
             justify-content: center;
             padding: 2rem;
         }
-        .intel-content { 
+        .intel-content {
             width: 100%;
-            max-width: 800px; 
-            font-family: 'Newsreader', serif; 
+            max-width: 800px;
+            font-family: var(--serif);
             color: white;
             position: relative;
             display: flex;
             flex-direction: column;
             max-height: 80vh;
-        }
-        .intel-scroll-area {
+        }        .intel-scroll-area {
             overflow-y: auto;
             padding-right: 2rem;
             flex: 1;
@@ -336,9 +344,9 @@
         .intel-scroll-area::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
         .intel-scroll-area::-webkit-scrollbar-thumb { background: var(--vibrant-red); }
 
-        .intel-role { color: var(--vibrant-red); font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.3em; margin-bottom: 2rem; text-transform: uppercase; }
+        .intel-role { color: var(--vibrant-red-hud); font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.3em; margin-bottom: 2rem; text-transform: uppercase; }
         .intel-desc { font-size: 1.8rem; line-height: 1.4; letter-spacing: -0.01em; margin-bottom: 3rem; text-wrap: pretty; cursor: pointer; }
-        .intel-close { position: absolute; top: 2rem; right: 2rem; font-family: var(--mono); font-size: 0.8rem; color: var(--vibrant-red); cursor: pointer; letter-spacing: 0.2em; z-index: 1100; }
+        .intel-close { position: absolute; top: 2rem; right: 2rem; font-family: var(--mono); font-size: 0.8rem; color: var(--vibrant-red-hud); cursor: pointer; letter-spacing: 0.2em; z-index: 1100; }
         
         .credits-drawer {
             display: none;
@@ -380,7 +388,7 @@
             line-height: 1.2;
             text-transform: uppercase; /* Scripts are often all caps in action */
         }
-        .script-close { position: fixed; top: 2rem; right: 2rem; font-family: var(--mono); font-size: 0.8rem; color: var(--vibrant-red); cursor: pointer; letter-spacing: 0.2em; z-index: 2100; }
+        .script-close { position: fixed; top: 2rem; right: 2rem; font-family: var(--mono); font-size: 0.8rem; color: var(--vibrant-red-hud); cursor: pointer; letter-spacing: 0.2em; z-index: 2100; }
         
         /* Production Header */
         .sc-header { text-align: center; margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 2px solid #1a1a1a; }
@@ -417,7 +425,7 @@
         }
 
         .credits-divider { height: 1px; background: rgba(255,255,255,0.1); margin-bottom: 2rem; }
-        .credits-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.2em; color: var(--vibrant-red); margin-bottom: 1.5rem; text-transform: uppercase; }
+        .credits-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.2em; color: var(--vibrant-red-hud); margin-bottom: 1.5rem; text-transform: uppercase; }
         
         .credits-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(255,255,255,0.6); }
         .credits-table tr { border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -697,7 +705,7 @@
                 subtitle: "Lose the Flash",
                 letterSpacing: '-0.02em',
                 vimeoId: "306235541",
-                img: "03-google-pixel-lose-the-flash-scaled-e1772256909967.png",
+                img: "assets/03-google-pixel-lose-the-flash-scaled-e1772256909967.png",
                 role: "CREATIVE DIRECTOR, WRITER",
                 desc: "Dracula sells cameras now.<br>Queen provides the soundtrack.<br>The flash is officially dead.<br><br>We turned Pixel's Night Sight<br>from a spec into a cultural moment.<br>No technical jargon.<br>Just vampires doing<br>what they do best.",
                 script: `
@@ -1525,6 +1533,7 @@
         watchBtn.addEventListener('click', () => {
             ApexSound.play('projector');
             modal.style.display = 'flex';
+            document.body.classList.add('video-active');
             loadVideoProject(currentIndex);
             showControls();
             viewfinderOverlay.classList.add('tap-block');
@@ -1648,6 +1657,7 @@
         document.getElementById('close-video').addEventListener('click', () => {
             ApexSound.play('film');
             modal.style.display = 'none';
+            document.body.classList.remove('video-active');
             stopAutoHide();
             stopFocusLock();
             if (vimeoPlayer) vimeoPlayer.unload();
@@ -1696,12 +1706,14 @@
             intelScrollArea.scrollTop = 0;
             
             intelOverlay.style.display = 'flex';
+            document.body.classList.add('modal-active');
             markAsViewed(`v-${currentIndex}`);
             intelOverlay.focus();
         });
 
         document.getElementById('close-intel').addEventListener('click', () => {
             intelOverlay.style.display = 'none';
+            document.body.classList.remove('modal-active');
         });
 
         // Tap copy to reveal Credits on mobile (mirrors Enter key)
@@ -1736,14 +1748,18 @@
                 }
                 if (scriptOverlay.style.display === 'flex') {
                     scriptOverlay.style.display = 'none';
+                    if (intelOverlay.style.display !== 'flex') document.body.classList.remove('modal-active');
                     return;
                 }
                 if (intelOverlay.style.display === 'flex') {
                     intelOverlay.style.display = 'none';
+                    document.body.classList.remove('modal-active');
                     return;
                 }
                 if (actionGroup.classList.contains('visible')) {
                     currentIndex = -1;
+                    isProjectState = false;
+                    document.body.classList.remove('project-view');
                     document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
                     const initialBg = document.getElementById('initial-bg');
                     if (initialBg) {
@@ -1971,6 +1987,7 @@
                 currentIndex = parseInt(pIndex);
                 const p = projects[currentIndex];
                 isProjectState = true;
+                document.body.classList.add('project-view');
                 
                 subtitleCycle.pause();
                 subtitleEl.textContent = p.subtitle;

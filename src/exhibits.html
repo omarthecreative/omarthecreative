@@ -15,26 +15,36 @@
     <meta property="og:type" content="website">
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤘🏽</text></svg>">
-    <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css">
     <link rel="stylesheet" href="https://use.typekit.net/niv4qrq.css">
     <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="video-overlay.css">
+    <script src="https://player.vimeo.com/api/player.js"></script>
+    <script>
+        (function() {
+            const v = JSON.parse(localStorage.getItem('omar_viewed') || '[]');
+            if (v.length > 0) {
+                document.documentElement.classList.add('name-unlocked');
+            }
+        })();
+    </script>
     <style>
         :root {
-            --vibrant-red: #A8002C;
+            --vibrant-red: #C5002C;
+            --vibrant-red-hud: #FF0015;
             --glow: rgba(255, 0, 0, 0.8);
         }
 
         body { background: #050505; color: white; overflow: hidden; height: 100vh; width: 100vw; }
 
-        /* LOCKED BACKGROUND */
-        .hero-background {
+        /* GRID BACKGROUND */
+        .exhibits-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
             background: #000;
             pointer-events: none;
         }
-        .hero-bg-image {
+        .exhibits-bg-image {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
@@ -43,26 +53,29 @@
             background-position: center center;
             filter: brightness(0.4) contrast(1.1);
             opacity: 1;
+            transition: opacity 0.8s ease;
         }
+        body.project-view .exhibits-bg-image { opacity: 0; }
+
+        /* PROJECT BACKGROUNDS */
+        .project-bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        .project-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            opacity: 0; transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background-repeat: no-repeat;
+        }
+        .project-bg.active { opacity: 0.44; }
 
         /* HUD ELEMENTS */
         .corner-frame {
             position: fixed;
-            top: 2rem;
-            left: 2rem;
-            right: 2rem;
-            bottom: 2rem;
+            top: 2rem; left: 2rem; right: 2rem; bottom: 2rem;
             border: 1px solid rgba(255, 0, 60, 0.2);
             pointer-events: none;
             z-index: 100;
         }
-        .corner {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--vibrant-red);
-            opacity: 1;
-        }
+        .corner { position: absolute; width: 20px; height: 20px; border: 1px solid var(--vibrant-red-hud); opacity: 1; }
         .tl { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
         .tr { top: -1px; right: -1px; border-left: 0; border-bottom: 0; }
         .bl { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
@@ -73,8 +86,8 @@
             font-family: var(--mono);
             font-size: 0.5rem;
             letter-spacing: 0.2em;
-            color: var(--vibrant-red);
-            opacity: 0.4;
+            color: var(--vibrant-red-hud);
+            opacity: 0.6;
             pointer-events: none;
             text-transform: uppercase;
             z-index: 100;
@@ -84,11 +97,9 @@
         .hud-bl { bottom: 0.8rem; left: 2rem; }
         .hud-br { bottom: 0.8rem; right: 2rem; }
 
-        /* Nav — standard fixed elements */
         .nav-name {
             position: fixed;
-            top: 4rem;
-            left: 4rem;
+            top: 4rem; left: 4rem;
             color: white;
             text-decoration: none;
             font-family: var(--serif);
@@ -98,10 +109,13 @@
             font-weight: 900;
             z-index: 10000;
         }
+        .name-suffix { display: none; }
+        .name-unlocked .name-last, .name-unlocked .name-space { display: none; }
+        .name-unlocked .name-suffix { display: inline; }
+
         .menu-trigger {
             position: fixed;
-            top: 4rem;
-            right: 4rem;
+            top: 4rem; right: 4rem;
             font-family: var(--mono);
             font-size: 0.55rem;
             letter-spacing: 0.3em;
@@ -112,9 +126,12 @@
             z-index: 10000;
             transition: opacity 0.3s ease;
         }
-        .menu-trigger:hover { opacity: 1; color: var(--vibrant-red); }
+        .menu-trigger:hover { opacity: 1; color: var(--vibrant-red-hud); }
 
-        /* Full Screen Menu Overlay */
+        body.project-view .apex-nav,
+        body.video-active .apex-nav,
+        body.modal-active .apex-nav { display: none !important; }
+
         #apex-menu {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -131,14 +148,10 @@
             font-family: var(--mono);
             font-size: 0.55rem;
             letter-spacing: 0.2em;
-            color: var(--vibrant-red);
+            color: var(--vibrant-red-hud);
             cursor: pointer;
         }
-        .menu-links {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        .menu-links { display: flex; flex-direction: column; align-items: center; }
         .menu-link {
             font-family: var(--display);
             font-size: clamp(60px, 15vw, 280px);
@@ -154,36 +167,35 @@
         .menu-link:hover { opacity: 1; color: var(--vibrant-red); }
         .menu-link.active { opacity: 1; color: var(--vibrant-red); }
 
-        /* Exhibits Grid — No Scroll Layout */
+        /* GRID VIEW */
+        .exhibits-grid-view {
+            position: relative;
+            z-index: 10;
+            transition: opacity 0.6s ease;
+        }
+        body.project-view .exhibits-grid-view { opacity: 0; pointer-events: none; }
+
         .exhibits-container {
             height: 100vh;
-            padding: 8rem 8rem 6rem 4rem; /* Nudged left */
+            padding: 8rem 8rem 8rem 8rem;
             display: flex;
             flex-direction: column;
             box-sizing: border-box;
-            position: relative;
-            z-index: 10;
         }
         
-        /* GHOST WATERMARK — PROJECTED FEEL */
         .exhibits-watermark {
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             font-family: var(--display);
             font-size: 35vw;
             line-height: 0.7;
             letter-spacing: -0.05em;
-            color: white;
-            opacity: 0.12;
-            pointer-events: none;
-            z-index: 1;
+            color: white; opacity: 0.12;
+            pointer-events: none; z-index: 1;
             text-transform: uppercase;
-            white-space: nowrap;
-            text-align: center;
-            mix-blend-mode: screen;
-            filter: blur(2px);
+            white-space: nowrap; text-align: center;
+            mix-blend-mode: screen; filter: blur(2px);
         }
 
         .exhibits-grid {
@@ -191,328 +203,133 @@
             display: grid;
             grid-template-columns: repeat(12, 1fr);
             grid-template-rows: repeat(12, 1fr);
-            gap: 2.5rem;
+            gap: 1.5rem;
             min-height: 0;
             z-index: 10;
-            margin-top: 2rem;
+            transition: gap 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
+
+        .exhibits-grid.hover-ready:has(.exhibit-card:hover) .exhibit-card:not(:hover) { opacity: 0; pointer-events: none; }
 
         .exhibit-card {
-            cursor: pointer;
-            position: relative;
-            transition: opacity 0.5s ease, filter 0.5s ease;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-        }
-        .exhibit-card:hover {
-            transform: scale(1.025);
-            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            z-index: 20;
+            cursor: pointer; position: relative;
+            transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1), 
+                        opacity 0.4s ease,
+                        grid-column 0.8s cubic-bezier(0.23, 1, 0.32, 1),
+                        grid-row 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            display: flex; flex-direction: column; min-height: 0;
+            background: rgba(0,0,0,0.2); overflow: hidden;
         }
 
-        .exhibit-thumb-wrap {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: transparent;
-        }
+        .exhibits-grid.hover-ready .exhibit-card:hover { grid-column: 1 / 13 !important; grid-row: 1 / 13 !important; z-index: 100; transform: scale(1); }
+
+        .exhibit-thumb-wrap { position: relative; width: 100%; height: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .exhibit-thumb {
-            width: auto;
-            height: auto;
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            opacity: 0.9;
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            filter: contrast(1.05) brightness(1.05);
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            width: 100%; height: 100%; object-fit: cover; opacity: 0.8;
+            transition: opacity 0.6s ease, filter 0.6s ease, transform 0.8s cubic-bezier(0.23, 1, 0.32, 1), object-position 0.8s ease;
+            filter: contrast(1.1) brightness(0.9); mix-blend-mode: screen;
         }
-        .exhibit-card:hover .exhibit-thumb {
-            opacity: 0.4;
-            filter: contrast(1.1) brightness(0.5) blur(3px);
-        }
+        .exhibit-card:hover .exhibit-thumb { opacity: 0.9; filter: contrast(1.15) brightness(0.7); transform: scale(1.05); }
 
-        /* CENTERED LABELS */
+        .card-6 .exhibit-thumb { object-position: center 5%; }
+        .card-5 .exhibit-thumb { object-position: center 10%; }
+
         .exhibit-info {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translateY(-50%);
-            width: fit-content;
-            text-align: left;
-            pointer-events: none;
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            z-index: 5;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: fit-content; max-width: 90%; text-align: left;
+            pointer-events: none; opacity: 0;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 5; display: flex; flex-direction: column; align-items: flex-start;
         }
-        .exhibit-card:hover .exhibit-info {
-            opacity: 1;
-        }
+        .exhibit-card:hover .exhibit-info { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
         .exhibit-brand {
-            font-family: var(--display);
-            font-size: clamp(0.8rem, 2vw, 2.5rem); /* Scaled down 50% */
-            line-height: 0.8;
-            letter-spacing: -0.02em;
-            text-transform: uppercase;
-            color: var(--vibrant-red);
-            text-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
-            margin-top: -0.2vw;
+            font-family: var(--display); font-size: clamp(2rem, 8vw, 10rem);
+            line-height: 0.8; letter-spacing: -0.04em; text-transform: uppercase;
+            color: var(--vibrant-red-hud); text-shadow: 0 0 40px rgba(255, 0, 0, 0.8); margin-bottom: 1vw;
+        }
+        /* CITI Spacing Fix - Reduced */
+        .exhibit-brand.brand-citi {
+            letter-spacing: 0.01em;
         }
         .exhibit-campaign {
-            font-family: var(--serif);
-            font-style: italic;
-            font-size: clamp(0.4rem, 0.5vw, 0.7rem); /* Scaled down 50% */
-            letter-spacing: 0.01em;
-            color: white;
-            text-transform: none;
-            margin-bottom: 0.1vw;
-            white-space: pre-line;
-            line-height: 1.1;
+            font-family: var(--serif); font-style: italic; font-size: clamp(1rem, 2vw, 2.5rem);
+            letter-spacing: 0.02em; color: white; text-transform: none; white-space: nowrap; line-height: 1.1;
+            margin-bottom: -0.5vw; /* Bring closer to brand title */
         }
 
-        /* ASYMMETRICAL GRID LAYOUT (12 COL × 12 ROW) — MAXIMIZED DISTRIBUTION */
-        .card-0 { grid-column: 1 / 7;  grid-row: 1 / 6; }  /* Google (Large Opener) */
-        .card-1 { grid-column: 7 / 10;  grid-row: 1 / 4; }  /* Samsung Tomorrow */
-        .card-2 { grid-column: 10 / 13; grid-row: 1 / 5; }  /* Bud Light */
-        .card-3 { grid-column: 9 / 12;  grid-row: 5 / 8; }  /* Legence (Enlarged) */
-        .card-4 { grid-column: 5 / 9;   grid-row: 4 / 8; }  /* Citi (Centered) */
-        .card-5 { grid-column: 1 / 5;   grid-row: 7 / 11; transform: translateY(2.5rem); } /* Samsung Play */
-        .card-6 { grid-column: 5 / 13;  grid-row: 8 / 13; } /* MBK Alliance (Large Closer) */
+        /* PROJECT CAROUSEL VIEW */
+        .project-carousel-view {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.8s ease;
+            z-index: 20;
+        }
+        body.project-view .project-carousel-view { opacity: 1; pointer-events: auto; }
 
-        /* --- RESPONSIVE BREAKPOINTS --- */
-
-        /* LANDSCAPE - MOBILE & TABLET (EXACT MATCH TO INDEX.HTML) */
-        @media (orientation: landscape) and (max-width: 1366px) {
-            .exhibits-container { padding: 4rem 4rem 8rem 8rem; }
-            .exhibits-watermark { font-size: 34vw; } /* Reduced from 36vw */
-            .exhibits-grid { gap: 1.5rem; }
-            .exhibit-brand { font-size: clamp(1rem, 2.5vw, 3rem); }
-            .exhibit-campaign { font-size: clamp(0.5rem, 1vw, 1.2rem); white-space: pre-line !important; }
-            .card-0 { transform: translateX(-6.0rem); } 
-            .card-0:hover { transform: translateX(-6.0rem) scale(1.025); } 
-            
-            /* Fix card-5 jumping in landscape tablet */
-            .card-5 { transform: translateY(2.5rem); }
-            .card-5:hover { transform: translateY(2.5rem) scale(1.025); }
-            
-            /* Match landing page exact positions */
-            .nav-name { top: 3.5rem !important; left: 3.5rem !important; font-size: 1.2rem !important; }
-            .menu-trigger { top: 3.5rem !important; right: 3.5rem !important; font-size: 0.7rem !important; opacity: 1 !important; }
-            
-            .hud-tag { opacity: 0.4 !important; } 
-            .hud-tl { top: 0.8rem !important; left: 2rem !important; } 
-            .hud-tr { top: 0.8rem !important; right: 2rem !important; }
-            .hud-bl { bottom: 0.8rem !important; left: 2rem !important; }
-            .hud-br { bottom: 0.8rem !important; right: 2rem !important; }
-            
-            .copyright-tag.fixed { 
-                display: block !important; 
-                bottom: 0.8rem !important; 
-                left: 50% !important; 
-                transform: translateX(-50%) !important;
-                z-index: 10000 !important;
-                opacity: 0.4 !important;
-            }
-
-            /* Mobile Landscape Specific (Short Viewports) — TYPOGRAPHIC INDEX */
-            @media (max-height: 600px) {
-                body { overflow: hidden !important; height: 100vh !important; }
-                .nav-name { top: 1.5rem !important; left: 2.5rem !important; font-size: 1rem !important; }
-                .menu-trigger { top: 1.5rem !important; right: 2rem !important; font-size: 0.6rem !important; }
-                .corner-frame { top: 1rem !important; left: 1.5rem !important; right: 1.5rem !important; bottom: 1rem !important; }
-                
-                .hud-tag { font-size: 0.4rem !important; opacity: 0.5 !important; }
-                .hud-tl { top: 0.25rem !important; left: 2rem !important; }
-                .hud-tr { top: 0.25rem !important; right: 2rem !important; }
-                .hud-bl { bottom: 0.25rem !important; left: 2rem !important; }
-                .hud-br { bottom: 0.25rem !important; right: 2rem !important; }
-                
-                .copyright-tag { display: none !important; }
-                .exhibits-watermark { display: none !important; }
-                
-                .exhibits-container { 
-                    height: 100vh !important; 
-                    padding: 5rem 4rem 3rem !important; 
-                    display: flex !important;
-                    align-items: center !important;
-                    justify-content: center !important;
-                    overflow: hidden !important;
-                }
-                
-                /* 3-COLUMN TYPOGRAPHIC CONTACT SHEET */
-                .exhibits-grid { 
-                    display: grid !important;
-                    grid-template-columns: repeat(3, 1fr) !important;
-                    grid-template-rows: auto auto auto !important;
-                    gap: 2rem 1.5rem !important;
-                    margin-top: 0 !important;
-                    width: 100% !important;
-                    max-width: 1200px !important;
-                }
-                .exhibit-card { 
-                    height: auto !important; 
-                    width: auto !important; 
-                    grid-column: auto !important; 
-                    grid-row: auto !important; 
-                    transform: none !important;
-                }
-                .exhibit-thumb-wrap { display: none !important; } 
-                .exhibit-info { 
-                    position: relative !important; 
-                    opacity: 1 !important; 
-                    display: flex !important;
-                    flex-direction: column !important;
-                    top: auto !important; left: auto !important; 
-                    transform: none !important;
-                    text-align: left !important;
-                    align-items: flex-start !important;
-                    pointer-events: auto !important;
-                }
-                .exhibit-brand { 
-                    font-size: 1.2rem !important; 
-                    line-height: 0.8 !important; 
-                    color: var(--vibrant-red) !important;
-                    text-shadow: 0 0 10px rgba(0,0,0,0.3) !important;
-                }
-                .exhibit-campaign { 
-                    font-family: var(--serif) !important;
-                    font-style: italic !important;
-                    font-size: 0.6rem !important; 
-                    color: white !important;
-                    margin-bottom: 0.2rem !important; 
-                    white-space: nowrap !important;
-                    opacity: 1 !important;
-                }
-                
-                /* Center the final project in its own row */
-                .card-6 { grid-column: 2 / 3 !important; }
-            }
-            
-            /* Aggressive hide for mobile landscape copyright */
-            @media (max-height: 600px) {
-                .copyright-tag { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
-                .exhibits-watermark { 
-                    display: block !important; 
-                    font-size: 66vh !important; 
-                    opacity: 0.1 !important; 
-                    filter: blur(3px) !important;
-                }
-            }
+        .carousel-content { text-align: left; position: relative; z-index: 10; pointer-events: none; width: fit-content; display: flex; flex-direction: column; align-items: flex-start; }
+        .carousel-title {
+            font-family: var(--display); font-size: 15vw; line-height: 0.75;
+            color: var(--vibrant-red-hud); text-transform: uppercase;
+            letter-spacing: -0.05em; margin: 0; padding: 0;
+            text-shadow: 0 0 30px rgba(255, 0, 0, 0.4); white-space: nowrap;
+        }
+        .carousel-subtitle {
+            font-family: var(--serif); font-style: italic; font-size: 3.5vw;
+            color: white; margin-top: -1.5vw; letter-spacing: -0.01em;
+            opacity: 1; z-index: 5; line-height: 1.1; text-align: left; white-space: nowrap;
+            margin-bottom: -1vw; /* "Crash" into title below */
         }
 
-        /* PORTRAIT - MOBILE & TABLET (EXACT MATCH TO INDEX.HTML) */
-        @media (orientation: portrait) and (max-width: 1366px) {
-            body { overflow: hidden; height: 100vh; }
-            .exhibits-container { 
-                height: 100vh; 
-                padding: 4rem 4rem 6rem; 
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-            } 
-            
-            .exhibits-watermark { 
-                font-size: 35vw; 
-                opacity: 0.1; 
-                mix-blend-mode: screen; 
-                filter: blur(2px);
-                display: block; 
-            }
-            
-            .nav-name { 
-                top: 3rem !important; 
-                left: 3rem !important; 
-                font-size: 0.9rem !important; 
-                max-width: 60% !important; 
-                line-height: 1.2 !important; 
-                opacity: 1 !important;
-            }
-            .menu-trigger { top: 3rem !important; right: 3rem !important; font-size: 0.7rem !important; opacity: 1 !important; }
-            
-            .corner-frame { top: 1.5rem !important; left: 1rem !important; right: 1rem !important; bottom: 1.5rem !important; }
-            .hud-tag { font-size: 0.45rem !important; opacity: 0.6 !important; letter-spacing: 0.05em !important; }
-            .hud-tl { top: 0.3rem !important; left: 1rem !important; }
-            .hud-tr { top: 0.3rem !important; right: 1rem !important; }
-            .hud-bl { bottom: 0.3rem !important; left: 1rem !important; }
-            .hud-br { bottom: 0.3rem !important; right: 1rem !important; }
-            
-            .copyright-tag.fixed { 
-                bottom: 0.3rem !important; 
-                font-size: 0.4rem !important; 
-                opacity: 0.4 !important;
-                display: block !important;
-            }
+        .action-group {
+            margin-top: 4rem; display: none; gap: 2rem; pointer-events: auto;
+            opacity: 0; transition: opacity 0.6s ease;
+            justify-content: center;
+        }
+        .action-group.visible { display: flex; opacity: 1; }
+        .btn {
+            background: transparent; border: 1px solid white; color: white;
+            padding: 1rem 2rem; font-family: var(--mono); font-size: 0.8rem;
+            letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn:hover { background: white; color: var(--vibrant-red-hud); border-color: white; }
 
-            /* Small Mobile Override — Match landing exactly */
-            @media (max-width: 480px) {
-                .nav-name { font-size: 0.8rem !important; }
-                .exhibits-container { padding: 6.5rem 2.5rem 6rem; }
-            }
+        /* GRID POSITIONS */
+        .card-0 { grid-column: 1 / 7;  grid-row: 1 / 5; }
+        .card-1 { grid-column: 7 / 13; grid-row: 1 / 5; }
+        .card-2 { grid-column: 1 / 4;  grid-row: 5 / 11; }
+        .card-4 { grid-column: 4 / 8;  grid-row: 5 / 9; }
+        .card-5 { grid-column: 8 / 13; grid-row: 5 / 9; }
+        .card-3 { grid-column: 1 / 4;  grid-row: 11 / 13; }
+        .card-6 { grid-column: 4 / 13; grid-row: 9 / 13; }
 
-            /* MOBILE & TABLET ASYMMETRICAL CONTACT SHEET */
-            .exhibits-grid { 
-                flex-grow: 1;
-                grid-template-columns: repeat(12, 1fr); 
-                grid-template-rows: repeat(12, 1fr);
-                display: grid;
-                gap: 1rem; 
-                min-height: 0;
-            }
-            .exhibit-card { height: auto; aspect-ratio: 16/9; transform: none !important; width: 100%; }
-            
-            /* TINY SCALE SPANS (12x12) */
-            .card-0 { grid-column: 1 / 8;  grid-row: 1 / 5; transform: translateY(-1.5rem) !important; } 
-            .card-1 { grid-column: 8 / 13; grid-row: 1 / 4; } 
-            .card-2 { grid-column: 4 / 11; grid-row: 4 / 7; transform: translateY(-2rem) !important; } 
-            .card-3 { grid-column: 1 / 5;  grid-row: 7 / 10; transform: translateY(-2rem) !important; } 
-            .card-4 { grid-column: 8 / 13; grid-row: 6 / 10; transform: translate(-2rem, 0.5rem) !important; } 
-            .card-5 { grid-column: 1 / 6;  grid-row: 10 / 13; } 
-            .card-6 { grid-column: 6 / 13; grid-row: 10 / 13; transform: translateY(-5rem) !important; } 
+        /* COPYRIGHT */
+        .copyright-tag {
+            position: fixed; bottom: 0.8rem; left: 50%; transform: translateX(-50%);
+            font-family: var(--mono); font-size: 0.4rem; letter-spacing: 0.15em;
+            color: white; opacity: 0.3; z-index: 100; white-space: nowrap;
+        }
 
-            .exhibit-info { 
-                opacity: 1; 
-                pointer-events: auto; 
-                position: absolute; 
-                bottom: 0.4rem; 
-                left: 0.4rem; 
-                top: auto;
-                transform: none;
-                margin-top: 0; 
-                width: auto;
-                text-align: left;
-                align-items: flex-start;
-                z-index: 10;
-            }
-            .exhibit-brand { 
-                font-size: 1.3rem; 
-                margin-top: 0; 
-                text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-            }
-            .exhibit-campaign { 
-                font-size: 0.7rem; 
-                margin-bottom: 0.1rem; 
-                opacity: 0.9;
-                text-shadow: 0 1px 5px rgba(0,0,0,0.8);
-                white-space: pre-line !important;
-            }
-            
-            .exhibit-thumb { opacity: 1 !important; filter: none !important; }
-            .exhibit-card:hover .exhibit-thumb { opacity: 0.7 !important; }
+        /* --- RESPONSIVE --- */
+        @media (orientation: portrait) {
+            .carousel-title { font-size: 18vw; }
+            .carousel-subtitle { font-size: 4vw; margin-top: 1rem; }
+            .exhibits-container { padding: 4rem 2rem; }
+            /* Mobile Grid overrides would go here if needed */
         }
     </style>
 </head>
 <body>
-    <div class="hero-background">
-        <div class="hero-bg-image"></div>
+    <div class="exhibits-bg">
+        <div class="exhibits-bg-image"></div>
     </div>
+
+    <div class="project-bg-container" id="bg-container">
+        <!-- Populated via JS -->
+    </div>
+
     <div class="corner-frame">
         <div class="corner tl"></div><div class="corner tr"></div>
         <div class="corner bl"></div><div class="corner br"></div>
@@ -520,159 +337,520 @@
         <div class="hud-tag hud-tl" id="hud-tc">[ TC 00:00:00:00 ]</div>
         <div class="hud-tag hud-tr" id="lut-toggle" style="pointer-events: auto; cursor: pointer;">[ LUT: REC.709 ]</div>
         <div class="hud-tag hud-bl">[ 24 FPS ]</div>
-        <div class="hud-tag hud-br">[ 7 TOTAL ]</div>
+        <div class="hud-tag hud-br" id="hud-total">[ 7 TOTAL ]</div>
     </div>
+
+    <nav class="apex-nav">
+        <a href="index.html" class="nav-name">
+            OMAR<span class="name-space"> </span><span class="name-last">SILWANY</span><span class="name-suffix">, THE CREATIVE</span>
+        </a>
+        <div class="menu-trigger" onclick="toggleMenu(true)">[ MENU ]</div>
+    </nav>
 
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
         <div class="menu-links">
-            <a href="exhibits.html" class="menu-link active" onclick="playExhibitsSound(event, 'exhibits.html')">EXHIBITS</a>
+            <a href="exhibits.html" class="menu-link active">EXHIBITS</a>
             <a href="choice-cuts.html" class="menu-link">CHOICE CUTS</a>
             <a href="long-pour.html" class="menu-link">LONG POUR</a>
             <a href="info.html" class="menu-link">INFORMATION</a>
         </div>
     </div>
 
-    <nav class="apex-nav">
-        <a href="index.html" class="nav-name" id="nav-name-el">OMAR SILWANY</a>
-        <div class="menu-trigger" onclick="toggleMenu(true)">[ MENU ]</div>
-    </nav>
-
-    <div class="exhibits-watermark">EXHIBITS</div>
-
-    <main class="exhibits-container">
-        <div class="exhibits-grid" id="exhibits-grid">
-            <!-- Populated via JS -->
-        </div>
-    </main>
-
-    <div class="copyright-tag fixed">
-        © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
+    <!-- GRID VIEW -->
+    <div class="exhibits-grid-view">
+        <div class="exhibits-watermark">EXHIBITS</div>
+        <main class="exhibits-container">
+            <div class="exhibits-grid" id="exhibits-grid">
+                <!-- Populated via JS -->
+            </div>
+        </main>
     </div>
 
+    <!-- PROJECT CAROUSEL VIEW -->
+    <div class="project-carousel-view" id="carousel-view">
+        <div class="carousel-content" id="carousel-content">
+            <div class="carousel-subtitle" id="project-subtitle">Subtitle</div>
+            <h1 class="carousel-title" id="project-title">PROJECT</h1>
+        </div>
+        <div class="action-group" id="action-group">
+            <button class="btn" id="watch-btn">[ WATCH ]</button>
+            <button class="btn" id="intel-btn">[ LEARN ]</button>
+        </div>
+    </div>
+
+    <!-- VIDEO MODAL -->
+    <div id="video-modal" tabindex="0" style="outline: none;">
+        <div id="vimeo-wrap" style="width: 100%; height: 100%;"></div>
+        <div id="cc-bar"></div>
+        <div id="mouse-capture"></div>
+
+        <div class="viewfinder-overlay">
+            <div id="close-video" role="button" tabindex="0">[ ESC // CLOSE ]</div>
+
+            <!-- PROJECT DETAILS -->
+            <div class="project-details-box" id="video-details-drawer">
+                <table class="details-table" id="video-details-table">
+                    <!-- Populated by JS -->
+                </table>
+            </div>
+
+            <!-- CENTER CONTROLS -->
+            <div class="center-controls">
+                <button class="ctrl" id="video-rewind">
+                    <span class="symbol">◄◄</span>
+                    <span class="text">-15S</span>
+                </button>
+                <button class="ctrl" id="video-pause">
+                    <span class="symbol" id="play-pause-symbol">║</span>
+                    <span class="text" id="play-pause-text">PAUSE</span>
+                </button>
+                <button class="ctrl" id="video-forward">
+                    <span class="symbol">►►</span>
+                    <span class="text">+15S</span>
+                </button>
+            </div>
+
+            <!-- TIME DISPLAY -->
+            <div class="time-display">
+                <span class="timecode">00:00:00:00</span>
+            </div>
+
+            <!-- AUDIO TOGGLE -->
+            <button class="audio-toggle" id="video-audio-toggle" title="Toggle Sound [M]">
+                <span class="muted-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                        <path d="M11 5L6 9H2v6h4l5 4V5z" fill="white"/>
+                    </svg>
+                </span>
+                <span class="unmuted-icon" style="display:none">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                        <path d="M11 5L6 9H2v6h4l5 4V5z" fill="white"/>
+                        <path d="M15.54 8.46a5 10 0 0 1 0 7.07" stroke-linecap="round"/>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14" stroke-linecap="round"/>
+                    </svg>
+                </span>
+            </button>
+
+            <!-- BOTTOM UI WRAPPER -->
+            <div class="bottom-ui-wrapper">
+                <!-- Progress -->
+                <div class="progress-container">
+                    <div class="progress-track" id="video-progress-track">
+                        <div class="progress-fill" id="video-progress-fill"></div>
+                    </div>
+                    <div class="duration-info" id="video-duration">00:00 / 00:00</div>
+                </div>
+                
+                <!-- Center Info -->
+                <div class="project-info" id="video-project-tag">
+                    PROJECT NAME
+                </div>
+                
+                <!-- Bottom Elements -->
+                <div class="nav-hints">
+                    <span class="hint clickable" id="video-enter-btn"><span class="key">↵</span> ENTER</span>
+                    <span class="hint clickable" id="video-restart-btn"><span class="key">R</span> RESTART</span>
+                </div>
+
+                <div class="project-nav-unified">
+                    <button class="nav-prev" id="video-prev-btn">←</button>
+                    <span class="nav-counter" id="video-counter">1/1</span>
+                    <button class="nav-next" id="video-next-btn">→</button>
+                </div>
+
+                <div class="frame-counter" id="video-frame-counter">F 001</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INTEL OVERLAY -->
+    <div id="intel-overlay" tabindex="-1">
+        <div class="intel-close" id="close-intel">[ ESC // CLOSE ]</div>
+        <div class="intel-content">
+            <div class="intel-scroll-area" id="intel-scroll-area">
+                <div class="intel-role" id="intel-role">ROLE</div>
+                <div class="intel-desc" id="intel-desc">Description</div>
+                <div id="credits-drawer" class="credits-drawer">
+                    <div class="credits-divider"></div>
+                    <div class="credits-label">[ PROJECT CREDITS ]</div>
+                    <table class="credits-table" id="credits-table"></table>
+                </div>
+            </div>
+            <div class="intel-footer">
+                <div class="intel-hint" id="intel-hint">[ ↵ // CREDITS ]</div>
+                <div class="intel-hint" id="script-hint" style="display: none; margin-top: 0.5rem; color: #FFFFFF; opacity: 0.8; cursor: pointer;">[ S // SCRIPT ]</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT OVERLAY -->
+    <div id="script-overlay">
+        <div class="script-close" id="close-script">[ ESC // CLOSE ]</div>
+        <div class="script-page"><div class="script-paper"><div class="script-content" id="script-content"></div></div></div>
+    </div>
+
+    <div class="copyright-tag fixed">© 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.</div>
+
+    <script src="carousel-config.js"></script>
     <script src="apex-sound.js?v=2"></script>
-    <script src="nav-name-reveal.js"></script>
+    <script src="nav-name-reveal.js?v=2"></script>
     <script>
-        const projects = [
-            { title: "GOOGLE", subtitle: "Lose the\nFlash", img: "assets/03-google-pixel-lose-the-flash-scaled-e1772256909967.png" },
-            { title: "SAMSUNG", subtitle: "Stay ahead\nof Tomorrow", img: "assets/04-samsung-stay-ahead-tomorrow.jpg" },
-            { title: "BUD LIGHT", subtitle: "Home\nAdvantage", img: "assets/07-bud-light-home-advantage.png" },
-            { title: "LEGENCE", subtitle: "Built for\nBuilding", img: "assets/06-legence-built-for-building.png" },
-            { title: "CITI", subtitle: "Rise", img: "assets/08-citi-rise.png" },
-            { title: "SAMSUNG", subtitle: "Study is\nBetter with Play", img: "assets/01-samsung-study-better-play-scaled.png" },
-            { title: "MBK ALLIANCE", subtitle: "We Are the Ones", img: "assets/02-mbk-we-are-the-ones-scaled-e1772257041527.png" }
-        ];
+        let currentIndex = -1;
+        let isProjectView = false;
+        let vimeoPlayer = null;
+        let isPaused = false;
+        let isMuted = true;
+
+        const gridEl = document.getElementById('exhibits-grid');
+        const carouselView = document.getElementById('carousel-view');
+        const bgContainer = document.getElementById('bg-container');
+        const titleEl = document.getElementById('project-title');
+        const subtitleEl = document.getElementById('project-subtitle');
+        const actionGroup = document.getElementById('action-group');
+        const videoModal = document.getElementById('video-modal');
+        const vimeoWrap = document.getElementById('vimeo-wrap');
+        const intelOverlay = document.getElementById('intel-overlay');
+        const scriptOverlay = document.getElementById('script-overlay');
 
         function toggleMenu(show) {
             document.getElementById('apex-menu').style.display = show ? 'flex' : 'none';
             document.body.style.overflow = show ? 'hidden' : '';
-            if (show && typeof ApexSound !== 'undefined') ApexSound.play('door');
-        }
-
-        // HUD & TRACKING LOGIC
-        function updateHUD() {
-            const viewed = JSON.parse(localStorage.getItem('omar_viewed') || '[]');
-            const count = viewed.length;
-            document.getElementById('hud-tc').textContent = `[ TC 00:00:00:${count.toString().padStart(2, '0')} ]`;
-            
-            if (count > 0) {
-                const lut = document.getElementById('lut-toggle');
-                lut.classList.add('unlocked');
-                if (localStorage.getItem('omar_lut') === 'RUBY') {
-                    applyRubyLUT(true);
-                }
+            if (show && typeof ApexSound !== 'undefined') {
+                ApexSound.init();
+                ApexSound.play('door');
             }
         }
-
-        // LUT Logic
-        function applyRubyLUT(active) {
-            const lut = document.getElementById('lut-toggle');
-            if (active) {
-                document.documentElement.style.setProperty('--vibrant-red', '#A8002C');
-                document.documentElement.style.setProperty('--glow', 'rgba(255, 0, 0, 1)');
-                lut.textContent = '[ LUT: RUBY ]';
-                localStorage.setItem('omar_lut', 'RUBY');
-            } else {
-                document.documentElement.style.setProperty('--vibrant-red', '#A8002C');
-                document.documentElement.style.setProperty('--glow', 'rgba(255, 0, 60, 0.8)');
-                lut.textContent = '[ LUT: REC.709 ]';
-                localStorage.setItem('omar_lut', 'REC.709');
-            }
-        }
-
-        document.getElementById('lut-toggle').addEventListener('click', () => {
-            const viewed = JSON.parse(localStorage.getItem('omar_viewed') || '[]');
-            if (viewed.length > 0) {
-                const isRuby = localStorage.getItem('omar_lut') === 'RUBY';
-                applyRubyLUT(!isRuby);
-            }
-        });
-
-        // Initialize HUD state
-        (function() {
-            updateHUD();
-        })();
-
-        // Cinematic Sound Trigger: Play 'projector' on load/first interaction
-        (function() {
-            let started = false;
-            function startCinematic() {
-                if (started) return;
-                started = true;
-                if (typeof ApexSound !== 'undefined') {
-                    ApexSound.init();
-                    ApexSound.play('projector', 1.0); // Full volume for arrival
-                }
-                document.removeEventListener('mousedown', startCinematic);
-                document.removeEventListener('touchstart', startCinematic);
-                document.removeEventListener('scroll', startCinematic);
-                document.removeEventListener('mousemove', startCinematic);
-            }
-            
-            // Listen for any immediate interaction
-            document.addEventListener('mousedown', startCinematic);
-            document.addEventListener('touchstart', startCinematic);
-            document.addEventListener('scroll', startCinematic);
-            document.addEventListener('mousemove', startCinematic);
-            
-            // Reset flag on pageshow (e.g. back button navigation)
-            window.addEventListener('pageshow', (e) => {
-                started = false; 
-                // Attempt auto-start on show
-                setTimeout(startCinematic, 100);
-            });
-
-            // Attempt auto-start on initial load
-            window.addEventListener('load', () => {
-                setTimeout(startCinematic, 100); 
-            });
-        })();
 
         function populateGrid() {
-            const grid = document.getElementById('exhibits-grid');
+            gridEl.innerHTML = '';
+            gridEl.classList.remove('hover-ready');
             projects.forEach((p, i) => {
                 const card = document.createElement('div');
                 card.className = `exhibit-card card-${i}`;
+                const brandClass = p.title.toUpperCase() === 'CITI' ? 'exhibit-brand brand-citi' : 'exhibit-brand';
                 card.innerHTML = `
-                    <div class="exhibit-thumb-wrap">
-                        <img src="${p.img}" class="exhibit-thumb" alt="${p.title}">
-                    </div>
+                    <div class="exhibit-thumb-wrap"><img src="${p.img}" class="exhibit-thumb" alt="${p.title}"></div>
                     <div class="exhibit-info">
                         <div class="exhibit-campaign">${p.subtitle}</div>
-                        <div class="exhibit-brand">${p.title}</div>
+                        <div class="${brandClass}">${p.title}</div>
                     </div>
                 `;
-                card.onclick = () => window.location.href = `index.html?p=${i}`;
-                grid.appendChild(card);
+                card.onclick = () => loadProject(i);
+                gridEl.appendChild(card);
+
+                // Pre-create project backgrounds
+                const bg = document.createElement('div');
+                bg.className = 'project-bg';
+                bg.id = `bg-${i}`;
+                bg.style.backgroundImage = `url('${p.img}')`;
+                bgContainer.appendChild(bg);
             });
+
+            // Enable hover effects after a short delay to prevent immediate jump on load/nav
+            setTimeout(() => {
+                gridEl.classList.add('hover-ready');
+            }, 500);
         }
 
+        function loadProject(i) {
+            currentIndex = i;
+            isProjectView = true;
+            document.body.classList.add('project-view');
+            
+            const p = projects[i];
+            titleEl.textContent = p.title;
+            subtitleEl.textContent = p.subtitle;
+            
+            // CITI Spacing Fix for Carousel
+            if (p.title.toUpperCase() === 'CITI') {
+                titleEl.style.letterSpacing = '0.01em';
+            } else {
+                titleEl.style.letterSpacing = ''; // Reset
+            }
+
+            actionGroup.classList.add('visible');
+
+            document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
+            document.getElementById(`bg-${i}`).classList.add('active');
+
+            // Set URL
+            window.history.replaceState(null, "", `?p=${i}`);
+        }
+
+        function closeProjectView() {
+            isProjectView = false;
+            document.body.classList.remove('project-view');
+            actionGroup.classList.remove('visible');
+            document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
+            window.history.replaceState(null, "", "exhibits.html");
+        }
+
+        // --- VIDEO MODAL LOGIC ---
+        function loadVideoProject(i) {
+            currentIndex = i;
+            const p = projects[i];
+            
+            const scaleStyle = p.videoScale ? `transform: scale(${p.videoScale}); transform-origin: ${p.videoTransformOrigin || 'center center'};` : '';
+
+            // Reset modal UI
+            document.getElementById('video-progress-fill').style.width = '0%';
+            document.getElementById('video-project-tag').textContent = p.title;
+            document.getElementById('video-counter').textContent = `${i + 1}/${projects.length}`;
+            
+            // Details table
+            const detailsTable = document.getElementById('video-details-table');
+            if (detailsTable) {
+                detailsTable.innerHTML = p.credits.map(c => `<tr><td class="label">${c.l}</td><td class="value">${c.v}</td></tr>`).join('');
+            }
+            
+            document.getElementById('video-details-drawer').classList.remove('active');
+
+            if (!vimeoPlayer) {
+                const iframe = document.createElement('iframe');
+                iframe.src = `https://player.vimeo.com/video/${p.vimeoId}?autoplay=1&loop=1&controls=0&muted=1&title=0&byline=0&portrait=0&transparent=0&dnt=1`;
+                iframe.style.cssText = `width:100%;height:100%;border:none;${scaleStyle}`;
+                iframe.allow = 'autoplay; fullscreen';
+                iframe.allowFullscreen = true;
+                vimeoWrap.insertBefore(iframe, vimeoWrap.firstChild);
+                vimeoPlayer = new Vimeo.Player(iframe);
+
+                vimeoPlayer.on('timeupdate', (data) => {
+                    const percent = data.percent * 100;
+                    document.getElementById('video-progress-fill').style.width = `${percent}%`;
+                    const mins = Math.floor(data.seconds / 60);
+                    const secs = Math.floor(data.seconds % 60);
+                    const durationMins = Math.floor(data.duration / 60);
+                    const durationSecs = Math.floor(data.duration % 60);
+                    document.getElementById('video-duration').textContent =
+                        `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')} / ${durationMins.toString().padStart(2, '0')}:${durationSecs.toString().padStart(2, '0')}`;
+                    
+                    const timecodeEl = document.querySelector('.timecode');
+                    if (timecodeEl) timecodeEl.textContent = `00:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}:00`;
+                    
+                    const frames = Math.floor(data.seconds * 24);
+                    document.getElementById('video-frame-counter').textContent = `F ${frames.toString().padStart(3, '0')}`;
+                });
+
+                vimeoPlayer.on('play', () => {
+                    isPaused = false;
+                    document.getElementById('play-pause-symbol').textContent = '║';
+                    document.getElementById('play-pause-text').textContent = 'PAUSE';
+                });
+
+                vimeoPlayer.on('pause', () => {
+                    isPaused = true;
+                    document.getElementById('play-pause-symbol').textContent = '►';
+                    document.getElementById('play-pause-text').textContent = 'PLAY';
+                });
+            } else {
+                const iframe = vimeoWrap.querySelector('iframe');
+                if (iframe) iframe.style.cssText = `width:100%;height:100%;border:none;${scaleStyle}`;
+                vimeoPlayer.loadVideo(p.vimeoId).then(() => {
+                    vimeoPlayer.setLoop(true);
+                    vimeoPlayer.setMuted(isMuted);
+                    vimeoPlayer.play();
+                });
+            }
+
+            // Sync mute icon
+            document.querySelector('.muted-icon').style.display = isMuted ? 'inline' : 'none';
+            document.querySelector('.unmuted-icon').style.display = isMuted ? 'none' : 'inline';
+
+            if (isMuted) {
+                const audioToggle = document.getElementById('video-audio-toggle');
+                audioToggle.classList.remove('mute-pulse');
+                void audioToggle.offsetWidth;
+                audioToggle.classList.add('mute-pulse');
+            }
+
+            setTimeout(() => { window.focus(); document.body.focus(); }, 300);
+        }
+
+        // AUTO-HIDE OVERLAY CONTROLS
+        const viewfinderOverlay = document.querySelector('.viewfinder-overlay');
+        const mouseCapture = document.getElementById('mouse-capture');
+        let hideControlsTimer;
+
+        function getVimeoIframe() {
+            return vimeoWrap.querySelector('iframe');
+        }
+
+        function showControls() {
+            viewfinderOverlay.classList.remove('controls-hidden');
+            mouseCapture.classList.remove('active');
+            const iframe = getVimeoIframe();
+            if (iframe) iframe.style.pointerEvents = 'auto';
+            clearTimeout(hideControlsTimer);
+            hideControlsTimer = setTimeout(() => {
+                viewfinderOverlay.classList.add('controls-hidden');
+                mouseCapture.classList.add('active');
+                const iframe = getVimeoIframe();
+                if (iframe) iframe.style.pointerEvents = 'none';
+                window.focus();
+                document.body.focus();
+            }, 3000);
+        }
+
+        function stopAutoHide() {
+            clearTimeout(hideControlsTimer);
+            viewfinderOverlay.classList.remove('controls-hidden');
+            mouseCapture.classList.remove('active');
+            const iframe = getVimeoIframe();
+            if (iframe) iframe.style.pointerEvents = 'auto';
+        }
+
+        videoModal.addEventListener('mousemove', showControls);
+        mouseCapture.addEventListener('mousemove', showControls);
+        mouseCapture.addEventListener('touchstart', showControls, { passive: true });
+        videoModal.addEventListener('touchstart', showControls, { passive: true });
+
+        document.getElementById('watch-btn').onclick = () => {
+            if (typeof ApexSound !== 'undefined') ApexSound.play('projector');
+            videoModal.style.display = 'flex';
+            document.body.classList.add('video-active');
+            loadVideoProject(currentIndex);
+            showControls();
+            viewfinderOverlay.classList.add('tap-block');
+            setTimeout(() => { viewfinderOverlay.classList.remove('tap-block'); }, 400);
+            setTimeout(() => { if (document.activeElement) document.activeElement.blur(); window.focus(); }, 500);
+            startFocusLock();
+            markAsViewed(`v-${currentIndex}`);
+        };
+
+        document.getElementById('close-video').onclick = () => {
+            if (vimeoPlayer) vimeoPlayer.pause();
+            videoModal.style.display = 'none';
+            document.body.classList.remove('video-active');
+            stopAutoHide();
+            stopFocusLock();
+            if (typeof ApexSound !== 'undefined') ApexSound.play('film');
+        };
+
+        // Overlay Control Listeners
+        document.getElementById('video-pause').addEventListener('click', () => {
+            if (!vimeoPlayer) return;
+            if (isPaused) vimeoPlayer.play();
+            else vimeoPlayer.pause();
+        });
+
+        document.getElementById('video-rewind').addEventListener('click', () => {
+            if (vimeoPlayer) vimeoPlayer.getCurrentTime().then(t => vimeoPlayer.setCurrentTime(Math.max(0, t - 15)));
+        });
+
+        document.getElementById('video-forward').addEventListener('click', () => {
+            if (vimeoPlayer) vimeoPlayer.getCurrentTime().then(t => vimeoPlayer.setCurrentTime(t + 15));
+        });
+
+        document.getElementById('video-audio-toggle').addEventListener('click', () => {
+            isMuted = !isMuted;
+            if (vimeoPlayer) {
+                vimeoPlayer.setMuted(isMuted);
+                vimeoPlayer.setVolume(isMuted ? 0 : 1);
+            }
+            document.querySelector('.muted-icon').style.display = isMuted ? 'inline' : 'none';
+            document.querySelector('.unmuted-icon').style.display = isMuted ? 'none' : 'inline';
+            document.getElementById('video-audio-toggle').classList.remove('mute-pulse');
+        });
+
+        document.getElementById('video-progress-track').addEventListener('click', (e) => {
+            if (!vimeoPlayer) return;
+            const rect = e.target.getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            vimeoPlayer.getDuration().then(duration => {
+                vimeoPlayer.setCurrentTime(duration * pos);
+            });
+        });
+
+        document.getElementById('video-prev-btn').onclick = () => {
+            currentIndex = (currentIndex - 1 + projects.length) % projects.length;
+            loadVideoProject(currentIndex);
+        };
+
+        document.getElementById('video-next-btn').onclick = () => {
+            currentIndex = (currentIndex + 1) % projects.length;
+            loadVideoProject(currentIndex);
+        };
+
+        function toggleDetailsDrawer() {
+            document.getElementById('video-details-drawer').classList.toggle('active');
+        }
+
+        function restartVideo() {
+            if (vimeoPlayer) {
+                vimeoPlayer.setCurrentTime(0);
+                vimeoPlayer.play();
+            }
+        }
+
+        document.getElementById('video-enter-btn').onclick = toggleDetailsDrawer;
+        document.getElementById('video-restart-btn').onclick = restartVideo;
+
+        function handleVideoKeydown(e) {
+            if (videoModal.style.display !== 'flex') return;
+            showControls();
+            if (e.key === 'ArrowRight') document.getElementById('video-next-btn').click();
+            if (e.key === 'ArrowLeft') document.getElementById('video-prev-btn').click();
+            if (e.key === 'Enter') { e.preventDefault(); toggleDetailsDrawer(); }
+            if (e.key === ' ') { e.preventDefault(); document.getElementById('video-pause').click(); }
+            if (e.key === 'm' || e.key === 'M') document.getElementById('video-audio-toggle').click();
+            if (e.key === 'r' || e.key === 'R') restartVideo();
+            if (e.key === 'Escape') { e.preventDefault(); document.getElementById('close-video').click(); }
+        }
+        window.addEventListener('keydown', handleVideoKeydown);
+
+        // Focus lock logic
+        let focusInterval;
+        function startFocusLock() {
+            focusInterval = setInterval(() => {
+                if (videoModal.style.display === 'flex' && document.activeElement !== document.body) {
+                    window.focus();
+                    document.body.focus();
+                }
+            }, 500);
+        }
+        function stopFocusLock() { clearInterval(focusInterval); }
+
+        // --- INTEL LOGIC ---
+        document.getElementById('intel-btn').onclick = () => {
+            const p = projects[currentIndex];
+            document.getElementById('intel-role').textContent = p.role;
+            document.getElementById('intel-desc').innerHTML = p.desc;
+            document.getElementById('credits-table').innerHTML = p.credits.map(c => `<tr><td class="c-label">${c.l}</td><td class="c-value">${c.v}</td></tr>`).join('');
+            document.getElementById('script-content').innerHTML = p.script || 'SCRIPT PENDING...';
+            intelOverlay.style.display = 'flex';
+            document.body.classList.add('modal-active');
+            markAsViewed(`v-${currentIndex}`);
+        };
+
+        document.getElementById('close-intel').onclick = () => {
+            intelOverlay.style.display = 'none';
+            document.body.classList.remove('modal-active');
+        };
+        document.getElementById('close-script').onclick = () => {
+            scriptOverlay.style.display = 'none';
+            // script might be opened from intel, so we only remove modal-active if intel is also closed
+            if (intelOverlay.style.display !== 'flex') document.body.classList.remove('modal-active');
+        };
+
+        // --- ESCAPE HANDLING ---
         window.onkeydown = (e) => {
             if (e.key === 'Escape') {
-                if (document.getElementById('apex-menu').style.display === 'flex') toggleMenu(false);
-                else window.location.href = 'index.html';
+                if (document.getElementById('apex-menu').style.display === 'flex') { toggleMenu(false); return; }
+                if (videoModal.style.display === 'flex') { document.getElementById('close-video').onclick(); return; }
+                if (scriptOverlay.style.display === 'flex') { document.getElementById('close-script').onclick(); return; }
+                if (intelOverlay.style.display === 'flex') { document.getElementById('close-intel').onclick(); return; }
+                if (isProjectView) { closeProjectView(); }
+                else { window.location.href = 'index.html'; }
             }
         };
+
+        // Initialize from URL
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('p')) {
+            const idx = parseInt(params.get('p'));
+            if (projects[idx]) loadProject(idx);
+        }
 
         populateGrid();
     </script>

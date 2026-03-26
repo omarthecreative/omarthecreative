@@ -9,7 +9,25 @@
         if (viewed.length === 0) return;
 
         el.dataset.revealApplied = "true";
-        el.textContent = 'OMAR, THE CREATIVE';
+        
+        // Support both simple text and multi-span structures
+        var last = el.querySelector('.name-last');
+        var space = el.querySelector('.name-space');
+        var suffix = el.querySelector('.name-suffix');
+
+        if (last && suffix) {
+            // Already has spans, just hide/show
+            if (last) last.style.display = 'none';
+            if (space) space.style.display = 'none';
+            if (suffix) {
+                suffix.style.display = 'inline';
+                suffix.style.opacity = '1';
+                suffix.style.transform = 'translateX(0)';
+            }
+        } else {
+            // Legacy text-only, replace content
+            el.textContent = 'OMAR, THE CREATIVE';
+        }
     }
 
     function wireMenuSound() {

@@ -1,10 +1,10 @@
 /* LONG COPY - APEX VERSION */
 
 :root {
-    --color-accent: #BB0022;
+    --color-accent: #FF0015;
     --color-white: #FFFFFF;
     --font-primary: "freight-sans-pro", sans-serif;
-    --font-display: "brothers", sans-serif;
+    --font-display: var(--display);
     --font-mono: var(--mono);
     --font-serif: 'Newsreader', serif;
 }

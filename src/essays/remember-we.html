@@ -6,6 +6,13 @@
     <title>Remember WE - Omar Silwany</title>
     <meta name="description" content="A tribute to Warren Eakins — Art Director, Photographer & Friend. The Johnny Cash of Advertising. By Omar Silwany.">
 
+    <script>
+      (function() {
+        var v = JSON.parse(localStorage.getItem('omar_viewed') || '[]');
+        if (v.length > 0) document.documentElement.classList.add('name-unlocked');
+      })();
+    </script>
+
     <!-- Social Metadata -->
     <meta property="og:site_name" content="Omar, the Creative">
     <meta property="og:title" content="Remember WE — A Tribute to Warren Eakins">
@@ -24,10 +31,11 @@
     <meta name="twitter:image" content="https://omarthecreative.com/assets/og-image-remember-we.jpg">
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@300;400&family=Playfair+Display:wght@900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://use.typekit.net/fqr6eyz.css"/>
     <link rel="stylesheet" href="https://use.typekit.net/shz5hny.css"/>
+    <link rel="stylesheet" href="https://use.typekit.net/niv4qrq.css"/>
     <link rel="stylesheet" href="../base.css"/>
 
     <script id="tailwind-config">
@@ -42,7 +50,7 @@
                     },
                     fontFamily: {
                         "display": ["tribute", "serif"],
-                        "mono": ["Courier New", "Courier", "monospace"]
+                        "mono": ["auger-mono", "monospace"]
                     },
                     borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
                 },
@@ -70,7 +78,7 @@
         .nav-name {
             color: white;
             text-decoration: none;
-            font-family: 'Playfair Display', serif;
+            font-family: var(--serif);
             font-size: 1.5rem;
             letter-spacing: 0.05em;
             text-transform: uppercase;
@@ -80,7 +88,7 @@
         }
         .nav-name:hover { color: white; }
         .menu-trigger {
-            font-family: "IBM Plex Mono", monospace;
+            font-family: var(--mono);
             font-size: 0.55rem;
             letter-spacing: 0.3em;
             color: white;
@@ -109,7 +117,7 @@
         .menu-close {
             position: absolute;
             top: 4rem; right: 4rem;
-            font-family: "IBM Plex Mono", monospace;
+            font-family: var(--mono);
             font-size: 0.55rem;
             letter-spacing: 0.2em;
             color: #FF0000;
@@ -149,7 +157,7 @@
             text-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
         }
 
-        .brothers-font {
+        .display-font {
             font-family: "octin-stencil", sans-serif;
             font-weight: 900;
             letter-spacing: 0.04em;
@@ -233,7 +241,7 @@
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
         <div class="menu-links">
-            <a href="../exhibits.html" class="menu-link">EXHIBITS</a>
+            <a href="../index.html?view=exhibits" class="menu-link">EXHIBITS</a>
             <a href="../choice-cuts.html" class="menu-link">CHOICE CUTS</a>
             <a href="../long-pour.html" class="menu-link active">LONG POUR</a>
             <a href="../info.html" class="menu-link">INFORMATION</a>
@@ -264,12 +272,12 @@
             <div class="flex flex-col mb-16 min-h-screen justify-center">
                 <!-- Row 1: REMEMBER + subtitle -->
                 <div class="relative" style="line-height: 0.9; font-size: clamp(10px, 14.7vw, 227px);">
-                    <div class="brothers-font" style="font-size: 1em; color: rgba(160, 31, 36, 0.85);">R<span style="font-family: 'stencil-std', sans-serif; font-weight: 400; font-size: 0.94em; color: #a87835;">E</span>M<span style="font-family: 'stencil-std', sans-serif; font-weight: 400; font-size: 0.94em; color: #a87835;">E</span>MB<span style="font-family: 'stencil-std', sans-serif; font-weight: 400; font-size: 0.94em; color: #a87835;">E</span>R</div>
+                    <div class="display-font" style="font-size: 1em; color: rgba(160, 31, 36, 0.85);">R<span style="font-family: 'stencil-std', sans-serif; font-weight: 400; font-size: 0.94em; color: #a87835;">E</span>M<span style="font-family: 'stencil-std', sans-serif; font-weight: 400; font-size: 0.94em; color: #a87835;">E</span>MB<span style="font-family: 'stencil-std', sans-serif; font-weight: 400; font-size: 0.94em; color: #a87835;">E</span>R</div>
                     <p style="position: absolute; top: 50%; left: 0; transform: translateY(-50%); font-family: 'dalliance-script-display', cursive; font-size: 0.30em; color: rgba(250, 243, 141, 0.92); line-height: 1.3; pointer-events: none; white-space: nowrap;">advertising art director and photographer</p>
                 </div>
                 <!-- Row 2: WE + Warren Eakins -->
                 <div class="relative" style="line-height: 0.9; margin-top: 2rem;">
-                    <div class="brothers-font" style="font-size: clamp(200px, 26vw, 400px); color: rgba(160, 31, 36, 0.85);"><span style="font-family: 'octin-stencil', sans-serif; font-weight: 900; font-size: 1.02em; color: rgba(160, 31, 36, 0.85);">W</span><span style="font-family: 'stencil-std', sans-serif; font-weight: 400; font-size: 0.94em; color: #a87835;">E</span></div>
+                    <div class="display-font" style="font-size: clamp(200px, 26vw, 400px); color: rgba(160, 31, 36, 0.85);"><span style="font-family: 'octin-stencil', sans-serif; font-weight: 900; font-size: 1.02em; color: rgba(160, 31, 36, 0.85);">W</span><span style="font-family: 'stencil-std', sans-serif; font-weight: 400; font-size: 0.94em; color: #a87835;">E</span></div>
                     <p style="position: absolute; top: 50%; left: 0; transform: translateY(-50%); font-family: 'dalliance-script-display', cursive; font-size: clamp(56px, 7vw, 116px); color: rgba(250, 243, 141, 0.92); line-height: 1.3; pointer-events: none; white-space: nowrap;">Warren Eakins</p>
                 </div>
                 
@@ -517,9 +525,9 @@
                 </div>
             </article>
 
-            <footer class="mt-24 pt-12 border-t border-white/10">
-                <p class="font-mono text-[11px] text-white/20 tracking-widest uppercase">© 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.</p>
-            </footer>
+            <div class="copyright-tag">
+                © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
+            </div>
         </div>
     </main>
 
@@ -555,3 +563,4 @@
 <script src="../nav-name-reveal.js"></script>
 </body>
 </html>
+>

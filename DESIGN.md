@@ -10,7 +10,7 @@ Pre-med precision meets poetic instinct. Cinematic, Brutalist, Minimal, Sophisti
 - **Grey:** `#666666` (Muted UI for high-contrast scenarios)
 
 ## 3. Typography
-- **Display:** "Brothers" (900/Black) — Used for high-impact headlines and project titles.
+- **Display:** "Griffith Gothic Condensed" (900/Black) — Used for high-impact headlines and project titles.
 - **Primary:** "Freight Sans Pro" (300/Light, 400/Regular) — Used for body, nav, and CV data.
 - **Mono:** "Courier New" — Used for UI controls, counters, and technical data.
 
@@ -27,7 +27,7 @@ Pre-med precision meets poetic instinct. Cinematic, Brutalist, Minimal, Sophisti
 **IMPORTANT:** Always use these specific tokens when generating pages:
 - Background: `#050505`
 - Accent: `#D26446`
-- Header Font: "Brothers", sans-serif (900)
+- Header Font: "Griffith Gothic Condensed", sans-serif (900)
 - Body Font: "freight-sans-pro", sans-serif (300/400)
 - UI Font: "Courier New", monospace
 - Navigation: 11px uppercase, 1.5px letter-spacing
