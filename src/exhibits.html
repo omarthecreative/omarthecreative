@@ -110,16 +110,6 @@
             z-index: 10000;
         }
 
-        /* Nav Standards - Sync with Landing */
-        @media (orientation: landscape) and (max-width: 1366px) {
-            .nav-name { top: 3.5rem; left: 3.5rem; font-size: 1.2rem; }
-            .menu-trigger { top: 3.5rem; right: 3.5rem; font-size: 0.55rem; }
-        }
-        @media (orientation: landscape) and (max-height: 600px) {
-            .nav-name { top: 1.5rem; left: 2.5rem; font-size: 1rem; }
-            .menu-trigger { top: 1.5rem; right: 2.5rem; }
-        }
-
         .name-suffix { display: none; }
         .name-unlocked .name-last, .name-unlocked .name-space { display: none; }
         .name-unlocked .name-suffix { display: inline; }
@@ -332,12 +322,38 @@
             .exhibits-grid { gap: 0.5rem; }
             .exhibits-watermark { font-size: 45vw; }
             .nav-name { top: 3rem; left: 3rem; font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
-            .menu-trigger { top: 3rem; right: 3rem; font-size: 0.7rem; }
+            .menu-trigger { top: 3rem; right: 3rem; font-size: 0.55rem; letter-spacing: 0.2em; }
+            .corner-frame { top: 1.5rem; left: 1rem; right: 1rem; bottom: 1.5rem; }
+            .hud-tag { font-size: 0.45rem; opacity: 0.5; letter-spacing: 0.05em; }
+            .hud-tl { top: 0.3rem; left: 1rem; }
+            .hud-tr { top: 0.3rem; right: 1rem; }
+            .hud-bl { bottom: 0.3rem; left: 1rem; }
+            .hud-br { bottom: 0.3rem; right: 1rem; }
+            .copyright-tag { bottom: 0.3rem !important; }
         }
 
         @media (max-width: 480px) {
             .nav-name { font-size: 0.8rem; }
-            .menu-trigger { font-size: 0.65rem; }
+            .menu-trigger { font-size: 0.5rem; }
+        }
+
+        /* Nav Standards - Sync with Landing */
+        @media (orientation: landscape) and (max-width: 1366px) {
+            .nav-name { top: 3.5rem; left: 3.5rem; font-size: 1.2rem; }
+            .menu-trigger { top: 3.5rem; right: 3.5rem; font-size: 0.7rem; }
+        }
+        @media (orientation: landscape) and (max-height: 600px) {
+            .nav-name { top: 3rem; left: 2.5rem; font-size: 1rem; }
+            .menu-trigger { top: 3rem; right: 2.5rem; font-size: 0.6rem; letter-spacing: 0.2em; }
+            .corner-frame { top: 1.5rem; left: 1.5rem; right: 1.5rem; bottom: 1.5rem; }
+            .exhibits-container { padding: 1.5rem; }
+            .exhibits-grid { gap: 0.5rem; }
+            .hud-tag { font-size: 0.4rem; }
+            .hud-tl { top: 0.8rem; }
+            .hud-tr { top: 0.8rem; }
+            .hud-bl { bottom: 0.8rem; }
+            .hud-br { bottom: 0.8rem; }
+            #lut-toggle.unlocked { top: 0.75rem; }
         }
     </style>
 </head>

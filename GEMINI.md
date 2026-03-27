@@ -1,8 +1,19 @@
 # GEMINI.md — Project Context for Omar, the Creative
 
 ## Project Status
-- **Last Updated:** March 24, 2026
-- **Current Task:** iOS Safari sound regression fixed (March 24 Session 2). Resume/cover letter redesign next.
+- **Last Updated:** March 27, 2026
+- **Current Task:** Display heading color refined (#bb0006). Exhibits peek behavior complete. Resume/cover letter redesign next.
+
+## Progress Log (March 27, 2026) — Display Color Pass
+
+### Display Heading Color — `#FF0015` → `#bb0006`
+- LOOP-approved color change. `#bb0006` is restrained authority; `#FF0015` was electric alarm.
+- **Files changed:** `src/index.html` (`.title`), `src/info.html` (`.info-hero .title`), `src/choice-cuts.css` (`.lesson-row:hover .lesson-text`), `src/long-pour.css` (post title hover gradient), `src/exhibits.html` (`.exhibit-brand`).
+- **Do NOT change:** `--vibrant-red-hud: #FF0015` — still governs HUD corners, frames, mono tags, nav hover states. The variable definition stays at `#FF0015`.
+- **AA compliance:** `#bb0006` = 3.02:1 contrast on `#050505` — clears large-text AA. Not suitable for small body text.
+
+### Gemini Brief Protocol — Critical Reminder
+When given a targeted color brief, read each hit in context before changing. The March 27 brief explicitly listed elements to skip (corners, HUD tags, nav hover, `.lesson-number`, Neonderthaw neon). Future briefs will follow the same format.
 
 ## Progress Log (March 14, 2026)
 - **Site-wide Rebranding & Hierarchy:**
