@@ -379,9 +379,8 @@
                 if (played) return;
                 played = true;
                 btn.textContent = '🫡';
-                var audio = new Audio('assets/sound-effects/star-spangled-banner.mp3');
-                audio.volume = 0.7;
-                audio.play().catch(function (e) { console.error('[ANTHEM]', e); played = false; });
+                ApexSound.init();
+                ApexSound.play('anthem', 0.7);
             });
         })();
     </script>
