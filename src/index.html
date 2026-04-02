@@ -75,7 +75,8 @@
 
         body { background: #000; margin: 0; padding: 0; overflow: auto; overscroll-behavior: none; }
         body.locked { overflow: hidden; }
-        #scroll-stage { position: relative; }
+        /* scroll-stage is an empty height-provider — main is fixed above it */
+        #scroll-stage { display: block; }
         #page-fade {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; opacity: 0; pointer-events: none;
@@ -83,14 +84,14 @@
         }
         #page-fade.active { opacity: 1; pointer-events: all; }
         .portal-wrapper {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
             height: 100vh;
-            position: sticky;
-            top: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            position: relative;
             cursor: pointer;
             overflow: hidden;
             background: transparent;
@@ -667,31 +668,32 @@
 
     <div id="page-fade"></div>
 
-    <div id="scroll-stage">
+    <!-- Scroll height driver — main is position:fixed above this -->
+    <div id="scroll-stage"></div>
+
     <main class="portal-wrapper" id="portal">
         <a href="info.html" class="info-link">[ INFO ]</a>
-        
+
         <a href="index.html" class="header-name">
             OMAR<span id="name-space"> </span><span id="name-last">SILWANY</span><span id="name-suffix">, THE CREATIVE</span>
         </a>
-        
+
         <div class="project-display" id="project-display">
             <div class="subtitle" id="project-subtitle">Ideas. Into Copy. Into Scripts.<br>Into <span class="rotating-wrap"><span id="rotating-word">Films</span><span class="type-cursor" id="type-cursor">|</span></span>. Into Campaigns.</div>
             <h1 class="title" id="project-title" style="opacity:0">BROUHAHAHA.</h1>
         </div>
-        
+
         <div class="action-group" id="action-group">
             <button class="btn" id="watch-btn">[ WATCH ]</button>
             <button class="btn" id="intel-btn">[ LEARN ]</button>
         </div>
-        
+
         <div class="footer-metadata">
             <a href="long-pour.html">[ LONG POUR ]</a>
             <a href="exhibits.html" id="exhibits-link">[ EXHIBITS ]</a>
             <a href="choice-cuts.html">[ CHOICE CUTS ]</a>
         </div>
     </main>
-    </div><!-- /#scroll-stage -->
 
     <div class="copyright-tag fixed">
         © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
@@ -1753,7 +1755,7 @@
                     document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
                     actionGroup.classList.remove('visible');
                     document.body.classList.remove('locked');
-                    // Restore scroll-position word
+                    window.scrollTo(0, 0);
                     fitLockup(currentDisplayTitle || SCROLL_SEQUENCE[0]);
                     subtitleCycle.resume();
                 }
