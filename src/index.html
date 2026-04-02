@@ -120,20 +120,6 @@
             white-space: nowrap;
         }
 
-        /* HIGH-IMPACT VIBRATION */
-        @keyframes vibrate-heavy {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
-        }
-
-        .animate-vibrate {
-            animation: vibrate-heavy 0.15s infinite ease-in-out;
-        }
-
         .subtitle {
             font-family: 'lust-stencil-display', var(--serif);
             font-style: italic;
@@ -677,7 +663,7 @@
         
         <div class="project-display" id="project-display">
             <div class="subtitle" id="project-subtitle">Ideas. Into Copy. Into Scripts.<br>Into <span class="rotating-wrap"><span id="rotating-word">Films</span><span class="type-cursor" id="type-cursor">|</span></span>. Into Campaigns.</div>
-            <h1 class="title animate-vibrate" id="project-title" style="opacity:0">BROUHAHAHA.</h1>
+            <h1 class="title" id="project-title" style="opacity:0">BROUHAHAHA.</h1>
         </div>
         
         <div class="action-group" id="action-group">
@@ -1277,8 +1263,6 @@
         }
 
         function applyPictureLock() {
-            const title = document.getElementById('project-title');
-            title.classList.remove('animate-vibrate');
             document.getElementById('lut-toggle').textContent = '[ STATUS: LOCKED ]';
             document.getElementById('lut-toggle').style.color = '#FFFFFF';
         }
@@ -2054,6 +2038,32 @@
                 }, 300);
             }
         });
+
+        // Cursor-reactive hero word
+        (function() {
+            const title = document.getElementById('project-title');
+            let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                const rect = title.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                targetX = (e.clientX - cx) / 35;
+                targetY = (e.clientY - cy) / 35;
+            });
+
+            document.addEventListener('mouseleave', () => {
+                targetX = 0;
+                targetY = 0;
+            });
+
+            (function loop() {
+                currentX += (targetX - currentX) * 0.08;
+                currentY += (targetY - currentY) * 0.08;
+                title.style.transform = `translate(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px)`;
+                requestAnimationFrame(loop);
+            })();
+        })();
     </script>
 </body>
 </html>

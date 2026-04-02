@@ -181,29 +181,6 @@
             opacity: 0.9;
         }
 
-        /* HIGH-IMPACT VIBRATION */
-        @keyframes vibrate-heavy {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
-        }
-
-        /* CALIBRATED MOBILE VIBRATION */
-        @keyframes vibrate-mobile {
-            0% { transform: translate(0); }
-            20% { transform: translate(-1px, 1px); }
-            40% { transform: translate(-1px, -1px); }
-            60% { transform: translate(1px, 1px); }
-            80% { transform: translate(1px, -1px); }
-            100% { transform: translate(0); }
-        }
-
-        .animate-vibrate {
-            animation: vibrate-heavy 0.15s infinite ease-in-out;
-        }
 
         /* BIO SECTION */
         .bio-section {
@@ -422,9 +399,6 @@
             .container { padding: 4rem 4rem; }
             .menu-close { top: 2rem; right: 2rem; }
             .menu-link { font-size: 15vw; line-height: 0.65; letter-spacing: -0.07em; }
-            .animate-vibrate {
-                animation: vibrate-mobile 0.15s infinite ease-in-out;
-            }
             .bio-section, .dossier { grid-template-columns: 1fr; }
         }
 
@@ -497,14 +471,9 @@
                 infoTitle.addEventListener('click', () => {
                     const email = 'info@omarsilwany.com';
                     
-                    // Visual feedback for click: Pause vibration and scale down
-                    infoTitle.classList.remove('animate-vibrate');
+                    // Visual feedback for click
                     infoTitle.style.transform = 'scale(0.95)';
-                    
-                    setTimeout(() => {
-                        infoTitle.style.transform = '';
-                        infoTitle.classList.add('animate-vibrate');
-                    }, 150);
+                    setTimeout(() => { infoTitle.style.transform = ''; }, 150);
 
                     const showToast = () => {
                         hudToast.textContent = `[ ${email} copied to clipboard ]`;
@@ -573,7 +542,7 @@
     </nav>
 
     <div class="info-hero">
-        <h1 class="title animate-vibrate">OMAR SILWANY</h1>
+        <h1 class="title" id="info-title">OMAR SILWANY</h1>
     </div>
 
     <div class="container">
@@ -668,6 +637,33 @@
         // click fires after touchend on iOS — init() + startLoop() in same gesture ✓
         infoTitle.addEventListener('click', startWhistle);
     }
+})();
+
+// Cursor-reactive hero title
+(function() {
+    const title = document.getElementById('info-title');
+    if (!title) return;
+    let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+        const rect = title.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        targetX = (e.clientX - cx) / 35;
+        targetY = (e.clientY - cy) / 35;
+    });
+
+    document.addEventListener('mouseleave', () => {
+        targetX = 0;
+        targetY = 0;
+    });
+
+    (function loop() {
+        currentX += (targetX - currentX) * 0.08;
+        currentY += (targetY - currentY) * 0.08;
+        title.style.transform = `translate(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px)`;
+        requestAnimationFrame(loop);
+    })();
 })();
 </script>
 </body>
