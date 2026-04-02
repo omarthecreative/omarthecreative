@@ -22,6 +22,24 @@
     overflow: hidden;
 }
 
+#intel-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.92);
+    z-index: 3000;
+    display: none;
+    flex-direction: column;
+}
+
+#script-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #000;
+    z-index: 3500;
+    display: none;
+    flex-direction: column;
+}
+
 /* Caption mask — covers burned-in CC on Citi video (lower 25%).
    Portrait only — hidden on desktop and all landscape orientations. */
 #cc-bar {
