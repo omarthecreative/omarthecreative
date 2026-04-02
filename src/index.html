@@ -73,9 +73,19 @@
             opacity: 1 !important;
         }
 
-        body { background: #000; margin: 0; padding: 0; overflow: hidden; }
+        body { background: #000; margin: 0; padding: 0; overflow: auto; overscroll-behavior: none; }
+        body.locked { overflow: hidden; }
+        #scroll-stage { position: relative; }
+        #page-fade {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; opacity: 0; pointer-events: none;
+            z-index: 9999; transition: opacity 0.8s ease;
+        }
+        #page-fade.active { opacity: 1; pointer-events: all; }
         .portal-wrapper {
             height: 100vh;
+            position: sticky;
+            top: 0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -650,10 +660,14 @@
     </div>
 
     <div class="bg-container" id="bg-container">
-        <!-- Initial Mood Background -->
-        <div class="project-bg active" id="initial-bg" style="opacity: 0; transition: opacity 0.3s ease;"></div>
+        <!-- Initial Mood Backgrounds — two layers for crossfade -->
+        <div class="project-bg" id="initial-bg"   style="opacity: 0; transition: opacity 0.4s ease;"></div>
+        <div class="project-bg" id="initial-bg-b" style="opacity: 0; transition: opacity 0.4s ease;"></div>
     </div>
 
+    <div id="page-fade"></div>
+
+    <div id="scroll-stage">
     <main class="portal-wrapper" id="portal">
         <a href="info.html" class="info-link">[ INFO ]</a>
         
@@ -677,6 +691,7 @@
             <a href="choice-cuts.html">[ CHOICE CUTS ]</a>
         </div>
     </main>
+    </div><!-- /#scroll-stage -->
 
     <div class="copyright-tag fixed">
         © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
@@ -1353,15 +1368,7 @@
                 return;
             }
 
-            // Landing Page Randomizer Logic
-            if (e.isTrusted) {
-                ApexSound.init();
-                ApexSound.play('shutter');
-            }
-
-            const word = nextHeadlineWord();
-            setHeadlineBackground(word);
-            fitLockup(word);
+            // Landing — clicks do nothing; scroll drives the sequence
         });
 
         let vimeoPlayer = null;
@@ -1744,13 +1751,10 @@
                     isProjectState = false;
                     document.body.classList.remove('project-view');
                     document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
-                    const initialBg = document.getElementById('initial-bg');
-                    if (initialBg) {
-                        initialBg.style.display = 'block';
-                        setTimeout(() => initialBg.classList.add('active'), 10);
-                    }
                     actionGroup.classList.remove('visible');
-                    fitLockup(nextHeadlineWord());
+                    document.body.classList.remove('locked');
+                    // Restore scroll-position word
+                    fitLockup(currentDisplayTitle || SCROLL_SEQUENCE[0]);
                     subtitleCycle.resume();
                 }
             }
@@ -1826,10 +1830,10 @@
 
         subtitleCycle.start();
 
-        // — HEADLINE WORD — one word per visit/return, no in-page animation
-        const HEADLINE_WORDS = ['BROUHAHAHA.', 'HULLABAWHO.', 'PANDEMONEYUM.', 'RAZZZMATAZZZ.', 'FUNISSIMO.'];
+        // — SCROLL SEQUENCE — fixed arc, rotating entry point, HULLABAWHO always terminus
+        const SCROLL_SEQUENCE = ['BROUHAHAHA.', 'FUNISSIMO.', 'RAZZZMATAZZZ.', 'PANDEMONEYUM.', 'HULLABAWHO.'];
 
-        // Per-word background images — each visit loads a different world
+        // Per-word background images
         const HEADLINE_BACKGROUNDS = {
             'BROUHAHAHA.': {
                 img: 'assets/crowd-surf-bg.jpg',
@@ -1878,36 +1882,46 @@
 
         const projectDisplay = document.getElementById('project-display');
 
-        function nextHeadlineWord() {
-            const last = parseInt(localStorage.getItem('omar_headline_idx') || '-1');
-            let idx;
-            do {
-                idx = Math.floor(Math.random() * HEADLINE_WORDS.length);
-            } while (idx === last && HEADLINE_WORDS.length > 1);
-            localStorage.setItem('omar_headline_idx', idx);
-            return HEADLINE_WORDS[idx];
+        // Preload all background images
+        Object.values(HEADLINE_BACKGROUNDS).forEach(bg => { new Image().src = bg.img; });
+
+        // Rotating entry: cycles 0–3, HULLABAWHO (idx 4) is never a start
+        function getActiveWords() {
+            const entryIdx = parseInt(localStorage.getItem('omar_entry_idx') || '0') % 4;
+            localStorage.setItem('omar_entry_idx', (entryIdx + 1) % 4);
+            return SCROLL_SEQUENCE.slice(entryIdx);
         }
 
-        function setHeadlineBackground(word) {
-            const bg = HEADLINE_BACKGROUNDS[word];
-            if (!bg) return;
-            const el = document.getElementById('initial-bg');
-            if (!el) return;
+        // Two-layer crossfade
+        let activeBgId = 'initial-bg';
+        function applyBgProps(el, bg) {
             const w = window.innerWidth;
             const isMobile = w <= 480;
             const isTablet = w > 480 && w <= 1366;
             el.style.backgroundImage = `url('${bg.img}')`;
-            if (isMobile) {
-                el.style.backgroundSize = bg.mobileSize;
-                el.style.backgroundPosition = bg.mobilePosition;
-            } else if (isTablet && bg.tabletSize) {
-                el.style.backgroundSize = bg.tabletSize;
-                el.style.backgroundPosition = bg.tabletPosition;
-            } else {
-                el.style.backgroundSize = bg.size;
-                el.style.backgroundPosition = bg.position;
-            }
+            el.style.backgroundSize  = isMobile ? bg.mobileSize : (isTablet && bg.tabletSize ? bg.tabletSize : bg.size);
+            el.style.backgroundPosition = isMobile ? bg.mobilePosition : (isTablet && bg.tabletPosition ? bg.tabletPosition : bg.position);
+        }
+
+        function setHeadlineBackground(word) {
+            // Initial load — set layer A directly, no crossfade
+            const bg = HEADLINE_BACKGROUNDS[word];
+            if (!bg) return;
+            const el = document.getElementById('initial-bg');
+            applyBgProps(el, bg);
             el.style.opacity = '0.44';
+            activeBgId = 'initial-bg';
+        }
+
+        function crossfadeToWord(word) {
+            const bg = HEADLINE_BACKGROUNDS[word];
+            if (!bg) return;
+            const incoming = document.getElementById(activeBgId === 'initial-bg' ? 'initial-bg-b' : 'initial-bg');
+            const outgoing = document.getElementById(activeBgId);
+            applyBgProps(incoming, bg);
+            incoming.style.opacity = '0.44';
+            outgoing.style.opacity = '0';
+            activeBgId = incoming.id;
         }
 
         let currentDisplayTitle = '';
@@ -1971,7 +1985,8 @@
                 const p = projects[currentIndex];
                 isProjectState = true;
                 document.body.classList.add('project-view');
-                
+                document.body.classList.add('locked');
+
                 subtitleCycle.pause();
                 subtitleEl.textContent = p.subtitle;
                 fitLockup(p.title, p.letterSpacing);
@@ -1987,20 +2002,79 @@
                 // Final reveal: everything is set, show the portal
                 document.documentElement.classList.add('ready');
             } else {
-                // Default 'Brouhahaha' flow
-                const word = nextHeadlineWord();
-                setHeadlineBackground(word);
-                fitLockup(word);
-                // Even for landing, ensure ready class is added if jumped was somehow applied
+                // Scroll-driven landing sequence
+                const activeWords = getActiveWords();
+                let scrollWordIdx = 0;
+                let exhibitsTimer = null;
+
+                // Build scroll stage height
+                const scrollStage = document.getElementById('scroll-stage');
+                scrollStage.style.height = (activeWords.length * 100) + 'vh';
+
+                // Show first word
+                setHeadlineBackground(activeWords[0]);
+                fitLockup(activeWords[0]);
                 document.documentElement.classList.add('ready');
+
+                function crossfadeToExhibits() {
+                    if (exhibitsTimer) return;
+                    exhibitsTimer = setTimeout(() => {
+                        const fade = document.getElementById('page-fade');
+                        fade.classList.add('active');
+                        setTimeout(() => { window.location.href = 'exhibits.html'; }, 800);
+                    }, 1500);
+                }
+
+                function cancelExhibitsTransition() {
+                    if (exhibitsTimer) { clearTimeout(exhibitsTimer); exhibitsTimer = null; }
+                    const fade = document.getElementById('page-fade');
+                    fade.classList.remove('active');
+                }
+
+                function onScrollDrive() {
+                    if (currentIndex !== -1) return; // carousel active — ignore
+                    const scrollTop = window.scrollY;
+                    const scrollable = scrollStage.offsetHeight - window.innerHeight;
+                    if (scrollable <= 0) return;
+                    const progress = Math.min(scrollTop / scrollable, 1);
+                    const newIdx = Math.min(Math.floor(progress * activeWords.length), activeWords.length - 1);
+
+                    if (newIdx !== scrollWordIdx) {
+                        scrollWordIdx = newIdx;
+                        // Hard cut title
+                        fitLockup(activeWords[newIdx]);
+                        // Dissolve background
+                        crossfadeToWord(activeWords[newIdx]);
+                        // Shutter
+                        if (typeof ApexSound !== 'undefined') {
+                            ApexSound.init();
+                            ApexSound.play('shutter', 0.5);
+                        }
+                        // HULLABAWHO — schedule EXHIBITS
+                        if (activeWords[newIdx] === 'HULLABAWHO.') {
+                            crossfadeToExhibits();
+                        } else {
+                            cancelExhibitsTransition();
+                        }
+                    }
+                }
+
+                window.addEventListener('scroll', onScrollDrive, { passive: true });
+
+                // Cancel EXHIBITS if user clicks footer nav
+                document.querySelector('.footer-metadata').addEventListener('click', cancelExhibitsTransition);
             }
         });
 
-        // Re-run on rotation — portrait guard sets inline fontSize which
-        // survives orientation change and overrides CSS media queries
+        // Re-run on rotation
         window.addEventListener('resize', () => {
             if (currentDisplayTitle) {
-                setHeadlineBackground(currentDisplayTitle);
+                // Refresh active BG layer sizing without crossfade
+                const bg = HEADLINE_BACKGROUNDS[currentDisplayTitle];
+                if (bg) {
+                    const el = document.getElementById(activeBgId);
+                    if (el) applyBgProps(el, bg);
+                }
                 fitLockup(currentDisplayTitle, currentDisplaySpacing);
             }
         });
