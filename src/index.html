@@ -115,7 +115,6 @@
             text-transform: uppercase;
             color: #bb0006;
             letter-spacing: -0.04em;
-            text-shadow: 0 0 20px var(--glow);
             text-align: left;
             min-height: 0.8em;
             white-space: nowrap;
@@ -123,12 +122,12 @@
 
         /* HIGH-IMPACT VIBRATION */
         @keyframes vibrate-heavy {
-            0% { transform: translate(0); text-shadow: 0 0 10px var(--glow); }
-            20% { transform: translate(-2px, 2px); text-shadow: 4px 0 15px var(--vibrant-red-hud); }
-            40% { transform: translate(-2px, -2px); text-shadow: -4px 0 20px var(--vibrant-red-hud); }
-            60% { transform: translate(2px, 2px); text-shadow: 0 4px 15px var(--vibrant-red-hud); }
-            80% { transform: translate(2px, -2px); text-shadow: 0 -4px 20px var(--vibrant-red-hud); }
-            100% { transform: translate(0); text-shadow: 0 0 10px var(--glow); }
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
         }
 
         .animate-vibrate {
