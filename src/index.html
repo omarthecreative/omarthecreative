@@ -1943,9 +1943,8 @@
         function fitLockup(word, spacing) {
             currentDisplayTitle = word;
             currentDisplaySpacing = spacing || '';
-            
+
             titleEl.textContent = word;
-            titleEl.style.opacity = '1';
             titleEl.style.letterSpacing = currentDisplaySpacing;
 
             // Portrait (mobile + tablet): measure and scale to fit within frame + breathing room
@@ -1960,6 +1959,7 @@
                 titleEl.style.fontSize = probeWidth > availableWidth
                     ? (18 * availableWidth / probeWidth).toFixed(2) + 'vw'
                     : '18vw';
+                titleEl.style.opacity = '1';
                 projectDisplay.style.width = '';
                 return;
             }
@@ -1967,10 +1967,11 @@
             // probe measurement would set wrong container width, skip it
             if (window.innerHeight <= 600 && window.innerWidth > window.innerHeight) {
                 titleEl.style.fontSize = '';
+                titleEl.style.opacity = '1';
                 projectDisplay.style.width = '';
                 return;
             }
-            
+
             // Measure title width
             const titleProbe = document.createElement('span');
             titleProbe.style.cssText = `position:absolute;visibility:hidden;font-family:griffith-gothic-condensed,sans-serif;font-weight:900;font-size:15vw;letter-spacing:${currentDisplaySpacing || '-0.04em'};text-transform:uppercase;white-space:nowrap;`;
@@ -1992,6 +1993,7 @@
                 document.body.removeChild(subProbe);
                 projectDisplay.style.width = Math.max(titleWidth, subWidth) + 'px';
             }
+            titleEl.style.opacity = '1';
         }
 
         document.fonts.ready.then(() => {
