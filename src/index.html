@@ -1853,7 +1853,9 @@
                 tabletSize: '120%',
                 tabletPosition: 'center 100%',
                 mobileSize: 'auto 150%',
-                mobilePosition: 'center 15%'
+                mobilePosition: 'center 15%',
+                opacity: '0.72',
+                filter: 'contrast(1.2) brightness(0.7)'
             },
             'PANDEMONEYUM.': {
                 img: 'assets/pandemoneyum-bg-comp.jpg',
@@ -1903,6 +1905,7 @@
             el.style.backgroundImage = `url('${bg.img}')`;
             el.style.backgroundSize  = isMobile ? bg.mobileSize : (isTablet && bg.tabletSize ? bg.tabletSize : bg.size);
             el.style.backgroundPosition = isMobile ? bg.mobilePosition : (isTablet && bg.tabletPosition ? bg.tabletPosition : bg.position);
+            el.style.filter = bg.filter || 'contrast(1.2) brightness(0.4)';
         }
 
         function setHeadlineBackground(word) {
@@ -1911,7 +1914,7 @@
             if (!bg) return;
             const el = document.getElementById('initial-bg');
             applyBgProps(el, bg);
-            el.style.opacity = '0.44';
+            el.style.opacity = bg.opacity || '0.44';
             activeBgId = 'initial-bg';
         }
 
@@ -1927,7 +1930,7 @@
             // Double rAF: first frame paints opacity:0, second triggers the CSS transition
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
-                    incoming.style.opacity = '0.44';
+                    incoming.style.opacity = bg.opacity || '0.44';
                     outgoing.style.opacity = '0';
                 });
             });
