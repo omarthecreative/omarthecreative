@@ -1918,12 +1918,20 @@
         function crossfadeToWord(word) {
             const bg = HEADLINE_BACKGROUNDS[word];
             if (!bg) return;
-            const incoming = document.getElementById(activeBgId === 'initial-bg' ? 'initial-bg-b' : 'initial-bg');
+            const incomingId = activeBgId === 'initial-bg' ? 'initial-bg-b' : 'initial-bg';
+            const incoming = document.getElementById(incomingId);
             const outgoing = document.getElementById(activeBgId);
+            // Pin opacity to 0 before painting the new image
+            incoming.style.opacity = '0';
             applyBgProps(incoming, bg);
-            incoming.style.opacity = '0.44';
-            outgoing.style.opacity = '0';
-            activeBgId = incoming.id;
+            // Double rAF: first frame paints opacity:0, second triggers the CSS transition
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    incoming.style.opacity = '0.44';
+                    outgoing.style.opacity = '0';
+                });
+            });
+            activeBgId = incomingId;
         }
 
         let currentDisplayTitle = '';
@@ -2011,7 +2019,7 @@
 
                 // Build scroll stage height
                 const scrollStage = document.getElementById('scroll-stage');
-                scrollStage.style.height = (activeWords.length * 100) + 'vh';
+                scrollStage.style.height = (activeWords.length * 70) + 'vh';
 
                 // Show first word
                 setHeadlineBackground(activeWords[0]);
@@ -2049,7 +2057,6 @@
                         crossfadeToWord(activeWords[newIdx]);
                         // Shutter
                         if (typeof ApexSound !== 'undefined') {
-                            ApexSound.init();
                             ApexSound.play('shutter', 0.5);
                         }
                         // HULLABAWHO — schedule EXHIBITS
@@ -2060,6 +2067,17 @@
                         }
                     }
                 }
+
+                // Prime AudioContext on first genuine gesture so shutter fires on scroll
+                const _primeAudio = () => {
+                    if (typeof ApexSound !== 'undefined') ApexSound.init();
+                    document.removeEventListener('mousedown', _primeAudio);
+                    document.removeEventListener('touchstart', _primeAudio);
+                    document.removeEventListener('keydown', _primeAudio);
+                };
+                document.addEventListener('mousedown', _primeAudio);
+                document.addEventListener('touchstart', _primeAudio, { passive: true });
+                document.addEventListener('keydown', _primeAudio);
 
                 window.addEventListener('scroll', onScrollDrive, { passive: true });
 
