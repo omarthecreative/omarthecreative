@@ -2044,6 +2044,21 @@
                     fade.classList.remove('active');
                 }
 
+                function goToWord(idx) {
+                    if (idx === scrollWordIdx || idx < 0 || idx >= activeWords.length) return;
+                    scrollWordIdx = idx;
+                    fitLockup(activeWords[idx]);
+                    crossfadeToWord(activeWords[idx]);
+                    if (typeof ApexSound !== 'undefined') {
+                        ApexSound.play('shutter', 0.5);
+                    }
+                    if (activeWords[idx] === 'HULLABAWHO.') {
+                        crossfadeToExhibits();
+                    } else {
+                        cancelExhibitsTransition();
+                    }
+                }
+
                 function onScrollDrive() {
                     if (currentIndex !== -1) return; // carousel active — ignore
                     const scrollTop = window.scrollY;
@@ -2051,25 +2066,23 @@
                     if (scrollable <= 0) return;
                     const progress = Math.min(scrollTop / scrollable, 1);
                     const newIdx = Math.min(Math.floor(progress * activeWords.length), activeWords.length - 1);
-
-                    if (newIdx !== scrollWordIdx) {
-                        scrollWordIdx = newIdx;
-                        // Hard cut title
-                        fitLockup(activeWords[newIdx]);
-                        // Dissolve background
-                        crossfadeToWord(activeWords[newIdx]);
-                        // Shutter
-                        if (typeof ApexSound !== 'undefined') {
-                            ApexSound.play('shutter', 0.5);
-                        }
-                        // HULLABAWHO — schedule EXHIBITS
-                        if (activeWords[newIdx] === 'HULLABAWHO.') {
-                            crossfadeToExhibits();
-                        } else {
-                            cancelExhibitsTransition();
-                        }
-                    }
+                    goToWord(newIdx);
                 }
+
+                document.addEventListener('keydown', function(e) {
+                    if (currentIndex !== -1) return; // carousel active — ignore
+                    let nextIdx = null;
+                    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                        nextIdx = Math.min(scrollWordIdx + 1, activeWords.length - 1);
+                    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                        nextIdx = Math.max(scrollWordIdx - 1, 0);
+                    }
+                    if (nextIdx === null || nextIdx === scrollWordIdx) return;
+                    goToWord(nextIdx);
+                    // Sync scroll position so subsequent scroll picks up correctly
+                    const scrollable = scrollStage.offsetHeight - window.innerHeight;
+                    window.scrollTo({ top: (nextIdx / activeWords.length + 0.01) * scrollable, behavior: 'instant' });
+                });
 
                 // Prime AudioContext on first genuine gesture so shutter fires on scroll
                 const _primeAudio = () => {
