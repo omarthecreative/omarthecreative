@@ -1948,13 +1948,18 @@
             titleEl.style.opacity = '1';
             titleEl.style.letterSpacing = currentDisplaySpacing;
 
-            // Portrait (mobile + tablet): skip width constraint, scale down long words
+            // Portrait (mobile + tablet): measure and scale to fit within frame + breathing room
             if (window.innerWidth <= 1024 && window.innerHeight > window.innerWidth) {
-                if (word.length >= 12) {
-                    titleEl.style.fontSize = window.innerWidth <= 768 ? '15vw' : '14vw';
-                } else {
-                    titleEl.style.fontSize = '';
-                }
+                const availableWidth = window.innerWidth - 48; // 1rem frame + ~0.5rem breathing each side
+                const probe = document.createElement('span');
+                probe.style.cssText = `position:absolute;visibility:hidden;font-family:griffith-gothic-condensed,sans-serif;font-weight:900;font-size:18vw;letter-spacing:${currentDisplaySpacing || '-0.04em'};text-transform:uppercase;white-space:nowrap;`;
+                probe.textContent = word;
+                document.body.appendChild(probe);
+                const probeWidth = probe.offsetWidth;
+                document.body.removeChild(probe);
+                titleEl.style.fontSize = probeWidth > availableWidth
+                    ? (18 * availableWidth / probeWidth).toFixed(2) + 'vw'
+                    : '18vw';
                 projectDisplay.style.width = '';
                 return;
             }
