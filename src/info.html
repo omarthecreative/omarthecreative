@@ -116,7 +116,6 @@
             filter: blur(0.5px);
             z-index: 10; /* Elevated to ensure clickability */
             position: relative;
-            text-shadow: 0 0 20px var(--glow);
             cursor: pointer;
             transition: transform 0.2s ease;
         }
@@ -184,22 +183,22 @@
 
         /* HIGH-IMPACT VIBRATION */
         @keyframes vibrate-heavy {
-            0% { transform: translate(0); text-shadow: 0 0 10px var(--glow); }
-            20% { transform: translate(-2px, 2px); text-shadow: 4px 0 15px var(--vibrant-red-hud); }
-            40% { transform: translate(-2px, -2px); text-shadow: -4px 0 20px var(--vibrant-red-hud); }
-            60% { transform: translate(2px, 2px); text-shadow: 0 4px 15px var(--vibrant-red-hud); }
-            80% { transform: translate(2px, -2px); text-shadow: 0 -4px 20px var(--vibrant-red-hud); }
-            100% { transform: translate(0); text-shadow: 0 0 10px var(--glow); }
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
         }
 
         /* CALIBRATED MOBILE VIBRATION */
         @keyframes vibrate-mobile {
-            0% { transform: translate(0); text-shadow: 0 0 5px var(--glow); }
-            20% { transform: translate(-1px, 1px); text-shadow: 2px 0 8px var(--vibrant-red-hud); }
-            40% { transform: translate(-1px, -1px); text-shadow: -2px 0 12px var(--vibrant-red-hud); }
-            60% { transform: translate(1px, 1px); text-shadow: 0 2px 8px var(--vibrant-red-hud); }
-            80% { transform: translate(1px, -1px); text-shadow: 0 -2px 12px var(--vibrant-red-hud); }
-            100% { transform: translate(0); text-shadow: 0 0 5px var(--glow); }
+            0% { transform: translate(0); }
+            20% { transform: translate(-1px, 1px); }
+            40% { transform: translate(-1px, -1px); }
+            60% { transform: translate(1px, 1px); }
+            80% { transform: translate(1px, -1px); }
+            100% { transform: translate(0); }
         }
 
         .animate-vibrate {
