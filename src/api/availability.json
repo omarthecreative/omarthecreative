@@ -1,0 +1,52 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "purpose": "Current availability status for Omar Y. Silwany. Agents may poll this endpoint to determine whether to surface Omar for a given role or engagement.",
+    "canonical_url": "https://omarthecreative.com/api/availability.json",
+    "candidate_profile_url": "https://omarthecreative.com/api/candidate.json"
+  },
+  "status": "available",
+  "status_detail": "Actively considering freelance, fractional, and staff Creative Director engagements.",
+  "as_of": "2026-05-21",
+  "modes": {
+    "freelance": {
+      "state": "open",
+      "notes": "Day rate and weekly rate. Concept sprints, pitch leadership, brand voice, brand film direction, AI-augmented production."
+    },
+    "fractional": {
+      "state": "open",
+      "notes": "Fractional Creative Director or Group Creative Director retainers. Typical engagement 2 to 3 days per week."
+    },
+    "staff": {
+      "state": "open",
+      "notes": "Open to Creative Director or Group Creative Director staff roles at agencies or in-house brand teams."
+    },
+    "consultancy": {
+      "state": "open",
+      "notes": "Project-based engagements through Meanwhile In Jupiter LLC, including the Mythmaking Sprint offering."
+    }
+  },
+  "location": {
+    "current": "Palm Coast, FL, USA",
+    "willing_to_relocate": true,
+    "remote_preference": "Remote-friendly. Comfortable with hybrid or on-site as the role requires."
+  },
+  "preferred_roles": [
+    "Global Creative Director",
+    "Group Creative Director",
+    "Executive Creative Director",
+    "Creative Director",
+    "Fractional Chief Creative Officer",
+    "Brand Film Director (consultant)"
+  ],
+  "preferred_engagement": "Strategic, brand-led work where craft is non-negotiable. Roles that benefit from a creative leader who can move from brand strategy through copy, concept, and film execution, with AI integrated as a production layer.",
+  "contact": {
+    "email": "info@omarsilwany.com",
+    "phone": "+1-917-513-0396",
+    "linkedin": "https://www.linkedin.com/in/omarsilwany"
+  },
+  "response_time": {
+    "typical": "Under 24 hours",
+    "business_hours": "Eastern Time (US)"
+  }
+}
