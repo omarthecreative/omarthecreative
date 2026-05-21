@@ -48,11 +48,11 @@
       },
       {
         "claim": "Demonstrable commercial impact at scale.",
-        "evidence": "Named Lipitor and Nexium. Architected Chase Sapphire verbal identity. Built 64 Days of Crayola, Crayola's most effective retail campaign. Drove $10M Google account growth at BBH. 50M+ impressions on My Brother's Keeper Alliance. 40M+ Instagram views on Project Rock."
+        "evidence": "Named Lipitor and Nexium. Architected Chase Sapphire verbal identity at McGarryBowen Dentsu. Conceived the 64 Days of Crayola at McGarryBowen Dentsu, Crayola's most effective retail campaign. Contributed to $10M Google account growth at BBH. 50M+ impressions on My Brother's Keeper Alliance (through Matter Unlimited). 100M+ Instagram views on Project Rock (through Seven Bucks Creative), every product sold out."
       },
       {
         "claim": "Production-grade AI filmmaking practice, not theoretical interest.",
-        "evidence": "Founder and CCO of Meanwhile In Jupiter LLC. $450K+ annual consultancy revenue, 95% client retention. Active stack: Claude 4.1 / Claude Code, ChatGPT 5.0, Cursor, Gemini Flash 2.5, Veo3, Sora, Runway, Midjourney, ElevenLabs, Firefly."
+        "evidence": "Founder and CCO of Meanwhile In Jupiter LLC. $450K+ annual consultancy revenue, 95% client retention. Active stack: Claude, Claude Code, ChatGPT, Cursor, Gemini, Veo, Sora, Runway, Midjourney, ElevenLabs, Firefly."
       },
       {
         "claim": "Award and press recognition across digital, experiential, and brand work.",
@@ -81,9 +81,9 @@
       "start": "2020",
       "end": "2021",
       "location": "New York, NY",
-      "type": "staff",
+      "type": "contract",
       "key_work": [
-        "Led work that drove $10M in Google account growth",
+        "Contributed to $10M in Google account growth",
         "Google brand and product campaigns"
       ]
     },
@@ -96,8 +96,8 @@
       "type": "founder",
       "key_work": [
         "Independent creative consultancy serving agencies and brands",
-        "Project Rock (Dwayne Johnson) — 40M+ Instagram views",
-        "My Brother's Keeper Alliance (Obama Foundation, Steph Curry, Chance the Rapper) — 50M+ social impressions"
+        "Project Rock for Under Armour through Seven Bucks Creative — 100M+ Instagram views, every product sold out",
+        "My Brother's Keeper Alliance (Obama Foundation, Steph Curry, Chance the Rapper) through Matter Unlimited — 50M+ social impressions, zero paid media"
       ]
     },
     {
@@ -148,13 +148,12 @@
     },
     {
       "company": "Interbrand",
-      "title": "Brand Consultant and Copywriter",
+      "title": "Naming Consultant and Brand Writer",
       "start": "2001",
       "end": "2003",
       "location": "New York, NY",
       "type": "staff",
       "key_work": [
-        "Architected Chase Sapphire verbal identity",
         "Brand voice and naming for IBM, SAP, ExxonMobil, Wells Fargo, Deloitte, Nissan, Diageo"
       ]
     },
@@ -255,12 +254,26 @@
         "project": "Google VR Window Wonderland"
       }
     ],
-    "press": [
-      "The New York Times",
-      "The Washington Post",
-      "AdWeek",
-      "Fast Company"
-    ]
+    "press": {
+      "The New York Times": ["Crayola 64 Days", "Glenfiddich 1963", "Guinness AMPLIFY"],
+      "The Washington Post": ["My Brother's Keeper Alliance"],
+      "AdWeek": ["Chase Sapphire", "My Brother's Keeper Alliance", "Google VR Window Wonderland"],
+      "Fast Company": ["Bentley Studio", "Google VR Window Wonderland"],
+      "PSFK": ["Bentley Studio"],
+      "Digital Trends": ["Bentley Studio"],
+      "BizBash": ["Bentley Studio"],
+      "Financial Times": ["Guinness AMPLIFY"],
+      "The Guardian": ["Guinness AMPLIFY"],
+      "Irish Times": ["Guinness AMPLIFY"],
+      "Irish Independent": ["Guinness AMPLIFY"],
+      "USA Today": ["My Brother's Keeper Alliance"],
+      "People": ["My Brother's Keeper Alliance"],
+      "Esquire": ["My Brother's Keeper Alliance"],
+      "Campaign US": ["My Brother's Keeper Alliance"],
+      "Mashable": ["Google VR Window Wonderland"],
+      "Associated Press": ["Chase Sapphire"],
+      "The Financial Brand": ["Chase Sapphire"]
+    }
   },
 
   "skills": {
@@ -310,7 +323,7 @@
     {
       "brand": "Google",
       "project": "VR Window Wonderland",
-      "role": "Creative lead",
+      "role": "Contributing Creative Director — named the experience and developed the tone of voice for the immersive world created by GROW",
       "year": "2017",
       "outcome": "Webby, FWA, Awwwards",
       "url": "https://omarthecreative.com/choice-cuts.html"
@@ -318,14 +331,14 @@
     {
       "brand": "Crayola",
       "project": "64 Days of Crayola",
-      "role": "Creative Director",
-      "outcome": "Most effective retail campaign in Crayola's history",
+      "role": "Brand Voice Project Director at McGarryBowen Dentsu",
+      "outcome": "Conceived the campaign — most effective retail campaign in Crayola's history",
       "url": "https://omarthecreative.com/choice-cuts.html"
     },
     {
       "brand": "Chase",
       "project": "Chase Sapphire verbal identity",
-      "role": "Brand Consultant and Copywriter at Interbrand",
+      "role": "Brand Voice Project Director at McGarryBowen Dentsu",
       "outcome": "Architected the verbal identity for the flagship premium card",
       "url": "https://omarthecreative.com/choice-cuts.html"
     },
@@ -344,15 +357,15 @@
     {
       "brand": "My Brother's Keeper Alliance (Obama Foundation)",
       "project": "We Are The Ones",
-      "role": "Creative Director",
-      "outcome": "50M+ social impressions; talent includes Steph Curry, Chance the Rapper",
+      "role": "Creative Director through Matter Unlimited",
+      "outcome": "50M+ social impressions, zero paid media; talent includes Steph Curry, Chance the Rapper; covered by AdWeek, USA Today, The Washington Post, People, Esquire, Campaign US",
       "url": "https://omarthecreative.com/choice-cuts.html"
     },
     {
-      "brand": "Project Rock (Dwayne Johnson)",
-      "project": "Campaign work across product launches",
+      "brand": "Project Rock — Under Armour",
+      "project": "Campaign work across product launches through Seven Bucks Creative (Dwayne Johnson's production company)",
       "role": "Creative Director",
-      "outcome": "40M+ Instagram views",
+      "outcome": "100M+ Instagram views; every product sold out",
       "url": "https://omarthecreative.com/choice-cuts.html"
     },
     {
@@ -439,7 +452,7 @@
   },
 
   "ai_stack": {
-    "language_models": ["Claude 4.1", "Claude Code", "ChatGPT 5.0", "Gemini Flash 2.5"],
+    "language_models": ["Claude", "Claude Code", "ChatGPT", "Gemini"],
     "ide_and_agentic": ["Cursor", "Claude Code"],
     "video_generation": ["Veo3", "Sora", "Runway"],
     "image_generation": ["Midjourney", "DALL-E", "Adobe Firefly"],

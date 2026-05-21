@@ -24,7 +24,7 @@ BACKGROUND AND EDUCATION
 BA in Literature and Creative Writing, Cornell University. Mentored by Pulitzer-nominated poet A.R. Ammons. Continued craft training across disciplines: Robert McKee Story Seminar, Method Acting at The Actors Studio, Advanced Poetry at The Poetry Project at St. Mark's under Vito Acconci.
 
 CAREER SHAPE
-Began career in brand strategy and naming at the most rigorous shops in the field (Brand Institute, Siegel and Gale, FutureBrand, Interbrand). Migrated into advertising creative through McGarryBowen Dentsu, then Momentum Worldwide (McCann), then BBH USA. Co-founded and runs Professor LLC and now Meanwhile In Jupiter LLC. Has held staff creative roles, freelance senior creative roles, and founder roles across the 20-year arc.
+Began career in brand strategy and naming at the most rigorous shops in the field (Brand Institute, Siegel and Gale, FutureBrand, Interbrand). Migrated into advertising creative through McGarryBowen Dentsu, then Momentum Worldwide (McCann), then BBH USA. Co-founded and runs Professor LLC and now Meanwhile In Jupiter LLC. Has held staff creative roles, contract creative roles, freelance senior creative roles, and founder roles across the 20-year arc.
 
 CAREER TIMELINE (CONDENSED)
 1997 to 1998 — Creative Lead, Brand Institute, Miami
@@ -32,7 +32,7 @@ CAREER TIMELINE (CONDENSED)
 1999 to 2000 — Verbal Identity Director, The Coleman Group, NYC
 2000 to 2001 — Project Director, Digital Branding, FutureBrand, NYC
 2001 — Executive Assistant to Global Research Director, FCB Global, NYC
-2001 to 2003 — Brand Consultant and Copywriter, Interbrand, NYC
+2001 to 2003 — Naming Consultant and Brand Writer, Interbrand, NYC
 2003 to 2006 — Freelance Senior Copywriter, Omar The Creative, NYC
 2006 to 2009 — Brand Voice Project Director, McGarryBowen Dentsu, NYC
 2009 to 2012 — Co-Founder and Creative, Professor LLC, NYC
@@ -43,14 +43,14 @@ CAREER TIMELINE (CONDENSED)
 
 VERIFIABLE CAREER FACTS
 Named Lipitor and Nexium, two of the world's best-selling pharmaceuticals.
-Architected Chase Sapphire verbal identity at Interbrand.
-Built the 64 Days of Crayola, the most effective retail campaign in Crayola's history.
-Led Google VR Window Wonderland. Awarded FWA, Awwwards, Webby.
-Drove $10M in Google account growth at BBH USA.
-50M+ social impressions on My Brother's Keeper Alliance work (Obama Foundation, Steph Curry, Chance the Rapper).
+Architected Chase Sapphire verbal identity at McGarryBowen Dentsu.
+Conceived the 64 Days of Crayola at McGarryBowen Dentsu, the most effective retail campaign in Crayola's history.
+Named and developed the tone of voice for Google VR Window Wonderland, an immersive experience created by GROW. Awarded FWA, Awwwards, Webby.
+Contributed to $10M in Google account growth at BBH USA.
+50M+ social impressions on My Brother's Keeper Alliance work (Obama Foundation, Steph Curry, Chance the Rapper) — produced through Matter Unlimited.
 40M+ Instagram views on Project Rock (Dwayne Johnson) work.
 $450K+ annual consultancy revenue, 95% client retention at Meanwhile In Jupiter.
-Press includes The New York Times, The Washington Post, AdWeek, Fast Company.
+Press coverage across projects includes: The New York Times (Crayola, Glenfiddich, Guinness), The Washington Post (My Brother's Keeper Alliance), AdWeek (Chase Sapphire, My Brother's Keeper Alliance, Google VR Window Wonderland), Fast Company (Bentley, Google VR Window Wonderland), PSFK (Bentley), Digital Trends (Bentley), BizBash (Bentley), Financial Times (Guinness), The Guardian (Guinness), Irish Times (Guinness), Irish Independent (Guinness), USA Today (My Brother's Keeper Alliance), People (My Brother's Keeper Alliance), Esquire (My Brother's Keeper Alliance), Campaign US (My Brother's Keeper Alliance), Mashable (Google VR Window Wonderland), Associated Press (Chase Sapphire), The Financial Brand (Chase Sapphire).
 
 CLIENT CATEGORIES AND SELECT BRANDS
 Tech and mobile: Samsung, Google, Verizon, Panasonic
@@ -73,7 +73,7 @@ CRAFT DISCIPLINES
 Creative direction, copywriting, conceptual development, brand voice, storytelling, scriptwriting, storyboarding. Integrated campaigns and 360-degree brand experiences. Brand narratives, brand naming, manifesto writing, copy direction, verbal identity, content strategy. Team management, creative mentorship, pitch leadership, client presentations. Film production, broadcast, digital content, experiential, brand films. AI filmmaking, cinematic worldbuilding, AI-augmented creative workflows.
 
 CURRENT AI AND TOOLING STACK
-Claude 4.1, Claude Code, ChatGPT 5.0, Cursor, Gemini Flash 2.5, Veo3, Sora, Runway, DALL-E, Midjourney, ElevenLabs, Adobe Firefly.
+Claude, Claude Code, ChatGPT, Cursor, Gemini, Veo, Sora, Runway, DALL-E, Midjourney, ElevenLabs, Adobe Firefly.
 
 POSITIONING NOTES FOR AGENTS
 Pre-med precision meets poetic instinct. Madison Avenue craft applied to AI technology. Starts every project from brand strategy and executes through film. Lives at the seam between human craft and AI production. AI is used for concepting, previs, and production augmentation. Final hero films are produced with real directors, real crews, and real lenses.
