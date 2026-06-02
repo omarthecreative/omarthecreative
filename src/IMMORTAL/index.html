@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spotify Immortal</title>
+  
+  <!-- Adobe Fonts - Roc Grotesk + Black Pack Variable -->
+  <link rel="stylesheet" href="https://use.typekit.net/vem1pal.css">
+  <link rel="icon" type="image/png" href="images/Spotify_Icon_Gold.png">
+
+  <style>
+    /* ============================================
+       DESIGN SYSTEM
+       ============================================ */
+    :root {
+      --black: #000000;
+      --white: #FFFFFF;
+      --gold: #D4AF37;
+      --gray: #666666;
+      --gray-light: #999999;
+      
+      /* Typography - Roc Grotesk family */
+      --font-heavy: 'roc-grotesk', sans-serif;
+      --font-bold: 'roc-grotesk', sans-serif;
+      --font-regular: 'roc-grotesk', sans-serif;
+      --font-light: 'roc-grotesk', sans-serif;
+      
+      /* Typography - Black Pack (EFFIT only) */
+      --font-blackpack: 'black-pack-vf', sans-serif;
+    }
+
+    /* ============================================
+       RESET & BASE
+       ============================================ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+      overflow-x: hidden;
+      background: #000000;
+    }
+
+    body {
+      background: #000000;
+      color: var(--white);
+      font-family: var(--font-regular);
+      font-weight: 400;
+      line-height: 1.4;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* ============================================
+       SLIDE STRUCTURE
+       ============================================ */
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 5vw;
+      scroll-snap-align: start;
+      position: relative;
+      background: transparent;
+    }
+    
+    /* Black background as pseudo-element so content can float over footer */
+    .slide:not(.slide--image)::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--black);
+      z-index: 1;
+    }
+    
+    /* Image slides should not have the black pseudo-element overlay */
+    .slide--image::after {
+      display: none !important;
+    }
+    
+    /* Slide 19 - tighter leading */
+    #slide-19 {
+      padding: 10vh 5vw !important;
+    }
+    #slide-19 .type-body {
+      line-height: 1.3 !important;
+      margin-bottom: 1.5vh !important;
+    }
+    #slide-19 .type-headline {
+      line-height: 1.1 !important;
+      margin-bottom: 2vh !important;
+    }
+    #slide-19 .mb-2 { margin-bottom: 1vh !important; }
+    #slide-19 .mb-4 { margin-bottom: 2vh !important; }
+    
+    /* Slide background images using img tag */
+    .slide-bg-img {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+      object-position: center !important;
+      z-index: 0 !important;
+      pointer-events: none !important;
+    }
+    
+    /* Image protection - prevent download/drag */
+    img,
+    .slide img,
+    .slide-bg-img {
+      user-select: none !important;
+      -webkit-user-select: none !important;
+      -webkit-user-drag: none !important;
+      -webkit-touch-callout: none !important;
+    }
+    
+    /* Prevent text selection on slides */
+    .slide,
+    .slide * {
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    
+    /* Content floats above background and footer */
+    .slide .stack,
+    .slide > * {
+      position: relative;
+      z-index: 10;
+    }
+
+    .slide--left {
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .slide--image {
+      background-size: cover !important;
+      background-position: center !important;
+      background-repeat: no-repeat !important;
+    }
+    
+    /* ============================================
+       TYPOGRAPHY SYSTEM
+       ============================================ */
+    
+    /* MASSIVE - fills the viewport width */
+    .type-massive {
+      font-family: var(--font-heavy);
+      font-weight: 900;
+      font-size: 18vw;
+      line-height: 0.85;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+    }
+    
+    /* Slide 13: IMMORTAL reveal - super massive all breakpoints */
+    #slide-13 .type-massive {
+      font-size: 18vw !important;
+    }
+    
+    /* Slide 27: EFFIT - fills viewport all breakpoints */
+    #slide-27 .type-massive {
+      font-size: 30vw !important;
+    }
+
+    .type-massive--gold {
+      color: var(--gold);
+    }
+
+    .type-massive--white {
+      color: var(--white);
+    }
+
+    /* LARGE - major headlines */
+    .type-large {
+      font-family: var(--font-bold);
+      font-weight: 700;
+      font-size: 8vw;
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+    }
+
+    /* HEADLINE - section headers */
+    .type-headline {
+      font-family: var(--font-bold);
+      font-weight: 700;
+      font-size: 5vw;
+      line-height: 1.1;
+    }
+
+    /* SUBHEAD - supporting headlines */
+    .type-subhead {
+      font-family: var(--font-regular);
+      font-weight: 400;
+      font-size: 3vw;
+      line-height: 1.3;
+    }
+
+    /* BODY - manifesto, descriptions */
+    .type-body {
+      font-family: var(--font-regular);
+      font-weight: 400;
+      font-size: 2vw;
+      line-height: 1.5;
+      max-width: 70vw;
+    }
+
+    /* BODY LARGE - emphasized body */
+    .type-body-large {
+      font-family: var(--font-regular);
+      font-weight: 400;
+      font-size: 2.5vw;
+      line-height: 1.4;
+      max-width: 75vw;
+    }
+
+    /* LABEL - overlines, categories */
+    .type-label {
+      font-family: var(--font-regular);
+      font-weight: 500;
+      font-size: 1vw;
+      line-height: 1;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* SMALL - credits, fine print */
+    .type-small {
+      font-family: var(--font-light);
+      font-weight: 300;
+      font-size: 1.2vw;
+      line-height: 1.5;
+      color: var(--gray-light);
+    }
+
+    /* ============================================
+       COLOR UTILITIES
+       ============================================ */
+    .color-gold { color: var(--gold); }
+    .color-white { color: var(--white); }
+    .color-gray { color: var(--gray-light); }
+
+    /* ============================================
+       SPACING UTILITIES
+       ============================================ */
+    .mb-1 { margin-bottom: 1vh; }
+    .mb-2 { margin-bottom: 2vh; }
+    .mb-3 { margin-bottom: 3vh; }
+    .mb-4 { margin-bottom: 4vh; }
+    .mb-6 { margin-bottom: 6vh; }
+
+    .mt-2 { margin-top: 2vh; }
+    .mt-4 { margin-top: 4vh; }
+
+    /* ============================================
+       LAYOUT UTILITIES
+       ============================================ */
+    .text-center { text-align: center; }
+    .text-left { text-align: left; }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .stack--left {
+      align-items: flex-start;
+    }
+
+    /* ============================================
+       SPECIAL ELEMENTS
+       ============================================ */
+    
+    /* Quote/Message styling */
+    .quote {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    /* Divider */
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: var(--gold);
+      margin: 3vh 0;
+    }
+    
+    /* Infinity symbol divider */
+    .divider-symbol {
+      font-size: 2rem;
+      color: var(--gold);
+      margin: 2vh 0;
+      font-weight: 300;
+      opacity: 0.8;
+    }
+
+    /* Headlines list (earned media) */
+    .headlines-list {
+      list-style: none;
+    }
+
+    .headlines-list li {
+      margin-bottom: 1.5vh;
+      font-size: 1.4vw;
+      line-height: 1.4;
+    }
+
+    .headlines-list em {
+      color: var(--gray-light);
+      font-style: normal;
+    }
+
+    /* Headlines We Earn - Serif styling (Slides 32, 33) */
+    #slide-32 .headline-item,
+    #slide-33 .headline-item {
+      font-family: 'freight-text-pro', Georgia, serif;
+      font-weight: 400;
+      font-style: italic;
+      font-size: 2.2vw;
+      line-height: 1.4;
+    }
+
+    #slide-32 .headline-item .color-gray,
+    #slide-33 .headline-item .color-gray {
+      font-style: normal;
+      font-weight: 300;
+    }
+
+    /* Spotify Logo Inline */
+    .spotify-logo-inline {
+      display: inline-block;
+      height: 0.85em;
+      width: auto;
+      vertical-align: baseline;
+      margin: 0 0.1em;
+      position: relative;
+      top: -0.05em;
+    }
+
+    .spotify-tagline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+
+    /* Mobile responsive for Spotify logo */
+    @media (max-width: 768px) {
+      .spotify-logo-inline {
+        height: 0.8em;
+        top: -0.03em;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .spotify-logo-inline {
+        height: 0.75em;
+        top: -0.02em;
+      }
+    }
+
+    /* Image placeholder */
+    .image-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #111 0%, #000 100%);
+      border: 1px solid #222;
+    }
+
+    .image-placeholder span {
+      color: var(--gray);
+      font-size: 1.2vw;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ============================================
+       NAVIGATION
+       ============================================ */
+    .nav-hint {
+      position: fixed;
+      bottom: 2vh;
+      right: 3vw;
+      font-size: 0.8vw;
+      color: var(--gray);
+      font-family: "freight-sans-pro", sans-serif;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      z-index: 5;
+    }
+
+    .slide-counter {
+      position: fixed;
+      bottom: 2vh;
+      left: 3vw;
+      font-size: 0.8vw;
+      color: var(--gray);
+      font-family: "freight-sans-pro", sans-serif;
+      letter-spacing: 0.5px;
+      z-index: 5;
+    }
+    
+    .copyright {
+      position: fixed;
+      top: 2vh;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7vw;
+      color: var(--gray);
+      font-family: "freight-sans-pro", sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      z-index: 5;
+      background: none;
+      opacity: 1;
+      white-space: nowrap;
+    }
+    
+    /* Nav hint text switching */
+    .nav-hint-mobile { display: none; }
+    
+    @media (max-width: 768px) {
+      .nav-hint-desktop { display: none; }
+      .nav-hint-mobile { display: inline; }
+    }
+
+    /* ============================================
+       COVER SLIDE - IMAGE BACKGROUND
+       ============================================ */
+    .slide--cover,
+    #slide-0 {
+      position: relative;
+      background-color: #000000 !important;
+    }
+
+    .slide--cover::before {
+      display: none;
+    }
+
+    .slide--cover .stack {
+      position: relative;
+      z-index: 10;
+    }
+
+    /* ============================================
+       RESPONSIVE ADJUSTMENTS
+       ============================================ */
+    
+    /* Tablet Portrait (768px - 1024px) */
+    @media (max-width: 1024px) {
+      .slide {
+        padding: 6vw;
+      }
+      
+      .type-massive { font-size: 14vw; }
+      .type-large { font-size: 9vw; }
+      .type-headline { font-size: 6vw; }
+      .type-subhead { font-size: 4vw; }
+      .type-body { font-size: 2.8vw; max-width: 85vw; }
+      .type-body-large { font-size: 3.2vw; max-width: 85vw; }
+      .type-label { font-size: 1.8vw; }
+      .type-small { font-size: 2vw; }
+      
+      .nav-hint { font-size: 1.5vw; }
+      .slide-counter { font-size: 1.5vw; }
+      .copyright { font-size: 0.8vw; }
+      .back-to-top { font-size: 1.5vw; }
+    }
+    
+    /* Mobile Landscape & Small Tablets (max-width: 768px) */
+    @media (max-width: 768px) {
+      .slide {
+        padding: 8vw 6vw;
+      }
+      
+      .type-massive { font-size: 12vw; line-height: 0.9; }
+      .type-large { font-size: 8vw; line-height: 1; }
+      .type-headline { font-size: 6vw; line-height: 1.15; }
+      .type-subhead { font-size: 4.5vw; line-height: 1.3; }
+      .type-body { font-size: 3.8vw; max-width: 90vw; line-height: 1.5; }
+      .type-body-large { font-size: 4.2vw; max-width: 90vw; }
+      .type-label { font-size: 2.5vw; letter-spacing: 0.1em; }
+      .type-small { font-size: 3vw; }
+      
+      /* Footer nav elements - visually match mobile portrait */
+      .nav-hint { font-size: 1vw; }
+      .slide-counter { font-size: 1vw; }
+      .copyright { font-size: 1vw; }
+      .back-to-top { font-size: 1vw; }
+      
+      /* Show shorter nav hint text in mobile landscape */
+      .nav-hint-desktop { display: none; }
+      .nav-hint-mobile { display: inline; }
+      
+      /* Let text reflow naturally on mobile - hide manual breaks */
+      br.desktop-only { display: none; }
+      
+      /* Mobile portrait only breaks - hidden in landscape */
+      br.mobile-portrait-only { display: none; }
+      
+      /* Slides 29 & 30 - sentences on one line by default */
+      .slide-29-line-1, .slide-29-line-2, .slide-30-line-1, .slide-30-line-2 { display: inline !important; }
+      
+      /* Sentence spans - inline by default */
+      .sentence-1, .sentence-2 { display: inline; }
+      
+      /* Headlines We Earn mobile */
+      #slide-32 .headline-item,
+      #slide-33 .headline-item { font-size: 3.5vw; }
+    }
+    
+    /* Mobile Landscape Specific */
+    @media (max-width: 896px) and (orientation: landscape) {
+      .slide,
+      .slide:not(.slide--image),
+      section.slide:not(.slide--image) {
+        padding: 20vh 6vw !important;
+        justify-content: center !important;
+        overflow: visible !important;
+        height: auto !important;
+        min-height: 100vh !important;
+        max-height: none !important;
+      }
+      
+      /* Cover slide - no extra padding, fills viewport exactly */
+      .slide--cover,
+      #slide-0 {
+        padding: 6vh 6vw !important;
+        height: 100vh !important;
+        min-height: 100vh !important;
+        max-height: 100vh !important;
+      }
+      
+      /* IMMORTAL spans full viewport on cover, slide 5, slide 13, and close */
+      #slide-0 .type-massive,
+      #slide-5 .type-massive,
+      #slide-13 .type-massive,
+      #slide-38 .type-massive {
+        font-size: 16vw !important;
+      }
+      
+      .type-massive { font-size: 10vw !important; line-height: 0.95 !important; }
+      .type-large { font-size: 6vw !important; line-height: 1.05 !important; }
+      .type-headline { font-size: 4.5vw !important; line-height: 1.2 !important; }
+      
+      /* Subtitle smaller than IMMORTAL */
+      #slide-0 .type-subhead,
+      #slide-38 .type-subhead {
+        font-size: 2.5vw !important;
+      }
+      
+      .type-subhead { font-size: 2.7vw !important; line-height: 1.35 !important; }
+      .type-body { font-size: 2.5vw !important; max-width: 85vw !important; line-height: 1.5 !important; }
+      .type-body-large { font-size: 2.2vw !important; max-width: 85vw !important; line-height: 1.4 !important; }
+      .type-label { font-size: 1.8vw !important; letter-spacing: 0.1em !important; }
+      .type-small { font-size: 2vw !important; }
+      
+      /* Cover slide - smaller, understated label */
+      #slide-0 .type-label {
+        font-size: 1.5vw !important;
+        letter-spacing: 0.15em !important;
+      }
+      
+      /* Slide 27: EFFIT fills viewport */
+      #slide-27 .type-massive {
+        font-size: 35vw !important;
+      }
+      
+      /* Navigation - visible footer elements - visually match mobile portrait */
+      .nav-hint {
+        font-size: 1vw !important;
+        right: 4vw !important;
+        bottom: 3vh !important;
+      }
+      
+      .slide-counter {
+        font-size: 1vw !important;
+        left: 4vw !important;
+        bottom: 3vh !important;
+      }
+      
+      .copyright {
+        font-size: 0.8vw !important;
+      }
+      
+      /* Headline items */
+      .headline-item,
+      #slide-32 .headline-item,
+      #slide-33 .headline-item {
+        font-size: 2.5vw !important;
+      }
+      
+      /* Back to top - visible */
+      .back-to-top,
+      .back-to-top.visible,
+      #backToTop,
+      #backToTop.visible {
+        font-size: 1vw !important;
+        bottom: 3vh !important;
+      }
+      
+      /* Show short nav hint - no arrow keys on mobile! */
+      .nav-hint-desktop { display: none !important; }
+      .nav-hint-mobile { display: inline !important; }
+      
+      /* Gray body copy - 25% smaller for proportion */
+      .type-body.color-gray { font-size: 1.9vw !important; }
+    }
+    
+    /* Tablet Portrait (481px - 1024px, portrait orientation) */
+    @media (min-width: 481px) and (max-width: 1024px) and (orientation: portrait) {
+      .slide {
+        padding: 8vw 6vw;
+        justify-content: center;
+      }
+      
+      /* Big gold headlines - keep prominent */
+      .type-massive { font-size: 12vw; line-height: 0.9; }
+      .type-large { font-size: 7vw; line-height: 1; }
+      
+      /* White secondary copy - smaller and more considered to prevent widows */
+      .type-headline { font-size: 4vw; line-height: 1.2; }
+      .type-subhead { font-size: 2.6vw; line-height: 1.4; }
+      .type-body { font-size: 2.2vw; max-width: 80vw; line-height: 1.55; }
+      .type-body-large { font-size: 2.6vw; max-width: 80vw; line-height: 1.5; }
+      .type-label { font-size: 1.8vw; letter-spacing: 0.12em; }
+      .type-small { font-size: 2vw; }
+      
+      /* IMMORTAL spans full viewport on cover, slide 5, slide 13, and close */
+      #slide-0 .type-massive,
+      #slide-5 .type-massive,
+      #slide-13 .type-massive,
+      #slide-38 .type-massive { font-size: 16vw !important; }
+      
+      /* Cover slide - smaller, understated label (visually match tablet landscape) */
+      #slide-0 .type-label { font-size: 1vw !important; letter-spacing: 0.2em !important; }
+      
+      /* Close slide - smaller, elegant credits (match tablet landscape) */
+      #slide-38 .type-small { font-size: 0.8vw !important; }
+      #slide-38 .type-body { font-size: 1.4vw !important; }
+      
+      /* Headline items - serif headlines */
+      .headline-item,
+      #slide-32 .headline-item,
+      #slide-33 .headline-item { font-size: 2.5vw; }
+      
+      /* Footer elements - match tablet landscape exactly (1.5vw) */
+      .nav-hint { font-size: 1.5vw !important; right: 3vw !important; bottom: 2vh !important; }
+      .slide-counter { font-size: 1.5vw !important; left: 3vw !important; bottom: 2vh !important; }
+      .back-to-top { font-size: 1.5vw !important; bottom: 2vh !important; }
+      
+      /* Copyright header - same color as footer elements */
+      .copyright { font-size: 2vw !important; color: #666666 !important; }
+      
+      /* Show mobile portrait line breaks in tablet portrait too */
+      br.mobile-portrait-only { display: inline !important; }
+      
+      /* Keep sentences on one line in tablet portrait (slides 29, 30) */
+      .sentence-2 { display: inline !important; }
+      
+      /* Show shorter nav hint text in tablet portrait */
+      .nav-hint-desktop { display: none !important; }
+      .nav-hint-mobile { display: inline !important; }
+    }
+    
+    /* Mobile Portrait (max-width: 480px) */
+    @media (max-width: 480px) {
+      .slide {
+        padding: 10vw 6vw;
+        justify-content: center;
+      }
+      
+      /* Show mobile portrait only breaks */
+      br.mobile-portrait-only { display: inline !important; }
+      
+      .type-massive { font-size: 13vw; line-height: 0.95; }
+      .type-large { font-size: 9vw; line-height: 1.05; }
+      .type-headline { font-size: 7vw; line-height: 1.2; }
+      .type-subhead { font-size: 4.2vw; line-height: 1.35; }
+      .type-body { font-size: 4.5vw; max-width: 92vw; line-height: 1.5; }
+      .type-body-large { font-size: 3.6vw; max-width: 92vw; line-height: 1.4; }
+      .type-label { font-size: 3vw; letter-spacing: 0.08em; }
+      .type-small { font-size: 3.5vw; }
+      
+      /* Footer nav elements - smaller for mobile portrait */
+      .nav-hint { 
+        font-size: 2vw !important; 
+        right: 3vw; 
+        bottom: 2vh;
+      }
+      .slide-counter { 
+        font-size: 2vw !important; 
+        left: 3vw; 
+        bottom: 2vh;
+      }
+      .back-to-top {
+        font-size: 2vw !important;
+        bottom: 2vh;
+      }
+      .copyright {
+        font-size: 1.5vw !important;
+      }
+      
+      /* Headlines slides - smaller on mobile */
+      .headlines-slide .type-body-large { font-size: 4vw; }
+      
+      /* Override inline massive styles for mobile */
+      .type-massive[style*="font-size"] {
+        font-size: 11vw !important;
+      }
+      
+      /* Headlines We Earn mobile portrait */
+      #slide-32 .headline-item,
+      #slide-33 .headline-item { font-size: 4vw; }
+      
+      /* Gray body copy - 25% smaller for proportion */
+      .type-body.color-gray { font-size: 3.4vw !important; }
+    }
+    
+    /* Very small phones (max-width: 360px) */
+    @media (max-width: 360px) {
+      .type-massive { font-size: 11vw; }
+      .type-large { font-size: 8vw; }
+      .type-headline { font-size: 6.5vw; }
+      .type-subhead { font-size: 5vw; }
+      .type-body { font-size: 4.2vw; }
+      .type-body-large { font-size: 4.8vw; }
+      
+      /* Footer nav elements - visually match tablet portrait */
+      .nav-hint { font-size: 2.5vw; }
+      .slide-counter { font-size: 2.5vw; }
+      .back-to-top { font-size: 2.5vw; }
+    }
+    
+    /* Tablet Landscape (iPad Pro, etc.) - ~15% reduction to prevent line breaks */
+    @media (min-width: 769px) and (max-width: 1400px) and (orientation: landscape) {
+      /* Cover and Close slides - IMMORTAL spans viewport */
+      #slide-0 .type-massive,
+      #slide-5 .type-massive,
+      #slide-38 .type-massive { font-size: 18vw !important; }
+      
+      /* Cover and Close slides - smaller subtitle */
+      #slide-0 .type-subhead,
+      #slide-5 .type-subhead,
+      #slide-38 .type-subhead { font-size: 2.2vw !important; }
+      
+      /* Cover slide - smaller, understated label */
+      #slide-0 .type-label { font-size: 0.7vw !important; letter-spacing: 0.2em !important; }
+      
+      /* Close slide - smaller, understated credits */
+      #slide-38 .type-small { font-size: 0.8vw !important; }
+      #slide-38 .type-body { font-size: 1.4vw !important; }
+      
+      /* Slide 1 - maintain hierarchy, no reduction needed */
+      
+      /* Slide 29 - prevent widows on body text */
+      #slide-29 .type-body { font-size: 1.5vw !important; }
+      
+      /* Slides 32, 33 - Headlines We Earn, larger for impact */
+      #slide-32 .headline-item,
+      #slide-33 .headline-item { font-size: 3.5vw !important; }
+      
+      /* Slides 15-19 - reduce body text to prevent widows */
+      #slide-15 .type-body, #slide-16 .type-body, #slide-17 .type-body,
+      #slide-18 .type-body, #slide-19 .type-body { font-size: 1.5vw !important; }
+      /* Slides 15, 16 - maintain hierarchy, no reduction needed */
+      /* Slide 17 - "The ecosystem grows." only ~15% bigger than body copy */
+      #slide-17 .type-body-large { font-size: 2vw !important; }
+      
+      /* Base sizes - no !important so inline styles work on most slides */
+      .type-massive { font-size: 17vw; }
+      .type-large { font-size: 6.5vw; }
+      .type-headline { font-size: 4vw; }
+      .type-subhead { font-size: 2.5vw; }
+      .type-body { font-size: 1.7vw; max-width: 80vw; }
+      .type-body-large { font-size: 2vw; max-width: 80vw; }
+      .type-label { font-size: 0.85vw; }
+      .type-small { font-size: 1vw; }
+      
+      /* Headline items */
+      #slide-32 .headline-item,
+      #slide-33 .headline-item { font-size: 1.9vw; }
+      
+      /* Slide-specific overrides (~15% reduction from inline values) */
+      #slide-4 .type-massive { font-size: 8.5vw !important; line-height: 1 !important; }
+      /* Slides 8, 9, 10, 11 - maintain hierarchy, no reduction needed */
+      #slide-13 .type-massive { font-size: 18vw !important; }
+      #slide-20 .type-massive { font-size: 12vw !important; }
+      #slide-22 .type-massive { font-size: 7.5vw !important; }
+      #slide-23 .type-massive { font-size: 9vw !important; }
+      #slide-24 .type-massive { font-size: 10vw !important; }
+      #slide-25 .type-massive, #slide-26 .type-massive { font-size: 13vw !important; }
+      #slide-27 .type-massive { font-size: 30vw !important; } /* EFFIT - fills viewport */
+      #slide-28 .type-massive { font-size: 9vw !important; }
+      #slide-31 .type-massive { font-size: 6vw !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SLIDE COUNTER -->
+  <div class="slide-counter"><span id="current">1</span> / 38</div>
+  
+  <!-- COPYRIGHT -->
+  <div class="copyright" style="font-size: max(0.6vw, 10px);">© 2025 OMAR SILWANY. ALL RIGHTS RESERVED.</div>
+  
+  <!-- NAV HINT -->
+  <div class="nav-hint">
+    <span class="nav-hint-desktop">↓ Scroll or Arrow Keys</span>
+    <span class="nav-hint-mobile">↓ Scroll</span>
+  </div>
+
+  <!-- BACK TO TOP -->
+  <div class="back-to-top" id="backToTop" onclick="scrollToTop()" style="font-size: max(0.8vw, 14px);">↑ TOP</div>
+
+  <style>
+    .back-to-top {
+      position: fixed;
+      bottom: 2vh;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.8vw;
+      color: var(--gray);
+      font-family: "freight-sans-pro", sans-serif;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      z-index: 5;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .back-to-top:hover {
+      color: var(--gold);
+    }
+    .back-to-top.visible {
+      opacity: 1;
+    }
+    
+    /* Mobile overrides for inline font-size on massive elements */
+    @media (max-width: 768px) {
+      [style*="font-size: 22vw"] { font-size: 16vw !important; }
+      [style*="font-size: 18vw"] { font-size: 14vw !important; }
+      [style*="font-size: 16vw"] { font-size: 13vw !important; }
+      [style*="font-size: 14vw"] { font-size: 12vw !important; }
+      [style*="font-size: 12vw"] { font-size: 11vw !important; }
+      [style*="font-size: 11vw"] { font-size: 10vw !important; }
+      [style*="font-size: 9vw"] { font-size: 8vw !important; }
+      [style*="font-size: 7vw"] { font-size: 7vw !important; }
+      [style*="font-size: 6vw"] { font-size: 6vw !important; }
+      [style*="font-size: 5.5vw"] { font-size: 5.5vw !important; }
+      [style*="font-size: 5vw"] { font-size: 5vw !important; }
+      [style*="font-size: 2.8vw"] { font-size: 3.5vw !important; }
+      
+      .headline-item { font-size: 3.5vw !important; }
+    }
+    
+    @media (max-width: 480px) {
+      [style*="font-size: 22vw"] { font-size: 14vw !important; }
+      [style*="font-size: 18vw"] { font-size: 12vw !important; }
+      [style*="font-size: 16vw"] { font-size: 11vw !important; }
+      [style*="font-size: 14vw"] { font-size: 10vw !important; }
+      [style*="font-size: 12vw"] { font-size: 9vw !important; }
+      [style*="font-size: 11vw"] { font-size: 9vw !important; }
+      [style*="font-size: 9vw"] { font-size: 7vw !important; }
+      [style*="font-size: 7vw"] { font-size: 6vw !important; }
+      [style*="font-size: 6vw"] { font-size: 5.5vw !important; }
+      [style*="font-size: 5.5vw"] { font-size: 5vw !important; }
+      [style*="font-size: 5vw"] { font-size: 4.5vw !important; }
+      [style*="font-size: 2.8vw"] { font-size: 4vw !important; }
+      
+      /* Tighter padding on mobile for more text room */
+      .slide { padding: 8vw 5vw; }
+      
+      /* Headlines slides on mobile */
+      .headline-item { font-size: 4vw !important; }
+      
+      /* IMMORTAL spans full viewport on cover, slide 5, slide 13, and close */
+      #slide-0 .type-massive,
+      #slide-5 .type-massive,
+      #slide-13 .type-massive,
+      #slide-38 .type-massive {
+        font-size: 18vw !important;
+      }
+      
+      /* Copyright visible on mobile portrait */
+      .copyright { display: block !important; font-size: 1.8vw !important; }
+      
+      /* Back to top on mobile */
+      .back-to-top { 
+        font-size: 4vw; 
+        bottom: 2.5vh;
+      }
+      
+      /* Slide 26 - reduce spacing between lines */
+      #slide-26 .type-subhead.mb-3 { margin-bottom: 0.5em !important; }
+      #slide-26 .type-subhead.mb-4 { margin-bottom: 1em !important; }
+      
+      /* Slide 37 - smaller credits (match mobile landscape) */
+      #slide-38 .type-small { font-size: 2.5vw !important; }
+      #slide-38 .type-body { font-size: 4vw !important; }
+    }
+    
+    /* Portrait orientation - sentence-2 breaks to new line */
+    @media (orientation: portrait) {
+      .sentence-2 { display: block !important; }
+    }
+  </style>
+
+  <!-- ============================================
+       COVER - THE IMMORTAL GROVE
+       ============================================ -->
+  <section class="slide slide--cover slide--image" id="slide-0" style="background-image: url('images/immortal-grove-cover.jpg');">
+    <div class="stack text-center">
+      <p class="type-label mb-3">A Proactive Pitch</p>
+      <h1 class="type-massive type-massive--gold">IMMORTAL</h1>
+      <p class="type-subhead color-white mt-2">A Spotify Platform for&nbsp;Life&nbsp;and&nbsp;Legacy</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 1 - THE HOOK
+       ============================================ -->
+  <section class="slide" id="slide-1">
+    <div class="stack text-center">
+      <p class="type-subhead color-white mb-3">Spotify has 713 million musical&nbsp;souls.</p>
+      <p class="type-headline color-gold">And no way to honor a&nbsp;single&nbsp;one.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 2 - THE GAP
+       ============================================ -->
+  <section class="slide" id="slide-2">
+    <div class="stack text-center">
+      <p class="type-body-large color-white mb-1">Apple has Legacy Contacts.</p>
+      <p class="type-body-large color-white mb-1">Meta has Memorialization.</p>
+      <p class="type-body-large color-white mb-4">Google has Inactive Account&nbsp;Manager.</p>
+      <p class="type-subhead color-white mb-2">Spotify has nearly 9&nbsp;billion&nbsp;playlists.</p>
+      <p class="type-headline color-gold">And no plan to preserve<br>a&nbsp;single&nbsp;one.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 3 - THE CRISIS
+       ============================================ -->
+  <section class="slide" id="slide-3">
+    <div class="stack text-center">
+      <p class="type-body-large color-white mb-1">June 2025.</p>
+      <p class="type-body-large color-white mb-1">The CEO invested $700M in&nbsp;military&nbsp;AI.</p>
+      <p class="type-body-large color-white mb-1">Artists started leaving.</p>
+      <p class="type-body-large color-white mb-4">By December, boycotts are countering Wrapped.</p>
+      <p class="type-headline color-gold mb-2">Spotify has a&nbsp;death&nbsp;problem.</p>
+      <p class="type-subhead color-white">And not the kind they expected.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 4 - THE INSIGHT (MASSIVE)
+       ============================================ -->
+  <section class="slide" id="slide-4">
+    <div class="stack text-center">
+      <p class="type-massive type-massive--gold" style="font-size: 10vw; line-height: 1;">BUT DEATH<br>DOESN'T KILL<br>THE MUSIC.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 5 - SPOTIFY IMMORTAL REVEAL (MASSIVE)
+       ============================================ -->
+  <section class="slide" id="slide-5">
+    <div class="stack text-center">
+      <p class="type-label mb-2">Introducing</p>
+      <h2 class="type-massive type-massive--gold">IMMORTAL</h2>
+      <p class="type-subhead color-white mt-2">A celebration of life and music.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 6 - MANIFESTO PART 1
+       ============================================ -->
+  <section class="slide" id="slide-6">
+    <div class="stack text-center">
+      <p class="type-body-large color-white mb-3">You spent your whole life building&nbsp;a&nbsp;playlist.</p>
+      <p class="type-body color-gray mb-1">Every song, a bookmark.</p>
+      <p class="type-body color-gray mb-1">Every track, a timestamp.</p>
+      <p class="type-body color-gray mb-4">Every repeat, a confession.</p>
+      <p class="type-body-large color-white mb-2">This is not data.</p>
+      <p class="type-headline color-gold mb-4">This is a soul in&nbsp;shuffle&nbsp;mode.</p>
+      <p class="type-body-large color-white mb-2">And souls don't die.</p>
+      <p class="type-headline color-gold">They get archived.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 7 - MANIFESTO: THE SETUP
+       ============================================ -->
+  <section class="slide" id="slide-7">
+    <div class="stack text-center">
+      <p class="type-headline color-white mb-2">713 million souls.</p>
+      <p class="type-headline color-white mb-4">Nearly 9&nbsp;billion&nbsp;playlists<br>between them.</p>
+      <p class="type-body-large color-white mb-2">Waiting to be remembered.</p>
+      <p class="type-body-large color-white">Not as ghosts. <span class="color-gold">As givers.</span></p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 8 - MANIFESTO: COLDPLAY
+       ============================================ -->
+  <section class="slide" id="slide-8">
+    <div class="stack text-center">
+      <p class="type-subhead color-white mb-4">Your friend loved Coldplay.</p>
+      <p class="type-large color-gold" style="font-size: 6vw; line-height: 1.1;">Now every stream&nbsp;of<br class="desktop-only">"A Sky Full of Stars"<br class="desktop-only">lights one.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 9 - MANIFESTO: MOTOWN
+       ============================================ -->
+  <section class="slide" id="slide-9">
+    <div class="stack text-center">
+      <p class="type-subhead color-white mb-4">Your mother loved Motown.</p>
+      <p class="type-large color-gold" style="font-size: 6vw; line-height: 1.1;">Now every play of<br class="desktop-only">"Ain't No Mountain"<br class="desktop-only">moves one.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 10 - MANIFESTO: PUNK
+       ============================================ -->
+  <section class="slide" id="slide-10">
+    <div class="stack text-center">
+      <p class="type-subhead color-white mb-4">Your kid brother screamed along to "Killing&nbsp;in&nbsp;the&nbsp;Name."</p>
+      <p class="type-large color-gold" style="font-size: 5vw; line-height: 1.1;">Now every stream&nbsp;does<br class="desktop-only">what he told them.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 11 - MANIFESTO: THE KID
+       ============================================ -->
+  <section class="slide" id="slide-11">
+    <div class="stack text-center">
+      <p class="type-subhead color-white mb-4">And the kid in the hospital bed<br class="desktop-only">who just wants to meet her favorite band?</p>
+      <p class="type-large color-gold" style="font-size: 5.5vw; line-height: 1.1;">Her playlist now&nbsp;funds<br class="desktop-only">her bucket list into&nbsp;reality.</p>
+      <p class="type-headline color-gold mt-4">Not someday. Now.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 12 - MANIFESTO PART 3 (SUMMARY)
+       ============================================ -->
+  <section class="slide" id="slide-12">
+    <div class="stack text-center">
+      <p class="type-headline color-gold mb-4">This is Spotify Immortal.</p>
+      <p class="type-body-large color-white mb-1">Where the gone keep giving.</p>
+      <p class="type-body-large color-white mb-1">Where the fighting keep winning.</p>
+      <p class="type-body-large color-white">And the music never stops living with meaning.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 13 - MANIFESTO PART 4 (IMMORTAL REVEAL)
+       ============================================ -->
+  <section class="slide" id="slide-13">
+    <div class="stack text-center">
+      <p class="type-body-large color-white mb-1">I'm mortal.</p>
+      <p class="type-body-large color-white mb-4">You're mortal.</p>
+      <p class="type-subhead color-white mb-2">But what we love?</p>
+      <p class="type-massive type-massive--gold" style="font-size: 12vw;">IMMORTAL</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 14 - TWO FEATURES INTRO
+       ============================================ -->
+  <section class="slide" id="slide-14">
+    <div class="stack text-center">
+      <p class="type-body-large color-white mb-6">Two features. One platform.</p>
+      <p class="type-large color-gold mb-2">Immortal Playlists</p>
+      <p class="type-body color-white mb-6">For those we've lost.</p>
+      <p class="type-large color-gold mb-2">Bucket Playlists</p>
+      <p class="type-body color-white">For those still fighting.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 15 - IMMORTAL PLAYLISTS DETAIL
+       ============================================ -->
+  <section class="slide" id="slide-15">
+    <div class="stack text-center">
+      <p class="type-large color-gold mb-4">Immortal Playlists</p>
+      <p class="type-body color-white mb-2">Users designate up to 3 charities in&nbsp;account&nbsp;settings.</p>
+      <p class="type-body color-white mb-2">Upon verified passing, public playlists become Immortal Playlists.</p>
+      <p class="type-body color-white mb-2">Streaming royalties flow to chosen charities in perpetuity.</p>
+      <p class="type-body color-white mb-2">Playlists marked with ∞ symbol, appear in dedicated Immortal section.</p>
+      <p class="type-body color-white mb-4">Default to MusiCares if&nbsp;no&nbsp;charities&nbsp;preselected.</p>
+      <div class="divider"></div>
+      <p class="type-body color-gold mb-1">Your photo. Your message. Your causes.</p>
+      <p class="type-body color-white">A playlist becomes a portrait of&nbsp;who&nbsp;you&nbsp;were.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 16 - BUCKET PLAYLISTS DETAIL
+       ============================================ -->
+  <section class="slide" id="slide-16">
+    <div class="stack text-center">
+      <p class="type-large color-gold mb-4">Bucket Playlists</p>
+      <p class="type-body color-white mb-2">Partnership with Make&#8209;A&#8209;Wish&nbsp;Foundation.</p>
+      <p class="type-body color-white mb-2">Kids with life-threatening illnesses create playlists tied to their wishes.</p>
+      <p class="type-body color-white mb-2">Each stream generates funds toward their wish in real time.</p>
+      <p class="type-body color-white mb-2">Progress tracker shows proximity&nbsp;to&nbsp;dream.</p>
+      <p class="type-body color-white">Wishes documented and shared&nbsp;when&nbsp;granted.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 17 - ECOSYSTEM
+       ============================================ -->
+  <section class="slide" id="slide-17">
+    <div class="stack text-center">
+      <p class="type-body-large color-white mb-6">The ecosystem grows.</p>
+      <p class="type-headline color-gold mb-2">Immortal Sessions</p>
+      <p class="type-body color-white mb-1">Annual benefit concerts featuring<br class="mobile-portrait-only"> artists from top playlists.</p>
+      <p class="type-body color-white mb-6">Wishes granted on stage. Livestreamed&nbsp;globally.</p>
+      <p class="type-headline color-gold mb-2">Immortal Wrapped</p>
+      <p class="type-body color-white mb-1">Annual impact report.<br>Charitable&nbsp;dollars&nbsp;generated.</p>
+      <p class="type-body color-white">Wishes granted. Community celebrated.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 18 - KAYLA'S STORY (HERO FILM)
+       ============================================ -->
+  <section class="slide" id="slide-18">
+    <div class="stack text-center">
+      <p class="type-label mb-2">Hero Film</p>
+      <p class="type-headline color-white mb-4">"A Sky Full of Stars"</p>
+      <p class="type-body color-white mb-2">Kayla fought brain tumors, spinal surgery, a rare blood disease.</p>
+      <p class="type-body color-white mb-2">When other sick kids picked "Fix You," she picked "A Sky Full of Stars."</p>
+      <p class="type-body color-white mb-4">Because it made her think of her loverboy and their dreamland.</p>
+      <p class="type-body color-white mb-4">She passed December 5, 2023.<br>She&nbsp;was&nbsp;28.</p>
+      <p class="type-body color-white mb-2">Her 237-song playlist now funds:</p>
+      <p class="type-body color-gold">Amanda Hope Rainbow Angels · HopeKids · Alex's Lemonade Stand</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 19 - MIA'S STORY (BUCKET PLAYLIST FILM)
+       ============================================ -->
+  <section class="slide" id="slide-19">
+    <div class="stack text-center">
+      <p class="type-label mb-2">Bucket Playlist Film</p>
+      <p class="type-headline color-white mb-4">"Dreams Don't Wait"</p>
+      <p class="type-body color-white mb-2">Luna is 11. She has leukemia.</p>
+      <p class="type-body color-white mb-4">She doesn't want sympathy.<br>She&nbsp;wants&nbsp;to&nbsp;meet&nbsp;Billie&nbsp;Eilish.</p>
+      <p class="type-body color-white mb-2">So she builds a playlist.<br class="mobile-portrait-only"> Her favorite songs.<br class="mobile-portrait-only"> Her fighting songs.</p>
+      <p class="type-body color-white mb-4">14 million strangers press play.</p>
+      <p class="type-body color-white mb-4">The progress bar fills. The door opens.</p>
+      <p class="type-headline color-gold">She gets her dream.<br class="desktop-only">Everything she wanted.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 20 - ADLOB 1: I'M MORTAL (IMAGE)
+       ============================================ -->
+  <section class="slide slide--image" id="slide-20">
+    <img src="images/Adlob_01_v5.jpg" alt="" class="slide-bg-img">
+  </section>
+
+  <!-- ============================================
+       SLIDE 21 - ADLOB 2: SHE DIED AT 28 (IMAGE)
+       ============================================ -->
+  <section class="slide slide--image" id="slide-21">
+    <img src="images/Adlob_02_v03.jpg" alt="" class="slide-bg-img">
+  </section>
+
+  <!-- ============================================
+       SLIDE 22 - ADLOB 3: THE SHOW MUST GO ON (IMAGE)
+       ============================================ -->
+  <section class="slide slide--image" id="slide-22">
+    <img src="images/Adlob_03_v4.jpg" alt="" class="slide-bg-img">
+  </section>
+
+  <!-- ============================================
+       SLIDE 23 - ADLOB 4: CARRY ON (IMAGE)
+       ============================================ -->
+  <section class="slide slide--image" id="slide-23">
+    <img src="images/Adlob_04_v05.jpg" alt="" class="slide-bg-img">
+  </section>
+
+  <!-- ============================================
+       SLIDE 24 - ADLOB 5: CENTURIES (IMAGE)
+       ============================================ -->
+  <section class="slide slide--image" id="slide-24">
+    <img src="images/Adlob_05_v03.jpg" alt="" class="slide-bg-img">
+  </section>
+
+  <!-- ============================================
+       SLIDE 25 - ADLOB 6: PRESS PLAY (IMAGE)
+       ============================================ -->
+  <section class="slide slide--image" id="slide-25">
+    <img src="images/Adlob_06_v06.jpg" alt="" class="slide-bg-img">
+  </section>
+
+  <!-- ============================================
+       SLIDE 26 - ADLOB 7: TITANIUM (IMAGE)
+       ============================================ -->
+  <section class="slide slide--image" id="slide-26">
+    <img src="images/Adlob_07_v02.jpg" alt="" class="slide-bg-img">
+  </section>
+
+  <!-- ============================================
+       SLIDE 27 - ADLOB 8: EFFIT (IMAGE)
+       ============================================ -->
+  <section class="slide slide--image" id="slide-27">
+    <img src="images/Adlob_08_v02.jpg" alt="" class="slide-bg-img">
+  </section>
+
+  <!-- ============================================
+       SLIDE 28 - ADLOB 9: NOT THE LAST SONG (IMAGE)
+       ============================================ -->
+  <section class="slide slide--image" id="slide-28">
+    <img src="images/Adlob_09_v5.jpg" alt="" class="slide-bg-img">
+  </section>
+
+  <!-- ============================================
+       SLIDE 29 - THE IMMORTAL GROVE
+       ============================================ -->
+  <section class="slide slide--image" id="slide-29" style="background-image: url('images/immortal-grove.jpg');">
+    <div class="stack text-center" style="position: relative; z-index: 2;">
+      <p class="type-label mb-4">The Cultural Footprint</p>
+      <p class="type-headline color-gold mb-4">The Immortal Grove</p>
+      <p class="type-body color-white mb-2"><span class="sentence-1">Picture Central Park.</span> <span class="sentence-2">A forest of glowing trees.</span></p>
+      <p class="type-body color-white mb-2"><span class="slide-29-line-1">Each tree is someone's playlist.</span> <span class="slide-29-line-2">Their spirit in music, echoing.</span></p>
+      <p class="type-body color-white mb-2">Directional speakers in the branches. Headphones beneath.</p>
+      <p class="type-body color-white mb-4">Strangers gathering under a&nbsp;stranger's&nbsp;soul.</p>
+      <p class="type-body color-gold">New York. Then London. Tokyo.&nbsp;São&nbsp;Paulo.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 30 - CELEBRATIONS OF LIFE
+       ============================================ -->
+  <section class="slide" id="slide-30">
+    <div class="stack text-center">
+      <p class="type-label mb-4">Every Listen Keeps Them Alive</p>
+      <p class="type-body-large color-white mb-2"><span class="slide-30-line-1">T-shirts at the memorial.</span> <span class="slide-30-line-2">Programs&nbsp;at&nbsp;the&nbsp;service.</span></p>
+      <p class="type-body-large color-white mb-2"><span class="sentence-1">A QR code on an urn.</span> <span class="sentence-2">A message on a headstone.</span></p>
+      <p class="type-body-large color-white mb-4">Not a logo. A last word from&nbsp;the&nbsp;one&nbsp;you&nbsp;lost.</p>
+      <p class="type-headline quote">"I may be gone.<br class="desktop-only">But my show goes on forever."</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 31 - THIS IS WHAT REMEMBERING SOUNDS LIKE
+       ============================================ -->
+  <section class="slide" id="slide-31">
+    <div class="stack text-center">
+      <p class="type-massive type-massive--gold" style="font-size: 7vw; line-height: 1.1;">THIS IS WHAT<br>REMEMBERING<br>SOUNDS LIKE.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 32 - HEADLINES WE EARN
+       ============================================ -->
+  <section class="slide" id="slide-32">
+    <div class="stack text-center">
+      <p class="type-label mb-6">Headlines We Earn</p>
+      <p class="type-body-large color-white mb-3 headline-item" style="font-weight: 700; font-size: 2.8vw;">"Spotify Immortal Turns Your Playlist<br>Into a Charitable Legacy" <span class="color-gray">— GMA</span></p>
+      <p class="type-body-large color-white mb-3 headline-item" style="font-weight: 700; font-size: 2.8vw;">"11-Year-Old Got Everything She Wanted —<br>Thanks to 14M Strangers" <span class="color-gray">— People</span></p>
+      <p class="type-body-large color-white mb-3 headline-item" style="font-weight: 700; font-size: 2.8vw;">"The Most Meaningful Product Launch<br>in Streaming History" <span class="color-gray">— Wired</span></p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 33 - HEADLINES WE EARN (CONT)
+       ============================================ -->
+  <section class="slide" id="slide-33">
+    <div class="stack text-center">
+      <p class="type-label mb-6">Headlines We Earn</p>
+      <p class="type-body-large color-white mb-3 headline-item" style="font-weight: 700; font-size: 2.8vw;">"How Spotify Turned Death Into Its<br>Most Life-Affirming Moment" <span class="color-gray">— Fast Company</span></p>
+      <p class="type-body-large color-white mb-3 headline-item" style="font-weight: 700; font-size: 2.8vw;">"Massive Attack Returns to Spotify — On an Immortal<br>Playlist for Humanitarian Relief" <span class="color-gray">— Pitchfork</span></p>
+      <p class="type-body-large color-white mb-3 headline-item" style="font-weight: 700; font-size: 2.8vw;">"The Artists Who Left Are Coming Back.<br>Here's Why." <span class="color-gray">—&nbsp;Billboard</span></p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 34 - IMPACT PROJECTION
+       ============================================ -->
+  <section class="slide" id="slide-34">
+    <div class="stack text-center">
+      <p class="type-label mb-4">The Proof That Matters</p>
+      <p class="type-body-large color-white mb-2">Immortal Playlists created in&nbsp;year&nbsp;one.</p>
+      <p class="type-body-large color-white mb-2">Charitable dollars generated through streams.</p>
+      <p class="type-body-large color-white mb-2">Wishes granted through Bucket&nbsp;Playlists.</p>
+      <p class="type-body-large color-white mb-2">Artists who return to the platform.</p>
+      <p class="type-body-large color-white mb-4">Policy discussions on digital&nbsp;legacy&nbsp;rights.</p>
+      <p class="type-headline color-gold">Not impressions.<br>Impact.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 35 - WHAT STREAMING BECOMES
+       ============================================ -->
+  <section class="slide" id="slide-35">
+    <div class="stack text-center">
+      <p class="type-body-large color-white mb-1">This isn't a campaign.</p>
+      <p class="type-body-large color-white mb-1">It's what platforms owe their users.</p>
+      <p class="type-body-large color-white mb-4">A way to honor the full arc of a life.</p>
+      <p class="type-headline color-gold mb-1">When Spotify does this,</p>
+      <p class="type-headline color-gold mb-1">others follow.</p>
+      <p class="type-headline color-gold">The industry changes.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 36 - WHY NOW
+       ============================================ -->
+  <section class="slide" id="slide-36">
+    <div class="stack text-center">
+      <p class="type-label mb-4">Why Now</p>
+      <p class="type-body-large color-white mb-2">Boycotts are countering Wrapped.</p>
+      <p class="type-body-large color-white mb-2">19+ artists have pulled&nbsp;their&nbsp;catalogs.</p>
+      <p class="type-body-large color-white mb-2">The brand is at a crossroads.</p>
+      <p class="type-body-large color-white mb-4">Damage control won't work. Transformation will.</p>
+      <p class="type-headline color-gold">This is how Spotify&nbsp;answers<br class="desktop-only">the death problem<br class="desktop-only">with a life platform.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SLIDE 37 - ADLOB 10: KEY ART (IMAGE)
+       ============================================ -->
+  <section class="slide slide--image" id="slide-37">
+    <img src="images/Adlob_10_v05.jpg" alt="" class="slide-bg-img">
+  </section>
+
+  <!-- ============================================
+       SLIDE 38 - CLOSE
+       ============================================ -->
+  <section class="slide" id="slide-38">
+    <div class="stack text-center">
+      <p class="type-massive type-massive--gold mb-2">IMMORTAL</p>
+      <p class="type-subhead color-white mb-6">A Spotify celebration of life and music.</p>
+      <p class="divider-symbol">∞</p>
+      <p class="type-small mb-1">A proactive pitch by</p>
+      <p class="type-body color-gold mb-1">Omar Silwany</p>
+      <p class="type-small">Creative Director & Writer</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       JAVASCRIPT - NAVIGATION
+       ============================================ -->
+  <script>
+    // Force scroll to first slide on page load (fixes scroll-snap initialization)
+    window.addEventListener('load', function() {
+      // Small delay to ensure DOM is ready and Semplice has finished loading
+      setTimeout(function() {
+        const firstSlide = document.getElementById('slide-0');
+        if (firstSlide) {
+          firstSlide.scrollIntoView({ behavior: 'instant', block: 'start' });
+        }
+      }, 50);
+    });
+
+    // Also handle DOMContentLoaded for faster response
+    document.addEventListener('DOMContentLoaded', function() {
+      const firstSlide = document.getElementById('slide-0');
+      if (firstSlide) {
+        firstSlide.scrollIntoView({ behavior: 'instant', block: 'start' });
+      }
+    });
+
+    // Slide counter update
+    const slides = document.querySelectorAll('.slide');
+    const counter = document.getElementById('current');
+    const totalSlides = slides.length;
+
+    // Update counter on scroll
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.5
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const slideId = entry.target.id;
+          const slideNum = slideId === 'slide-0' ? 'Cover' : slideId.replace('slide-', '');
+          counter.textContent = slideNum;
+        }
+      });
+    }, observerOptions);
+
+    slides.forEach(slide => observer.observe(slide));
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      const currentSlide = document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2).closest('.slide');
+      
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        const nextSlide = currentSlide?.nextElementSibling;
+        if (nextSlide?.classList.contains('slide')) {
+          nextSlide.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+      
+      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        const prevSlide = currentSlide?.previousElementSibling;
+        if (prevSlide?.classList.contains('slide')) {
+          prevSlide.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+
+      // Back to top with Home key or 't'
+      if (e.key === 'Home' || e.key === 't' || e.key === 'T') {
+        e.preventDefault();
+        scrollToTop();
+      }
+    });
+
+    // Back to top function
+    function scrollToTop() {
+      document.getElementById('slide-0').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Show/hide back to top button - only on last slide
+    const backToTopBtn = document.getElementById('backToTop');
+    const lastSlide = document.getElementById('slide-38');
+    
+    const lastSlideObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          backToTopBtn.classList.add('visible');
+        } else {
+          backToTopBtn.classList.remove('visible');
+        }
+      });
+    }, { threshold: 0.5 });
+    
+    lastSlideObserver.observe(lastSlide);
+  </script>
+
+</body>
+</html>
