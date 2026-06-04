@@ -608,7 +608,11 @@
     soundBtn.addEventListener('click', () => {
       userWantsSound = !userWantsSound;
       videoMain.muted = !userWantsSound;
-      if (videoFrog && videoFrog.tagName === 'VIDEO') videoFrog.muted = !userWantsSound;
+      videoMain.play().catch(() => {});
+      if (videoFrog && videoFrog.tagName === 'VIDEO') {
+        videoFrog.muted = !userWantsSound;
+        videoFrog.play().catch(() => {});
+      }
       soundBtn.textContent = userWantsSound ? '♪ On' : '♪ Off';
       soundBtn.classList.toggle('active', userWantsSound);
     });
