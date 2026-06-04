@@ -65,6 +65,29 @@
       object-position: center;
     }
 
+    /* ── Loading screen ── */
+    #loader {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 1s ease;
+    }
+    #loader.hidden { opacity: 0; pointer-events: none; }
+    #loader-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(245,240,232,0.4);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.2; transform: scale(1); }
+      50%       { opacity: 1;   transform: scale(1.5); }
+    }
+
     /* ── Dark overlay ── */
     #overlay {
       position: fixed;
@@ -243,14 +266,22 @@
 </head>
 <body>
 
+  <!-- Loading screen — hides once video is fully buffered -->
+  <div id="loader"><div id="loader-dot"></div></div>
+
   <!-- ═══ BACKGROUND: Main looping video ═══════════════════════════════
-       Replace kayla-bg.mp4 with the actual filename you provide.
+       Video stays permanently muted. Sound is handled by #audio-companion.
   ════════════════════════════════════════════════════════════════════ -->
   <div id="bg-main-wrap">
-    <video id="bg-main" autoplay muted loop playsinline poster="kayla-flip-yard.png">
+    <video id="bg-main" autoplay muted loop playsinline preload="auto" poster="kayla-flip-yard.png">
       <source src="kayla-bg.mp4" type="video/mp4" />
     </video>
   </div>
+
+  <!-- Audio companion: same source, synced to video, toggled by sound button -->
+  <audio id="audio-companion" loop preload="auto">
+    <source src="kayla-bg.mp4" type="audio/mp4" />
+  </audio>
 
   <!-- ═══ BACKGROUND: Frog (S16) ═════════════════════════════════════ -->
   <div id="bg-frog-wrap">
@@ -597,24 +628,57 @@
       setTimeout(() => { wheelLock = false; }, 700);
     }, { passive: true });
 
-    // ── Sound (video) ──────────────────────────────────────────────
+    // ── Preload + sound ────────────────────────────────────────────
+    // Video stays muted at all times — iOS Safari won't allow unmuting
+    // a playing video. Instead we use an audio companion element synced
+    // to the video's playhead.
     let userWantsSound = false;
-    const videoMain = document.getElementById('bg-main');
-    const videoFrog = document.getElementById('bg-frog');
-    const soundBtn  = document.getElementById('sound-btn');
+    let syncTimer      = null;
 
-    videoMain.addEventListener('canplay', () => soundBtn.classList.add('show'), { once: true });
+    const videoMain      = document.getElementById('bg-main');
+    const videoFrog      = document.getElementById('bg-frog');
+    const audioCompanion = document.getElementById('audio-companion');
+    const soundBtn       = document.getElementById('sound-btn');
+    const loader         = document.getElementById('loader');
+
+    // Hide loader and show sound button once video is fully buffered
+    videoMain.addEventListener('canplaythrough', () => {
+      loader.classList.add('hidden');
+      soundBtn.classList.add('show');
+    }, { once: true });
+
+    // Fallback: if canplaythrough takes too long, hide loader after 4s
+    setTimeout(() => loader.classList.add('hidden'), 4000);
+
+    function startSound() {
+      audioCompanion.currentTime = videoMain.currentTime;
+      audioCompanion.play().catch(() => {
+        userWantsSound = false;
+        updateSoundBtn();
+      });
+      // Resync every 2s to prevent drift on loop boundaries
+      syncTimer = setInterval(() => {
+        if (Math.abs(audioCompanion.currentTime - videoMain.currentTime) > 0.5) {
+          audioCompanion.currentTime = videoMain.currentTime;
+        }
+      }, 2000);
+    }
+
+    function stopSound() {
+      audioCompanion.pause();
+      clearInterval(syncTimer);
+      syncTimer = null;
+    }
+
+    function updateSoundBtn() {
+      soundBtn.textContent = userWantsSound ? '♪ On' : '♪ Off';
+      soundBtn.classList.toggle('active', userWantsSound);
+    }
 
     soundBtn.addEventListener('click', () => {
       userWantsSound = !userWantsSound;
-      videoMain.muted = !userWantsSound;
-      videoMain.play().catch(() => {});
-      if (videoFrog && videoFrog.tagName === 'VIDEO') {
-        videoFrog.muted = !userWantsSound;
-        videoFrog.play().catch(() => {});
-      }
-      soundBtn.textContent = userWantsSound ? '♪ On' : '♪ Off';
-      soundBtn.classList.toggle('active', userWantsSound);
+      userWantsSound ? startSound() : stopSound();
+      updateSoundBtn();
     });
 
     // ── Flip play ──────────────────────────────────────────────────
