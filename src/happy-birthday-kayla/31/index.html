@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>It's your flippin' 31st bday, Kayla</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DCVBRB1LW6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-DCVBRB1LW6');
+  </script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐸</text></svg>" />
+  <meta property="og:title" content="It's your flippin' 31st bday, Kayla" />
+  <meta property="og:description" content="Happy 31st birthday, Kayla Elizabeth Parcak. 🐸" />
+  <meta property="og:image" content="https://omarthecreative.com/happy-birthday-kayla/31/kayla-flip-yard.png" />
+  <meta property="og:url" content="https://omarthecreative.com/happy-birthday-kayla/31" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="It's your flippin' 31st bday, Kayla" />
+  <meta name="twitter:image" content="https://omarthecreative.com/happy-birthday-kayla/31/kayla-flip-yard.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --cream: #F5F0E8;
+      --muted: rgba(245, 240, 232, 0.5);
+      --serif: 'Cormorant Garamond', Georgia, serif;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      background: #000;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Background videos ── */
+    #bg-main-wrap,
+    #bg-frog-wrap,
+    #bg-still-wrap {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      transition: opacity 1.6s ease;
+    }
+
+    #bg-frog-wrap  { opacity: 0; }
+    #bg-still-wrap { opacity: 0; }
+
+    #bg-main-wrap video,
+    #bg-frog-wrap video,
+    #bg-frog-wrap img,
+    #bg-still-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    /* ── Dark overlay ── */
+    #overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    /* ── Sound button ── */
+    #sound-btn {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 100;
+      font-family: var(--serif);
+      font-size: 11px;
+      font-style: italic;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 14px 8px;
+      min-height: 44px;
+      opacity: 0;
+      transition: opacity 0.6s ease, color 0.3s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #sound-btn.show  { opacity: 1; pointer-events: auto; }
+    #sound-btn.active { color: var(--cream); }
+
+    /* ── Stanza layer ── */
+    #poem {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+    }
+
+    .stanza {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 40px;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      pointer-events: none;
+    }
+
+    .stanza.active { opacity: 1; }
+
+    .stanza-inner {
+      max-width: 540px;
+      width: 100%;
+      text-align: center;
+      font-family: var(--serif);
+      color: var(--cream);
+      font-size: clamp(20px, 4vw, 27px);
+      font-weight: 300;
+      line-height: 1.9;
+    }
+
+    /* Title card */
+    .title-name {
+      display: block;
+      font-size: clamp(22px, 3.5vw, 38px);
+      font-weight: 300;
+      letter-spacing: 0.03em;
+      margin-bottom: 14px;
+    }
+    .title-date {
+      display: block;
+      font-size: clamp(12px, 1.6vw, 15px);
+      font-weight: 300;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* Standalone refrain — hushed, italic */
+    .stanza-refrain .stanza-inner {
+      font-style: italic;
+      color: rgba(245, 240, 232, 0.6);
+      font-size: clamp(17px, 3vw, 23px);
+    }
+
+    /* Spacer between thought-breaks within a stanza */
+    .br { display: block; height: 0.55em; }
+
+    /* All-caps punch lines */
+    .big {
+      display: block;
+      font-size: clamp(22px, 4.5vw, 32px);
+      font-weight: 600;
+      font-style: normal;
+      letter-spacing: 0.1em;
+      line-height: 1.45;
+      margin: 0.3em 0;
+    }
+
+    /* Asides / punchlines in italic-muted */
+    .aside {
+      font-style: italic;
+      color: rgba(245, 240, 232, 0.65);
+    }
+
+    /* Italian */
+    .it { font-style: italic; }
+
+    /* ── End screen ── */
+    #end-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding-bottom: 80px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1.2s ease;
+    }
+    #end-screen.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .end-btns {
+      display: flex;
+      gap: 48px;
+      align-items: center;
+    }
+    .end-btn {
+      font-family: var(--serif);
+      font-size: 13px;
+      font-style: italic;
+      letter-spacing: 0.2em;
+      color: var(--cream);
+      background: none;
+      border: none;
+      border-bottom: 1px solid rgba(245, 240, 232, 0.3);
+      padding-bottom: 4px;
+      cursor: pointer;
+      transition: color 0.3s ease, border-color 0.3s ease;
+      -webkit-tap-highlight-color: transparent;
+      min-height: 44px;
+    }
+    .end-btn:hover { color: #fff; border-color: rgba(245,240,232,0.7); }
+    .end-btn.active { color: #fff; }
+
+    /* ── Film credit (final stanza) ── */
+    #credit {
+      position: fixed;
+      bottom: 28px;
+      left: 32px;
+      z-index: 100;
+      font-family: var(--serif);
+      font-size: 10px;
+      font-style: italic;
+      letter-spacing: 0.16em;
+      color: rgba(245, 240, 232, 0.35);
+      opacity: 0;
+      transition: opacity 1.2s ease 0.6s;
+      pointer-events: none;
+    }
+    #credit.show { opacity: 1; }
+
+    /* ── Mobile ── */
+    @media (max-width: 480px) {
+      .stanza { padding: 40px 28px; }
+      #sound-btn { bottom: 20px; right: 20px; }
+      #credit { bottom: 20px; left: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ BACKGROUND: Main looping video ═══════════════════════════════
+       Replace kayla-bg.mp4 with the actual filename you provide.
+  ════════════════════════════════════════════════════════════════════ -->
+  <div id="bg-main-wrap">
+    <video id="bg-main" autoplay muted loop playsinline poster="kayla-flip-yard.png">
+      <source src="kayla-bg.mp4" type="video/mp4" />
+    </video>
+  </div>
+
+  <!-- ═══ BACKGROUND: Frog (S16) ═════════════════════════════════════ -->
+  <div id="bg-frog-wrap">
+    <video id="bg-frog" autoplay muted loop playsinline poster="frog.jpg">
+      <source src="frog.mp4" type="video/mp4" />
+    </video>
+  </div>
+
+  <!-- ═══ BACKGROUND: Flip still (S17 — closing line) ════════════════ -->
+  <div id="bg-still-wrap">
+    <img src="kayla-flip-yard.png" alt="" />
+  </div>
+
+  <div id="overlay"></div>
+
+  <button id="sound-btn" aria-label="Toggle sound">♪ Sound</button>
+  <div id="credit">Film: Zachary Parcak &nbsp;·&nbsp; June 7, 2011</div>
+
+  <!-- ═══ END SCREEN ════════════════════════════════════════════════ -->
+  <div id="end-screen">
+    <div class="end-btns">
+      <button class="end-btn" id="btn-flip-play">↺ Flip play</button>
+      <button class="end-btn" id="btn-share">↗ Share</button>
+    </div>
+  </div>
+
+
+  <!-- ═══ POEM ═══════════════════════════════════════════════════════ -->
+  <div id="poem">
+
+    <!-- S0 · Title card -->
+    <div class="stanza" id="s0">
+      <div class="stanza-inner">
+        <span class="title-name">It's your flippin' birthday, Kayla!</span>
+        <span class="title-date">June 4, 2026</span>
+      </div>
+    </div>
+
+    <!-- S1 · Opening -->
+    <div class="stanza" id="s1">
+      <div class="stanza-inner">
+        To my one and only,<br />
+        the incredible Kayla Elizabeth Parcak.
+        <span class="br"></span>
+        My dearest. My sweetest.<br />
+        My loveliest. My bravest.<br />
+        My Bambina.
+        <span class="br"></span>
+        <span class="it">Ti amo. Ti adoro.</span>
+      </div>
+    </div>
+
+    <!-- S2 · First refrain — standalone -->
+    <div class="stanza stanza-refrain" id="s2">
+      <div class="stanza-inner">
+        Today is your 31st birthday.
+      </div>
+    </div>
+
+    <!-- S3 · Grief + love -->
+    <div class="stanza" id="s3">
+      <div class="stanza-inner">
+        I miss you.<br />
+        I celebrate you.<br />
+        I hold you dear,<br />
+        in every moment, every memory.
+        <span class="br"></span>
+        It's still not fair.<br />
+        Never was.
+      </div>
+    </div>
+
+    <!-- S4 · Second refrain — standalone -->
+    <div class="stanza stanza-refrain" id="s4">
+      <div class="stanza-inner">
+        Today is your 31st birthday.
+      </div>
+    </div>
+
+    <!-- S5 · Community + memory -->
+    <div class="stanza" id="s5">
+      <div class="stanza-inner">
+        Everybody misses you.<br />
+        Your body was your enemy.<br />
+        I remember.
+        <span class="br"></span>
+        To give back form to memory.<br />
+        Every memory.<br />
+        Yours and mine, combined.
+        <span class="br"></span>
+        You'd like that.
+      </div>
+    </div>
+
+    <!-- S6 · Martha Washington -->
+    <div class="stanza" id="s6">
+      <div class="stanza-inner">
+        Martha Washington burned<br />
+        Every word George feathered her.<br />
+        Not yours, but mine forever ––&nbsp;she<br />
+        Must have thought to herself<br />
+        Alone at Mt. Vernon.
+        <span class="br"></span>
+        <span class="aside">Oh, Martha.</span>
+      </div>
+    </div>
+
+    <!-- S7 · Birthstone -->
+    <div class="stanza" id="s7">
+      <div class="stanza-inner">
+        <span class="it" style="color: rgba(245,240,232,0.6); font-size: 0.85em; letter-spacing:0.1em;">Today is your 31st birthday.</span>
+        <span class="br"></span>
+        Did you know your birthstone<br />
+        Flows from soft-blue-green tones<br />
+        To reddish-cheeky-purple hues —<br />
+        And's known as Alexandrite?
+        <span class="br"></span>
+        <span class="aside">Duh.</span>
+      </div>
+    </div>
+
+    <!-- S8 · The yard -->
+    <div class="stanza" id="s8">
+      <div class="stanza-inner">
+        <span class="it" style="color: rgba(245,240,232,0.6); font-size: 0.85em; letter-spacing:0.1em;">Today is your 31st birthday.</span>
+        <span class="br"></span>
+        It's all butterflies and rainbows in the yard,<br />
+        The desk is perfect where we<br />
+        Anchored. The sun rises behind<br />
+        Me and across the stern and<br />
+        Steady course we set.
+        <span class="br"></span>
+        Still, yet floating in the ether.<br />
+        The space.
+      </div>
+    </div>
+
+    <!-- S9 · Dreams + Moon -->
+    <div class="stanza" id="s9">
+      <div class="stanza-inner">
+        <span class="it" style="color: rgba(245,240,232,0.6); font-size: 0.85em; letter-spacing:0.1em;">Today is your 31st birthday.</span>
+        <span class="br"></span>
+        I don't want it to ever end.<br />
+        Last night, like always,<br />
+        We laughed in Dreamland.
+        <span class="br"></span>
+        Our neighbor, brightly Moon,<br />
+        Didn't mind, she says hello.
+      </div>
+    </div>
+
+    <!-- S10 · LOVE / HULK -->
+    <div class="stanza" id="s10">
+      <div class="stanza-inner">
+        <span class="it" style="color: rgba(245,240,232,0.6); font-size: 0.85em; letter-spacing:0.1em;">Today is your 31st birthday.</span>
+        <span class="br"></span>
+        You're sending everybody<br />
+        <span class="big">LOVE. COURAGE.<br />RAGE &amp; LAUGHTER.</span>
+        Smoothies make everything better.<br />
+        Remembering that makes you<br />
+        <span class="big">MORE INCREDIBLE<br />THAN THE HULK.</span>
+      </div>
+    </div>
+
+    <!-- S11 · The secret -->
+    <div class="stanza" id="s11">
+      <div class="stanza-inner">
+        <span class="it" style="color: rgba(245,240,232,0.6); font-size: 0.85em; letter-spacing:0.1em;">Today is your 31st birthday.</span>
+        <span class="br"></span>
+        We can keep this up all day.<br />
+        That's the secret, not-so-secret,<br />
+        Secret: We
+        <span class="br"></span>
+        Never Ever Give Up.
+      </div>
+    </div>
+
+    <!-- S12 · Henson shave -->
+    <div class="stanza" id="s12">
+      <div class="stanza-inner">
+        <span class="it" style="color: rgba(245,240,232,0.6); font-size: 0.85em; letter-spacing:0.1em;">Today is your 31st birthday.</span>
+        <span class="br"></span>
+        I shaved with the Henson<br />
+        Without a knick.
+      </div>
+    </div>
+
+    <!-- S13 · Dukie -->
+    <div class="stanza" id="s13">
+      <div class="stanza-inner">
+        <span class="it" style="color: rgba(245,240,232,0.6); font-size: 0.85em; letter-spacing:0.1em;">Today is your 31st birthday.</span>
+        <span class="br"></span>
+        Your Mum tells me Dukie's okay.
+      </div>
+    </div>
+
+    <!-- S14 · Little bro -->
+    <div class="stanza" id="s14">
+      <div class="stanza-inner">
+        <span class="it" style="color: rgba(245,240,232,0.6); font-size: 0.85em; letter-spacing:0.1em;">Today is your 31st birthday.</span>
+        <span class="br"></span>
+        Your little bro's got this.
+      </div>
+    </div>
+
+    <!-- S15 · bday! -->
+    <div class="stanza" id="s15">
+      <div class="stanza-inner">
+        <span class="it" style="color: rgba(245,240,232,0.6); font-size: 0.85em; letter-spacing:0.1em;">Today's your 31st birthday.</span>
+        <span class="br"></span>
+        <span class="it">It's your bday! It's your bday!</span>
+      </div>
+    </div>
+
+    <!-- S16 · Frog — background swaps here ══════════════════════════ -->
+    <div class="stanza" id="s16">
+      <div class="stanza-inner">
+        I don't know how, but I know<br />
+        You sent me a little Froggy.<br />
+        I see what you're doing.
+        <span class="br"></span>
+        I'll show your Mum and Granny Trisha.
+        <span class="br"></span>
+        Surely, that's a reason to smile.
+      </div>
+    </div>
+
+    <!-- S17 · Closing line — back to flip video ═════════════════════ -->
+    <div class="stanza" id="s17">
+      <div class="stanza-inner">
+        Today's your flippin' 31st bday, Kayla!
+      </div>
+    </div>
+
+  </div><!-- /poem -->
+
+  <script>
+    const stanzas    = Array.from(document.querySelectorAll('.stanza'));
+    const FROG_INDEX  = 16;
+    const STILL_INDEX = 17;
+
+    const durations = [
+      6000,   // S0  title card
+      12000,  // S1  opening / endearments
+      6000,   // S2  refrain (standalone)
+      10500,  // S3  grief
+      6000,   // S4  refrain (standalone)
+      13500,  // S5  community / memory
+      13500,  // S6  martha washington
+      13500,  // S7  birthstone
+      15000,  // S8  the yard
+      13500,  // S9  dreams / moon
+      15000,  // S10 love / hulk
+      13500,  // S11 the secret
+      9000,   // S12 henson shave
+      7500,   // S13 dukie
+      7500,   // S14 little bro
+      7500,   // S15 bday!
+      12000,  // S16 frog — auto-advances to closing line
+      0,      // S17 flip still — end screen appears; no auto-advance
+    ];
+
+    let current   = 0;
+    let autoTimer = null;
+    let endTimer  = null;
+
+    const bgMain    = document.getElementById('bg-main-wrap');
+    const bgFrog    = document.getElementById('bg-frog-wrap');
+    const bgStill   = document.getElementById('bg-still-wrap');
+    const endScreen = document.getElementById('end-screen');
+    const credit    = document.getElementById('credit');
+
+    function showEndScreen() { endScreen.classList.add('show'); }
+    function hideEndScreen() { endScreen.classList.remove('show'); }
+
+    function setBackground(which) {
+      bgMain.style.opacity  = which === 'main'  ? '1' : '0';
+      bgFrog.style.opacity  = which === 'frog'  ? '1' : '0';
+      bgStill.style.opacity = which === 'still' ? '1' : '0';
+    }
+
+    function showStanza(i) {
+      if (i < 0 || i >= stanzas.length) return;
+      current = i;
+
+      stanzas.forEach((s, idx) => s.classList.toggle('active', idx === i));
+      clearTimeout(autoTimer);
+      clearTimeout(endTimer);
+      hideEndScreen();
+
+      if (i === FROG_INDEX) {
+        setBackground('frog');
+        credit.classList.add('show');
+        autoTimer = setTimeout(() => showStanza(i + 1), durations[i]);
+      } else if (i === STILL_INDEX) {
+        setBackground('still');
+        credit.classList.remove('show');
+        endTimer = setTimeout(showEndScreen, 3500);
+      } else {
+        setBackground('main');
+        credit.classList.remove('show');
+        if (durations[i] > 0) {
+          autoTimer = setTimeout(() => showStanza(i + 1), durations[i]);
+        }
+      }
+    }
+
+    function advance() {
+      if (current < stanzas.length - 1) {
+        clearTimeout(autoTimer);
+        showStanza(current + 1);
+      }
+    }
+
+    function retreat() {
+      if (current > 0) {
+        clearTimeout(autoTimer);
+        showStanza(current - 1);
+      }
+    }
+
+    // Keyboard
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); advance(); }
+      if (e.key === 'ArrowUp'   || e.key === 'ArrowLeft')  { e.preventDefault(); retreat(); }
+    });
+
+    // Touch swipe
+    let touchY0 = 0;
+    document.addEventListener('touchstart', e => {
+      touchY0 = e.touches[0].clientY;
+    }, { passive: true });
+    document.addEventListener('touchend', e => {
+      const dy = touchY0 - e.changedTouches[0].clientY;
+      if (Math.abs(dy) > 40) dy > 0 ? advance() : retreat();
+    }, { passive: true });
+
+    // Wheel / trackpad
+    let wheelLock = false;
+    document.addEventListener('wheel', e => {
+      if (wheelLock) return;
+      wheelLock = true;
+      e.deltaY > 0 ? advance() : retreat();
+      setTimeout(() => { wheelLock = false; }, 700);
+    }, { passive: true });
+
+    // ── Sound (video) ──────────────────────────────────────────────
+    let userWantsSound = false;
+    const videoMain = document.getElementById('bg-main');
+    const videoFrog = document.getElementById('bg-frog');
+    const soundBtn  = document.getElementById('sound-btn');
+
+    videoMain.addEventListener('canplay', () => soundBtn.classList.add('show'), { once: true });
+
+    soundBtn.addEventListener('click', () => {
+      userWantsSound = !userWantsSound;
+      videoMain.muted = !userWantsSound;
+      if (videoFrog && videoFrog.tagName === 'VIDEO') videoFrog.muted = !userWantsSound;
+      soundBtn.textContent = userWantsSound ? '♪ On' : '♪ Off';
+      soundBtn.classList.toggle('active', userWantsSound);
+    });
+
+    // ── Flip play ──────────────────────────────────────────────────
+    document.getElementById('btn-flip-play').addEventListener('click', () => {
+      hideEndScreen();
+      showStanza(0);
+    });
+
+    // ── Share ───────────────────────────────────────────────────────
+    document.getElementById('btn-share').addEventListener('click', () => {
+      const url  = 'https://omarthecreative.com/happy-birthday-kayla/31';
+      const btn  = document.getElementById('btn-share');
+      if (navigator.share) {
+        navigator.share({
+          title: "It's your flippin' 31st bday, Kayla 🐸",
+          text:  'Happy 31st birthday, Kayla Elizabeth Parcak.',
+          url
+        }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(url).then(() => {
+          btn.textContent = '✓ Copied';
+          setTimeout(() => { btn.textContent = '↗ Share'; }, 2200);
+        }).catch(() => {});
+      }
+    });
+
+    // ── Start ──────────────────────────────────────────────────────
+    showStanza(0);
+  </script>
+
+</body>
+</html>
