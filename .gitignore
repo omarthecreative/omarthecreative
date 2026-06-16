@@ -78,3 +78,6 @@ Archive/
 /The-Unopen-Manifesto/
 /happy-birthday-kayla/
 /src/index.html.bak-*
+
+# Resume PDF is a live site asset, not a working file
+!src/assets/Omar_Y_Silwany_Creative_Director.pdf
