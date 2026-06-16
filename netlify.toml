@@ -30,3 +30,13 @@
   from = "/long-copy.html"
   to = "/long-pour.html"
   status = 301
+
+[[redirects]]
+  from = "/resume"
+  to = "/resume/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/IMMORTAL"
+  to = "/IMMORTAL/index.html"
+  status = 200
