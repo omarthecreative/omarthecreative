@@ -6,77 +6,101 @@
 # Default: all crawlers allowed
 User-agent: *
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 # Search engines
 User-agent: Googlebot
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: Googlebot-Image
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: Bingbot
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: DuckDuckBot
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 # AI agents and assistants
 User-agent: GPTBot
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: Claude-Web
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: anthropic-ai
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: Perplexity-User
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: CCBot
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: cohere-ai
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: Applebot
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: Applebot-Extended
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: Bytespider
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: Meta-ExternalAgent
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: FacebookBot
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: Amazonbot
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: YouBot
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 User-agent: DiffbotBot
 Allow: /
+Disallow: /assets/Omar_Y_Silwany_Creative_Director.pdf
 
 # Sitemap and AI manifest
 Sitemap: https://omarthecreative.com/sitemap.xml
