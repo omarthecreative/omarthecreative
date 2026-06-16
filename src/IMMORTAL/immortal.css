@@ -1,0 +1,1994 @@
+/* ============================================
+   SPOTIFY IMMORTAL - PROJECT STYLES
+   For Semplice 7 Custom CSS
+   Proactive Pitch Presentation
+   
+   This CSS matches the local index.html exactly,
+   with added specificity to override Semplice defaults.
+   ============================================ */
+
+/* ============================================
+   SCOPED RESET - KILL ALL SEMPLICE INHERITANCE
+   ============================================ */
+
+/* Universal reset for all slide elements */
+.slide,
+.slide *,
+.slide-counter,
+.slide-counter *,
+.nav-hint,
+.nav-hint *,
+.back-to-top,
+body .slide,
+body .slide *,
+body .slide-counter,
+body .nav-hint,
+body .back-to-top {
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  border: none !important;
+  text-decoration: none !important;
+}
+
+/* Re-apply only the spacing we want */
+.slide {
+  padding: 5vw !important;
+}
+
+/* ============================================
+   DESIGN SYSTEM TOKENS
+   ============================================ */
+:root {
+  --black: #000000;
+  --white: #FFFFFF;
+  --gold: #D4AF37;
+  --gray: #666666;
+  --gray-light: #999999;
+  
+  /* Typography - Roc Grotesk family */
+  --font-heavy: 'roc-grotesk', sans-serif;
+  --font-bold: 'roc-grotesk', sans-serif;
+  --font-regular: 'roc-grotesk', sans-serif;
+  --font-light: 'roc-grotesk', sans-serif;
+  
+  /* Typography - Black Pack (EFFIT only) */
+  --font-blackpack: 'black-pack-vf', sans-serif;
+}
+
+/* ============================================
+   BASE HTML/BODY
+   ============================================ */
+html {
+  scroll-behavior: smooth !important;
+  scroll-snap-type: y mandatory !important;
+  overflow-x: hidden !important;
+  background: #000000 !important;
+  background-color: #000000 !important;
+}
+
+body,
+html body,
+body.wp-singular,
+html body.wp-singular,
+body[class*="postid"],
+body.page-project {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  color: var(--white) !important;
+  font-family: var(--font-regular) !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+  overflow-x: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+
+/* Force black on Semplice containers */
+[id*="content"],
+[class*="content-holder"],
+[class*="smp-content"],
+.content-holder,
+.is-content,
+main,
+#main,
+.main-content,
+[class*="project"],
+[data-post-type="project"],
+[class*="smp-section"],
+[class*="smp-container"],
+[class*="smp-row"],
+[class*="smp-column"],
+[class*="smp-content-wrapper"],
+.smp-content-wrapper,
+.smp-section,
+.smp-container,
+.smp-row,
+.smp-column,
+[id*="content"] *,
+.sections,
+.sections > *,
+[class*="section_"],
+[id*="section_"],
+div[data-column-mode],
+div[data-module] {
+  background: #000000 !important;
+  background-color: #000000 !important;
+}
+
+/* Override Semplice/Global CSS #050505 background - MAXIMUM SPECIFICITY */
+html#html body#body,
+html body.postid-557.single-project.project-template-default,
+body.postid-557.single-project.project-template-default,
+body.postid-557 #content-557.content-container.active-content,
+body.postid-557 #content-557 .is-content.smp-code,
+body.postid-557 #content-557 .slide,
+body.single-project #content-557 .slide,
+html body.wp-singular.postid-557 .slide,
+html body.wp-singular.postid-557 section.slide,
+body.postid-557 section[class*="slide"],
+#content-557 section.slide,
+#content-557 .slide {
+  background: #000 !important;
+  background-color: #000 !important;
+}
+
+/* Fallback with attribute selectors */
+body[class*="postid-557"] .slide,
+body[class*="single-project"] .slide,
+[data-post-id="557"] .slide,
+div[id*="content"] .slide,
+section.slide[id^="slide-"] {
+  background: #000 !important;
+  background-color: #000 !important;
+}
+
+/* ============================================
+   SLIDE STRUCTURE
+   ============================================ */
+.slide,
+body .slide,
+section.slide,
+html body .slide,
+html body section.slide,
+[id*="content"] .slide,
+[class*="smp"] .slide,
+.slide:not(.slide--image),
+body .slide:not(.slide--image),
+section.slide:not(.slide--image) {
+  width: 100vw !important;
+  height: 100vh !important;
+  min-height: 100vh !important;
+  max-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 5vw !important;
+  scroll-snap-align: start !important;
+  position: relative !important;
+  background: transparent !important;
+  overflow: hidden !important;
+}
+
+/* Black background as pseudo-element so content can float over footer */
+.slide:not(.slide--image)::after,
+body .slide:not(.slide--image)::after,
+section.slide:not(.slide--image)::after,
+html body .slide:not(.slide--image)::after,
+[id*="content"] .slide:not(.slide--image)::after,
+[class*="smp"] .slide:not(.slide--image)::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: #000000 !important;
+  background-color: #000000 !important;
+  z-index: 1 !important;
+}
+
+/* Image slides should not have the black pseudo-element overlay */
+.slide--image::after,
+body .slide--image::after,
+html body .slide--image::after,
+section.slide--image::after,
+#slide-20.slide--image::after,
+#slide-28.slide--image::after,
+#slide-29.slide--image::after,
+body.postid-557 .slide--image::after,
+body.postid-557 #slide-20::after,
+body.postid-557 #slide-28::after,
+[id*="content"] .slide--image::after,
+[class*="smp"] .slide--image::after {
+  display: none !important;
+  content: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Content floats above background and footer */
+.slide .stack,
+.slide > *,
+body .slide .stack,
+body .slide > *,
+html body .slide .stack,
+html body .slide > *,
+[id*="content"] .slide .stack,
+[id*="content"] .slide > *,
+[class*="smp"] .slide .stack,
+[class*="smp"] .slide > * {
+  position: relative !important;
+  z-index: 10 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Force transparent background on ALL elements inside slides (Semplice wrappers) */
+.slide *,
+body .slide *,
+html body .slide *,
+[id*="content"] .slide *,
+[class*="smp"] .slide *,
+.slide div,
+.slide p,
+.slide span,
+.slide h1,
+.slide h2,
+.slide h3,
+body .slide div,
+body .slide p,
+body .slide span,
+html body .slide div,
+html body .slide p,
+html body .slide span {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Force true black on all slides without background images */
+.slide:not(.slide--image):not(.slide--cover),
+body .slide:not(.slide--image):not(.slide--cover),
+html body .slide:not(.slide--image):not(.slide--cover),
+[id*="content"] .slide:not(.slide--image):not(.slide--cover),
+[class*="smp"] .slide:not(.slide--image):not(.slide--cover),
+section[class*="slide"]:not(.slide--image):not(.slide--cover) {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+.slide--left,
+body .slide--left {
+  align-items: flex-start !important;
+  text-align: left !important;
+}
+
+.slide--image,
+body .slide--image,
+html body .slide--image,
+[id*="content"] .slide--image,
+[class*="smp"] .slide--image,
+section.slide--image {
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+/* ============================================
+   TYPOGRAPHY SYSTEM
+   ============================================ */
+
+/* MASSIVE - fills the viewport width */
+/* NOTE: font-size and line-height have NO !important so inline styles can override */
+.type-massive,
+body .type-massive,
+p.type-massive,
+h1.type-massive,
+h2.type-massive,
+.slide .type-massive {
+  font-family: var(--font-heavy) !important;
+  font-weight: 900 !important;
+  font-size: 18vw;
+  line-height: 0.85;
+  text-transform: uppercase !important;
+  letter-spacing: -0.02em !important;
+}
+
+.type-massive--gold,
+body .type-massive--gold,
+.slide .type-massive--gold {
+  color: var(--gold) !important;
+}
+
+.type-massive--white,
+body .type-massive--white,
+.slide .type-massive--white {
+  color: var(--white) !important;
+}
+
+/* LARGE - major headlines */
+/* NOTE: font-size and line-height have NO !important so inline styles can override */
+.type-large,
+body .type-large,
+p.type-large,
+.slide .type-large {
+  font-family: var(--font-bold) !important;
+  font-weight: 700 !important;
+  font-size: 8vw;
+  line-height: 0.95;
+  letter-spacing: -0.01em !important;
+}
+
+/* HEADLINE - section headers */
+.type-headline,
+body .type-headline,
+p.type-headline,
+.slide .type-headline {
+  font-family: var(--font-bold) !important;
+  font-weight: 700 !important;
+  font-size: 5vw;
+  line-height: 1.1;
+}
+
+/* SUBHEAD - supporting headlines */
+.type-subhead,
+body .type-subhead,
+p.type-subhead,
+.slide .type-subhead {
+  font-family: var(--font-regular) !important;
+  font-weight: 400 !important;
+  font-size: 3vw;
+  line-height: 1.3;
+}
+
+/* BODY - manifesto, descriptions */
+.type-body,
+body .type-body,
+p.type-body,
+.slide .type-body {
+  font-family: var(--font-regular) !important;
+  font-weight: 400 !important;
+  font-size: 2vw;
+  line-height: 1.5;
+  max-width: 70vw !important;
+}
+
+/* BODY LARGE - emphasized body */
+.type-body-large,
+body .type-body-large,
+p.type-body-large,
+.slide .type-body-large {
+  font-family: var(--font-regular) !important;
+  font-weight: 400 !important;
+  font-size: 2.5vw;
+  line-height: 1.4;
+  max-width: 75vw !important;
+}
+
+/* LABEL - overlines, categories */
+.type-label,
+body .type-label,
+p.type-label,
+.slide .type-label {
+  font-family: var(--font-regular) !important;
+  font-weight: 500 !important;
+  font-size: 1vw;
+  line-height: 1;
+  letter-spacing: 0.15em !important;
+  text-transform: uppercase !important;
+  color: var(--gold) !important;
+}
+
+/* SMALL - credits, fine print */
+.type-small,
+body .type-small,
+p.type-small,
+.slide .type-small {
+  font-family: var(--font-light) !important;
+  font-weight: 300 !important;
+  font-size: 1.2vw;
+  line-height: 1.5;
+  color: var(--gray-light) !important;
+}
+
+/* ============================================
+   COLOR UTILITIES
+   ============================================ */
+.color-gold,
+body .color-gold,
+.slide .color-gold,
+span.color-gold {
+  color: var(--gold) !important;
+}
+
+.color-white,
+body .color-white,
+.slide .color-white,
+span.color-white {
+  color: var(--white) !important;
+}
+
+.color-gray,
+body .color-gray,
+.slide .color-gray,
+span.color-gray {
+  color: var(--gray-light) !important;
+}
+
+/* ============================================
+   SPACING UTILITIES
+   ============================================ */
+.mb-1, body .mb-1, .slide .mb-1 { margin-bottom: 1vh !important; }
+.mb-2, body .mb-2, .slide .mb-2 { margin-bottom: 2vh !important; }
+.mb-3, body .mb-3, .slide .mb-3 { margin-bottom: 3vh !important; }
+.mb-4, body .mb-4, .slide .mb-4 { margin-bottom: 4vh !important; }
+.mb-6, body .mb-6, .slide .mb-6 { margin-bottom: 6vh !important; }
+
+.mt-2, body .mt-2, .slide .mt-2 { margin-top: 2vh !important; }
+.mt-4, body .mt-4, .slide .mt-4 { margin-top: 4vh !important; }
+
+/* ============================================
+   LAYOUT UTILITIES
+   ============================================ */
+.text-center,
+body .text-center,
+.slide .text-center {
+  text-align: center !important;
+}
+
+.text-left,
+body .text-left,
+.slide .text-left {
+  text-align: left !important;
+}
+
+.stack,
+body .stack,
+.slide .stack {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: auto !important;
+  max-width: 100% !important;
+}
+
+.stack--left,
+body .stack--left,
+.slide .stack--left {
+  align-items: flex-start !important;
+}
+
+/* ============================================
+   SPECIAL ELEMENTS
+   ============================================ */
+
+/* Quote/Message styling */
+.quote,
+body .quote,
+.slide .quote,
+p.quote {
+  font-style: italic !important;
+  color: var(--gold) !important;
+}
+
+/* Divider */
+.divider,
+body .divider,
+.slide .divider {
+  width: 60px !important;
+  height: 2px !important;
+  background: var(--gold) !important;
+  margin: 3vh 0 !important;
+}
+
+/* Infinity symbol divider */
+.divider-symbol,
+body .divider-symbol,
+.slide .divider-symbol {
+  font-size: 2rem !important;
+  color: var(--gold) !important;
+  margin: 2vh 0 !important;
+  font-weight: 300 !important;
+  opacity: 0.8 !important;
+  letter-spacing: 0 !important;
+}
+
+/* Headlines list (earned media) */
+.headlines-list,
+body .headlines-list,
+.slide .headlines-list {
+  list-style: none !important;
+}
+
+.headlines-list li,
+body .headlines-list li,
+.slide .headlines-list li {
+  margin-bottom: 1.5vh !important;
+  font-size: 1.4vw !important;
+  line-height: 1.4 !important;
+}
+
+.headlines-list em,
+body .headlines-list em,
+.slide .headlines-list em {
+  color: var(--gray-light) !important;
+  font-style: normal !important;
+}
+
+/* Headline items */
+/* NOTE: font-size has NO !important so inline styles can override */
+.headline-item,
+body .headline-item,
+.slide .headline-item,
+p.headline-item {
+  font-weight: 700 !important;
+  font-size: 2.8vw;
+}
+
+/* Image placeholder */
+.image-placeholder,
+body .image-placeholder {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  background: linear-gradient(135deg, #111 0%, #000 100%) !important;
+  border: 1px solid #222 !important;
+}
+
+.image-placeholder span,
+body .image-placeholder span {
+  color: var(--gray) !important;
+  font-size: 1.2vw !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+}
+
+/* ============================================
+   NAVIGATION ELEMENTS
+   ============================================ */
+.nav-hint,
+body .nav-hint,
+html body .nav-hint {
+  position: fixed !important;
+  bottom: 2vh !important;
+  right: 3vw !important;
+  font-size: 0.8vw !important;
+  color: var(--gray) !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  z-index: 5 !important;
+  font-family: "freight-sans-pro", sans-serif !important;
+  background: transparent !important;
+}
+
+.slide-counter,
+body .slide-counter,
+html body .slide-counter {
+  position: fixed !important;
+  bottom: 2vh !important;
+  left: 3vw !important;
+  font-size: 0.8vw !important;
+  color: var(--gray) !important;
+  font-family: "freight-sans-pro", sans-serif !important;
+  letter-spacing: 0.5px !important;
+  z-index: 5 !important;
+  background: transparent !important;
+}
+
+.copyright,
+body .copyright,
+html body .copyright,
+[class*="copyright"],
+div.copyright,
+html body div.copyright,
+[id*="content"] .copyright,
+[id*="content"] div.copyright,
+[class*="smp"] .copyright,
+[class*="smp"] div.copyright {
+  position: fixed !important;
+  top: 2vh !important;
+  bottom: auto !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  font-size: 0.7vw !important;
+  color: #666666 !important;
+  font-family: "freight-sans-pro", sans-serif !important;
+  font-weight: 300 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  z-index: 5 !important;
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  opacity: 1 !important;
+  white-space: nowrap !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+/* Force no background and consistent color on copyright and its wrappers */
+.copyright *,
+body .copyright *,
+[class*="copyright"] *,
+div.copyright *,
+div.copyright span {
+  background: none !important;
+  background-color: transparent !important;
+  color: #666666 !important;
+}
+
+/* Nav hint text switching */
+.nav-hint-mobile,
+body .nav-hint-mobile {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .nav-hint-desktop,
+  body .nav-hint-desktop {
+    display: none !important;
+  }
+  .nav-hint-mobile,
+  body .nav-hint-mobile {
+    display: inline !important;
+  }
+}
+
+/* ============================================
+   BACK TO TOP BUTTON
+   ============================================ */
+.back-to-top,
+#backToTop,
+body .back-to-top,
+body #backToTop,
+html body .back-to-top,
+html body #backToTop {
+  position: fixed !important;
+  bottom: 2vh !important;
+  left: 50% !important;
+  right: auto !important;
+  top: auto !important;
+  transform: translateX(-50%) !important;
+  -webkit-transform: translateX(-50%) !important;
+  -ms-transform: translateX(-50%) !important;
+  margin: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  font-size: 0.8vw !important;
+  color: var(--gray) !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  z-index: 5 !important;
+  cursor: pointer !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: opacity 0.3s ease, visibility 0.3s ease !important;
+  font-family: "freight-sans-pro", sans-serif !important;
+  background: transparent !important;
+  display: block !important;
+  width: auto !important;
+  text-align: center !important;
+}
+
+.back-to-top:hover,
+#backToTop:hover,
+body .back-to-top:hover,
+body #backToTop:hover {
+  color: var(--gold) !important;
+}
+
+.back-to-top.visible,
+#backToTop.visible,
+body .back-to-top.visible,
+body #backToTop.visible,
+html body .back-to-top.visible,
+html body #backToTop.visible {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+/* ============================================
+   COVER SLIDE - IMAGE BACKGROUND
+   ============================================ */
+.slide--cover,
+body .slide--cover,
+html body .slide--cover,
+#slide-0,
+body #slide-0,
+html body #slide-0,
+section#slide-0,
+[id*="content"] .slide--cover,
+[id*="content"] #slide-0,
+body.postid-557 .slide--cover,
+body.postid-557 #slide-0 {
+  position: relative !important;
+  background: #000000 !important;
+  background-color: #000000 !important;
+}
+
+.slide--cover::before,
+body .slide--cover::before {
+  display: none !important;
+}
+
+.slide--cover .stack,
+body .slide--cover .stack {
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* ============================================
+   SPOTIFY LOGO INLINE
+   ============================================ */
+.spotify-logo-inline,
+body .spotify-logo-inline,
+img.spotify-logo-inline {
+  display: inline-block !important;
+  height: 0.85em !important;
+  width: auto !important;
+  vertical-align: baseline !important;
+  margin: 0 0.1em !important;
+  padding: 0 !important;
+  border: none !important;
+  position: relative !important;
+  top: -0.05em !important;
+}
+
+.spotify-tagline,
+body .spotify-tagline {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  flex-wrap: wrap !important;
+}
+
+/* Mobile responsive for Spotify logo */
+@media (max-width: 768px) {
+  .spotify-logo-inline,
+  body .spotify-logo-inline {
+    height: 0.8em !important;
+    top: -0.03em !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .spotify-logo-inline,
+  body .spotify-logo-inline {
+    height: 0.75em !important;
+    top: -0.02em !important;
+  }
+}
+
+/* ============================================
+   SLIDE 27 - BLACK PACK FONT (EFFIT)
+   Variable font requires explicit font-weight
+   ============================================ */
+/* Slide 27: EFFIT - super massive, fills viewport */
+#slide-27 .type-massive,
+body #slide-27 .type-massive {
+  font-family: 'roc-grotesk', sans-serif !important;
+  font-weight: 900 !important;
+  font-size: 30vw !important;
+}
+
+/* Slide 13: IMMORTAL reveal - super massive all breakpoints */
+#slide-13 .type-massive,
+body #slide-13 .type-massive {
+  font-size: 18vw !important;
+}
+
+/* ============================================
+   HEADLINES WE EARN - SERIF FONT (Slides 32, 33)
+   ============================================ */
+#slide-32 .headline-item,
+#slide-33 .headline-item,
+body #slide-32 .headline-item,
+body #slide-33 .headline-item {
+  font-family: 'freight-text-pro', Georgia, serif !important;
+  font-weight: 400 !important;
+  font-style: italic !important;
+  font-size: 2.2vw;
+  line-height: 1.4;
+}
+
+#slide-32 .headline-item .color-gray,
+#slide-33 .headline-item .color-gray,
+body #slide-32 .headline-item .color-gray,
+body #slide-33 .headline-item .color-gray {
+  font-style: normal !important;
+  font-weight: 300 !important;
+}
+
+/* ============================================
+   DESKTOP ONLY LINE BREAKS
+   ============================================ */
+br.desktop-only {
+  display: inline !important;
+}
+
+@media (max-width: 768px) {
+  br.desktop-only {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   MOBILE PORTRAIT ONLY LINE BREAKS
+   ============================================ */
+br.mobile-portrait-only {
+  display: none !important;
+}
+
+/* Slides 29 & 30 - sentences on one line by default */
+.slide-29-line-1,
+.slide-29-line-2,
+.slide-30-line-1,
+.slide-30-line-2 {
+  display: inline !important;
+}
+
+/* Only break to new line on mobile portrait */
+@media (max-width: 480px) {
+  .slide-29-line-2,
+  .slide-30-line-2 {
+    display: block !important;
+  }
+}
+
+@media (max-width: 480px) {
+  br.mobile-portrait-only {
+    display: inline !important;
+  }
+}
+
+/* ============================================
+   PORTRAIT ONLY LINE BREAKS - SPAN METHOD
+   Second sentence breaks to new line only in portrait
+   ============================================ */
+.sentence-1,
+.sentence-2 {
+  display: inline !important;
+}
+
+@media (orientation: portrait) {
+  .sentence-2,
+  body .sentence-2,
+  .slide .sentence-2,
+  p .sentence-2 {
+    display: block !important;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - TABLET (768px - 1024px)
+   ============================================ */
+@media (max-width: 1024px) {
+  .slide,
+  body .slide {
+    padding: 6vw !important;
+  }
+  
+  .type-massive,
+  body .type-massive,
+  .slide .type-massive {
+    font-size: 14vw !important;
+  }
+  
+  .type-large,
+  body .type-large,
+  .slide .type-large {
+    font-size: 9vw !important;
+  }
+  
+  .type-headline,
+  body .type-headline,
+  .slide .type-headline {
+    font-size: 6vw !important;
+  }
+  
+  .type-subhead,
+  body .type-subhead,
+  .slide .type-subhead {
+    font-size: 4vw !important;
+  }
+  
+  .type-body,
+  body .type-body,
+  .slide .type-body {
+    font-size: 2.8vw !important;
+    max-width: 85vw !important;
+  }
+  
+  .type-body-large,
+  body .type-body-large,
+  .slide .type-body-large {
+    font-size: 3.2vw !important;
+    max-width: 85vw !important;
+  }
+  
+  .type-label,
+  body .type-label,
+  .slide .type-label {
+    font-size: 1.8vw !important;
+  }
+  
+  .type-small,
+  body .type-small,
+  .slide .type-small {
+    font-size: 2vw !important;
+  }
+  
+  .nav-hint,
+  body .nav-hint {
+    font-size: 1.5vw !important;
+  }
+  
+  .slide-counter,
+  body .slide-counter {
+    font-size: 1.5vw !important;
+  }
+  
+  .copyright,
+  body .copyright {
+    font-size: 0.8vw !important;
+  }
+  
+  .back-to-top,
+  body .back-to-top {
+    font-size: 1.5vw !important;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE LANDSCAPE (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+  .slide,
+  body .slide {
+    padding: 8vw 6vw !important;
+  }
+  
+  .type-massive,
+  body .type-massive,
+  .slide .type-massive {
+    font-size: 12vw !important;
+    line-height: 0.9 !important;
+  }
+  
+  .type-large,
+  body .type-large,
+  .slide .type-large {
+    font-size: 8vw !important;
+    line-height: 1 !important;
+  }
+  
+  .type-headline,
+  body .type-headline,
+  .slide .type-headline {
+    font-size: 6vw !important;
+    line-height: 1.15 !important;
+  }
+  
+  .type-subhead,
+  body .type-subhead,
+  .slide .type-subhead {
+    font-size: 4.5vw !important;
+    line-height: 1.3 !important;
+  }
+  
+  .type-body,
+  body .type-body,
+  .slide .type-body {
+    font-size: 3.8vw !important;
+    max-width: 90vw !important;
+    line-height: 1.5 !important;
+  }
+  
+  .type-body-large,
+  body .type-body-large,
+  .slide .type-body-large {
+    font-size: 4.2vw !important;
+    max-width: 90vw !important;
+  }
+  
+  .type-label,
+  body .type-label,
+  .slide .type-label {
+    font-size: 2.5vw !important;
+    letter-spacing: 0.1em !important;
+  }
+  
+  .type-small,
+  body .type-small,
+  .slide .type-small {
+    font-size: 3vw !important;
+  }
+  
+  /* Navigation elements - visually match mobile portrait */
+  .nav-hint,
+  body .nav-hint {
+    font-size: 1vw !important;
+  }
+  
+  .slide-counter,
+  body .slide-counter {
+    font-size: 1vw !important;
+  }
+  
+  .copyright,
+  body .copyright {
+    font-size: 1vw !important;
+  }
+  
+  .back-to-top,
+  body .back-to-top {
+    font-size: 1vw !important;
+  }
+  
+  /* Show shorter nav hint text in mobile landscape */
+  .nav-hint-desktop,
+  body .nav-hint-desktop {
+    display: none !important;
+  }
+  .nav-hint-mobile,
+  body .nav-hint-mobile {
+    display: inline !important;
+  }
+  
+  /* Headline items mobile */
+  .headline-item,
+  body .headline-item,
+  #slide-32 .headline-item,
+  #slide-33 .headline-item {
+    font-size: 3.5vw !important;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE LANDSCAPE SPECIFIC
+   ============================================ */
+@media (max-width: 896px) and (orientation: landscape) {
+  .slide,
+  body .slide,
+  body .slide:not(.slide--image),
+  section.slide:not(.slide--image) {
+    padding: 20vh 6vw !important;
+    justify-content: center !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    max-height: none !important;
+  }
+  
+  /* Cover slide - no extra padding, fills viewport exactly */
+  .slide--cover,
+  body .slide--cover,
+  #slide-0,
+  body #slide-0 {
+    padding: 6vh 6vw !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    max-height: 100vh !important;
+  }
+  
+  /* IMMORTAL spans full viewport on cover, slide 5, slide 13, and close */
+  #slide-0 .type-massive,
+  body #slide-0 .type-massive,
+  #slide-5 .type-massive,
+  body #slide-5 .type-massive,
+  #slide-13 .type-massive,
+  body #slide-13 .type-massive,
+  #slide-38 .type-massive,
+  body #slide-38 .type-massive {
+    font-size: 16vw !important;
+  }
+  
+  .type-massive,
+  body .type-massive,
+  .slide .type-massive {
+    font-size: 10vw !important;
+    line-height: 0.95 !important;
+  }
+  
+  .type-large,
+  body .type-large,
+  .slide .type-large {
+    font-size: 6vw !important;
+    line-height: 1.05 !important;
+  }
+  
+  .type-headline,
+  body .type-headline,
+  .slide .type-headline {
+    font-size: 4.5vw !important;
+    line-height: 1.2 !important;
+  }
+  
+  /* Subtitle smaller than IMMORTAL */
+  #slide-0 .type-subhead,
+  body #slide-0 .type-subhead,
+  #slide-38 .type-subhead,
+  body #slide-38 .type-subhead {
+    font-size: 2.5vw !important;
+  }
+  
+  .type-subhead,
+  body .type-subhead,
+  .slide .type-subhead {
+    font-size: 2.7vw !important;
+    line-height: 1.35 !important;
+  }
+  
+  .type-body,
+  body .type-body,
+  .slide .type-body {
+    font-size: 2.5vw !important;
+    max-width: 85vw !important;
+    line-height: 1.5 !important;
+  }
+  
+  .type-body-large,
+  body .type-body-large,
+  .slide .type-body-large {
+    font-size: 2.2vw !important;
+    max-width: 85vw !important;
+    line-height: 1.4 !important;
+  }
+  
+  .type-label,
+  body .type-label,
+  .slide .type-label {
+    font-size: 1.8vw !important;
+    letter-spacing: 0.1em !important;
+  }
+  
+  /* Cover slide - smaller, understated label */
+  #slide-0 .type-label,
+  body #slide-0 .type-label {
+    font-size: 1.5vw !important;
+    letter-spacing: 0.15em !important;
+  }
+  
+  .type-small,
+  body .type-small,
+  .slide .type-small {
+    font-size: 2vw !important;
+  }
+  
+  /* Slide 27: EFFIT fills viewport */
+  #slide-27 .type-massive,
+  body #slide-27 .type-massive {
+    font-size: 35vw !important;
+  }
+  
+  /* Navigation - visible footer elements - match mobile portrait size */
+  [class*="nav-hint"],
+  .nav-hint,
+  body .nav-hint,
+  html body .nav-hint,
+  [id*="content"] .nav-hint,
+  [class*="smp"] .nav-hint,
+  div.nav-hint {
+    font-size: 1.2vw !important;
+    right: 4vw !important;
+    bottom: 3vh !important;
+  }
+  
+  [class*="slide-counter"],
+  .slide-counter,
+  body .slide-counter,
+  html body .slide-counter,
+  [id*="content"] .slide-counter,
+  [class*="smp"] .slide-counter,
+  div.slide-counter {
+    font-size: 1.2vw !important;
+    left: 4vw !important;
+    bottom: 3vh !important;
+  }
+  
+  /* Copyright */
+  .copyright,
+  body .copyright {
+    font-size: 1.2vw !important;
+  }
+  
+  /* Headline items */
+  .headline-item,
+  body .headline-item,
+  #slide-32 .headline-item,
+  #slide-33 .headline-item {
+    font-size: 2.5vw !important;
+  }
+  
+  /* Back to top - visible */
+  [class*="back-to-top"],
+  .back-to-top,
+  .back-to-top.visible,
+  body .back-to-top,
+  body .back-to-top.visible,
+  html body .back-to-top,
+  html body .back-to-top.visible,
+  html body #backToTop,
+  html body #backToTop.visible,
+  [id*="content"] .back-to-top,
+  [id*="content"] .back-to-top.visible,
+  [class*="smp"] .back-to-top,
+  div.back-to-top,
+  div.back-to-top.visible,
+  #backToTop,
+  #backToTop.visible {
+    font-size: 1.2vw !important;
+    bottom: 3vh !important;
+  }
+  
+  /* Show short nav hint - no arrow keys on mobile! */
+  .nav-hint-desktop,
+  body .nav-hint-desktop,
+  html body .nav-hint-desktop {
+    display: none !important;
+  }
+  .nav-hint-mobile,
+  body .nav-hint-mobile,
+  html body .nav-hint-mobile {
+    display: inline !important;
+  }
+  
+  /* Gray body copy - 25% smaller for proportion */
+  .type-body.color-gray,
+  body .type-body.color-gray,
+  .slide .type-body.color-gray {
+    font-size: 1.9vw !important;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - TABLET PORTRAIT (481px - 1024px, portrait)
+   ============================================ */
+@media (min-width: 481px) and (max-width: 1024px) and (orientation: portrait) {
+  .slide,
+  body .slide {
+    padding: 8vw 6vw !important;
+    justify-content: center !important;
+  }
+  
+  /* Big gold headlines - keep prominent */
+  .type-massive,
+  body .type-massive,
+  .slide .type-massive {
+    font-size: 12vw !important;
+    line-height: 0.9 !important;
+  }
+  
+  .type-large,
+  body .type-large,
+  .slide .type-large {
+    font-size: 7vw !important;
+    line-height: 1 !important;
+  }
+  
+  /* White secondary copy - smaller and more considered to prevent widows */
+  .type-headline,
+  body .type-headline,
+  .slide .type-headline {
+    font-size: 4vw !important;
+    line-height: 1.2 !important;
+  }
+  
+  .type-subhead,
+  body .type-subhead,
+  .slide .type-subhead {
+    font-size: 2.6vw !important;
+    line-height: 1.4 !important;
+  }
+  
+  .type-body,
+  body .type-body,
+  .slide .type-body {
+    font-size: 2.2vw !important;
+    max-width: 80vw !important;
+    line-height: 1.55 !important;
+  }
+  
+  .type-body-large,
+  body .type-body-large,
+  .slide .type-body-large {
+    font-size: 2.6vw !important;
+    max-width: 80vw !important;
+    line-height: 1.5 !important;
+  }
+  
+  .type-label,
+  body .type-label,
+  .slide .type-label {
+    font-size: 1.8vw !important;
+    letter-spacing: 0.12em !important;
+  }
+  
+  .type-small,
+  body .type-small,
+  .slide .type-small {
+    font-size: 2vw !important;
+  }
+  
+  /* IMMORTAL spans full viewport on cover, slide 5, slide 13, and close */
+  #slide-0 .type-massive,
+  body #slide-0 .type-massive,
+  #slide-5 .type-massive,
+  body #slide-5 .type-massive,
+  #slide-13 .type-massive,
+  body #slide-13 .type-massive,
+  #slide-38 .type-massive,
+  body #slide-38 .type-massive {
+    font-size: 16vw !important;
+  }
+  
+  /* Cover slide - smaller, understated label (visually match tablet landscape) */
+  #slide-0 .type-label,
+  body #slide-0 .type-label {
+    font-size: 1vw !important;
+    letter-spacing: 0.2em !important;
+  }
+  
+  /* Close slide - elegant credits */
+  #slide-38 .type-small,
+  body #slide-38 .type-small {
+    font-size: 1.8vw !important;
+  }
+  #slide-38 .type-body,
+  body #slide-38 .type-body {
+    font-size: 2.5vw !important;
+  }
+  
+  /* Headline items - serif headlines */
+  .headline-item,
+  body .headline-item,
+  #slide-32 .headline-item,
+  #slide-33 .headline-item {
+    font-size: 2.5vw !important;
+  }
+  
+  /* Footer elements - match tablet landscape exactly (1.5vw) */
+  [class*="nav-hint"],
+  .nav-hint,
+  body .nav-hint,
+  html body .nav-hint,
+  [id*="content"] .nav-hint,
+  [class*="smp"] .nav-hint,
+  div.nav-hint {
+    font-size: 1.5vw !important;
+    right: 3vw !important;
+    bottom: 2vh !important;
+  }
+  
+  [class*="slide-counter"],
+  .slide-counter,
+  body .slide-counter,
+  html body .slide-counter,
+  [id*="content"] .slide-counter,
+  [class*="smp"] .slide-counter,
+  div.slide-counter {
+    font-size: 1.5vw !important;
+    left: 3vw !important;
+    bottom: 2vh !important;
+  }
+  
+  [class*="back-to-top"],
+  .back-to-top,
+  .back-to-top.visible,
+  body .back-to-top,
+  body .back-to-top.visible,
+  html body .back-to-top,
+  html body .back-to-top.visible,
+  html body #backToTop,
+  html body #backToTop.visible,
+  [id*="content"] .back-to-top,
+  [class*="smp"] .back-to-top,
+  div.back-to-top,
+  #backToTop,
+  #backToTop.visible {
+    font-size: 1.5vw !important;
+    bottom: 2vh !important;
+  }
+  
+  /* Copyright header - same color as footer elements */
+  .copyright,
+  body .copyright,
+  html body .copyright,
+  [class*="copyright"],
+  div.copyright {
+    font-size: 2vw !important;
+    color: #666666 !important;
+  }
+  
+  /* Show mobile portrait line breaks in tablet portrait too */
+  br.mobile-portrait-only {
+    display: inline !important;
+  }
+  
+  /* Keep sentences on one line in tablet portrait (slides 29, 30) */
+  .sentence-2,
+  body .sentence-2,
+  .slide .sentence-2 {
+    display: inline !important;
+  }
+  
+  /* Show shorter nav hint text in tablet portrait */
+  .nav-hint-desktop,
+  body .nav-hint-desktop {
+    display: none !important;
+  }
+  .nav-hint-mobile,
+  body .nav-hint-mobile {
+    display: inline !important;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE PORTRAIT (max-width: 480px)
+   ============================================ */
+@media (max-width: 480px) {
+  .slide,
+  body .slide {
+    padding: 10vw 6vw !important;
+    justify-content: center !important;
+  }
+  
+  .type-massive,
+  body .type-massive,
+  .slide .type-massive {
+    font-size: 13vw !important;
+    line-height: 0.95 !important;
+  }
+  
+  .type-large,
+  body .type-large,
+  .slide .type-large {
+    font-size: 9vw !important;
+    line-height: 1.05 !important;
+  }
+  
+  .type-headline,
+  body .type-headline,
+  .slide .type-headline {
+    font-size: 7vw !important;
+    line-height: 1.2 !important;
+  }
+  
+  .type-subhead,
+  body .type-subhead,
+  .slide .type-subhead {
+    font-size: 4.2vw !important;
+    line-height: 1.35 !important;
+  }
+  
+  .type-body,
+  body .type-body,
+  .slide .type-body {
+    font-size: 4.5vw !important;
+    max-width: 92vw !important;
+    line-height: 1.5 !important;
+  }
+  
+  .type-body-large,
+  body .type-body-large,
+  .slide .type-body-large {
+    font-size: 3.6vw !important;
+    max-width: 92vw !important;
+    line-height: 1.4 !important;
+  }
+  
+  .type-label,
+  body .type-label,
+  .slide .type-label {
+    font-size: 3vw !important;
+    letter-spacing: 0.08em !important;
+  }
+  
+  .type-small,
+  body .type-small,
+  .slide .type-small {
+    font-size: 3.5vw !important;
+  }
+  
+  /* Navigation - visually match tablet portrait (scaled for smaller viewport) */
+  [class*="nav-hint"],
+  .nav-hint,
+  body .nav-hint,
+  html body .nav-hint,
+  [id*="content"] .nav-hint,
+  [class*="smp"] .nav-hint,
+  div.nav-hint {
+    font-size: 2.5vw !important;
+    right: 3vw !important;
+    bottom: 2vh !important;
+  }
+  
+  [class*="slide-counter"],
+  .slide-counter,
+  body .slide-counter,
+  html body .slide-counter,
+  [id*="content"] .slide-counter,
+  [class*="smp"] .slide-counter,
+  div.slide-counter {
+    font-size: 2.5vw !important;
+    left: 3vw !important;
+    bottom: 2vh !important;
+  }
+  
+  /* Copyright - visible on mobile portrait, visually match tablet portrait */
+  .copyright,
+  body .copyright {
+    display: block !important;
+    font-size: 2.5vw !important;
+  }
+  
+  /* Headlines slides */
+  .headlines-slide .type-body-large {
+    font-size: 4vw !important;
+  }
+  
+  /* Override inline massive styles for mobile */
+  .type-massive[style*="font-size"] {
+    font-size: 11vw !important;
+  }
+  
+  /* Headline items mobile portrait */
+  .headline-item,
+  body .headline-item,
+  #slide-32 .headline-item,
+  #slide-33 .headline-item {
+    font-size: 4vw !important;
+  }
+  
+  /* IMMORTAL spans full viewport on cover, slide 5, slide 13, and close */
+  #slide-0 .type-massive,
+  body #slide-0 .type-massive,
+  #slide-5 .type-massive,
+  body #slide-5 .type-massive,
+  #slide-13 .type-massive,
+  body #slide-13 .type-massive,
+  #slide-38 .type-massive,
+  body #slide-38 .type-massive {
+    font-size: 18vw !important;
+  }
+  
+  /* Back to top mobile - visually match tablet portrait */
+  [class*="back-to-top"],
+  .back-to-top,
+  .back-to-top.visible,
+  body .back-to-top,
+  body .back-to-top.visible,
+  html body .back-to-top,
+  html body .back-to-top.visible,
+  html body #backToTop,
+  html body #backToTop.visible,
+  html body div.back-to-top,
+  html body div.back-to-top.visible,
+  [id*="content"] .back-to-top,
+  [id*="content"] .back-to-top.visible,
+  [id*="content"] #backToTop,
+  [class*="smp"] .back-to-top,
+  div.back-to-top,
+  div.back-to-top.visible,
+  div#backToTop,
+  div#backToTop.visible,
+  #backToTop,
+  #backToTop.visible {
+    font-size: 2.5vw !important;
+    bottom: 2vh !important;
+  }
+  
+  /* Slide 26 - reduce spacing between lines */
+  #slide-26 .type-subhead.mb-3,
+  body #slide-26 .type-subhead.mb-3 {
+    margin-bottom: 0.5em !important;
+  }
+  #slide-26 .type-subhead.mb-4,
+  body #slide-26 .type-subhead.mb-4 {
+    margin-bottom: 1em !important;
+  }
+  
+  /* Slide 37 - smaller credits (match mobile landscape) */
+  #slide-38 .type-small,
+  body #slide-38 .type-small {
+    font-size: 2.5vw !important;
+  }
+  #slide-38 .type-body,
+  body #slide-38 .type-body {
+    font-size: 4vw !important;
+  }
+  
+  /* Gray body copy - 25% smaller for proportion */
+  .type-body.color-gray,
+  body .type-body.color-gray,
+  .slide .type-body.color-gray {
+    font-size: 3.4vw !important;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - VERY SMALL PHONES (max-width: 360px)
+   ============================================ */
+@media (max-width: 360px) {
+  .type-massive,
+  body .type-massive,
+  .slide .type-massive {
+    font-size: 11vw !important;
+  }
+  
+  .type-large,
+  body .type-large,
+  .slide .type-large {
+    font-size: 8vw !important;
+  }
+  
+  .type-headline,
+  body .type-headline,
+  .slide .type-headline {
+    font-size: 6.5vw !important;
+  }
+  
+  .type-subhead,
+  body .type-subhead,
+  .slide .type-subhead {
+    font-size: 5vw !important;
+  }
+  
+  .type-body,
+  body .type-body,
+  .slide .type-body {
+    font-size: 4.2vw !important;
+  }
+  
+  .type-body-large,
+  body .type-body-large,
+  .slide .type-body-large {
+    font-size: 4.8vw !important;
+  }
+  
+  .nav-hint,
+  body .nav-hint {
+    font-size: 4vw !important;
+  }
+  
+  .slide-counter,
+  body .slide-counter {
+    font-size: 4vw !important;
+  }
+  
+  .back-to-top,
+  body .back-to-top {
+    font-size: 4vw !important;
+  }
+}
+
+/* ============================================
+   TABLET LANDSCAPE (iPad Pro, etc.)
+   ~15% reduction to prevent line breaks
+   ============================================ */
+@media (min-width: 769px) and (max-width: 1400px) and (orientation: landscape) {
+  /* Cover and Close slides - IMMORTAL spans viewport */
+  #slide-0 .type-massive,
+  body #slide-0 .type-massive,
+  #slide-38 .type-massive,
+  body #slide-38 .type-massive,
+  #slide-5 .type-massive,
+  body #slide-5 .type-massive {
+    font-size: 18vw !important;
+  }
+  
+  /* Cover and Close slides - smaller subtitle */
+  #slide-0 .type-subhead,
+  body #slide-0 .type-subhead,
+  #slide-38 .type-subhead,
+  body #slide-38 .type-subhead,
+  #slide-5 .type-subhead,
+  body #slide-5 .type-subhead {
+    font-size: 2.2vw !important;
+  }
+  
+  /* Cover slide - smaller, understated label */
+  #slide-0 .type-label,
+  body #slide-0 .type-label {
+    font-size: 0.7vw !important;
+    letter-spacing: 0.2em !important;
+  }
+  
+  /* Close slide - smaller, understated credits */
+  #slide-38 .type-small,
+  body #slide-38 .type-small {
+    font-size: 0.8vw !important;
+  }
+  
+  #slide-38 .type-body,
+  body #slide-38 .type-body {
+    font-size: 1.4vw !important;
+  }
+  
+  /* Slide 1 - maintain hierarchy, no reduction needed */
+  
+  /* Slide 29 - prevent widows on body text */
+  #slide-29 .type-body,
+  body #slide-29 .type-body {
+    font-size: 1.5vw !important;
+  }
+  
+  /* Slides 32, 33 - Headlines We Earn, larger for impact */
+  #slide-32 .headline-item,
+  body #slide-32 .headline-item,
+  #slide-33 .headline-item,
+  body #slide-33 .headline-item {
+    font-size: 3.5vw !important;
+  }
+  
+  /* Slides 15, 16, 17, 18, 19 - reduce body text to prevent widows */
+  #slide-15 .type-body,
+  body #slide-15 .type-body,
+  #slide-16 .type-body,
+  body #slide-16 .type-body,
+  #slide-17 .type-body,
+  body #slide-17 .type-body,
+  #slide-18 .type-body,
+  body #slide-18 .type-body,
+  #slide-19 .type-body,
+  body #slide-19 .type-body {
+    font-size: 1.5vw !important;
+  }
+  
+  /* Slides 15, 16 - maintain hierarchy, no reduction needed */
+  
+  /* Slide 17 - "The ecosystem grows." only ~15% bigger than body copy */
+  #slide-17 .type-body-large,
+  body #slide-17 .type-body-large {
+    font-size: 2vw !important;
+  }
+  
+  /* Base type-massive for other slides */
+  .type-massive,
+  body .type-massive,
+  .slide .type-massive {
+    font-size: 17vw;
+  }
+  
+  .type-large,
+  body .type-large,
+  .slide .type-large {
+    font-size: 6.5vw;
+  }
+  
+  .type-headline,
+  body .type-headline,
+  .slide .type-headline {
+    font-size: 4vw;
+  }
+  
+  .type-subhead,
+  body .type-subhead,
+  .slide .type-subhead {
+    font-size: 2.5vw;
+  }
+  
+  .type-body,
+  body .type-body,
+  .slide .type-body {
+    font-size: 1.7vw;
+    max-width: 80vw !important;
+  }
+  
+  .type-body-large,
+  body .type-body-large,
+  .slide .type-body-large {
+    font-size: 2vw;
+    max-width: 80vw !important;
+  }
+  
+  .type-label,
+  body .type-label,
+  .slide .type-label {
+    font-size: 0.85vw;
+  }
+  
+  .type-small,
+  body .type-small,
+  .slide .type-small {
+    font-size: 1vw;
+  }
+  
+  /* Headline items */
+  #slide-32 .headline-item,
+  #slide-33 .headline-item {
+    font-size: 1.9vw !important;
+  }
+  
+  /* ===== SLIDE-SPECIFIC OVERRIDES FOR TABLET LANDSCAPE ===== */
+  /* These slides have inline styles - reduce them ~15% */
+  
+  /* Slide 4: BUT DEATH DOESN'T KILL THE MUSIC (was 10vw) */
+  #slide-4 .type-massive,
+  body #slide-4 .type-massive {
+    font-size: 8.5vw !important;
+    line-height: 1 !important;
+  }
+  
+  /* Slides 8, 9, 10, 11 - maintain hierarchy, no reduction needed */
+  
+  /* Slide 13: IMMORTAL reveal - spans viewport like cover */
+  #slide-13 .type-massive,
+  body #slide-13 .type-massive {
+    font-size: 18vw !important;
+  }
+  
+  /* Slide 20: MY PLAYLIST ISN'T (was 14vw) */
+  #slide-20 .type-massive,
+  body #slide-20 .type-massive {
+    font-size: 12vw !important;
+  }
+  
+  /* Slide 22: BUT THE SHOW MUST GO ON (was 9vw) */
+  #slide-22 .type-massive,
+  body #slide-22 .type-massive {
+    font-size: 7.5vw !important;
+  }
+  
+  /* Slide 23: HIS PLAYLIST CARRIES ON (was 11vw) */
+  #slide-23 .type-massive,
+  body #slide-23 .type-massive {
+    font-size: 9vw !important;
+  }
+  
+  /* Slide 24: FOR CENTURIES (was 12vw) */
+  #slide-24 .type-massive,
+  body #slide-24 .type-massive {
+    font-size: 10vw !important;
+  }
+  
+  /* Slide 25, 26: PRESS PLAY (was 16vw) */
+  #slide-25 .type-massive,
+  body #slide-25 .type-massive,
+  #slide-26 .type-massive,
+  body #slide-26 .type-massive {
+    font-size: 13vw !important;
+  }
+  
+  /* Slide 27: EFFIT - super massive, fills viewport */
+  #slide-27 .type-massive,
+  body #slide-27 .type-massive {
+    font-size: 30vw !important;
+  }
+  
+  /* Slide 28: NOT THE LAST SONG (was 11vw) */
+  #slide-28 .type-massive,
+  body #slide-28 .type-massive {
+    font-size: 9vw !important;
+  }
+  
+  /* Slide 31: THIS IS WHAT REMEMBERING SOUNDS LIKE (was 7vw) */
+  #slide-31 .type-massive,
+  body #slide-31 .type-massive {
+    font-size: 6vw !important;
+  }
+}
+
+/* ============================================
+   SEMPLICE/WORDPRESS CLEANUP
+   ============================================ */
+
+/* Hide Semplice progress bars */
+#nprogress,
+.semplice-progress-bar,
+#custom-progress-bar {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Ensure Semplice blocks don't constrain */
+.semplice-block,
+.semplice-module,
+.content-block {
+  overflow: visible !important;
+  max-width: none !important;
+  width: 100% !important;
+}
+
+/* Kill any Semplice container padding that might affect slides */
+.semplice-content,
+.content-wrap,
+.vc_row,
+.vc_column,
+.wpb_wrapper {
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: none !important;
+}
+
+/* ============================================
+   SLIDE 19 - TIGHTER LEADING
+   ============================================ */
+#slide-19,
+body #slide-19,
+section#slide-19 {
+  padding: 10vh 5vw !important;
+}
+
+#slide-19 .type-body,
+body #slide-19 .type-body {
+  line-height: 1.3 !important;
+  margin-bottom: 1.5vh !important;
+}
+
+#slide-19 .type-headline,
+body #slide-19 .type-headline {
+  line-height: 1.1 !important;
+  margin-bottom: 2vh !important;
+}
+
+#slide-19 .mb-2 { margin-bottom: 1vh !important; }
+#slide-19 .mb-4 { margin-bottom: 2vh !important; }
+
+/* ============================================
+   SLIDE BACKGROUND IMAGES - IMG TAG APPROACH
+   ============================================ */
+.slide-bg-img,
+img.slide-bg-img,
+.slide .slide-bg-img,
+body .slide-bg-img,
+#slide-20 .slide-bg-img,
+#slide-28 .slide-bg-img {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+
+/* ============================================
+   IMAGE PROTECTION - PREVENT DOWNLOAD/DRAG
+   ============================================ */
+
+/* Prevent image selection and dragging */
+img,
+.slide img,
+.slide-bg-img,
+body img,
+[class*="slide"] img {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  -webkit-user-drag: none !important;
+  -khtml-user-drag: none !important;
+  -moz-user-drag: none !important;
+  -o-user-drag: none !important;
+}
+
+/* Prevent text selection on slides */
+.slide,
+body .slide,
+section.slide,
+.slide * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+/* Disable right-click context menu via CSS (partial - JS needed for full protection) */
+.slide,
+.slide img {
+  -webkit-touch-callout: none !important;
+}
