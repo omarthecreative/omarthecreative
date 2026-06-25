@@ -2429,6 +2429,11 @@
         }
 
         document.fonts.ready.then(() => {
+            // Clean up immediate styles so that standard classes (grid-active, project-view) control layouts properly
+            const immediateStyle = document.getElementById('skip-intro-immediate-style');
+            if (immediateStyle) {
+                immediateStyle.remove();
+            }
             const params = new URLSearchParams(window.location.search);
             const pIndex = params.get('p');
             const filterParam = params.get('filter');
