@@ -1524,6 +1524,25 @@
             }
         })();
 
+        // Header logo click behavior:
+        // - From main-grid: clear seen intro and reload to show the splash
+        // - From project details: transition back to grid smoothly (no reload)
+        document.querySelector('.header-name').addEventListener('click', (e) => {
+            if (document.body.classList.contains('grid-active')) {
+                localStorage.removeItem('omar_seen_intro');
+            } else if (document.body.classList.contains('project-view')) {
+                e.preventDefault();
+                currentIndex = -1;
+                isProjectState = false;
+                document.body.classList.remove('project-view');
+                document.querySelectorAll('.project-bg').forEach(bg => bg.classList.remove('active'));
+                actionGroup.classList.remove('visible');
+                document.body.classList.remove('locked');
+                window.scrollTo(0, 0);
+                enterGridState();
+            }
+        });
+
         portal.addEventListener('click', (e) => {
             if (e.target.closest('.btn') || e.target.closest('.menu-trigger') || e.target.closest('.header-name')) return;
             
