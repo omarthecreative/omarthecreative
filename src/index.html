@@ -883,6 +883,25 @@
                 grid-template-columns: repeat(2, 1fr);
                 gap: 2rem;
             }
+            #combined-grid-view {
+                padding: 0 2rem 15rem 2rem;
+            }
+            .grid-filter-bar {
+                gap: 0.6rem;
+            }
+            .filter-btn {
+                padding: 0.4rem 0.4rem;
+            }
+        }
+        @media (max-width: 1024px) and (orientation: portrait) {
+            .grid-filter-bar {
+                gap: 0.35rem;
+                font-size: 0.46rem;
+                letter-spacing: 0.15em;
+            }
+            .filter-btn {
+                padding: 0.4rem 0.25rem;
+            }
         }
         @media (max-width: 640px) {
             body.grid-active .portal-wrapper {
