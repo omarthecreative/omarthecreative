@@ -1068,19 +1068,20 @@
             }
         }
         @media (max-height: 480px) and (orientation: landscape) {
+            .grid-container {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.75rem;
+            }
             .card-content {
-                padding: 0.85rem;
-                transform: translateY(4px);
+                padding: 0.65rem;
+                transform: translateY(3px);
             }
             .card-title {
-                font-size: 0.725rem;
+                font-size: 0.55rem;
                 margin-bottom: 0.05rem;
             }
             .card-subtitle {
-                font-size: 0.825rem;
-            }
-            .grid-container {
-                gap: 1rem;
+                font-size: 0.625rem;
             }
             #combined-grid-view {
                 padding: 0 2rem 6rem 2rem;
