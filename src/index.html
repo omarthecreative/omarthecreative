@@ -2313,6 +2313,7 @@
                 `;
 
                 card.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     if (item.type === 'film') {
                         if (typeof ApexSound !== 'undefined') {
                             ApexSound.init();
