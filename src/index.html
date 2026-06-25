@@ -54,6 +54,7 @@
     <link rel="stylesheet" href="base.css">
     <link rel="stylesheet" href="video-overlay.css">
     <script src="https://player.vimeo.com/api/player.js"></script>
+    <script src="carousel-config.js"></script>
     <style>
         :root {
             --vibrant-red: #C5002C;
@@ -77,7 +78,7 @@
             opacity: 1 !important;
         }
 
-        body { background: #000; margin: 0; padding: 0; overflow: auto; overscroll-behavior: none; }
+        body { background: #000; margin: 0; padding: 0; overscroll-behavior: none; }
         body.locked { overflow: hidden; }
         /* scroll-stage is an empty height-provider — main is fixed above it */
         #scroll-stage { display: block; }
@@ -235,30 +236,107 @@
         .bl { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
         .br { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
         
-        .info-link {
+        .apex-nav {
             position: fixed;
             top: 4rem;
             right: 4rem;
+            z-index: 10000;
+            display: flex;
+            justify-content: flex-end;
+            pointer-events: none;
+        }
+        .menu-trigger {
             font-family: var(--mono);
             font-size: 0.55rem;
             letter-spacing: 0.3em;
             color: white;
             opacity: 0.8;
-            text-decoration: none;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: opacity 0.3s ease, color 0.3s ease;
             text-transform: uppercase;
-            z-index: 10000;
+        }
+        .menu-trigger:hover {
+            opacity: 1;
+            color: var(--vibrant-red-hud);
         }
 
-        body.video-active .info-link,
+        /* Full Screen Menu Overlay */
+        #apex-menu {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 20000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5vw;
+        }
+        .menu-close {
+            position: absolute;
+            top: 4rem; right: 4rem;
+            font-family: var(--mono);
+            font-size: 0.55rem;
+            letter-spacing: 0.2em;
+            color: #A8002C;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+        .menu-close:hover { opacity: 1; }
+        
+        .menu-links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            pointer-events: none; /* Ignore clicks on the container background */
+        }
+        .menu-link {
+            position: relative;
+            font-family: var(--display);
+            font-size: clamp(60px, 18vw, 350px);
+            line-height: 0.65;
+            text-transform: uppercase;
+            color: #FFFFFF;
+            text-decoration: none;
+            letter-spacing: -0.07em;
+            transition: all 0.3s ease;
+            opacity: 0.1;
+            display: block;
+            width: fit-content;
+            text-align: center;
+            pointer-events: none;
+        }
+        /* Surgical Hit Zone - Centered on the word */
+        .menu-link::before {
+            content: "";
+            position: absolute;
+            top: 20%;
+            bottom: 20%;
+            left: 0;
+            right: 0;
+            pointer-events: auto; /* Clicks only work in this middle 60% slice */
+            z-index: 1;
+        }
+        .menu-link:hover {
+            opacity: 1;
+            color: #A8002C;
+            text-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+        }
+        .menu-link.active {
+            opacity: 1;
+            color: #A8002C;
+            text-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
+        }
+
         body.video-active .apex-nav,
-        body.modal-active .info-link,
         body.modal-active .apex-nav,
-        body.project-view .info-link,
         body.project-view .apex-nav {
             display: none !important;
         }
-
-        .info-link:hover { opacity: 1; color: var(--vibrant-red-hud); }
 
         .action-group {
             margin-top: 4rem;
@@ -439,11 +517,11 @@
         /* MEDIA QUERIES */
         
         /* MEDIA QUERIES - ORIENTATION AWARE */
-        
-        /* LANDSCAPE - MOBILE & TABLET */
+             /* LANDSCAPE - MOBILE & TABLET */
         @media (orientation: landscape) and (max-width: 1366px) {
             .header-name { top: 3.5rem; left: 3.5rem; font-size: 1.2rem; }
-            .info-link { top: 3.5rem; right: 3.5rem; font-size: 0.7rem; }
+            .apex-nav { top: 3.5rem; right: 3.5rem; }
+            .menu-trigger { font-size: 0.7rem; }
             .footer-metadata { bottom: 4rem; padding: 0 4rem; font-size: 0.7rem; }
             .subtitle { font-size: 4vw; margin-top: -1vw; }
             .copyright-tag { bottom: 0.8rem; display: block !important; }
@@ -454,11 +532,12 @@
             .hud-bl { bottom: 0.8rem; left: 2rem; }
             .hud-br { bottom: 0.8rem; right: 2rem; }
             #lut-toggle.unlocked { top: 0.6rem; }
-
+ 
             /* Mobile Landscape Specific (Short Viewports) */
             @media (max-height: 600px) {
                 .header-name { top: 3rem; left: 2.5rem; font-size: 1rem; }
-                .info-link { top: 3rem; right: 2.5rem; font-size: 0.6rem; letter-spacing: 0.2em; }
+                .apex-nav { top: 3rem; right: 2.5rem; }
+                .menu-trigger { font-size: 0.6rem; letter-spacing: 0.2em; }
                 .title { font-size: clamp(44px, 16vh, 100px); }
                 .subtitle { font-size: clamp(14px, 3.5vh, 24px); margin-top: 0; margin-bottom: 0.4rem; }
                 .action-group { margin-top: 1rem; flex-direction: row; gap: 1rem; }
@@ -467,7 +546,7 @@
                 .copyright-tag { bottom: 0.3rem !important; }
                 .corner-frame { top: 1.5rem; left: 1.5rem; right: 1.5rem; bottom: 1.5rem; }
                 .portal-wrapper { padding-bottom: 0; }
-
+ 
                 .hud-tag { font-size: 0.4rem; }
                 .hud-tl { top: 0.8rem; }
                 .hud-tr { top: 0.8rem; }
@@ -476,19 +555,20 @@
                 #lut-toggle.unlocked { top: 0.75rem; }
             }
         }
-
+ 
         /* PORTRAIT - MOBILE & TABLET */
         @media (orientation: portrait) and (max-width: 1024px) {
             .culture-break { display: block; }
             .header-name { top: 3rem; left: 3rem; font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
-            .info-link { top: 3rem; right: 3rem; font-size: 0.55rem; letter-spacing: 0.2em; }
-
+            .apex-nav { top: 3rem; right: 3rem; }
+            .menu-trigger { font-size: 0.55rem; letter-spacing: 0.2em; }
+ 
             .title { font-size: 18vw; }
             .subtitle { font-size: 4vw; margin-top: 1rem; margin-bottom: 0.5rem; }
-
+ 
             .action-group { flex-direction: column; gap: 0.5rem; margin-top: 3rem; }
             .btn { padding: 0.8rem 1.5rem; font-size: 0.7rem; }
-
+ 
             .footer-metadata {
                 bottom: 2.5rem;
                 padding: 0 2rem;
@@ -499,7 +579,7 @@
             }
             .copyright-tag { bottom: 0.3rem !important; font-size: 0.4rem; opacity: 0.4; display: block !important; }
             .corner-frame { top: 1.5rem; left: 1rem; right: 1rem; bottom: 1.5rem; }
-
+ 
             /* Fixed HUD for Portrait */
             .hud-tag { font-size: 0.45rem; opacity: 0.5; letter-spacing: 0.05em; }
             .hud-tl { top: 0.3rem; left: 1rem; }
@@ -507,17 +587,17 @@
             .hud-bl { bottom: 0.3rem; left: 1rem; }
             .hud-br { bottom: 0.3rem; right: 1rem; }
             #lut-toggle.unlocked { top: 0.3rem; padding: 1px 3px; }
-
+ 
             .intel-content { max-height: 90vh; }
             .intel-desc { font-size: 1.3rem; margin-bottom: 2rem; }
             .credits-table { font-size: 0.55rem; }
             .credits-table .c-label { width: 50%; }
         }
-
+        
         /* Small Mobile */
         @media (max-width: 480px) {
             .header-name { font-size: 0.8rem; }
-            .footer-metadata, .info-link { font-size: 0.5rem; }
+            .menu-trigger { font-size: 0.5rem; }
         }
     
         /* ===== PALADIN LANDING — static hero (additive; carousel state untouched) ===== */
@@ -559,6 +639,339 @@
             body.paladin-landing #initial-bg{background-position:28% 42%}
             body.paladin-landing .project-display{left:5vw; bottom:14vh}
             body.paladin-landing .title{font-size:clamp(40px,15vw,90px)}
+        }
+
+        /* Timed Standoff Splash Screen with Vertical Split Slide */
+        #standoff-splash {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 1050;
+            display: flex;
+            pointer-events: none;
+            visibility: visible;
+            opacity: 1;
+            transition: visibility 0s linear 1.2s, opacity 0.5s ease 1.2s;
+        }
+        #standoff-splash.split-active {
+            visibility: hidden;
+            opacity: 0;
+        }
+        .split-panel {
+            position: absolute;
+            top: 0;
+            width: 50vw;
+            height: 100vh;
+            overflow: hidden;
+            transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+            pointer-events: auto;
+        }
+        .split-left {
+            left: 0;
+        }
+        .split-right {
+            right: 0;
+        }
+        .split-bg-inner {
+            position: absolute;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            background-size: cover;
+            background-position: center 42%;
+            filter: grayscale(1) contrast(1.12) brightness(0.62);
+        }
+        .split-bg-inner::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(90deg, rgba(5,5,5,.74) 0%, rgba(5,5,5,.32) 34%, rgba(5,5,5,0) 60%),
+                        linear-gradient(0deg, rgba(5,5,5,.66) 0%, rgba(5,5,5,0) 42%);
+        }
+        .split-left .split-bg-inner {
+            left: 0;
+        }
+        .split-right .split-bg-inner {
+            left: -50vw;
+        }
+        
+        #standoff-splash.split-active .split-left {
+            transform: translateX(-100%);
+        }
+        #standoff-splash.split-active .split-right {
+            transform: translateX(100%);
+        }
+
+        /* Splash Overlay Elements */
+        .splash-content {
+            position: absolute;
+            left: 6vw;
+            bottom: 14vh;
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: flex-start;
+            justify-content: flex-end;
+            z-index: 1060;
+            pointer-events: none;
+            transition: opacity 0.6s ease;
+        }
+        #standoff-splash.split-active .splash-content {
+            opacity: 0;
+        }
+        .splash-title {
+            font-family: var(--display);
+            font-size: clamp(40px, 9vw, 150px);
+            line-height: .86;
+            letter-spacing: -.02em;
+            text-transform: uppercase;
+            color: #bb0006;
+            text-shadow: 0 4px 34px rgba(0,0,0,.6);
+            text-align: left;
+            white-space: nowrap;
+        }
+        .splash-subtitle {
+            font-family: 'lust-stencil-display', var(--serif);
+            font-style: italic;
+            font-size: clamp(16px, 2.1vw, 30px);
+            color: #EAE6DE;
+            margin-top: 1.1rem;
+            text-shadow: 0 2px 16px rgba(0,0,0,.7);
+            display: inline-flex;
+            align-items: center;
+            gap: .5em;
+            white-space: nowrap;
+        }
+        /* Mobile adjustment */
+        @media (orientation: portrait) and (max-width: 1024px) {
+            .splash-title { font-size: clamp(44px, 13vw, 120px); white-space: normal; }
+            .split-bg-inner { background-position: 30% 42%; }
+            .split-right .split-bg-inner { left: -50vw; }
+            .splash-content { left: 6vw; bottom: 16vh; }
+            .splash-subtitle { font-size: clamp(15px, 3.4vw, 26px); }
+        }
+        @media (max-width: 480px) {
+            .splash-title { font-size: clamp(40px, 15vw, 90px); }
+            .split-bg-inner { background-position: 28% 42%; }
+            .splash-content { left: 5vw; bottom: 14vh; }
+        }
+
+        /* Typewriter spans for footer */
+        .typing-text {
+            display: inline-block;
+            min-width: 1.5em;
+        }
+
+        body.intro-active {
+            overflow: hidden !important;
+        }
+
+        body.intro-active .header-name,
+        body.intro-active .apex-nav,
+        body.intro-active .action-group,
+        body.intro-active .footer-metadata,
+        body.intro-active .copyright-tag {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        .header-name, .apex-nav, .action-group, .footer-metadata, .copyright-tag {
+            transition: opacity 0.6s ease;
+        }
+
+        /* Combined Visual Grid Styles */
+        #hero-section {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        body.grid-active {
+            overflow: visible;
+            height: auto !important;
+        }
+        html.ready {
+            overflow: visible;
+            height: auto !important;
+        }
+        body.grid-active .portal-wrapper {
+            position: relative;
+            height: auto;
+            min-height: 100vh;
+            display: block;
+            padding: 0;
+            cursor: default;
+            overflow: visible;
+        }
+        /* Hide landing hero and backgrounds on visual grid */
+        body.grid-active #project-display,
+        body.grid-active #action-group,
+        body.grid-active #bg-container {
+            display: none !important;
+        }
+
+        #combined-grid-view {
+            max-width: 1400px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease 0.3s, transform 1s ease 0.3s;
+            display: none;
+            padding: 0 4rem 10rem 4rem;
+        }
+        body.grid-active #combined-grid-view {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .grid-filter-bar {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 3rem;
+            margin-bottom: 2rem;
+            font-family: var(--mono);
+            font-size: 0.55rem;
+            letter-spacing: 0.3em;
+        }
+        .filter-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            padding: 0.4rem 0.8rem;
+            text-transform: uppercase;
+            font: inherit;
+            letter-spacing: inherit;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            color: var(--vibrant-red-hud);
+            text-shadow: 0 0 5px var(--glow);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2.5rem;
+            width: 100%;
+        }
+
+        @media (max-width: 1024px) {
+            body.grid-active .portal-wrapper {
+                padding: 0;
+            }
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+        }
+        @media (max-width: 640px) {
+            body.grid-active .portal-wrapper {
+                padding: 0;
+            }
+            .grid-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .grid-filter-bar {
+                gap: 0.5rem;
+                margin-bottom: 3rem;
+            }
+        }
+
+        /* Card styles */
+        .grid-card {
+            position: relative;
+            aspect-ratio: 16 / 10;
+            background-color: #0c0c0c;
+            border: 1px solid rgba(255, 0, 60, 0.15);
+            overflow: hidden;
+            cursor: pointer;
+            transition: border-color 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                        box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                        transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            animation: cardFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .grid-card:hover {
+            border-color: var(--vibrant-red-hud);
+            box-shadow: 0 0 20px rgba(255, 0, 21, 0.25);
+            transform: translateY(-4px);
+        }
+        .card-img {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: grayscale(1) contrast(1.15) brightness(0.4);
+            transition: filter 0.6s ease, transform 0.6s ease;
+        }
+        .grid-card:hover .card-img {
+            filter: grayscale(0) contrast(1) brightness(0.65);
+            transform: scale(1.04);
+        }
+        .card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(5, 5, 5, 0.85) 0%, rgba(5, 5, 5, 0.2) 60%, rgba(5, 5, 5, 0) 100%);
+            opacity: 0.85;
+            transition: opacity 0.4s ease;
+        }
+        .grid-card:hover .card-overlay {
+            opacity: 0.65;
+        }
+        .card-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            z-index: 2;
+            transform: translateY(6px);
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .grid-card:hover .card-content {
+            transform: translateY(0);
+        }
+        .card-meta {
+            font-family: var(--mono);
+            font-size: 0.45rem;
+            letter-spacing: 0.15em;
+            color: var(--vibrant-red-hud);
+            text-transform: uppercase;
+            margin-bottom: 0.4rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .card-title {
+            font-family: var(--display);
+            font-size: 1.25rem;
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -0.01em;
+            color: #FFFFFF;
+            text-transform: uppercase;
+            margin-bottom: 0.2rem;
+        }
+        .card-subtitle {
+            font-family: var(--mono);
+            font-size: 0.48rem;
+            letter-spacing: 0.05em;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+        }
+
+        .grid-card.filtered-out {
+            display: none !important;
+        }
+
+        @keyframes cardFadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 </style>
     <!-- Google Analytics -->
@@ -772,8 +1185,19 @@
         <!-- HUD Elements -->
         <div class="hud-tag hud-tl" id="hud-tc">[ TC 00:00:00:00 ]</div>
         <div class="hud-tag hud-tr" id="lut-toggle">[ LUT: REC.709 ]</div>
+        <div class="hud-tag hud-tr" id="intro-timer" style="display: none; color: var(--vibrant-red-hud);">[ DISPATCH IN: 03.00 ]</div>
         <div class="hud-tag hud-bl" id="hud-fps">[ 24 FPS ]</div>
         <div class="hud-tag hud-br" id="bat-status">[ BAT: 00% ]</div>
+    </div>
+
+    <div id="apex-menu">
+        <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
+        <div class="menu-links">
+            <a href="exhibits.html" class="menu-link" onclick="playExhibitsSound(event, 'exhibits.html')">EXHIBITS</a>
+            <a href="choice-cuts.html" class="menu-link">CHOICE CUTS</a>
+            <a href="long-pour.html" class="menu-link">LONG POUR</a>
+            <a href="info.html" class="menu-link">INFORMATION</a>
+        </div>
     </div>
 
     <div class="bg-container" id="bg-container">
@@ -784,11 +1208,33 @@
 
     <div id="page-fade"></div>
 
+    <div id="standoff-splash">
+        <div class="split-panel split-left">
+            <div class="split-bg-inner" style="background-image: url('assets/paladin-standoff-bg.jpg');"></div>
+        </div>
+        <div class="split-panel split-right">
+            <div class="split-bg-inner" style="background-image: url('assets/paladin-standoff-bg.jpg');"></div>
+        </div>
+        <div class="splash-content">
+            <div class="splash-subtitle">
+                <svg class="ico-knight" viewBox="0 0 1052 1600" aria-hidden="true">
+                    <use xlink:href="#knight-mark" href="#knight-mark"></use>
+                </svg>
+                <span class="wire-text">Wire<br>Omar</span>
+            </div>
+            <h1 class="splash-title">HAVE&nbsp;IDEAS.<br>WILL&nbsp;TRAVEL.</h1>
+        </div>
+    </div>
+
     <!-- Scroll height driver — main is position:fixed above this -->
     <div id="scroll-stage"></div>
 
     <main class="portal-wrapper" id="portal">
-        <a href="info.html" class="info-link">[ INFO ]</a>
+        <nav class="apex-nav">
+            <div class="nav-right">
+                <div class="menu-trigger" onclick="toggleMenu(true)">[ MENU ]</div>
+            </div>
+        </nav>
 
         <a href="index.html" class="header-name">
             OMAR<span id="name-space"> </span><span id="name-last">SILWANY</span><span id="name-suffix">, THE CREATIVE</span>
@@ -804,10 +1250,14 @@
             <button class="btn" id="intel-btn">[ LEARN ]</button>
         </div>
 
-        <div class="footer-metadata">
-            <a href="long-pour.html">[ LONG POUR ]</a>
-            <a href="exhibits.html" id="exhibits-link">[ EXHIBITS ]</a>
-            <a href="choice-cuts.html">[ CHOICE CUTS ]</a>
+        <!-- Unified Visual Grid -->
+        <div id="combined-grid-view">
+            <div class="grid-filter-bar">
+                <button class="filter-btn active" data-filter="all">[ ALL ]</button>
+                <button class="filter-btn" data-filter="films">[ FILMS ]</button>
+                <button class="filter-btn" data-filter="case-studies">[ CASE STUDIES ]</button>
+            </div>
+            <div class="grid-container" id="grid-container"></div>
         </div>
     </main>
 
@@ -817,518 +1267,44 @@
 
     <script src="apex-sound.js?v=2"></script>
     <script>
-        const projects = [
-            {
-                title: "GOOGLE",
-                subtitle: "Lose the Flash",
-                letterSpacing: '-0.02em',
-                vimeoId: "306235541",
-                img: "assets/03-google-pixel-lose-the-flash-scaled-e1772256909967.png",
-                role: "CREATIVE DIRECTOR, WRITER",
-                desc: "Dracula sells cameras now.<br>Queen provides the soundtrack.<br>The flash is officially dead.<br><br>We turned Pixel's Night Sight<br>from a spec into a cultural moment.<br>No technical jargon.<br>Just vampires doing<br>what they do best.",
-                script: `
-                    <div class="sc-header">
-                        <div class="sc-brand">GOOGLE PIXEL 3</div>
-                        <div class="sc-campaign">"LOSE THE FLASH"</div>
-                        <div class="sc-format">TELEVISION COMMERCIAL — :35 · PRODUCTION DRAFT</div>
-                        <div class="sc-byline-role">CREATIVE DIRECTOR, COPY</div>
-                        <div class="sc-byline">OMAR SILWANY</div>
-                        <div class="sc-agency">JOAN NY</div>
-                        <hr class="sc-rule">
-                    </div>
 
-                    <div class="sc-action">MUSIC: "Flash" — Queen / Flash Gordon OST (1980)</div>
-
-                    <div class="sc-slug">OPEN — INTERCUT: UGC STILLS + DRACULA</div>
-
-                    <p>Bass line. We cut through a rapid series of flash-ruined still photographs — faces washed out, eyes red, moments flattened to white noise. Real. Grainy. User-generated.</p>
-
-                    <div class="sc-action">MUSIC: bass line builds</div>
-
-                    <p>DRACULA. In his element. Camera flash fires in his face.</p>
-
-                    <div class="sc-action">MUSIC (in sync with flash): FREDDIE MERCURY — "FLASH! AH! AHHH!"</div>
-
-                    <p>He recoils. More stills. Another flash. DRACULA again — different angle, same indignity.</p>
-
-                    <div class="sc-action">MUSIC: "FLASH! AH! AHHH!"</div>
-
-                    <p>Then: a still of two women on a plane. One is asleep — mouth open, completely gone. Her friend leans in to sneak a selfie with her. Flash fires. The sleeper jolts awake. The prank is over before it started. The prankster is busted.</p>
-
-                    <div class="sc-slug">BEAT TWO — INT. RESTAURANT — NIGHT</div>
-
-                    <p>Two foodies lean over a candlelit table, phones raised, firing flash after flash at their food. Their neighbors wince. A couple at the next table shares a look. A waiter passes, completely unfazed. He's seen this every night.</p>
-
-                    <div class="sc-action">MUSIC: chorus builds</div>
-
-                    <div class="sc-slug">BEAT THREE — INT. SMALL MUSIC VENUE — NIGHT</div>
-
-                    <p>A male guitarist performs on a small, warmly lit stage. Intimate. Something real is happening here. An audience member raises a phone — flash fires. The guitarist flinches mid-song. The spell breaks.</p>
-
-                    <div class="sc-action">MUSIC: heroic orchestral swell begins</div>
-
-                    <p>The same stage. The same man. The same amber light. Two versions of the same shot:</p>
-
-                    <p>First — with flash. Blown out. Overexposed. The face obliterated.</p>
-
-                    <div class="sc-action">SUPER: "Lose the flash"</div>
-
-                    <p>Then — Night Sight. The same frame, perfectly rendered. Warm. Alive. Every detail intact.</p>
-
-                    <div class="sc-action">SUPER: "Not the moment"</div>
-
-                    <div class="sc-slug">PRODUCT INTRODUCTION — PIXEL 3</div>
-
-                    <p>The Pixel 3. The answer.</p>
-
-                    <div class="sc-slug">CLOSER — INT. PLANE — NIGHT (CALLBACK)</div>
-
-                    <p>The two women from the plane. The prankster leans in again — this time no flash. Her friend is still out cold, mouth open, completely unaware. The shot is perfect. The prankster is delighted. The prank finally lands.</p>
-
-                    <div class="sc-action">SUPER: "Night Sight"</div>
-
-                    <p>The same super holds as we reveal the photo glowing on a Pixel 3 screen.</p>
-
-                    <div class="sc-action">SUPER: "Night Sight" (continuous — over scene and over device)</div>
-
-                    <p>The Pixel 3 rotates. Back panel. Clean. Dark.</p>
-
-                    <div class="sc-action">SUPER: "Pixel 3"</div>
-
-                    <div class="sc-slug">END CARD — WHITE</div>
-
-                    <div class="sc-action">Google G logo. :35.</div>
-                `,
-                credits: [
-                    {l: "Client", v: "Google"},
-                    {l: "Creative Director, Copy", v: "Omar Silwany"},
-                    {l: "Creative Director, Art", v: "Lars Mars Jorgensen"},
-                    {l: "Chief Creative Officer", v: "Jaime Robinson"},
-                    {l: "Agency", v: "JOAN NY"},
-                    {l: "Director", v: "Terri Timely"},
-                    {l: "Production", v: "Park Pictures"},
-                    {l: "Edit", v: "Exile"},
-                    {l: "Post/Color", v: "The Mill"}
-                ]
-            },
-            {
-                title: "SAMSUNG",
-                subtitle: "Stay Ahead of Tomorrow",
-                letterSpacing: '-0.02em',
-                vimeoId: "442857172",
-                img: "assets/04-samsung-stay-ahead-tomorrow.jpg",
-                role: "CREATIVE DIRECTOR, WRITER",
-                desc: "Samsung wanted to sell 5G devices.<br>We sold Gen Z<br>their own skepticism instead.<br><br>Let our hero argue with her future.<br>Made global markets copy our playbook.<br>Turns out that little 5G icon<br>changes everything.",
-                script: `
-                    <div class="sc-header">
-                        <div class="sc-brand">SAMSUNG GALAXY</div>
-                        <div class="sc-campaign">"STAY AHEAD OF TOMORROW"</div>
-                        <div class="sc-format">GLOBAL TELEVISION COMMERCIAL — :60 · PRODUCTION DRAFT</div>
-                        <div class="sc-byline-role">CREATIVE DIRECTOR, COPY</div>
-                        <div class="sc-byline">OMAR SILWANY</div>
-                        <div class="sc-agency">PUBLICIS NYC</div>
-                        <hr class="sc-rule">
-                    </div>
-                    <div class="sc-slug">EXT. STREET — DAY</div>
-
-                    <p>Our heroine walks, looking at her Samsung Galaxy 5G. Checks out her phone. Curious but skeptical.</p>
-
-                    <div class="sc-char">GIRL</div>
-                    <div class="sc-dialogue">So what does Galaxy 5G …</div>
-
-                    <p>She flips the phone — SAMSUNG on the back.</p>
-
-                    <div class="sc-char">GIRL</div>
-                    <div class="sc-dialogue">…really change?</div>
-
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">More than you think.</div>
-
-                    <p>People in costumes from iconic Netflix series begin appearing — first a few, then more, filling the screen as the back-and-forth builds.</p>
-
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">Try downloading.</div>
-
-                    <div class="sc-char">GIRL</div>
-                    <div class="sc-dialogue">Like, my favorite show?</div>
-
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">Go for it.</div>
-
-                    <p>She downloads. Money Heist robbers sprint past her. She reacts.</p>
-
-                    <div class="sc-char">GIRL</div>
-                    <div class="sc-dialogue">A whole series?</div>
-
-                    <p>She taps — a full season of Stranger Things downloads instantly on the Netflix UI. Stranger Things characters surround her. She looks around.</p>
-
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">Think bigger.</div>
-
-                    <div class="sc-char">GIRL</div>
-                    <div class="sc-dialogue">What about everything I've ever binged on?</div>
-
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">Yes. In no time.</div>
-
-                    <p>30+ Netflix characters flood the frame: Umbrella Academy, BoJack Horseman, The Chilling Adventures of Sabrina, Money Heist, Big Mouth, The Crown, Lost in Space.</p>
-
-                    <div class="sc-slug">EXT. PARK — DAY</div>
-
-                    <p>Our heroine with a fuzzy-tailed squirrel on her shoulder.</p>
-
-                    <div class="sc-char">GIRL</div>
-                    <div class="sc-dialogue">What if I want to show my friend this little guy?</div>
-
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">Just one friend? You can now call all your friends, and their mama's mamas.</div>
-
-                    <p>Her phone screen fills with 25 simultaneous video chats in a multi-frame grid.</p>
-
-                    <div class="sc-slug">INT. PING PONG TOURNAMENT</div>
-
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">Now, check out this game.</div>
-
-                    <p>Intense ping pong rally. Light speed.</p>
-
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">Not that game.</div>
-
-                    <p>Cut to a console-level cloud game being played on the Galaxy 5G screen.</p>
-
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">This one.</div>
-
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">Bring on your friends.</div>
-
-                    <p>20 friends playing the same game. Pull wider — 75 more. Our heroine wins. She knows it.</p>
-
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">Take on the world.</div>
-
-                    <div class="sc-slug">INT. BUS — DAY</div>
-
-                    <p>Our heroine riding. Galaxy Buds in. Looking out the window like she'd rather be anywhere else.</p>
-
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">You bored?</div>
-
-                    <div class="sc-char">GIRL</div>
-                    <div class="sc-dialogue">Obviously.</div>
-
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">So, let's go to a concert.</div>
-
-                    <p>She starts streaming. Over-the-shoulder — she's watching a DJ's live performance. She spins a 360 view. Camera mirrors the spin — she's transported into the concert.</p>
-
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">(yelling) It's like being there.</div>
-
-                    <div class="sc-char">GIRL</div>
-                    <div class="sc-dialogue">(yelling) Without being there.</div>
-
-                    <div class="sc-slug">CALLBACK — EXT. STREET</div>
-
-                    <p>Our heroine from the opening — now sitting comfortably with the Demogorgon, watching Netflix on her Galaxy 5G.</p>
-
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">Galaxy 5G …</div>
-
-                    <div class="sc-char">GIRL</div>
-                    <div class="sc-dialogue">...really changes things.</div>
-
-                    <div class="sc-action">SUPER: "Galaxy 5G changes downloading"</div>
-                    <div class="sc-action">SUPER: "Galaxy 5G changes video calling"</div>
-                    <div class="sc-action">SUPER: "Galaxy 5G changes gaming"</div>
-                    <div class="sc-action">SUPER: "Galaxy 5G changes live events"</div>
-                    <div class="sc-action">SUPER: "EXPERIENCE THE CHANGE"</div>
-                    <div class="sc-action">CARD: SAMSUNG</div></div>
-                `,
-                credits: [
-                    {l: "Client", v: "Samsung Global"},
-                    {l: "Creative Director, Copy", v: "Omar Silwany"},
-                    {l: "Creative Director, Art", v: "Joakim Saul"},
-                    {l: "Chief Creative Officer", v: "Louis-Philippe Tremblay"},
-                    {l: "Agency", v: "Publicis NYC"},
-                    {l: "Director", v: "Sara Dunlop"},
-                    {l: "Editor", v: "Maury Loeb / PS 260"},
-                    {l: "Color", v: "Fergus McCall / The Mill"}
-                ]
-            },
-            {
-                title: "BUD LIGHT",
-                subtitle: "Home Advantage",
-                letterSpacing: '-0.01em',
-                vimeoId: "154384335",
-                img: "assets/07-bud-light-home-advantage.png",
-                role: "CREATIVE DIRECTOR, COPY",
-                desc: "Super Bowl 50 needed a bottle.<br>We gave it a time machine.<br><br>Bud Light doesn't just sell beer;<br>it sells heritage.<br><br>We reminded fans<br>that the home field advantage<br>starts long before kickoff.",
-                script: `
-                    <div class="sc-header">
-                        <div class="sc-brand">BUD LIGHT</div>
-                        <div class="sc-campaign">"HOME ADVANTAGE"</div>
-                        <div class="sc-format">TELEVISION COMMERCIAL — :30 · SUPER BOWL 50 · PRODUCTION DRAFT</div>
-                        <div class="sc-byline-role">CREATIVE DIRECTOR, COPY</div>
-                        <div class="sc-byline">OMAR SILWANY</div>
-                        <div class="sc-agency">VAYNERX</div>
-                        <hr class="sc-rule">
-                    </div>
-
-                    <div class="sc-slug">INT. LIVING ROOM — 1982</div>
-
-                    <p>Close on an original 1982 Budweiser Light bottle. Pan back to reveal a living room: Zenith console, period furniture, friends gathered for Super Bowl XVI — 49ers vs. Bengals, Pontiac Silverdome, Detroit.</p>
-
-                    <div class="sc-char">NFL ANNOUNCER</div>
-                    <div class="sc-dialogue">It's game time!</div>
-
-                    <p>Everyone raises their Budweiser Lights. Camera pushes into the TV as the game begins.</p>
-
-                    <p>NFL SEQUENCE — Great plays connect across decades. A play from one Super Bowl hands off to the next great play years later:</p>
-
-                    <p>Joe Montana's Super Bowl XVI pass — the ball arrives in Cliff Branch's hands for a touchdown in Super Bowl XVIII.</p>
-
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">Since 1982, Bud Light has united every Super Bowl fan, connecting one amazing NFL moment to the next.</div>
-
-                    <p>Randle El's 43-yard pass in Super Bowl XL — the ball arrives at David Tyree's helmet in Super Bowl XLII.</p>
-
-                    <div class="sc-slug">INT. LIVING ROOM — 2016</div>
-
-                    <p>Camera pulls back out of the TV to reveal a present-day living room. LED TV mounted on the wall. Friends together for Super Bowl 50. Pre-game footage plays on screen. A bucket of SB50 bottles chills on ice.</p>
-
-                    <div class="sc-char">NFL ANNOUNCER</div>
-                    <div class="sc-dialogue">It's game time!</div>
-
-                    <p>Everyone raises their SB50 bottles. Camera pushes in to a close on the commemorative bottle.</p>
-
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">On the Super Bowl's 50th anniversary, we're driving our game forward. Introducing the Bud Light Super Bowl 50 Commemorative Bottle. The only official beer for celebrating all Super Bowl games, always.</div>
-
-                    <div class="sc-action">SUPER: "Bud Light. Since 1982. Fans. Forward."</div>
-                `,
-                credits: [
-                    {l: "Client", v: "Bud Light"},
-                    {l: "Creative Director, Copy", v: "Omar Silwany"},
-                    {l: "GCD", v: "Chris Bradley"},
-                    {l: "Creative Director, Art", v: "Andy Cummings"},
-                    {l: "Agency", v: "VaynerX"},
-                    {l: "Director", v: "Lucy Tcherniak"},
-                    {l: "Production", v: "Radical Media"},
-                    {l: "Editor", v: "Charlie Harvey / Whitehouse Post"}
-                ]
-            },
-            {
-                title: "LEGENCE",
-                subtitle: "Built for Building",
-                letterSpacing: '-0.02em',
-                vimeoId: "1080884698",
-                img: "assets/06-legence-built-for-building.png",
-                role: "CREATIVE DIRECTOR, ART",
-                desc: "We made infrastructure sexy.<br>$5 billion sexy, to be exact.<br><br>Turned mechanical, electrical, and plumbing<br>into a rallying cry.<br>Made engineers feel like astronauts.<br><br>Helped a company nobody heard of<br>become essential overnight.",
-                script: `
-                    <div class="sc-header">
-                        <div class="sc-brand">LEGENCE × BLACKSTONE</div>
-                        <div class="sc-campaign">"BUILT FOR BUILDING"</div>
-                        <div class="sc-format">BRAND FILM — 2:30 · PRODUCTION DRAFT</div>
-                        <div class="sc-byline-role">CREATIVE DIRECTOR, ART</div>
-                        <div class="sc-byline">OMAR SILWANY</div>
-                        <div class="sc-agency">FUNDAMENTALCO</div>
-                        <hr class="sc-rule">
-                    </div>
-                    <div class="sc-slug">FADE IN:</div>
-                    <div class="sc-slug">VARIOUS — DATA CENTERS, CONSTRUCTION SITES, FACILITIES</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">BUSINESSES, INSTITUTIONS AND GOVERNMENTS ARE INVESTING MORE IN THEIR FACILITIES THAN AT ANY OTHER TIME IN U.S. HISTORY — AS THEY BUILD DIGITAL INFRASTRUCTURE, RESHORE MANUFACTURING, AND EXPAND TO MEET GROWING DEMAND.</div>
-                    <div class="sc-action">CUT TO: ENGINEERS IN A SERVER ROOM. A SEMICONDUCTOR FAB. AN OPERATING THEATER. THESE ARE THE PLACES THAT RUN THE WORLD.</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">AT THE SAME TIME, THEY'RE FACING RISING POWER PRICES AND INCREASING PRESSURE FROM STAKEHOLDERS TO MAKE THEIR OPERATIONS MORE ENERGY EFFICIENT AND SUSTAINABLE.</div>
-                    <div class="sc-transition">CUT TO:</div>
-                    <div class="sc-slug">WIDE SHOT — LEGENCE FIELD TEAMS AT WORK</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">WE ARE LEGENCE — AND WE'RE HELPING THE WORLD'S LEADING BUSINESSES AND INSTITUTIONS CREATE MODERN, EFFICIENT, AND HEALTHY BUILDINGS THAT ARE LESS COSTLY TO OPERATE AND MORE SUSTAINABLE.</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">LEGENCE IS ONE OF THE MOST EXPERIENCED AND CAPABLE PROVIDERS OF ENGINEERING, INSTALLATION, AND MAINTENANCE SERVICES FOR MEP SYSTEMS IN THE UNITED STATES.</div>
-                    <div class="sc-action">GRAPHICS: A MAP OF THE U.S. — DOTS LIGHTING UP ACROSS 20 STATES.</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">WE EMPLOY MORE THAN 5,700 ENGINEERS, ENERGY CONSULTANTS, AND CRAFT WORKERS ACROSS OFFICES IN 20 STATES, AND WE GO TO MARKET UNDER WELL-KNOWN BRANDS THAT HAVE LONGSTANDING REPUTATIONS FOR EXCEPTIONAL SERVICE AND QUALITY.</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">WE ARE THE PREFERRED PARTNER FOR HIGH-GROWTH INDUSTRIES WITH TECHNICALLY DEMANDING BUILDINGS — INCLUDING RESEARCH LABS, DATA CENTERS, SEMICONDUCTOR FABS, PHARMACEUTICAL PRODUCTION FACILITIES, AND HOSPITALS.</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">WE COUNT MORE THAN 60% OF THE COMPANIES IN THE NASDAQ 100 AS CLIENTS.</div>
-                    <div class="sc-action">GRAPHICS: REVENUE GROWTH CHART — 2021 THROUGH 2024.</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">FROM 2021 THROUGH 2024, WE MORE THAN DOUBLED OUR REVENUES THROUGH A COMBINATION OF ORGANIC AND ACQUISITION GROWTH. AT THE END OF 2024, WE HAD MORE THAN TWO AND A HALF BILLION IN BACKLOG — REFLECTING STRONG DEMAND GOING INTO 2025.</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">AND WE'RE JUST GETTING STARTED. THERE'S NO LIMIT TO WHAT WE CAN BUILD FOR OUR CUSTOMERS AND SHAREHOLDERS.</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">WE ARE LEGENCE.</div>
-                    <div class="sc-action">SUPER: "LEGENCE. BUILT FOR BUILDING." LOGO. FADE OUT.</div>
-                `,
-                credits: [
-                    {l: "Client", v: "Legence"},
-                    {l: "Creative Director, Art", v: "Omar Silwany"},
-                    {l: "Agency", v: "Fundamentalco"},
-                    {l: "Edit", v: "Whitehouse Post"},
-                    {l: "Post & GFX", v: "Carbon"},
-                    {l: "Sound", v: "Sounds Good"}
-                ]
-            },
-            {
-                title: "CITI",
-                subtitle: "Rise",
-                vimeoId: "812285745",
-                videoScale: 1.35,
-                letterSpacing: '-0.01em',
-                captionBar: true,
-                img: "08-citi-rise.png",
-                role: "CREATIVE DIRECTOR, COPY",
-                desc: "$1 trillion in sustainable finance<br>is complex.<br>We gave it one simple direction. Up.<br><br>We turned global capital into local impact,<br>proving that profit and purpose<br>aren't just compatible—they're powerful.",
-                script: `
-                    <div class="sc-header">
-                        <div class="sc-brand">CITI</div>
-                        <div class="sc-campaign">"RISE"</div>
-                        <div class="sc-format">TELEVISION COMMERCIAL — :30 · PRODUCTION DRAFT</div>
-                        <div class="sc-byline-role">CREATIVE DIRECTOR, COPY</div>
-                        <div class="sc-byline">OMAR SILWANY</div>
-                        <div class="sc-agency">PUBLICIS NY</div>
-                        <hr class="sc-rule">
-                    </div>
-                    <div class="sc-slug">FADE IN:</div>
-                    <div class="sc-slug">VARIOUS — MONTAGE</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">STRIVING TO REACH THE ULTIMATE GOAL OF ZERO POVERTY TAKES MORE THAN EVERYONE'S HOPES AND DREAMS.</div>
-                    <div class="sc-action">WIDE SHOTS: COMMUNITIES. SMALL BUSINESSES. FAMILIES. THE SCALE OF THE PROBLEM AND THE SCALE OF THE POSSIBLE.</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">CITI: IT TAKES A FINANCIAL COMMITMENT TO COMPANIES WHO EMPOWER PEOPLE TO LIFT THEMSELVES UP.</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">IT TAKES FUNDING AND BUILDING ON OUR KNOW-HOW TO HELP COMMUNITIES GROW.</div>
-                    <div class="sc-action">MONTAGE CONTINUES: RENEWABLE ENERGY INFRASTRUCTURE. A WOMAN OPENING A BUSINESS. A SCHOOL BEING BUILT. EACH IMAGE MOVING UPWARD IN FRAME.</div>
-                    <div class="sc-char">VOICEOVER</div>
-                    <div class="sc-dialogue">THAT'S HOW CITI IS HELPING CREATE A BETTER FUTURE — BY COMMITTING ONE TRILLION DOLLARS IN SUSTAINABLE FINANCE BY 2030. BECAUSE IT TAKES EVERYTHING TO REACH ZERO POVERTY.</div>
-                    <div class="sc-action">SUPER: "CITI." LOGO. FADE OUT.</div>
-                `,
-                credits: [
-                    {l: "Client", v: "Citi"},
-                    {l: "Creative Director, Copy", v: "Omar Silwany"},
-                    {l: "Creative Director, Art", v: "Kim Davies"},
-                    {l: "Chief Creative Officer", v: "Erica Roberts"},
-                    {l: "Agency", v: "Publicis NY"}
-                ]
-            },
-            {
-                title: "SAMSUNG",
-                subtitle: "Study Is Better with Play",
-                letterSpacing: '-0.02em',
-                vimeoId: "637229831",
-                img: "assets/01-samsung-study-better-play-scaled.png",
-                role: "CREATIVE DIRECTOR, WRITER",
-                desc: "We told students<br>to make play work for them.<br>Then proved it<br>with pen spinning.<br><br>Turned ADHD into a superpower.<br>Made fidgeting fashionable.<br>Convinced a generation<br>that distraction is focus.",
-                script: `
-                    <div class="sc-header">
-                        <div class="sc-brand">SAMSUNG GALAXY TAB S7 FE</div>
-                        <div class="sc-campaign">"STUDY IS BETTER WITH PLAY"</div>
-                        <div class="sc-format">TELEVISION COMMERCIAL — :30 · PRODUCTION DRAFT</div>
-                        <div class="sc-byline-role">CREATIVE DIRECTOR, COPY</div>
-                        <div class="sc-byline">OMAR SILWANY</div>
-                        <div class="sc-agency">BBH USA</div>
-                        <hr class="sc-rule">
-                    </div>
-                    <div class="sc-slug">MUSIC UP.</div>
-                    <div class="sc-slug">OVERHEAD — TABLE, FOUR TABS</div>
-                    <div class="sc-action">OPEN FROM ABOVE: FOUR HANDS REACH IN FROM THE EDGES OF FRAME. FOUR COLORED TAB S7 FES ON THE TABLE — GREEN, PINK, SILVER, BLACK. EACH HAND PICKS UP ITS MATCHING S PEN AND BEGINS TO TWIRL.</div>
-                    <div class="sc-action">SUPER: "INTRODUCING GALAXY TAB S7 FE."</div>
-                    <div class="sc-transition">CUT TO:</div>
-                    <div class="sc-slug">INT. GYM — DAY</div>
-                    <div class="sc-action">A HAND IN THE FOREGROUND — TWIRLING AN S PEN. IN THE BACKGROUND: A SPORTS HALL, STUDENTS IN MOTION. THE S PEN IS A DIFFERENT COLOR FOR EVERY HAND. EACH ONE A MATCH FOR ITS OWNER.</div>
-                    <div class="sc-action">SUPER: "S PEN IN MATCHING COLORS."</div>
-                    <div class="sc-transition">CUT TO:</div>
-                    <div class="sc-slug">C/U — S PEN ON SCREEN</div>
-                    <div class="sc-action">EXTREME CLOSE-UP: THE TIP OF AN S PEN GLIDING ACROSS THE TAB'S DISPLAY. A COLORFUL ILLUSTRATION BLOOMS BENEATH IT. NAILS PAINTED GREEN WITH A SMILEY FACE. THE SCREEN IS VAST.</div>
-                    <div class="sc-action">SUPER: "12.4\" BIG SCREEN."</div>
-                    <div class="sc-transition">CUT TO:</div>
-                    <div class="sc-slug">EXT. STAIRCASE — DAY</div>
-                    <div class="sc-action">A STUDENT ON STEPS. THE TAB S7 FE IN ONE HAND, A GALAXY PHONE IN THE OTHER. THE S PEN MOVES BETWEEN THEM — DRAWING ON THE TAB, THE SKETCH MIRRORING ACROSS TO THE PHONE. TWO SCREENS. ONE ECOSYSTEM.</div>
-                    <div class="sc-action">SUPER: "WORK ACROSS GALAXY DEVICES WITH EASE."</div>
-                    <div class="sc-transition">CUT TO:</div>
-                    <div class="sc-slug">EXT. CAMPUS — DAY</div>
-                    <div class="sc-action">A HAND HOLDS UP A GREEN TAB S7 FE — BACK OF DEVICE TO CAMERA, S PEN SEATED IN ITS SLOT. THE CAMPUS SPRAWLS IN SOFT FOCUS BEHIND IT. STUDENTS GATHERED ON THE GRASS. GOLDEN LIGHT.</div>
-                    <div class="sc-action">SUPER: "STUDY IS BETTER WITH PLAY."</div>
-                    <div class="sc-transition">SMASH CUT TO:</div>
-                    <div class="sc-slug">PRODUCT SHOT</div>
-                    <div class="sc-action">ALL FOUR COLORS OF THE GALAXY TAB S7 FE — FANNED OUT, SCREENS FACING, S PENS BESIDE THEM. CLEAN. CONFIDENT.</div>
-                    <div class="sc-action">SUPER: "GALAXY TAB S7 FE."</div>
-                    <div class="sc-transition">CUT TO:</div>
-                    <div class="sc-slug">LOGO CARD — BLACK</div>
-                    <div class="sc-action">SAMSUNG. MUSIC OUT.</div>
-                `,
-                credits: [
-                    {l: "Client", v: "Samsung"},
-                    {l: "Creative Director, Copy", v: "Omar Silwany"},
-                    {l: "Creative Director, Art", v: "Coral Garvey"},
-                    {l: "Senior Copywriter", v: "Patrick DeYoung"},
-                    {l: "Senior Art Director", v: "Rosendo Ayala"},
-                    {l: "Chief Creative Officer", v: "Rafael Rizuto"},
-                    {l: "Agency", v: "BBH USA"},
-                    {l: "Director", v: "We Are From LA"},
-                    {l: "Color", v: "Company3"}
-                ]
-            },
-            { 
-                title: "MBK ALLIANCE",
-                subtitle: "We Are the Ones",
-                letterSpacing: '-0.01em',
-                vimeoId: "267027000",
-                img: "assets/02-mbk-we-are-the-ones-scaled-e1772257041527.png", 
-                role: "CREATIVE DIRECTOR, WRITER", 
-                desc: "One voice becomes a movement.<br>Obama listens.<br>Curry takes note.<br>Chance amplifies.<br><br>And it all starts<br>when a kid decides to speak.<br>50 million impressions.<br>Zero paid media.<br><br>Just truth traveling<br>at the speed of culture.",
-                script: `
-                    <div class="sc-dark" style="background:#050505;color:#fff;margin:-12px;padding:0;font-family:var(--mono);">
-
-                        <img src="assets/obama-hero-image/Lincoln_Memorial_Warren_Eakins.jpg"
-                             alt="We Are The Ones — Lincoln Memorial"
-                             style="width:100%;display:block;object-fit:cover;max-height:280px;filter:brightness(0.75);">
-
-                        <div style="padding:28px 48px 0;">
-                            <div style="font-size:7px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:20px;">ORIGIN</div>
-
-                            <blockquote style="margin:0 0 12px;padding:0;border:none;">
-                                <p style="font-family:var(--serif);font-style:italic;font-size:13px;line-height:1.8;color:#fff;margin:0 0 16px;">
-                                    "Change will not come if we wait for some other person or if we wait for some other time. We are the ones we've been waiting for. We are the change that we seek. We are the hope of those boys who have so little, who've been told that they cannot have what they dream, that they cannot be what they imagine. Yes, they can."
-                                </p>
-                                <cite style="font-size:8px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.55);font-style:normal;">— Senator Barack Obama &nbsp;·&nbsp; February 5, 2008</cite>
-                            </blockquote>
-
-                            <hr style="border:none;border-top:1px solid rgba(255,255,255,0.15);margin:28px 0;">
-
-                            <div style="font-size:7px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:20px;">THE CONCEPT &nbsp;·&nbsp; WE ARE THE ONES MANIFESTO</div>
-
-                            <p style="font-size:11px;line-height:1.9;color:rgba(255,255,255,0.85);margin:0 0 16px;">Our country was defined by great battles. Such was the case in 1814 when brave men both black and white fought side-by-side to keep our star-spangled banner in the sky. And such is the case today when the bravery of all races faces the persistent front of injustice, keeping faith in each one's humanity to become the other's keeper.</p>
-
-                            <p style="font-size:11px;line-height:1.9;color:#fff;margin:0 0 6px;">When we look up and ask for light: <strong>We Are The Ones.</strong></p>
-                            <p style="font-size:11px;line-height:1.9;color:#fff;margin:0 0 6px;">When we listen for the words that keep our spirits high: <strong>We Are The Ones.</strong></p>
-                            <p style="font-size:11px;line-height:1.9;color:#fff;margin:0 0 20px;">And when we sing of bravery's home and freedom's land: <strong>We Are The Ones.</strong></p>
-
-                            <p style="font-size:11px;line-height:1.9;color:rgba(255,255,255,0.85);margin:0 0 16px;">Young Americans locked arm-in-arm instead of raising arms. Perfectly united and free,<br>with the inextinguishable hope to be judged not for the color of our skin but for<br>the color in our hearts.</p>
-
-                            <p style="font-size:11px;line-height:1.9;color:#fff;margin:0 0 28px;">We are each other's keepers.</p>
-
-                            <div style="font-size:7px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.35);padding-bottom:24px;">Omar Silwany &nbsp;&amp;&nbsp; Warren Eakins &nbsp;·&nbsp; Matter Unlimited &nbsp;·&nbsp; 2017</div>
-                        </div>
-                    </div>
-                `,
-                credits: [
-                    {l: "Client", v: "MBK Alliance"},
-                    {l: "Creative Director, Copy", v: "Omar Silwany"},
-                    {l: "Creative Director, Art", v: "Warren Eakins"},
-                    {l: "Additional Creative", v: "Shabazz Larkin"},
-                    {l: "Agency", v: "Matter Unlimited"},
-                    {l: "Director", v: "Jason J.M. Harper"},
-                    {l: "Production", v: "LonelyLeap"}
-                ]
-            },
-        ];
+        function toggleMenu(show) {
+            const menu = document.getElementById('apex-menu');
+            if (menu) {
+                menu.style.display = show ? 'flex' : 'none';
+                document.body.style.overflow = show ? 'hidden' : '';
+                if (show && typeof ApexSound !== 'undefined') {
+                    ApexSound.init();
+                    ApexSound.play('door');
+                }
+            }
+        }
+        window.toggleMenu = toggleMenu;
+
+        window.playExhibitsSound = function(e, url) {
+            if (e) e.preventDefault();
+            if (typeof ApexSound !== 'undefined') {
+                ApexSound.init();
+                ApexSound.play('projector', 1.0);
+            }
+            setTimeout(function() {
+                window.location.href = url;
+            }, 800);
+        };
+
+        function enterGridState() {
+            document.body.classList.add('grid-active');
+            const wrapper = document.querySelector('.portal-wrapper');
+            if (wrapper) {
+                const temp = wrapper.style.display;
+                wrapper.style.display = 'none';
+                wrapper.offsetHeight; // force layout recalculation
+                wrapper.style.display = temp;
+            }
+            document.body.offsetHeight; // force body reflow
+            window.dispatchEvent(new Event('resize'));
+        }
+        window.enterGridState = enterGridState;
 
         let currentIndex = -1;
         let isProjectState = false;
@@ -1359,19 +1335,27 @@
             const progress = Math.min(Math.round((count / totalItems) * 100), 100);
             
             // Update Battery
-            document.getElementById('bat-status').textContent = `[ BAT: ${progress.toString().padStart(2, '0')}% ]`;
+            const batEl = document.getElementById('bat-status');
+            if (batEl) {
+                batEl.textContent = `[ BAT: ${progress.toString().padStart(2, '0')}% ]`;
+            }
             
             // Update Timecode (simplistic mapping of count to frames)
-            document.getElementById('hud-tc').textContent = `[ TC 00:00:00:${count.toString().padStart(2, '0')} ]`;
+            const tcEl = document.getElementById('hud-tc');
+            if (tcEl) {
+                tcEl.textContent = `[ TC 00:00:00:${count.toString().padStart(2, '0')} ]`;
+            }
             
             // Check Unlock
             if (count > 0) {
                 const lut = document.getElementById('lut-toggle');
-                const wasLocked = !lut.classList.contains('unlocked');
-                lut.classList.add('unlocked');
-                if (wasLocked) ApexSound.play('shutter', 0.5);
-                if (localStorage.getItem('omar_lut') === 'RUBY') {
-                    applyRubyLUT(true);
+                if (lut) {
+                    const wasLocked = !lut.classList.contains('unlocked');
+                    lut.classList.add('unlocked');
+                    if (wasLocked && typeof ApexSound !== 'undefined') ApexSound.play('shutter', 0.5);
+                    if (localStorage.getItem('omar_lut') === 'RUBY') {
+                        applyRubyLUT(true);
+                    }
                 }
             }
 
@@ -1466,7 +1450,7 @@
         })();
 
         portal.addEventListener('click', (e) => {
-            if (e.target.closest('.btn') || e.target.closest('.info-link') || e.target.closest('.header-name') || e.target.closest('.footer-metadata a')) return;
+            if (e.target.closest('.btn') || e.target.closest('.menu-trigger') || e.target.closest('.header-name')) return;
             
             // If we are in a project state (from deep-link), clicking advances
             if (isProjectState) {
@@ -1690,21 +1674,6 @@
         }
         window.addEventListener('keydown', handleVideoKeydown);
 
-        // Exhibits link transition with sound
-        document.getElementById('exhibits-link').addEventListener('click', function(e) {
-            e.preventDefault();
-            const href = this.getAttribute('href');
-            
-            if (typeof ApexSound !== 'undefined') {
-                ApexSound.init();
-                ApexSound.play('projector', 1.0); // Full volume for maximum impact
-            }
-            
-            setTimeout(() => {
-                window.location.href = href;
-            }, 800); // Slightly more time to hear the machine build up
-        });
-
         // Reclaim focus immediately if iframe steals it while modal is open
         window.addEventListener('blur', () => {
             if (modal.style.display === 'flex') {
@@ -1850,6 +1819,11 @@
 
         const handleEscape = (e) => {
             if (e.key === 'Escape') {
+                const menu = document.getElementById('apex-menu');
+                if (menu && menu.style.display === 'flex') {
+                    toggleMenu(false);
+                    return;
+                }
                 if (modal.style.display === 'flex') {
                     document.getElementById('close-video').click();
                     return;
@@ -1872,7 +1846,7 @@
                     actionGroup.classList.remove('visible');
                     document.body.classList.remove('locked');
                     window.scrollTo(0, 0);
-                    renderPaladinHero();
+                    enterGridState();
                 }
             }
         };
@@ -2139,9 +2113,247 @@
             if (typeof projectDisplay !== 'undefined' && projectDisplay) projectDisplay.style.width = '';
         }
 
+        // — TIMED INTRO SPLIT SCREEN & FOOTER TYPEWRITER SYSTEM —
+        let introTimer = null;
+        let countdownInterval = null;
+        let introTimeLeft = 3.0;
+
+        function initIntro() {
+            const params = new URLSearchParams(window.location.search);
+            // If direct link to project or deep link, skip intro
+            if (params.get('p') !== null || params.get('filter') !== null) {
+                const splash = document.getElementById('standoff-splash');
+                if (splash) splash.style.display = 'none';
+                document.body.classList.remove('intro-active');
+                enterGridState();
+                initVisualGrid();
+                if (params.get('filter')) {
+                    applyGridFilter(params.get('filter'));
+                }
+                return;
+            }
+
+            document.body.classList.add('intro-active');
+            const timerEl = document.getElementById('intro-timer');
+            const lutToggle = document.getElementById('lut-toggle');
+            if (timerEl) {
+                timerEl.style.display = 'block';
+                timerEl.textContent = `[ DISPATCH IN: 03.00 ]`;
+            }
+            if (lutToggle) lutToggle.style.display = 'none';
+
+            function skipIntro() {
+                if (introTimer) {
+                    clearTimeout(introTimer);
+                    introTimer = null;
+                }
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                }
+
+                const splash = document.getElementById('standoff-splash');
+                if (splash && !splash.classList.contains('split-active')) {
+                    if (typeof ApexSound !== 'undefined') {
+                        ApexSound.init();
+                        ApexSound.play('shutter');
+                    }
+                    splash.classList.add('split-active');
+                    document.body.classList.remove('intro-active');
+                    enterGridState();
+                    if (timerEl) timerEl.style.display = 'none';
+                    if (lutToggle) lutToggle.style.display = 'block';
+                    
+                    initVisualGrid();
+                }
+            }
+
+            // Keyboard/Click listeners to skip
+            const handleKeyToSkip = (e) => {
+                if (document.body.classList.contains('intro-active')) {
+                    if (e.key === ' ' || e.key === 'Enter' || e.key === 'Escape') {
+                        e.preventDefault();
+                        document.removeEventListener('keydown', handleKeyToSkip);
+                        skipIntro();
+                    }
+                }
+            };
+            document.addEventListener('keydown', handleKeyToSkip);
+
+            const handleClickToSkip = () => {
+                if (document.body.classList.contains('intro-active')) {
+                    document.removeEventListener('click', handleClickToSkip);
+                    skipIntro();
+                }
+            };
+            document.addEventListener('click', handleClickToSkip);
+
+            // Countdown ticker
+            countdownInterval = setInterval(() => {
+                introTimeLeft -= 0.1;
+                if (introTimeLeft <= 0) {
+                    introTimeLeft = 0;
+                    clearInterval(countdownInterval);
+                }
+                if (timerEl) {
+                    timerEl.textContent = `[ DISPATCH IN: ${introTimeLeft.toFixed(2).padStart(5, '0')} ]`;
+                }
+            }, 100);
+
+            // Auto skip after 3 seconds
+            introTimer = setTimeout(() => {
+                clearInterval(countdownInterval);
+                const splash = document.getElementById('standoff-splash');
+                if (splash && !splash.classList.contains('split-active')) {
+                    if (typeof ApexSound !== 'undefined') {
+                        ApexSound.init();
+                        ApexSound.play('shutter');
+                    }
+                    splash.classList.add('split-active');
+                    document.body.classList.remove('intro-active');
+                    enterGridState();
+                    if (timerEl) timerEl.style.display = 'none';
+                    if (lutToggle) lutToggle.style.display = 'block';
+                    
+                    initVisualGrid();
+                }
+            }, 3000);
+        }
+
+        function initVisualGrid() {
+            const container = document.getElementById('grid-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            const allItems = [];
+
+            // Add films (first)
+            projects.forEach((p, idx) => {
+                allItems.push({
+                    type: 'film',
+                    title: p.title,
+                    subtitle: p.subtitle,
+                    img: p.img,
+                    index: idx,
+                    role: p.role || "CREATIVE DIRECTOR, WRITER"
+                });
+            });
+
+            // Add case studies
+            caseStudies.forEach((cs) => {
+                allItems.push({
+                    type: 'case-study',
+                    title: cs.title,
+                    subtitle: cs.subtitle,
+                    img: cs.img,
+                    slug: cs.slug,
+                    role: cs.role || "CREATIVE DIRECTOR, WRITER"
+                });
+            });
+
+            // Render cards
+            allItems.forEach((item) => {
+                const card = document.createElement('div');
+                card.className = 'grid-card';
+                card.setAttribute('data-type', item.type);
+
+                const metaType = item.type === 'film' ? '[ FILM ]' : '[ CASE STUDY ]';
+
+                card.innerHTML = `
+                    <div class="card-img" style="background-image: url('${item.img}')"></div>
+                    <div class="card-overlay"></div>
+                    <div class="card-content">
+                        <h3 class="card-title">${item.subtitle}</h3>
+                        <div class="card-subtitle">${item.title}</div>
+                    </div>
+                `;
+
+                card.addEventListener('click', (e) => {
+                    if (item.type === 'film') {
+                        if (typeof ApexSound !== 'undefined') {
+                            ApexSound.init();
+                            ApexSound.play('projector');
+                        }
+                        currentIndex = item.index;
+                        isProjectState = true;
+                        document.body.classList.remove('grid-active');
+                        document.body.classList.add('project-view');
+                        document.body.classList.add('locked');
+
+                        modal.style.display = 'flex';
+                        document.body.classList.add('video-active');
+                        loadVideoProject(currentIndex);
+                        showControls();
+                        viewfinderOverlay.classList.add('tap-block');
+                        setTimeout(() => { viewfinderOverlay.classList.remove('tap-block'); }, 400);
+                        setTimeout(() => { if (document.activeElement) document.activeElement.blur(); window.focus(); }, 500);
+                        startFocusLock();
+                        markAsViewed(`v-${currentIndex}`);
+                    } else {
+                        if (typeof ApexSound !== 'undefined') {
+                            ApexSound.init();
+                            ApexSound.play('shutter');
+                        }
+                        setTimeout(() => {
+                            window.location.href = `choice-cuts/${item.slug}`;
+                        }, 120);
+                    }
+                });
+
+                container.appendChild(card);
+            });
+
+            // Wire up filter UI
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const filter = btn.getAttribute('data-filter');
+                    applyGridFilter(filter);
+                    if (typeof ApexSound !== 'undefined') {
+                        ApexSound.init();
+                        ApexSound.play('shutter');
+                    }
+                });
+            });
+        }
+
+        function applyGridFilter(filter) {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                if (btn.getAttribute('data-filter') === filter) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            const cards = document.querySelectorAll('.grid-card');
+            cards.forEach(card => {
+                const type = card.getAttribute('data-type');
+                if (filter === 'all') {
+                    card.classList.remove('filtered-out');
+                } else if (filter === 'films' && type === 'film') {
+                    card.classList.remove('filtered-out');
+                } else if (filter === 'case-studies' && type === 'case-study') {
+                    card.classList.remove('filtered-out');
+                } else {
+                    card.classList.add('filtered-out');
+                }
+            });
+        }
+
+        function scrollToGrid() {
+            const gridView = document.getElementById('combined-grid-view');
+            if (gridView) {
+                gridView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
         document.fonts.ready.then(() => {
             const params = new URLSearchParams(window.location.search);
             const pIndex = params.get('p');
+            const filterParam = params.get('filter');
             
             if (pIndex !== null && projects[pIndex]) {
                 currentIndex = parseInt(pIndex);
@@ -2163,12 +2375,19 @@
                 actionGroup.classList.add('visible');
                 actionGroup.style.opacity = '1';
 
-                // Final reveal: everything is set, show the portal
                 document.documentElement.classList.add('ready');
+            } else if (filterParam !== null) {
+                const splash = document.getElementById('standoff-splash');
+                if (splash) splash.style.display = 'none';
+                document.body.classList.remove('intro-active');
+                enterGridState();
+                document.documentElement.classList.add('ready');
+                initVisualGrid();
+                applyGridFilter(filterParam);
             } else {
-                // Static Paladin hero — single still, fixed headline & subhead
                 renderPaladinHero();
                 document.documentElement.classList.add('ready');
+                initIntro();
             }
         });
 

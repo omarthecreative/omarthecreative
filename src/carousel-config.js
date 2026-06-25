@@ -513,6 +513,178 @@ const projects = [
     }
 ];
 
+const caseStudies = [
+    {
+        title: "PROJECT ROCK x UNDER ARMOUR",
+        subtitle: "IT TAKES AN IRON WILL",
+        img: "assets/wp-uploads/DJ_Red.jpg",
+        slug: "project-rock.html",
+        client: "Project Rock x UnderArmour",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "MBK ALLIANCE",
+        subtitle: "We Are The Ones",
+        img: "assets/obama-hero-image/Lincoln_Memorial_Warren_Eakins.jpg",
+        slug: "obama-foundation.html",
+        client: "MBK Alliance",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "GOOGLE",
+        subtitle: "WINDOW WONDERLAND",
+        img: "assets/wp-uploads/Google_Window_Wonderland_still_generated.jpg",
+        slug: "google-wonderland.html",
+        client: "GOOGLE",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "SKYY VODKA",
+        subtitle: "West of Expected",
+        img: "assets/skyy-vodka-bg.jpg",
+        slug: "skyy-vodka.html",
+        client: "SKYY",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "ESPOLÓN TEQUILA",
+        subtitle: "The Instigator",
+        img: "assets/espolon-tequila-bg.jpg",
+        slug: "espolon-tequila.html",
+        client: "ESPOLÓN",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "THE BALVENIE",
+        subtitle: "LONG ODDS",
+        img: "assets/balvenie-patience-bg.jpg",
+        slug: "balvenie-patience.html",
+        client: "THE BALVENIE",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "GLENFIDDICH",
+        subtitle: "PORTAL INTO 1963",
+        img: "assets/glenfiddich-original-bg.jpg",
+        slug: "glenfiddich-original.html",
+        client: "GLENFIDDICH",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "BENTLEY",
+        subtitle: "VISIONARY EXPERIENCE",
+        img: "assets/bentley-hero.jpg",
+        slug: "bentley-studio.html",
+        client: "BENTLEY",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "GUINNESS",
+        subtitle: "AMPLIFY",
+        img: "assets/guinness-amplify-bg.jpg",
+        slug: "guinness-amplify.html",
+        client: "GUINNESS",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "STOLI NIGHT EDITION",
+        subtitle: "Illuminate Your Night",
+        img: "assets/stoli-night-bg.jpeg",
+        slug: "stoli-night-edition.html",
+        client: "STOLI",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "AMERICAN EXPRESS",
+        subtitle: "From This Moment, On",
+        img: "assets/amex-moments-bg.jpg",
+        slug: "amex-moments.html",
+        client: "AMERICAN EXPRESS",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "AUDI",
+        subtitle: "Truth Be Bold",
+        img: "assets/audi-big-wave-bg.jpeg",
+        slug: "audi-truth-be-bold.html",
+        client: "AUDI",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "PANASONIC LUMIX",
+        subtitle: "LuV Moves Me",
+        img: "assets/panasonic-luv-bg.jpg",
+        slug: "panasonic-luv.html",
+        client: "PANASONIC",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "PANASONIC LUMIX",
+        subtitle: "For Every Photonista",
+        img: "assets/panasonic-photonista-bg.jpg",
+        slug: "panasonic-photonista.html",
+        client: "PANASONIC",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "HONDA HYBRIDS",
+        subtitle: "Naturally Driven",
+        img: "assets/honda-grass-flowers-bg.png",
+        slug: "honda-hybrids.html",
+        client: "HONDA",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "JOHNNIE WALKER",
+        subtitle: "Conquista La Noche",
+        img: "assets/johnnie-walker-hero-bg.jpg",
+        slug: "johnnie-walker-conquista.html",
+        client: "DIAGEO",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "VERIZON",
+        subtitle: "DROIDS",
+        img: "assets/verizon-droid-sky.png",
+        slug: "verizon-droid.html",
+        client: "VERIZON",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "CRAYOLA",
+        subtitle: "THE 64 DAYS OF CRAYOLA",
+        img: "assets/crayola-hero-bg.jpg",
+        slug: "crayola-64-days.html",
+        client: "CRAYOLA",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "CHASE",
+        subtitle: "SAPPHIRE. SLATE. INK. & LIQUID.",
+        img: "assets/chase-hero-bg.jpg",
+        slug: "chase-blue.html",
+        client: "CHASE",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "KRAFT",
+        subtitle: "Dish",
+        img: "assets/kraft-hero-bg.jpg",
+        slug: "kraft-dish.html",
+        client: "KRAFT",
+        role: "CREATIVE DIRECTOR, WRITER"
+    },
+    {
+        title: "DISNEY RESORTS",
+        subtitle: "Be Our Guest",
+        img: "assets/disney-hero-bg.png",
+        slug: "disney-be-our-guest.html",
+        client: "DISNEY",
+        role: "CREATIVE DIRECTOR, WRITER"
+    }
+];
+
+
 function markAsViewed(id) {
     let viewed = JSON.parse(localStorage.getItem('omar_viewed') || '[]');
     if (!viewed.includes(id)) {
