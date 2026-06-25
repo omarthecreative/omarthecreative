@@ -169,8 +169,16 @@
             opacity: 0.1;
             margin: 0.5rem 0;
         }
-        .menu-link:hover { opacity: 1; color: var(--vibrant-red); }
-        .menu-link.active { opacity: 1; color: var(--vibrant-red); }
+        .menu-link:hover {
+            opacity: 1;
+            color: #A8002C;
+            text-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+        }
+        .menu-link.active {
+            opacity: 1;
+            color: #A8002C;
+            text-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
+        }
 
         /* GRID VIEW */
         .exhibits-grid-view {
@@ -215,27 +223,34 @@
             transition: gap 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        .exhibits-grid.hover-ready:has(.exhibit-card.peeking) .exhibit-card:not(.peeking) { opacity: 0; pointer-events: none; }
-
         .exhibit-card {
             cursor: pointer; position: relative;
-            transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1), 
-                        opacity 0.4s ease,
-                        grid-column 0.8s cubic-bezier(0.23, 1, 0.32, 1),
-                        grid-row 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease;
             display: flex; flex-direction: column; min-height: 0;
             background: rgba(0,0,0,0.2); overflow: hidden;
         }
 
-        .exhibits-grid.hover-ready .exhibit-card.peeking { grid-column: 1 / 13 !important; grid-row: 1 / 13 !important; z-index: 100; transform: scale(1); }
-
         .exhibit-thumb-wrap { position: relative; width: 100%; height: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .exhibit-thumb-wrap::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .exhibits-grid.hover-ready .exhibit-card:hover .exhibit-thumb-wrap::after {
+            opacity: 1;
+        }
+
         .exhibit-thumb {
             width: 100%; height: 100%; object-fit: cover; opacity: 0.8;
             transition: opacity 0.6s ease, filter 0.6s ease, transform 0.8s cubic-bezier(0.23, 1, 0.32, 1), object-position 0.8s ease;
             filter: contrast(1.1) brightness(0.9); mix-blend-mode: screen;
         }
-        .exhibit-card.peeking .exhibit-thumb { opacity: 0.9; filter: contrast(1.15) brightness(0.7); transform: scale(1.05); }
+        .exhibits-grid.hover-ready .exhibit-card:hover .exhibit-thumb { opacity: 0.9; filter: contrast(1.15) brightness(0.75); transform: scale(1.04); }
 
         .card-6 .exhibit-thumb { object-position: center 5%; }
         .card-5 .exhibit-thumb { object-position: center 10%; }
@@ -247,20 +262,20 @@
             transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             z-index: 5; display: flex; flex-direction: column; align-items: flex-start;
         }
-        .exhibit-card.peeking .exhibit-info { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+        .exhibits-grid.hover-ready .exhibit-card:hover .exhibit-info { opacity: 1; transform: translate(-50%, -50%) scale(1.03); }
         .exhibit-brand {
-            font-family: var(--display); font-size: clamp(2rem, 8vw, 10rem);
+            font-family: var(--display); font-size: clamp(1rem, 4vw, 5rem);
             line-height: 0.8; letter-spacing: -0.04em; text-transform: uppercase;
-            color: #bb0006; text-shadow: 0 0 10px rgba(255, 0, 0, 0.8); margin-bottom: 1vw;
+            color: #bb0006; margin-bottom: 0.5vw;
         }
         /* CITI Spacing Fix - Reduced */
         .exhibit-brand.brand-citi {
             letter-spacing: 0.01em;
         }
         .exhibit-campaign {
-            font-family: var(--serif); font-style: italic; font-size: clamp(1rem, 2vw, 2.5rem);
+            font-family: var(--serif); font-style: italic; font-size: clamp(0.75rem, 1vw, 1.25rem);
             letter-spacing: 0.02em; color: white; text-transform: none; white-space: nowrap; line-height: 1.1;
-            margin-bottom: -0.5vw; /* Bring closer to brand title */
+            margin-bottom: -0.2vw; /* Bring closer to brand title */
         }
 
         /* PROJECT CAROUSEL VIEW */
@@ -390,10 +405,10 @@
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
         <div class="menu-links">
-            <a href="exhibits.html" class="menu-link active">EXHIBITS</a>
-            <a href="choice-cuts.html" class="menu-link">CHOICE CUTS</a>
-            <a href="long-pour.html" class="menu-link">LONG POUR</a>
-            <a href="info.html" class="menu-link">INFORMATION</a>
+            <a href="exhibits.html" class="menu-link active" onclick="playExhibitsSound(event, 'exhibits.html')">FILMS</a>
+            <a href="choice-cuts.html" class="menu-link">CASE STUDIES</a>
+            <a href="long-pour.html" class="menu-link">ESSAYS</a>
+            <a href="info.html" class="menu-link">ABOUT OMAR</a>
         </div>
     </div>
 
@@ -577,19 +592,6 @@
                     </div>
                 `;
                 card.onclick = () => loadProject(i);
-
-                card.addEventListener('mouseenter', () => {
-                    if (card.dataset.cooling) return;
-                    card.classList.add('peeking');
-                    card._peekTimer = setTimeout(() => {
-                        card.classList.remove('peeking');
-                        card.dataset.cooling = '1';
-                    }, 2000);
-                });
-
-                card.addEventListener('mouseleave', () => {
-                    delete card.dataset.cooling;
-                });
 
                 gridEl.appendChild(card);
 

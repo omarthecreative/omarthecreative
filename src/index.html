@@ -768,8 +768,7 @@
         body.intro-active .header-name,
         body.intro-active .apex-nav,
         body.intro-active .action-group,
-        body.intro-active .footer-metadata,
-        body.intro-active .copyright-tag {
+        body.intro-active .footer-metadata {
             opacity: 0 !important;
             pointer-events: none !important;
         }
@@ -813,18 +812,31 @@
         }
 
         #combined-grid-view {
-            max-width: 1400px;
+            max-width: 1344px;
             margin: 0 auto;
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 1s ease 0.3s, transform 1s ease 0.3s;
             display: none;
-            padding: 0 4rem 10rem 4rem;
+            padding: 0 4rem 15rem 4rem;
         }
         body.grid-active #combined-grid-view {
             display: block;
             opacity: 1;
             transform: translateY(0);
+        }
+        body.grid-active .copyright-tag.fixed {
+            position: fixed;
+            left: 1rem;
+            top: 50%;
+            bottom: auto;
+            width: auto;
+            white-space: nowrap;
+            transform: translate(-50%, -50%) rotate(-90deg);
+            transform-origin: center center;
+            opacity: 0.15;
+            display: block !important;
+            pointer-events: none;
         }
 
         .grid-filter-bar {
@@ -856,7 +868,7 @@
         .grid-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 2.5rem;
+            gap: 1.25rem;
             width: 100%;
         }
 
@@ -948,20 +960,23 @@
             justify-content: space-between;
         }
         .card-title {
-            font-family: var(--display);
-            font-size: 1.25rem;
-            font-weight: 900;
-            line-height: 1.1;
-            letter-spacing: -0.01em;
+            font-family: 'lust-stencil-display', var(--serif);
+            font-style: italic;
+            font-size: 1.45rem;
+            font-weight: normal;
+            line-height: 1.2;
+            letter-spacing: 0.02em;
             color: #FFFFFF;
-            text-transform: uppercase;
-            margin-bottom: 0.2rem;
+            text-transform: none;
+            margin-bottom: 0.1rem;
         }
         .card-subtitle {
-            font-family: var(--mono);
-            font-size: 0.48rem;
-            letter-spacing: 0.05em;
-            color: rgba(255, 255, 255, 0.5);
+            font-family: var(--display);
+            font-size: 1.1rem;
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -0.04em;
+            color: #bb0006;
             text-transform: uppercase;
         }
 
@@ -1193,10 +1208,10 @@
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
         <div class="menu-links">
-            <a href="exhibits.html" class="menu-link" onclick="playExhibitsSound(event, 'exhibits.html')">EXHIBITS</a>
-            <a href="choice-cuts.html" class="menu-link">CHOICE CUTS</a>
-            <a href="long-pour.html" class="menu-link">LONG POUR</a>
-            <a href="info.html" class="menu-link">INFORMATION</a>
+            <a href="exhibits.html" class="menu-link" onclick="playExhibitsSound(event, 'exhibits.html')">FILMS</a>
+            <a href="choice-cuts.html" class="menu-link">CASE STUDIES</a>
+            <a href="long-pour.html" class="menu-link">ESSAYS</a>
+            <a href="info.html" class="menu-link">ABOUT OMAR</a>
         </div>
     </div>
 
@@ -2356,6 +2371,10 @@
             const filterParam = params.get('filter');
             
             if (pIndex !== null && projects[pIndex]) {
+                const splash = document.getElementById('standoff-splash');
+                if (splash) splash.style.display = 'none';
+                document.body.classList.remove('intro-active');
+
                 currentIndex = parseInt(pIndex);
                 const p = projects[currentIndex];
                 isProjectState = true;
@@ -2375,6 +2394,7 @@
                 actionGroup.classList.add('visible');
                 actionGroup.style.opacity = '1';
 
+                initVisualGrid();
                 document.documentElement.classList.add('ready');
             } else if (filterParam !== null) {
                 const splash = document.getElementById('standoff-splash');

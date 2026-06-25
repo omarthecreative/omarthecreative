@@ -516,7 +516,7 @@ const projects = [
 const caseStudies = [
     {
         title: "PROJECT ROCK x UNDER ARMOUR",
-        subtitle: "IT TAKES AN IRON WILL",
+        subtitle: "It Takes an Iron Will",
         img: "assets/wp-uploads/DJ_Red.jpg",
         slug: "project-rock.html",
         client: "Project Rock x UnderArmour",
@@ -532,7 +532,7 @@ const caseStudies = [
     },
     {
         title: "GOOGLE",
-        subtitle: "WINDOW WONDERLAND",
+        subtitle: "Window Wonderland",
         img: "assets/wp-uploads/Google_Window_Wonderland_still_generated.jpg",
         slug: "google-wonderland.html",
         client: "GOOGLE",
@@ -556,7 +556,7 @@ const caseStudies = [
     },
     {
         title: "THE BALVENIE",
-        subtitle: "LONG ODDS",
+        subtitle: "Long Odds",
         img: "assets/balvenie-patience-bg.jpg",
         slug: "balvenie-patience.html",
         client: "THE BALVENIE",
@@ -564,7 +564,7 @@ const caseStudies = [
     },
     {
         title: "GLENFIDDICH",
-        subtitle: "PORTAL INTO 1963",
+        subtitle: "Portal Into 1963",
         img: "assets/glenfiddich-original-bg.jpg",
         slug: "glenfiddich-original.html",
         client: "GLENFIDDICH",
@@ -572,7 +572,7 @@ const caseStudies = [
     },
     {
         title: "BENTLEY",
-        subtitle: "VISIONARY EXPERIENCE",
+        subtitle: "Visionary Experience",
         img: "assets/bentley-hero.jpg",
         slug: "bentley-studio.html",
         client: "BENTLEY",
@@ -580,7 +580,7 @@ const caseStudies = [
     },
     {
         title: "GUINNESS",
-        subtitle: "AMPLIFY",
+        subtitle: "Amplify",
         img: "assets/guinness-amplify-bg.jpg",
         slug: "guinness-amplify.html",
         client: "GUINNESS",
@@ -644,7 +644,7 @@ const caseStudies = [
     },
     {
         title: "VERIZON",
-        subtitle: "DROIDS",
+        subtitle: "Droids",
         img: "assets/verizon-droid-sky.png",
         slug: "verizon-droid.html",
         client: "VERIZON",
@@ -652,7 +652,7 @@ const caseStudies = [
     },
     {
         title: "CRAYOLA",
-        subtitle: "THE 64 DAYS OF CRAYOLA",
+        subtitle: "The 64 Days of Crayola",
         img: "assets/crayola-hero-bg.jpg",
         slug: "crayola-64-days.html",
         client: "CRAYOLA",
@@ -660,7 +660,7 @@ const caseStudies = [
     },
     {
         title: "CHASE",
-        subtitle: "SAPPHIRE. SLATE. INK. & LIQUID.",
+        subtitle: "Sapphire. Slate. Ink. & Liquid.",
         img: "assets/chase-hero-bg.jpg",
         slug: "chase-blue.html",
         client: "CHASE",

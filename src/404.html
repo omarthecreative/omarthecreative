@@ -174,8 +174,13 @@
         }
         .menu-link:hover {
             opacity: 1;
-            color: #C5002C;
+            color: #A8002C;
             text-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+        }
+        .menu-link.active {
+            opacity: 1;
+            color: #A8002C;
+            text-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
         }
 
         /* SIGNAL STAGE — centered, full height */
@@ -279,10 +284,10 @@
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
         <div class="menu-links">
-            <a href="index.html?start=true" class="menu-link">EXHIBITS</a>
-            <a href="choice-cuts.html" class="menu-link">CHOICE CUTS</a>
-            <a href="long-pour.html" class="menu-link">LONG POUR</a>
-            <a href="info.html" class="menu-link">INFORMATION</a>
+            <a href="exhibits.html" class="menu-link" onclick="playExhibitsSound(event, 'exhibits.html')">FILMS</a>
+            <a href="choice-cuts.html" class="menu-link">CASE STUDIES</a>
+            <a href="long-pour.html" class="menu-link">ESSAYS</a>
+            <a href="info.html" class="menu-link">ABOUT OMAR</a>
         </div>
     </div>
 
