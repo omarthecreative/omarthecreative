@@ -7,11 +7,36 @@
     <meta name="description" content="Creative Director. Writer. And More. Over the last 10 years, my focus is on brand actions, films and campaigns that create value and move culture. More recently, my focus is on deploying frontier technology to amplify human creativity and craft.">
 
     <script>
-        // Immediate check for start parameter to avoid flash
+        // Immediate check for start parameter and intro seen state to avoid flash
         (function() {
-            const params = new URLSearchParams(window.location.search);
-            if (params.has('start')) {
-                document.documentElement.classList.add('starting');
+            try {
+                const params = new URLSearchParams(window.location.search);
+                if (params.has('start')) {
+                    document.documentElement.classList.add('starting');
+                }
+                const seenIntro = localStorage.getItem('omar_seen_intro') === 'true';
+                const hasProject = params.get('p') !== null;
+                const hasFilter = params.get('filter') !== null;
+                if (hasProject || hasFilter || seenIntro) {
+                    document.documentElement.classList.add('skip-intro-immediate');
+                    
+                    const rules = [
+                        '#standoff-splash { display: none !important; visibility: hidden !important; opacity: 0 !important; }'
+                    ];
+                    
+                    // If going straight to the grid view (no project detail view active), hide hero and show grid immediately
+                    if (!hasProject && (hasFilter || seenIntro)) {
+                        rules.push('#project-display, #action-group, #bg-container { display: none !important; }');
+                        rules.push('#combined-grid-view { display: block !important; opacity: 1 !important; transform: translateY(0) !important; }');
+                    }
+                    
+                    const style = document.createElement('style');
+                    style.id = 'skip-intro-immediate-style';
+                    style.textContent = rules.join('\n');
+                    document.head.appendChild(style);
+                }
+            } catch (e) {
+                console.error("Intro bypass check failed:", e);
             }
         })();
     </script>
@@ -63,6 +88,12 @@
             --mono: 'auger-mono', monospace;
             --display: 'griffith-gothic-condensed', sans-serif;
             --serif: 'lust-display', serif;
+        }
+        
+        .skip-intro-immediate #standoff-splash {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
         }
         
         /* Flash prevention for EXHIBITS menu link and deep-links */
@@ -2401,6 +2432,7 @@
             const params = new URLSearchParams(window.location.search);
             const pIndex = params.get('p');
             const filterParam = params.get('filter');
+            const seenIntro = localStorage.getItem('omar_seen_intro') === 'true';
             
             if (pIndex !== null && projects[pIndex]) {
                 const splash = document.getElementById('standoff-splash');
@@ -2436,6 +2468,13 @@
                 document.documentElement.classList.add('ready');
                 initVisualGrid();
                 applyGridFilter(filterParam);
+            } else if (seenIntro) {
+                const splash = document.getElementById('standoff-splash');
+                if (splash) splash.style.display = 'none';
+                document.body.classList.remove('intro-active');
+                enterGridState();
+                document.documentElement.classList.add('ready');
+                initVisualGrid();
             } else {
                 renderPaladinHero();
                 document.documentElement.classList.add('ready');
