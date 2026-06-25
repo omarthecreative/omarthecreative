@@ -1812,7 +1812,10 @@
             document.body.classList.remove('video-active');
             stopAutoHide();
             stopFocusLock();
-            if (vimeoPlayer) vimeoPlayer.unload();
+            if (vimeoPlayer) {
+                vimeoPlayer.unload();
+                vimeoPlayer = null;
+            }
             vimeoWrap.innerHTML = '';
 
             // Return to the project's WATCH/LEARN state — not full reset
