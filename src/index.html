@@ -1337,6 +1337,7 @@
 
         function enterGridState() {
             document.body.classList.add('grid-active');
+            localStorage.setItem('omar_seen_intro', 'true');
             const wrapper = document.querySelector('.portal-wrapper');
             if (wrapper) {
                 const temp = wrapper.style.display;
@@ -2163,8 +2164,10 @@
 
         function initIntro() {
             const params = new URLSearchParams(window.location.search);
-            // If direct link to project or deep link, skip intro
-            if (params.get('p') !== null || params.get('filter') !== null) {
+            const seenIntro = localStorage.getItem('omar_seen_intro') === 'true';
+            
+            // If direct link to project, deep link, or intro already seen, skip intro
+            if (params.get('p') !== null || params.get('filter') !== null || seenIntro) {
                 const splash = document.getElementById('standoff-splash');
                 if (splash) splash.style.display = 'none';
                 document.body.classList.remove('intro-active');
