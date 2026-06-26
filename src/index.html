@@ -582,14 +582,14 @@
                     bottom: calc(1.5rem + env(safe-area-inset-bottom));
                 }
                 body.grid-active .hud-mask-top {
-                    bottom: calc(100% - (1.5rem + env(safe-area-inset-top)));
-                    height: 100vh;
-                    top: auto;
+                    top: -50vh;
+                    height: calc(50vh + 1.5rem + env(safe-area-inset-top));
+                    bottom: auto;
                 }
                 body.grid-active .hud-mask-bottom {
-                    top: calc(100% - (1.5rem + env(safe-area-inset-bottom)));
-                    height: 100vh;
-                    bottom: auto;
+                    bottom: -50vh;
+                    height: calc(50vh + 1.5rem + env(safe-area-inset-bottom));
+                    top: auto;
                 }
                 .portal-wrapper { padding-bottom: 0; }
  
@@ -631,14 +631,14 @@
                 bottom: calc(1.5rem + env(safe-area-inset-bottom));
             }
             body.grid-active .hud-mask-top {
-                bottom: calc(100% - (1.5rem + env(safe-area-inset-top)));
-                height: 100vh;
-                top: auto;
+                top: -50vh;
+                height: calc(50vh + 1.5rem + env(safe-area-inset-top));
+                bottom: auto;
             }
             body.grid-active .hud-mask-bottom {
-                top: calc(100% - (1.5rem + env(safe-area-inset-bottom)));
-                height: 100vh;
-                bottom: auto;
+                bottom: -50vh;
+                height: calc(50vh + 1.5rem + env(safe-area-inset-bottom));
+                top: auto;
             }
  
             /* Fixed HUD for Portrait */
@@ -867,14 +867,14 @@
             display: block;
         }
         .hud-mask-top {
-            bottom: calc(100% - (2rem + env(safe-area-inset-top)));
-            height: 100vh;
-            top: auto;
+            top: -50vh;
+            height: calc(50vh + 2rem + env(safe-area-inset-top));
+            bottom: auto;
         }
         .hud-mask-bottom {
-            top: calc(100% - (2rem + env(safe-area-inset-bottom)));
-            height: 100vh;
-            bottom: auto;
+            bottom: -50vh;
+            height: calc(50vh + 2rem + env(safe-area-inset-bottom));
+            top: auto;
         }
         html.ready {
             overflow: visible;

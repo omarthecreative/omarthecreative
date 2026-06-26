@@ -84,14 +84,14 @@
             display: none;
         }
         .hud-mask-top {
-            bottom: calc(100% - (2rem + env(safe-area-inset-top)));
-            height: 100vh;
-            top: auto;
+            top: -50vh;
+            height: calc(50vh + 2rem + env(safe-area-inset-top));
+            bottom: auto;
         }
         .hud-mask-bottom {
-            top: calc(100% - (2rem + env(safe-area-inset-bottom)));
-            height: 100vh;
-            bottom: auto;
+            bottom: -50vh;
+            height: calc(50vh + 2rem + env(safe-area-inset-bottom));
+            top: auto;
         }
 
         /* HUD ELEMENTS */
@@ -378,14 +378,14 @@
             .hud-br { bottom: calc(0.3rem + env(safe-area-inset-bottom)); right: calc(1rem + env(safe-area-inset-right)); }
             .copyright-tag { bottom: calc(0.3rem + env(safe-area-inset-bottom)) !important; }
             .hud-mask-top {
-                bottom: calc(100% - (1.5rem + env(safe-area-inset-top)));
-                height: 100vh;
-                top: auto;
+                top: -50vh;
+                height: calc(50vh + 1.5rem + env(safe-area-inset-top));
+                bottom: auto;
             }
             .hud-mask-bottom {
-                top: calc(100% - (1.5rem + env(safe-area-inset-bottom)));
-                height: 100vh;
-                bottom: auto;
+                bottom: -50vh;
+                height: calc(50vh + 1.5rem + env(safe-area-inset-bottom));
+                top: auto;
             }
             .exhibit-brand {
                 font-weight: 700;
@@ -421,14 +421,14 @@
             .hud-br { bottom: calc(0.8rem + env(safe-area-inset-bottom)); right: calc(1.5rem + env(safe-area-inset-right)); }
             #lut-toggle.unlocked { top: calc(0.75rem + env(safe-area-inset-top)); }
             .hud-mask-top {
-                bottom: calc(100% - (1.5rem + env(safe-area-inset-top)));
-                height: 100vh;
-                top: auto;
+                top: -50vh;
+                height: calc(50vh + 1.5rem + env(safe-area-inset-top));
+                bottom: auto;
             }
             .hud-mask-bottom {
-                top: calc(100% - (1.5rem + env(safe-area-inset-bottom)));
-                height: 100vh;
-                bottom: auto;
+                bottom: -50vh;
+                height: calc(50vh + 1.5rem + env(safe-area-inset-bottom));
+                top: auto;
             }
         }
     </style>
