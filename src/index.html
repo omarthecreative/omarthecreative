@@ -576,6 +576,10 @@
                 .footer-metadata { bottom: 3rem; padding: 0 2rem; font-size: 0.6rem; letter-spacing: 0.2em; }
                 .copyright-tag { bottom: 0.3rem !important; }
                 .corner-frame { top: 1.5rem; left: 1.5rem; right: 1.5rem; bottom: 1.5rem; }
+                body.grid-active::before,
+                body.grid-active::after {
+                    height: 1.5rem;
+                }
                 .portal-wrapper { padding-bottom: 0; }
  
                 .hud-tag { font-size: 0.4rem; }
@@ -610,6 +614,10 @@
             }
             .copyright-tag { bottom: 0.3rem !important; font-size: 0.4rem; opacity: 0.4; display: block !important; }
             .corner-frame { top: 1.5rem; left: 1rem; right: 1rem; bottom: 1.5rem; }
+            body.grid-active::before,
+            body.grid-active::after {
+                height: 1.5rem;
+            }
  
             /* Fixed HUD for Portrait */
             .hud-tag { font-size: 0.45rem; opacity: 0.5; letter-spacing: 0.05em; }
@@ -824,6 +832,24 @@
         body.grid-active {
             overflow: visible;
             height: auto !important;
+        }
+        body.grid-active::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 2rem;
+            background: #050505;
+            z-index: 99;
+            pointer-events: none;
+        }
+        body.grid-active::after {
+            content: "";
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 2rem;
+            background: #050505;
+            z-index: 99;
+            pointer-events: none;
         }
         html.ready {
             overflow: visible;
