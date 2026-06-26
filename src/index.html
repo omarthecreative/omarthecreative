@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Omar, the Creative</title>
     <meta name="description" content="Creative Director. Writer. And More. Over the last 10 years, my focus is on brand actions, films and campaigns that create value and move culture. More recently, my focus is on deploying frontier technology to amplify human creativity and craft.">
 
@@ -566,38 +566,47 @@
  
             /* Mobile Landscape Specific (Short Viewports) */
             @media (max-height: 600px) {
-                .header-name { top: 3rem; left: 2.5rem; font-size: 1rem; }
-                .apex-nav { top: 3rem; right: 2.5rem; }
+                .header-name { top: calc(3rem + env(safe-area-inset-top)); left: calc(2.5rem + env(safe-area-inset-left)); font-size: 1rem; }
+                .apex-nav { top: calc(3rem + env(safe-area-inset-top)); right: calc(2.5rem + env(safe-area-inset-right)); }
                 .menu-trigger { font-size: 0.6rem; letter-spacing: 0.2em; }
                 .title { font-size: clamp(44px, 16vh, 100px); }
                 .subtitle { font-size: clamp(14px, 3.5vh, 24px); margin-top: 0; margin-bottom: 0.4rem; }
                 .action-group { margin-top: 1rem; flex-direction: row; gap: 1rem; }
                 .btn { padding: 0.5rem 1.5rem; }
-                .footer-metadata { bottom: 3rem; padding: 0 2rem; font-size: 0.6rem; letter-spacing: 0.2em; }
-                .copyright-tag { bottom: 0.3rem !important; }
-                .corner-frame { top: 1.5rem; left: 1.5rem; right: 1.5rem; bottom: 1.5rem; }
+                .footer-metadata { bottom: calc(3rem + env(safe-area-inset-bottom)); padding: 0 2rem; font-size: 0.6rem; letter-spacing: 0.2em; }
+                .copyright-tag { bottom: calc(0.3rem + env(safe-area-inset-bottom)) !important; }
+                .corner-frame {
+                    top: calc(1.5rem + env(safe-area-inset-top));
+                    left: calc(1.5rem + env(safe-area-inset-left));
+                    right: calc(1.5rem + env(safe-area-inset-right));
+                    bottom: calc(1.5rem + env(safe-area-inset-bottom));
+                }
                 body.grid-active .hud-mask-top {
-                    height: calc(1.5rem + env(safe-area-inset-top));
+                    bottom: calc(100% - (1.5rem + env(safe-area-inset-top)));
+                    height: 100vh;
+                    top: auto;
                 }
                 body.grid-active .hud-mask-bottom {
-                    height: calc(1.5rem + env(safe-area-inset-bottom));
+                    top: calc(100% - (1.5rem + env(safe-area-inset-bottom)));
+                    height: 100vh;
+                    bottom: auto;
                 }
                 .portal-wrapper { padding-bottom: 0; }
  
                 .hud-tag { font-size: 0.4rem; }
-                .hud-tl { top: 0.8rem; }
-                .hud-tr { top: 0.8rem; }
-                .hud-bl { bottom: 0.8rem; }
-                .hud-br { bottom: 0.8rem; }
-                #lut-toggle.unlocked { top: 0.75rem; }
+                .hud-tl { top: calc(0.8rem + env(safe-area-inset-top)); left: calc(1.5rem + env(safe-area-inset-left)); }
+                .hud-tr { top: calc(0.8rem + env(safe-area-inset-top)); right: calc(1.5rem + env(safe-area-inset-right)); }
+                .hud-bl { bottom: calc(0.8rem + env(safe-area-inset-bottom)); left: calc(1.5rem + env(safe-area-inset-left)); }
+                .hud-br { bottom: calc(0.8rem + env(safe-area-inset-bottom)); right: calc(1.5rem + env(safe-area-inset-right)); }
+                #lut-toggle.unlocked { top: calc(0.75rem + env(safe-area-inset-top)); }
             }
         }
  
         /* PORTRAIT - MOBILE & TABLET */
         @media (orientation: portrait) and (max-width: 1024px) {
             .culture-break { display: block; }
-            .header-name { top: 3rem; left: 3rem; font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
-            .apex-nav { top: 3rem; right: 3rem; }
+            .header-name { top: calc(3rem + env(safe-area-inset-top)); left: calc(3rem + env(safe-area-inset-left)); font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
+            .apex-nav { top: calc(3rem + env(safe-area-inset-top)); right: calc(3rem + env(safe-area-inset-right)); }
             .menu-trigger { font-size: 0.55rem; letter-spacing: 0.2em; }
  
             .title { font-size: 18vw; }
@@ -607,29 +616,38 @@
             .btn { padding: 0.8rem 1.5rem; font-size: 0.7rem; }
  
             .footer-metadata {
-                bottom: 2.5rem;
+                bottom: calc(2.5rem + env(safe-area-inset-bottom));
                 padding: 0 2rem;
                 flex-direction: row;
                 justify-content: space-between;
                 font-size: 0.55rem;
                 letter-spacing: 0.2em;
             }
-            .copyright-tag { bottom: 0.3rem !important; font-size: 0.4rem; opacity: 0.4; display: block !important; }
-            .corner-frame { top: 1.5rem; left: 1rem; right: 1rem; bottom: 1.5rem; }
+            .copyright-tag { bottom: calc(0.3rem + env(safe-area-inset-bottom)) !important; font-size: 0.4rem; opacity: 0.4; display: block !important; }
+            .corner-frame {
+                top: calc(1.5rem + env(safe-area-inset-top));
+                left: calc(1rem + env(safe-area-inset-left));
+                right: calc(1rem + env(safe-area-inset-right));
+                bottom: calc(1.5rem + env(safe-area-inset-bottom));
+            }
             body.grid-active .hud-mask-top {
-                height: calc(1.5rem + env(safe-area-inset-top));
+                bottom: calc(100% - (1.5rem + env(safe-area-inset-top)));
+                height: 100vh;
+                top: auto;
             }
             body.grid-active .hud-mask-bottom {
-                height: calc(1.5rem + env(safe-area-inset-bottom));
+                top: calc(100% - (1.5rem + env(safe-area-inset-bottom)));
+                height: 100vh;
+                bottom: auto;
             }
  
             /* Fixed HUD for Portrait */
             .hud-tag { font-size: 0.45rem; opacity: 0.5; letter-spacing: 0.05em; }
-            .hud-tl { top: 0.3rem; left: 1rem; }
-            .hud-tr { top: 0.3rem; right: 1rem; }
-            .hud-bl { bottom: 0.3rem; left: 1rem; }
-            .hud-br { bottom: 0.3rem; right: 1rem; }
-            #lut-toggle.unlocked { top: 0.3rem; padding: 1px 3px; }
+            .hud-tl { top: calc(0.3rem + env(safe-area-inset-top)); left: calc(1rem + env(safe-area-inset-left)); }
+            .hud-tr { top: calc(0.3rem + env(safe-area-inset-top)); right: calc(1rem + env(safe-area-inset-right)); }
+            .hud-bl { bottom: calc(0.3rem + env(safe-area-inset-bottom)); left: calc(1rem + env(safe-area-inset-left)); }
+            .hud-br { bottom: calc(0.3rem + env(safe-area-inset-bottom)); right: calc(1rem + env(safe-area-inset-right)); }
+            #lut-toggle.unlocked { top: calc(0.3rem + env(safe-area-inset-top)); padding: 1px 3px; }
  
             .intel-content { max-height: 90vh; }
             .intel-desc { font-size: 1.3rem; margin-bottom: 2rem; }
@@ -849,12 +867,14 @@
             display: block;
         }
         .hud-mask-top {
-            top: 0;
-            height: calc(2rem + env(safe-area-inset-top));
+            bottom: calc(100% - (2rem + env(safe-area-inset-top)));
+            height: 100vh;
+            top: auto;
         }
         .hud-mask-bottom {
-            bottom: 0;
-            height: calc(2rem + env(safe-area-inset-bottom));
+            top: calc(100% - (2rem + env(safe-area-inset-bottom)));
+            height: 100vh;
+            bottom: auto;
         }
         html.ready {
             overflow: visible;

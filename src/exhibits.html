@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Exhibits | Omar, the Creative</title>
     <meta name="description" content="A curated overview of brand actions, films, and campaigns.">
     
@@ -84,12 +84,14 @@
             display: none;
         }
         .hud-mask-top {
-            top: 0;
-            height: calc(2rem + env(safe-area-inset-top));
+            bottom: calc(100% - (2rem + env(safe-area-inset-top)));
+            height: 100vh;
+            top: auto;
         }
         .hud-mask-bottom {
-            bottom: 0;
-            height: calc(2rem + env(safe-area-inset-bottom));
+            top: calc(100% - (2rem + env(safe-area-inset-bottom)));
+            height: 100vh;
+            bottom: auto;
         }
 
         /* HUD ELEMENTS */
@@ -361,20 +363,29 @@
             .exhibits-container { padding: 2rem; }
             .exhibits-grid { gap: 0.5rem; }
             .exhibits-watermark { font-size: 45vw; }
-            .nav-name { top: 3rem; left: 3rem; font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
-            .menu-trigger { top: 3rem; right: 3rem; font-size: 0.55rem; letter-spacing: 0.2em; }
-            .corner-frame { top: 1.5rem; left: 1rem; right: 1rem; bottom: 1.5rem; }
+            .nav-name { top: calc(3rem + env(safe-area-inset-top)); left: calc(3rem + env(safe-area-inset-left)); font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
+            .menu-trigger { top: calc(3rem + env(safe-area-inset-top)); right: calc(3rem + env(safe-area-inset-right)); font-size: 0.55rem; letter-spacing: 0.2em; }
+            .corner-frame {
+                top: calc(1.5rem + env(safe-area-inset-top));
+                left: calc(1rem + env(safe-area-inset-left));
+                right: calc(1rem + env(safe-area-inset-right));
+                bottom: calc(1.5rem + env(safe-area-inset-bottom));
+            }
             .hud-tag { font-size: 0.45rem; opacity: 0.5; letter-spacing: 0.05em; }
-            .hud-tl { top: 0.3rem; left: 1rem; }
-            .hud-tr { top: 0.3rem; right: 1rem; }
-            .hud-bl { bottom: 0.3rem; left: 1rem; }
-            .hud-br { bottom: 0.3rem; right: 1rem; }
-            .copyright-tag { bottom: 0.3rem !important; }
+            .hud-tl { top: calc(0.3rem + env(safe-area-inset-top)); left: calc(1rem + env(safe-area-inset-left)); }
+            .hud-tr { top: calc(0.3rem + env(safe-area-inset-top)); right: calc(1rem + env(safe-area-inset-right)); }
+            .hud-bl { bottom: calc(0.3rem + env(safe-area-inset-bottom)); left: calc(1rem + env(safe-area-inset-left)); }
+            .hud-br { bottom: calc(0.3rem + env(safe-area-inset-bottom)); right: calc(1rem + env(safe-area-inset-right)); }
+            .copyright-tag { bottom: calc(0.3rem + env(safe-area-inset-bottom)) !important; }
             .hud-mask-top {
-                height: calc(1.5rem + env(safe-area-inset-top));
+                bottom: calc(100% - (1.5rem + env(safe-area-inset-top)));
+                height: 100vh;
+                top: auto;
             }
             .hud-mask-bottom {
-                height: calc(1.5rem + env(safe-area-inset-bottom));
+                top: calc(100% - (1.5rem + env(safe-area-inset-bottom)));
+                height: 100vh;
+                bottom: auto;
             }
             .exhibit-brand {
                 font-weight: 700;
@@ -393,22 +404,31 @@
             .menu-trigger { top: 3.5rem; right: 3.5rem; font-size: 0.7rem; }
         }
         @media (orientation: landscape) and (max-height: 600px) {
-            .nav-name { top: 3rem; left: 2.5rem; font-size: 1rem; }
-            .menu-trigger { top: 3rem; right: 2.5rem; font-size: 0.6rem; letter-spacing: 0.2em; }
-            .corner-frame { top: 1.5rem; left: 1.5rem; right: 1.5rem; bottom: 1.5rem; }
+            .nav-name { top: calc(3rem + env(safe-area-inset-top)); left: calc(2.5rem + env(safe-area-inset-left)); font-size: 1rem; }
+            .menu-trigger { top: calc(3rem + env(safe-area-inset-top)); right: calc(2.5rem + env(safe-area-inset-right)); font-size: 0.6rem; letter-spacing: 0.2em; }
+            .corner-frame {
+                top: calc(1.5rem + env(safe-area-inset-top));
+                left: calc(1.5rem + env(safe-area-inset-left));
+                right: calc(1.5rem + env(safe-area-inset-right));
+                bottom: calc(1.5rem + env(safe-area-inset-bottom));
+            }
             .exhibits-container { padding: 1.5rem; }
             .exhibits-grid { gap: 0.5rem; }
             .hud-tag { font-size: 0.4rem; }
-            .hud-tl { top: 0.8rem; }
-            .hud-tr { top: 0.8rem; }
-            .hud-bl { bottom: 0.8rem; }
-            .hud-br { bottom: 0.8rem; }
-            #lut-toggle.unlocked { top: 0.75rem; }
+            .hud-tl { top: calc(0.8rem + env(safe-area-inset-top)); left: calc(1.5rem + env(safe-area-inset-left)); }
+            .hud-tr { top: calc(0.8rem + env(safe-area-inset-top)); right: calc(1.5rem + env(safe-area-inset-right)); }
+            .hud-bl { bottom: calc(0.8rem + env(safe-area-inset-bottom)); left: calc(1.5rem + env(safe-area-inset-left)); }
+            .hud-br { bottom: calc(0.8rem + env(safe-area-inset-bottom)); right: calc(1.5rem + env(safe-area-inset-right)); }
+            #lut-toggle.unlocked { top: calc(0.75rem + env(safe-area-inset-top)); }
             .hud-mask-top {
-                height: calc(1.5rem + env(safe-area-inset-top));
+                bottom: calc(100% - (1.5rem + env(safe-area-inset-top)));
+                height: 100vh;
+                top: auto;
             }
             .hud-mask-bottom {
-                height: calc(1.5rem + env(safe-area-inset-bottom));
+                top: calc(100% - (1.5rem + env(safe-area-inset-bottom)));
+                height: 100vh;
+                bottom: auto;
             }
         }
     </style>
