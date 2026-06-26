@@ -643,7 +643,7 @@
             body.grid-active #grid-scroll-container {
                 top: calc(1.5rem + env(safe-area-inset-top));
                 bottom: calc(1.5rem + env(safe-area-inset-bottom));
-                padding-right: 0.5rem;
+                padding-right: 0.2rem;
             }
         }
         
@@ -828,7 +828,13 @@
         body.intro-active .copyright-tag.fixed {
             z-index: 1100;
         }
+        body.intro-active .corner-frame {
+            opacity: 0;
+        }
 
+        .corner-frame {
+            transition: opacity 0.6s ease;
+        }
         .header-name, .apex-nav, .action-group, .footer-metadata, .copyright-tag {
             transition: opacity 0.6s ease;
         }
@@ -861,6 +867,18 @@
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
             z-index: 50;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 0, 21, 0.5) transparent;
+        }
+        body.grid-active #grid-scroll-container::-webkit-scrollbar {
+            width: 3px;
+        }
+        body.grid-active #grid-scroll-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        body.grid-active #grid-scroll-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 0, 21, 0.5);
+            border-radius: 2px;
         }
         html.ready {
             overflow: visible;
