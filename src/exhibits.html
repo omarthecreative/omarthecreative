@@ -371,10 +371,14 @@
             .hud-br { bottom: 0.3rem; right: 1rem; }
             .copyright-tag { bottom: 0.3rem !important; }
             .hud-mask-top {
-                height: calc(1.5rem + env(safe-area-inset-top));
+                height: calc(3.5rem + env(safe-area-inset-top));
             }
             .hud-mask-bottom {
-                height: calc(1.5rem + env(safe-area-inset-bottom));
+                height: calc(3.5rem + env(safe-area-inset-bottom));
+            }
+            .exhibit-brand {
+                font-weight: 700;
+                letter-spacing: 0.02em;
             }
         }
 
@@ -616,6 +620,15 @@
             }
         }
 
+        function preventWidows(text) {
+            if (!text) return '';
+            const lastSpaceIndex = text.lastIndexOf(' ');
+            if (lastSpaceIndex !== -1) {
+                return text.substring(0, lastSpaceIndex) + '&nbsp;' + text.substring(lastSpaceIndex + 1);
+            }
+            return text;
+        }
+
         function populateGrid() {
             gridEl.innerHTML = '';
             gridEl.classList.remove('hover-ready');
@@ -626,7 +639,7 @@
                 card.innerHTML = `
                     <div class="exhibit-thumb-wrap"><img src="${p.img}" class="exhibit-thumb" alt="${p.title}"></div>
                     <div class="exhibit-info">
-                        <div class="exhibit-campaign">${p.subtitle}</div>
+                        <div class="exhibit-campaign">${preventWidows(p.subtitle)}</div>
                         <div class="${brandClass}">${p.title}</div>
                     </div>
                 `;
