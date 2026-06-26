@@ -60,14 +60,12 @@
             pointer-events: none;
         }
         .hud-mask-top {
-            top: -50vh;
-            height: calc(50vh + 2rem + env(safe-area-inset-top));
-            bottom: auto;
+            top: 0;
+            height: calc(2rem + env(safe-area-inset-top));
         }
         .hud-mask-bottom {
-            bottom: -50vh;
-            height: calc(50vh + 2rem + env(safe-area-inset-bottom));
-            top: auto;
+            bottom: 0;
+            height: calc(2rem + env(safe-area-inset-bottom));
         }
         .container {
             max-width: 1200px;
@@ -408,14 +406,10 @@
             .menu-trigger { font-size: 0.7rem; }
             .corner-frame { top: 1.5rem; left: 1rem; right: 1rem; bottom: 1.5rem; }
             .hud-mask-top {
-                top: -50vh;
-                height: calc(50vh + 1.5rem + env(safe-area-inset-top));
-                bottom: auto;
+                height: calc(1.5rem + env(safe-area-inset-top));
             }
             .hud-mask-bottom {
-                bottom: -50vh;
-                height: calc(50vh + 1.5rem + env(safe-area-inset-bottom));
-                top: auto;
+                height: calc(1.5rem + env(safe-area-inset-bottom));
             }
             .hud-tag { font-size: 0.4rem; opacity: 0.4; letter-spacing: 0.05em; }
             .hud-tl { top: 0.3rem; left: 1rem; }
