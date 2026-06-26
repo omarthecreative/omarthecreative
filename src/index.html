@@ -635,6 +635,24 @@
             .intel-desc { font-size: 1.3rem; margin-bottom: 2rem; }
             .credits-table { font-size: 0.55rem; }
             .credits-table .c-label { width: 50%; }
+
+            /* Grid scroll container: fixed to frame bounds so content can't leak past frame edges */
+            html.grid-active,
+            body.grid-active {
+                overflow: hidden !important;
+                height: 100% !important;
+            }
+            body.grid-active #grid-scroll-container {
+                position: fixed;
+                top: calc(1.5rem + env(safe-area-inset-top));
+                bottom: calc(1.5rem + env(safe-area-inset-bottom));
+                left: 0;
+                right: 0;
+                overflow-y: auto;
+                overflow-x: hidden;
+                -webkit-overflow-scrolling: touch;
+                z-index: 50;
+            }
         }
         
         /* Small Mobile */
@@ -837,36 +855,12 @@
             overflow: visible;
             height: auto !important;
         }
-        .hud-mask {
-            position: fixed;
-            left: 0; right: 0;
-            background: #050505;
-            z-index: -1;
-            pointer-events: none;
-            display: none;
-            -webkit-transform: translate3d(0, 0, 0);
-            transform: translate3d(0, 0, 0);
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-        }
-        body.grid-active .hud-mask {
+        /* Fixed scroll container for mobile portrait — content is clipped to frame bounds */
+        #grid-scroll-container {
             display: block;
         }
-        .hud-mask-top {
-            position: absolute;
-            bottom: 100%;
-            left: -20vw;
-            right: -20vw;
-            height: 100vh;
-            top: auto;
-        }
-        .hud-mask-bottom {
-            position: absolute;
-            top: 100%;
-            left: -20vw;
-            right: -20vw;
-            height: 100vh;
-            bottom: auto;
+        body.grid-active #grid-scroll-container {
+            display: block;
         }
         html.ready {
             overflow: visible;
@@ -1426,13 +1420,15 @@
         </div>
 
         <!-- Unified Visual Grid -->
-        <div id="combined-grid-view">
-            <div class="grid-filter-bar">
-                <button class="filter-btn active" data-filter="all">[ ALL ]</button>
-                <button class="filter-btn" data-filter="films">[ FILMS ]</button>
-                <button class="filter-btn" data-filter="case-studies">[ CASE STUDIES ]</button>
+        <div id="grid-scroll-container">
+            <div id="combined-grid-view">
+                <div class="grid-filter-bar">
+                    <button class="filter-btn active" data-filter="all">[ ALL ]</button>
+                    <button class="filter-btn" data-filter="films">[ FILMS ]</button>
+                    <button class="filter-btn" data-filter="case-studies">[ CASE STUDIES ]</button>
+                </div>
+                <div class="grid-container" id="grid-container"></div>
             </div>
-            <div class="grid-container" id="grid-container"></div>
         </div>
     </main>
 
@@ -1445,10 +1441,6 @@
         <div class="corner tr"></div>
         <div class="corner bl"></div>
         <div class="corner br"></div>
-        
-        <!-- Viewport Crop Masks (inside corner-frame to inherit z-index: 100 context) -->
-        <div class="hud-mask hud-mask-top"></div>
-        <div class="hud-mask hud-mask-bottom"></div>
         
         <!-- HUD Elements -->
         <div class="hud-tag hud-tl" id="hud-tc">[ TC 00:00:00:00 ]</div>
@@ -1488,6 +1480,7 @@
         function enterGridState() {
             document.body.classList.remove('paladin-landing');
             document.body.classList.add('grid-active');
+            document.documentElement.classList.add('grid-active');
             localStorage.setItem('omar_seen_intro', 'true');
             const wrapper = document.querySelector('.portal-wrapper');
             if (wrapper) {
@@ -2507,6 +2500,7 @@
                         currentIndex = item.index;
                         isProjectState = true;
                         document.body.classList.remove('grid-active');
+                        document.documentElement.classList.remove('grid-active');
                         document.body.classList.add('project-view');
                         document.body.classList.add('locked');
 
