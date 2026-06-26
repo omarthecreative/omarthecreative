@@ -590,6 +590,10 @@
                 .hud-bl { bottom: calc(0.8rem + env(safe-area-inset-bottom)); left: calc(1.5rem + env(safe-area-inset-left)); }
                 .hud-br { bottom: calc(0.8rem + env(safe-area-inset-bottom)); right: calc(1.5rem + env(safe-area-inset-right)); }
                 #lut-toggle.unlocked { top: calc(0.75rem + env(safe-area-inset-top)); }
+                body.grid-active #grid-scroll-container {
+                    top: calc(1.5rem + env(safe-area-inset-top));
+                    bottom: calc(1.5rem + env(safe-area-inset-bottom));
+                }
             }
         }
  
@@ -636,30 +640,9 @@
             .credits-table { font-size: 0.55rem; }
             .credits-table .c-label { width: 50%; }
 
-        }
-
-        /* Phone portrait only: fixed scroll container clips content to frame bounds.
-           Masks don't work on iOS mobile due to compositing quirks — this approach
-           contains the scroll physically so content can never escape the frame. */
-        @media (orientation: portrait) and (max-width: 640px) {
-            html.grid-active,
-            body.grid-active {
-                overflow: hidden !important;
-                height: 100% !important;
-            }
-            body.grid-active .hud-mask {
-                display: none;
-            }
             body.grid-active #grid-scroll-container {
-                position: fixed;
                 top: calc(1.5rem + env(safe-area-inset-top));
                 bottom: calc(1.5rem + env(safe-area-inset-bottom));
-                left: 0;
-                right: 0;
-                overflow-y: auto;
-                overflow-x: hidden;
-                -webkit-overflow-scrolling: touch;
-                z-index: 50;
             }
         }
         
@@ -859,45 +842,24 @@
             justify-content: center;
             z-index: 10;
         }
+        /* Grid active: lock page scroll — the fixed container handles it */
+        html.grid-active,
         body.grid-active {
-            overflow: visible;
-            height: auto !important;
+            overflow: hidden !important;
+            height: 100% !important;
         }
-        /* Masks: cover the zones above and below the HUD frame on desktop and tablet */
-        .hud-mask {
+        /* Fixed scroll container — clips content to frame top/bottom on all viewports.
+           Scrollbar appears at right: 0 (viewport edge, outside the frame). */
+        body.grid-active #grid-scroll-container {
             position: fixed;
-            left: 0; right: 0;
-            background: #050505;
-            z-index: -1;
-            pointer-events: none;
-            display: none;
-            -webkit-transform: translate3d(0, 0, 0);
-            transform: translate3d(0, 0, 0);
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-        }
-        body.grid-active .hud-mask {
-            display: block;
-        }
-        .hud-mask-top {
-            position: absolute;
-            bottom: 100%;
-            left: -20vw;
-            right: -20vw;
-            height: 100vh;
-            top: auto;
-        }
-        .hud-mask-bottom {
-            position: absolute;
-            top: 100%;
-            left: -20vw;
-            right: -20vw;
-            height: 100vh;
-            bottom: auto;
-        }
-        /* Fixed scroll container: phone portrait only (masks handle everything else) */
-        #grid-scroll-container {
-            display: block;
+            top: 2rem;
+            bottom: 2rem;
+            left: 0;
+            right: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            z-index: 50;
         }
         html.ready {
             overflow: visible;
@@ -1479,10 +1441,6 @@
         <div class="corner bl"></div>
         <div class="corner br"></div>
         
-        <!-- Viewport crop masks (desktop/tablet: active; phone portrait: suppressed by media query) -->
-        <div class="hud-mask hud-mask-top"></div>
-        <div class="hud-mask hud-mask-bottom"></div>
-
         <!-- HUD Elements -->
         <div class="hud-tag hud-tl" id="hud-tc">[ TC 00:00:00:00 ]</div>
         <div class="hud-tag hud-tr" id="lut-toggle">[ LUT: REC.709 ]</div>
