@@ -859,9 +859,13 @@
             position: fixed;
             left: 0; right: 0;
             background: #050505;
-            z-index: 99;
+            z-index: -1;
             pointer-events: none;
             display: none;
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
         body.grid-active .hud-mask {
             display: block;
@@ -1448,15 +1452,15 @@
         © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
     </div>
 
-    <!-- Viewport Crop Masks -->
-    <div class="hud-mask hud-mask-top"></div>
-    <div class="hud-mask hud-mask-bottom"></div>
-
     <div class="corner-frame">
         <div class="corner tl"></div>
         <div class="corner tr"></div>
         <div class="corner bl"></div>
         <div class="corner br"></div>
+        
+        <!-- Viewport Crop Masks (inside corner-frame to inherit z-index: 100 context) -->
+        <div class="hud-mask hud-mask-top"></div>
+        <div class="hud-mask hud-mask-bottom"></div>
         
         <!-- HUD Elements -->
         <div class="hud-tag hud-tl" id="hud-tc">[ TC 00:00:00:00 ]</div>
