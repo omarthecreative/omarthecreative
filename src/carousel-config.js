@@ -515,7 +515,7 @@ const projects = [
 
 const caseStudies = [
     {
-        title: "PROJECT ROCK <span class=\"collab-x\">x</span> UNDER ARMOUR",
+        title: "PROJECT ROCK <span style=\"white-space: nowrap;\"><span class=\"collab-x\">x</span> UNDER ARMOUR</span>",
         subtitle: "It Takes an Iron Will",
         img: "assets/wp-uploads/DJ_Red.jpg",
         slug: "project-rock.html",
