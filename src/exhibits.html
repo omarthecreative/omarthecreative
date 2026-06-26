@@ -71,6 +71,27 @@
         }
         .project-bg.active { opacity: 0.44; }
 
+        .hud-mask {
+            position: fixed;
+            left: 0; right: 0;
+            background: #050505;
+            z-index: 99;
+            pointer-events: none;
+            display: block;
+        }
+        body.project-view .hud-mask,
+        body.video-active .hud-mask {
+            display: none;
+        }
+        .hud-mask-top {
+            top: 0;
+            height: calc(2rem + env(safe-area-inset-top));
+        }
+        .hud-mask-bottom {
+            bottom: 0;
+            height: calc(2rem + env(safe-area-inset-bottom));
+        }
+
         /* HUD ELEMENTS */
         .corner-frame {
             position: fixed;
@@ -264,7 +285,7 @@
         }
         .exhibits-grid.hover-ready .exhibit-card:hover .exhibit-info { opacity: 1; transform: translate(-50%, -50%) scale(1.03); }
         .exhibit-brand {
-            font-family: var(--display); font-size: clamp(1rem, 4vw, 5rem);
+            font-family: var(--display); font-size: clamp(1.05rem, 4.2vw, 5.25rem);
             line-height: 0.8; letter-spacing: -0.04em; text-transform: uppercase;
             color: #bb0006; margin-bottom: 0.5vw;
         }
@@ -273,7 +294,7 @@
             letter-spacing: 0.01em;
         }
         .exhibit-campaign {
-            font-family: var(--serif); font-style: italic; font-size: clamp(0.75rem, 1vw, 1.25rem);
+            font-family: var(--serif); font-style: italic; font-size: clamp(0.7875rem, 1.05vw, 1.3125rem);
             letter-spacing: 0.02em; color: white; text-transform: none; white-space: nowrap; line-height: 1.1;
             margin-bottom: -0.2vw; /* Bring closer to brand title */
         }
@@ -349,6 +370,12 @@
             .hud-bl { bottom: 0.3rem; left: 1rem; }
             .hud-br { bottom: 0.3rem; right: 1rem; }
             .copyright-tag { bottom: 0.3rem !important; }
+            .hud-mask-top {
+                height: calc(1.5rem + env(safe-area-inset-top));
+            }
+            .hud-mask-bottom {
+                height: calc(1.5rem + env(safe-area-inset-bottom));
+            }
         }
 
         @media (max-width: 480px) {
@@ -373,6 +400,12 @@
             .hud-bl { bottom: 0.8rem; }
             .hud-br { bottom: 0.8rem; }
             #lut-toggle.unlocked { top: 0.75rem; }
+            .hud-mask-top {
+                height: calc(1.5rem + env(safe-area-inset-top));
+            }
+            .hud-mask-bottom {
+                height: calc(1.5rem + env(safe-area-inset-bottom));
+            }
         }
     </style>
 </head>
@@ -384,6 +417,9 @@
     <div class="project-bg-container" id="bg-container">
         <!-- Populated via JS -->
     </div>
+
+    <div class="hud-mask hud-mask-top"></div>
+    <div class="hud-mask hud-mask-bottom"></div>
 
     <div class="corner-frame">
         <div class="corner tl"></div><div class="corner tr"></div>
