@@ -576,8 +576,11 @@
                 .footer-metadata { bottom: 3rem; padding: 0 2rem; font-size: 0.6rem; letter-spacing: 0.2em; }
                 .copyright-tag { bottom: 0.3rem !important; }
                 .corner-frame { top: 1.5rem; left: 1.5rem; right: 1.5rem; bottom: 1.5rem; }
-                body.grid-active .hud-mask {
-                    height: 1.5rem;
+                body.grid-active .hud-mask-top {
+                    height: calc(1.5rem + env(safe-area-inset-top));
+                }
+                body.grid-active .hud-mask-bottom {
+                    height: calc(1.5rem + env(safe-area-inset-bottom));
                 }
                 .portal-wrapper { padding-bottom: 0; }
  
@@ -613,8 +616,11 @@
             }
             .copyright-tag { bottom: 0.3rem !important; font-size: 0.4rem; opacity: 0.4; display: block !important; }
             .corner-frame { top: 1.5rem; left: 1rem; right: 1rem; bottom: 1.5rem; }
-            body.grid-active .hud-mask {
-                height: 1.5rem;
+            body.grid-active .hud-mask-top {
+                height: calc(1.5rem + env(safe-area-inset-top));
+            }
+            body.grid-active .hud-mask-bottom {
+                height: calc(1.5rem + env(safe-area-inset-bottom));
             }
  
             /* Fixed HUD for Portrait */
@@ -844,11 +850,11 @@
         }
         .hud-mask-top {
             top: 0;
-            height: 2rem;
+            height: calc(2rem + env(safe-area-inset-top));
         }
         .hud-mask-bottom {
             bottom: 0;
-            height: 2rem;
+            height: calc(2rem + env(safe-area-inset-bottom));
         }
         html.ready {
             overflow: visible;
@@ -998,7 +1004,7 @@
         .card-title {
             font-family: 'lust-stencil-display', var(--serif);
             font-style: italic;
-            font-size: 1.45rem;
+            font-size: 1.52rem;
             font-weight: normal;
             line-height: 1.2;
             letter-spacing: 0.02em;
@@ -1008,7 +1014,7 @@
         }
         .card-subtitle {
             font-family: var(--display);
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 900;
             line-height: 0.9;
             letter-spacing: -0.04em;
@@ -1052,11 +1058,11 @@
                 transform: translateY(4px);
             }
             .card-title {
-                font-size: 0.95rem;
+                font-size: 1.0rem;
                 margin-bottom: 0.08rem;
             }
             .card-subtitle {
-                font-size: 0.85rem;
+                font-size: 0.89rem;
             }
         }
         @media (max-width: 1368px) and (orientation: portrait) {
@@ -1072,11 +1078,11 @@
                 transform: translateY(3px);
             }
             .card-title {
-                font-size: 0.75rem;
+                font-size: 0.79rem;
                 margin-bottom: 0.05rem;
             }
             .card-subtitle {
-                font-size: 0.65rem;
+                font-size: 0.68rem;
             }
         }
         @media (max-width: 640px) {
@@ -1105,11 +1111,11 @@
                 transform: translateY(3px);
             }
             .card-title {
-                font-size: 0.425rem;
+                font-size: 0.45rem;
                 margin-bottom: 0.05rem;
             }
             .card-subtitle {
-                font-size: 0.485rem;
+                font-size: 0.51rem;
             }
         }
         @media (max-height: 480px) and (orientation: landscape) {
@@ -1132,11 +1138,11 @@
                 transform: translateY(3px);
             }
             .card-title {
-                font-size: 0.55rem;
+                font-size: 0.58rem;
                 margin-bottom: 0.05rem;
             }
             .card-subtitle {
-                font-size: 0.625rem;
+                font-size: 0.66rem;
             }
             #combined-grid-view {
                 padding: 0 3rem 6rem 3rem;
