@@ -1111,11 +1111,11 @@
                 transform: translateY(3px);
             }
             .card-title {
-                font-size: 0.45rem;
+                font-size: 0.72rem;
                 margin-bottom: 0.05rem;
             }
             .card-subtitle {
-                font-size: 0.51rem;
+                font-size: 0.82rem;
             }
         }
         @media (max-height: 480px) and (orientation: landscape) {
@@ -1351,24 +1351,6 @@
       </symbol>
     </svg>
 
-    <!-- Viewport Crop Masks -->
-    <div class="hud-mask hud-mask-top"></div>
-    <div class="hud-mask hud-mask-bottom"></div>
-
-    <div class="corner-frame">
-        <div class="corner tl"></div>
-        <div class="corner tr"></div>
-        <div class="corner bl"></div>
-        <div class="corner br"></div>
-        
-        <!-- HUD Elements -->
-        <div class="hud-tag hud-tl" id="hud-tc">[ TC 00:00:00:00 ]</div>
-        <div class="hud-tag hud-tr" id="lut-toggle">[ LUT: REC.709 ]</div>
-        <div class="hud-tag hud-tr" id="intro-timer" style="display: none; color: var(--vibrant-red-hud);">[ DISPATCH IN: 03.00 ]</div>
-        <div class="hud-tag hud-bl" id="hud-fps">[ 24 FPS ]</div>
-        <div class="hud-tag hud-br" id="bat-status">[ BAT: 00% ]</div>
-    </div>
-
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
         <div class="menu-links">
@@ -1442,6 +1424,24 @@
 
     <div class="copyright-tag fixed">
         © 2026 OMAR YASSER SILWANY | ALL RIGHTS RESERVED.
+    </div>
+
+    <!-- Viewport Crop Masks -->
+    <div class="hud-mask hud-mask-top"></div>
+    <div class="hud-mask hud-mask-bottom"></div>
+
+    <div class="corner-frame">
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+        
+        <!-- HUD Elements -->
+        <div class="hud-tag hud-tl" id="hud-tc">[ TC 00:00:00:00 ]</div>
+        <div class="hud-tag hud-tr" id="lut-toggle">[ LUT: REC.709 ]</div>
+        <div class="hud-tag hud-tr" id="intro-timer" style="display: none; color: var(--vibrant-red-hud);">[ DISPATCH IN: 03.00 ]</div>
+        <div class="hud-tag hud-bl" id="hud-fps">[ 24 FPS ]</div>
+        <div class="hud-tag hud-br" id="bat-status">[ BAT: 00% ]</div>
     </div>
 
     <script src="apex-sound.js?v=2"></script>
