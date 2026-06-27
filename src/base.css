@@ -18,7 +18,12 @@ a:focus, a:active, button:focus, button:active { outline: none; color: inherit; 
 
 html {
     overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 0, 21, 0.5) transparent;
 }
+html::-webkit-scrollbar { width: 3px; }
+html::-webkit-scrollbar-track { background: transparent; }
+html::-webkit-scrollbar-thumb { background: rgba(255, 0, 21, 0.5); border-radius: 2px; }
 
 body {
     background-color: var(--bg);
