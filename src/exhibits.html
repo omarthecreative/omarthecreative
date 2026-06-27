@@ -180,15 +180,14 @@
         .menu-links { display: flex; flex-direction: column; align-items: center; }
         .menu-link {
             font-family: var(--display);
-            font-size: clamp(60px, 15vw, 280px);
+            font-size: clamp(60px, 18vw, 350px);
             line-height: 0.65;
             text-transform: uppercase;
-            color: #FFFFFF;
+            color: #A8002C;
             text-decoration: none;
             letter-spacing: -0.07em;
             transition: all 0.3s ease;
             opacity: 0.1;
-            margin: 0.5rem 0;
         }
         .menu-link:hover {
             opacity: 1;
@@ -218,21 +217,6 @@
             box-sizing: border-box;
         }
         
-        .exhibits-watermark {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-family: var(--display);
-            font-size: 35vw;
-            line-height: 0.7;
-            letter-spacing: -0.05em;
-            color: white; opacity: 0.12;
-            pointer-events: none; z-index: 1;
-            text-transform: uppercase;
-            white-space: nowrap; text-align: center;
-            mix-blend-mode: screen; filter: blur(2px);
-        }
-
         .exhibits-grid {
             flex-grow: 1;
             display: grid;
@@ -360,8 +344,7 @@
             .carousel-subtitle { font-size: 4vw; margin-top: 1rem; }
             .exhibits-container { padding: 2rem; }
             .exhibits-grid { gap: 0.5rem; }
-            .exhibits-watermark { font-size: 45vw; }
-            .nav-name { top: 3rem; left: 3rem; font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
+.nav-name { top: 3rem; left: 3rem; font-size: 0.9rem; max-width: 60%; line-height: 1.2; }
             .menu-trigger { top: 3rem; right: 3rem; font-size: 0.55rem; letter-spacing: 0.2em; }
             .corner-frame { top: 1.5rem; left: 1rem; right: 1rem; bottom: 1.5rem; }
             .hud-tag { font-size: 0.45rem; opacity: 0.5; letter-spacing: 0.05em; }
@@ -443,7 +426,6 @@
 
     <!-- GRID VIEW -->
     <div class="exhibits-grid-view">
-        <div class="exhibits-watermark">EXHIBITS</div>
         <main class="exhibits-container">
             <div class="exhibits-grid" id="exhibits-grid">
                 <!-- Populated via JS -->
