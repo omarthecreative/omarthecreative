@@ -1432,7 +1432,7 @@
                 </svg>
                 <span class="wire-text">Wire<br>Omar</span>
             </div>
-            <h1 class="splash-title">HAVE&nbsp;IDEAS.<br>WILL&nbsp;TRAVEL.</h1>
+            <h1 class="splash-title">HAVE&nbsp;TASTE.<br>WILL&nbsp;TRAVEL.</h1>
         </div>
     </div>
 
@@ -1452,7 +1452,7 @@
 
         <div class="project-display" id="project-display">
             <div class="subtitle" id="project-subtitle"><a href="info.html"><svg class="ico-knight" viewBox="0 0 1052 1600" aria-hidden="true"><use xlink:href="#knight-mark" href="#knight-mark"></use></svg><span class="wire-text">Wire<br>Omar</span></a></div>
-            <h1 class="title" id="project-title" style="opacity:0">HAVE&nbsp;IDEAS.<br>WILL&nbsp;TRAVEL.</h1>
+            <h1 class="title" id="project-title" style="opacity:0">HAVE&nbsp;TASTE.<br>WILL&nbsp;TRAVEL.</h1>
         </div>
 
         <div class="action-group" id="action-group">
@@ -1461,7 +1461,7 @@
         </div>
 
         <!-- Unified Visual Grid -->
-        <div id="grid-scroll-container">
+        <div id="grid-scroll-container" tabindex="0">
             <div id="combined-grid-view">
                 <div class="grid-filter-bar">
                     <button class="filter-btn active" data-filter="all">[ ALL ]</button>
@@ -1537,6 +1537,8 @@
             }
             document.body.offsetHeight; // force body reflow
             window.dispatchEvent(new Event('resize'));
+            const gridContainer = document.getElementById('grid-scroll-container');
+            if (gridContainer) setTimeout(() => gridContainer.focus({ preventScroll: true }), 50);
         }
         window.enterGridState = enterGridState;
 
@@ -2375,7 +2377,7 @@
             titleEl.style.fontSize = '';
             titleEl.style.letterSpacing = '';
             titleEl.style.transform = '';
-            titleEl.innerHTML = 'HAVE&nbsp;IDEAS.<br>WILL&nbsp;TRAVEL.';
+            titleEl.innerHTML = 'HAVE&nbsp;TASTE.<br>WILL&nbsp;TRAVEL.';
             titleEl.style.opacity = '1';
             subtitleEl.innerHTML = '<a href="info.html"><svg class="ico-knight" viewBox="0 0 1052 1600" aria-hidden="true"><use xlink:href="#knight-mark" href="#knight-mark"></use></svg><span class="wire-text">Wire<br>Omar</span></a>';
             subtitleEl.style.opacity = '1';

@@ -388,6 +388,7 @@
             .apex-nav { top: 3.5rem; left: 3.5rem; right: 3.5rem; }
             .nav-name { font-size: 1.2rem; }
             .menu-trigger { font-size: 0.55rem; }
+            .container { padding-left: 4rem; padding-right: 4rem; }
         }
         @media (orientation: landscape) and (max-height: 600px) {
             .apex-nav { top: 1.5rem; left: 2.5rem; right: 2.5rem; }
@@ -451,7 +452,7 @@
         gtag('config', 'G-DCVBRB1LW6');
     </script>
     <!-- Back to Top -->
-    <button id="back-to-top" onclick="(document.getElementById('info-scroll-container')||window).scrollTo({top:0,behavior:'smooth'})" title="Back to top" style="position:fixed; bottom:4rem; right:4rem; width:64px; height:64px; padding:0; border:none; background:transparent; font-size:2.2rem; cursor:pointer; opacity:0; transition:all 0.4s ease; z-index:9999; display:flex; align-items:center; justify-content:center; pointer-events:none;">
+    <button id="back-to-top" title="Back to top" style="position:fixed; bottom:4rem; right:4rem; width:64px; height:64px; padding:0; border:none; background:transparent; font-size:2.2rem; cursor:pointer; opacity:0; transition:all 0.4s ease; z-index:9999; display:flex; align-items:center; justify-content:center; pointer-events:none;">
         <img src="assets/cowboy-hat.png" alt="Back to top" style="width:40px;height:40px;object-fit:contain;">
     </button>
 
@@ -492,6 +493,10 @@
             if (infoContainer) infoContainer.addEventListener('scroll', () => checkBackToTop(infoContainer));
             backToTop.addEventListener('mouseenter', () => backToTop.style.opacity = '1');
             backToTop.addEventListener('mouseleave', () => backToTop.style.opacity = '0');
+            backToTop.addEventListener('click', () => {
+                const target = (infoContainer && infoContainer.scrollTop > 0) ? infoContainer : window;
+                target.scrollTo({ top: 0, behavior: 'smooth' });
+            });
 
             // Tracking
             const viewed = JSON.parse(localStorage.getItem('omar_viewed') || '[]');
@@ -809,9 +814,14 @@
         }
     });
 
-    // First touch unlocks AudioContext — do NOT play yet, wait for scroll.
+    // First touch: unlock AudioContext AND start whistle within the gesture.
+    // iOS blocks AudioContext from scroll (non-gesture) callbacks, so we must
+    // play here — scroll listeners below serve as desktop/mouse fallbacks only.
     document.addEventListener('touchstart', function () {
-        if (typeof ApexSound !== 'undefined') ApexSound.init();
+        if (typeof ApexSound !== 'undefined') {
+            ApexSound.init();
+            startWhistle();
+        }
     }, { passive: true, once: true });
 
     // Start on first real scroll (Y > 50 prevents menu-tap micro-scroll from firing)
@@ -821,6 +831,17 @@
             window.removeEventListener('scroll', onFirstScroll);
         }
     }, { passive: true });
+
+    // iPad/mobile portrait: page scrolls inside #info-scroll-container, not window
+    var infoScrollEl = document.getElementById('info-scroll-container');
+    if (infoScrollEl) {
+        infoScrollEl.addEventListener('scroll', function onContainerScroll() {
+            if (infoScrollEl.scrollTop > 50) {
+                startWhistle();
+                infoScrollEl.removeEventListener('scroll', onContainerScroll);
+            }
+        }, { passive: true });
+    }
 
     var infoTitle = document.querySelector('.info-hero .title');
     if (infoTitle) {
