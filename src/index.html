@@ -1462,9 +1462,9 @@
         };
 
         function enterGridState() {
-            document.body.classList.remove('paladin-landing');
             document.body.classList.add('grid-active');
             document.documentElement.classList.add('grid-active');
+            document.body.classList.remove('paladin-landing');
             localStorage.setItem('omar_seen_intro', 'true');
             const wrapper = document.querySelector('.portal-wrapper');
             if (wrapper) {
