@@ -1397,10 +1397,10 @@
     <div id="apex-menu">
         <div class="menu-close" onclick="toggleMenu(false)">[ CLOSE // ESC ]</div>
         <div class="menu-links">
-            <a href="exhibits.html" class="menu-link" onclick="playExhibitsSound(event, 'exhibits.html')">FILMS</a>
+            <a href="films.html" class="menu-link" onclick="playExhibitsSound(event, 'films.html')">FILMS</a>
             <a href="choice-cuts.html" class="menu-link">CASE STUDIES</a>
             <a href="long-pour.html" class="menu-link">ESSAYS</a>
-            <a href="info.html" class="menu-link">ABOUT OMAR</a>
+            <a href="about.html" class="menu-link">ABOUT OMAR</a>
         </div>
     </div>
 
@@ -1445,7 +1445,7 @@
         </a>
 
         <div class="project-display" id="project-display">
-            <div class="subtitle" id="project-subtitle"><a href="info.html"><svg class="ico-knight" viewBox="0 0 1052 1600" aria-hidden="true"><use xlink:href="#knight-mark" href="#knight-mark"></use></svg><span class="wire-text">Wire<br>Omar</span></a></div>
+            <div class="subtitle" id="project-subtitle"><a href="about.html"><svg class="ico-knight" viewBox="0 0 1052 1600" aria-hidden="true"><use xlink:href="#knight-mark" href="#knight-mark"></use></svg><span class="wire-text">Wire<br>Omar</span></a></div>
             <h1 class="title" id="project-title" style="opacity:0">HAVE&nbsp;TASTE.<br>WILL&nbsp;TRAVEL.</h1>
         </div>
 
@@ -2373,7 +2373,7 @@
             titleEl.style.transform = '';
             titleEl.innerHTML = 'HAVE&nbsp;TASTE.<br>WILL&nbsp;TRAVEL.';
             titleEl.style.opacity = '1';
-            subtitleEl.innerHTML = '<a href="info.html"><svg class="ico-knight" viewBox="0 0 1052 1600" aria-hidden="true"><use xlink:href="#knight-mark" href="#knight-mark"></use></svg><span class="wire-text">Wire<br>Omar</span></a>';
+            subtitleEl.innerHTML = '<a href="about.html"><svg class="ico-knight" viewBox="0 0 1052 1600" aria-hidden="true"><use xlink:href="#knight-mark" href="#knight-mark"></use></svg><span class="wire-text">Wire<br>Omar</span></a>';
             subtitleEl.style.opacity = '1';
             if (typeof projectDisplay !== 'undefined' && projectDisplay) projectDisplay.style.width = '';
         }
