@@ -695,10 +695,13 @@
             position: absolute;
             left: 6vw;
             bottom: 14vh;
+            top: auto;
             display: flex;
             flex-direction: column-reverse;
             align-items: flex-start;
-            justify-content: flex-end;
+            text-align: left;
+            width: auto !important;
+            transform: none;
             z-index: 1060;
             pointer-events: none;
             transition: opacity 0.6s ease;
@@ -715,7 +718,7 @@
             color: #bb0006;
             text-shadow: 0 4px 34px rgba(0,0,0,.6);
             text-align: left;
-            white-space: nowrap;
+            white-space: normal;
         }
         .splash-subtitle {
             font-family: 'lust-stencil-display', var(--serif);
@@ -724,7 +727,9 @@
             color: #EAE6DE;
             margin-top: 1.1rem;
             text-shadow: 0 2px 16px rgba(0,0,0,.7);
-            white-space: nowrap;
+            white-space: normal;
+            line-height: 1.1;
+            letter-spacing: -0.01em;
         }
         .splash-subtitle a {
             color: #EAE6DE;
@@ -857,10 +862,7 @@
         body.grid-active #grid-back-to-top.visible:hover {
             opacity: 1;
         }
-        html.ready {
-            overflow: visible;
-            height: auto !important;
-        }
+
         body.grid-active .portal-wrapper {
             position: relative;
             height: auto;
