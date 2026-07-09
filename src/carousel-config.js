@@ -149,10 +149,9 @@ const projects = [
         `,
         credits: [
             {l: "Client", v: "Coca-Cola (Spec)"},
-            {l: "Creative Director, Copy", v: "Omar Silwany"},
+            {l: "Creative Director", v: "Omar Silwany"},
             {l: "Agency", v: "Meanwhile In Jupiter"},
             {l: "AI Generation", v: "Google Flow (Veo)"},
-            {l: "Sound Design", v: "Meanwhile In Jupiter"},
             {l: "Music", v: "Original 1971 'Hilltop' Recording"}
         ]
     },
@@ -345,7 +344,7 @@ const projects = [
             {l: "Creative Director", v: "Omar Silwany"},
             {l: "Edit & Assembly", v: "Omar Silwany"},
             {l: "AI Generation", v: "Google Flow / Gemini Omni Flash"},
-            {l: "Production", v: "Meanwhile In Jupiter"},
+            {l: "Agency", v: "Meanwhile In Jupiter"},
             {l: "Sound", v: "Carlo Vanzini (commentatore) / \"Profondo rosso\" by Goblin"}
         ]
     },
@@ -473,8 +472,8 @@ const projects = [
         `,
         credits: [
             {l: "Client", v: "Capita Snowboards (Spec)"},
-            {l: "Creative Director, Writer", v: "Omar Silwany"},
-            {l: "Production", v: "Meanwhile In Jupiter"},
+            {l: "Creative Director", v: "Omar Silwany"},
+            {l: "Agency", v: "Meanwhile In Jupiter"},
             {l: "AI Generation", v: "Google Flow"},
             {l: "Sound Design", v: "BBC Sound Effects Library"},
             {l: "Voiceover", v: "Adlai Stevenson (1965 Geneva)"}
