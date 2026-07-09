@@ -786,6 +786,12 @@
             height: 100vh !important;
         }
 
+        /* Prevent FOUT layout shifts by hiding text elements until fonts are fully loaded */
+        html:not(.ready) .splash-content,
+        html:not(.ready) .copyright-tag {
+            opacity: 0 !important;
+        }
+
         /* Combined Visual Grid Styles */
         #hero-section {
             position: relative;
