@@ -307,6 +307,7 @@ const projects = [
         subtitle: "La Tempesta",
         letterSpacing: '-0.01em',
         vimeoId: "1197064979",
+        maxDuration: 90,
         img: "assets/ferrari-la-tempesta.jpg",
         role: "CREATIVE DIRECTOR, WRITER",
         desc: "Ferrari built a quiet EV.<br>We gave them the storm back.<br><br>Coined a name. Started a petition.<br>A cinematic protest on behalf of the Tifosi.<br>Rosso Corsa or nothing.",

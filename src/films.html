@@ -705,20 +705,27 @@
                 vimeoPlayer = new Vimeo.Player(iframe);
 
                 vimeoPlayer.on('timeupdate', (data) => {
-                    const percent = data.percent * 100;
+                    const activeProject = projects[currentIndex] || {};
+                    const maxDuration = activeProject.maxDuration || data.duration;
+                    const currentSecs = Math.min(data.seconds, maxDuration);
+                    const percent = (currentSecs / maxDuration) * 100;
                     document.getElementById('video-progress-fill').style.width = `${percent}%`;
-                    const mins = Math.floor(data.seconds / 60);
-                    const secs = Math.floor(data.seconds % 60);
-                    const durationMins = Math.floor(data.duration / 60);
-                    const durationSecs = Math.floor(data.duration % 60);
+                    const mins = Math.floor(currentSecs / 60);
+                    const secs = Math.floor(currentSecs % 60);
+                    const durationMins = Math.floor(maxDuration / 60);
+                    const durationSecs = Math.floor(maxDuration % 60);
                     document.getElementById('video-duration').textContent =
                         `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')} / ${durationMins.toString().padStart(2, '0')}:${durationSecs.toString().padStart(2, '0')}`;
                     
                     const timecodeEl = document.querySelector('.timecode');
                     if (timecodeEl) timecodeEl.textContent = `00:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}:00`;
                     
-                    const frames = Math.floor(data.seconds * 24);
+                    const frames = Math.floor(currentSecs * 24);
                     document.getElementById('video-frame-counter').textContent = `F ${frames.toString().padStart(3, '0')}`;
+
+                    if (activeProject.maxDuration && data.seconds >= activeProject.maxDuration) {
+                        vimeoPlayer.setCurrentTime(0);
+                    }
                 });
 
                 vimeoPlayer.on('play', () => {
@@ -829,7 +836,16 @@
         });
 
         document.getElementById('video-forward').addEventListener('click', () => {
-            if (vimeoPlayer) vimeoPlayer.getCurrentTime().then(t => vimeoPlayer.setCurrentTime(t + 15));
+            if (vimeoPlayer) {
+                const activeProject = projects[currentIndex] || {};
+                vimeoPlayer.getCurrentTime().then(t => {
+                    let nextTime = t + 15;
+                    if (activeProject.maxDuration && nextTime >= activeProject.maxDuration) {
+                        nextTime = 0;
+                    }
+                    vimeoPlayer.setCurrentTime(nextTime);
+                });
+            }
         });
 
         document.getElementById('video-audio-toggle').addEventListener('click', () => {
@@ -847,9 +863,14 @@
             if (!vimeoPlayer) return;
             const rect = e.target.getBoundingClientRect();
             const pos = (e.clientX - rect.left) / rect.width;
-            vimeoPlayer.getDuration().then(duration => {
-                vimeoPlayer.setCurrentTime(duration * pos);
-            });
+            const activeProject = projects[currentIndex] || {};
+            if (activeProject.maxDuration) {
+                vimeoPlayer.setCurrentTime(activeProject.maxDuration * pos);
+            } else {
+                vimeoPlayer.getDuration().then(duration => {
+                    vimeoPlayer.setCurrentTime(duration * pos);
+                });
+            }
         });
 
         document.getElementById('video-prev-btn').onclick = () => {
