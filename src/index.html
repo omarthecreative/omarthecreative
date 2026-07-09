@@ -466,63 +466,7 @@
             justify-content: center;
             padding: 2rem;
         }
-        .script-page {
-            width: 100%;
-            max-width: 850px;
-            height: 90vh;
-            background: #fdfdfd; /* Off-white paper */
-            box-shadow: 0 0 50px rgba(0,0,0,0.5), inset 0 0 100px rgba(0,0,0,0.05);
-            position: relative;
-            overflow-y: auto;
-            transform: rotate(-0.5deg); /* Slight physical tilt */
-        }
-        /* Paper texture */
-        .script-paper {
-            padding: 4rem 6rem;
-            min-height: 100%;
-            background-image: 
-                radial-gradient(circle at 2px 2px, rgba(0,0,0,0.02) 1px, transparent 0);
-            background-size: 40px 40px;
-            color: #1a1a1a;
-            font-family: "Courier Prime", "Courier New", Courier, monospace;
-            line-height: 1.2;
-            text-transform: uppercase; /* Scripts are often all caps in action */
-        }
-        .script-close { position: fixed; top: 2rem; right: 2rem; font-family: var(--mono); font-size: 0.8rem; color: var(--vibrant-red-hud); cursor: pointer; letter-spacing: 0.2em; z-index: 2100; }
-        
-        /* Production Header */
-        .sc-header { text-align: center; margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 2px solid #1a1a1a; }
-        .sc-brand { font-size: 1.1em; font-weight: 700; letter-spacing: 0.15em; margin-bottom: 0.4rem; }
-        .sc-campaign { font-size: 0.95em; margin-bottom: 1.5rem; font-style: normal; }
-        .sc-format { font-size: 0.75em; letter-spacing: 0.08em; color: #444; margin-bottom: 1.8rem; }
-        .sc-byline { font-size: 0.82em; line-height: 2; margin-bottom: 0.4rem; font-weight: 700; }
-        .sc-byline-role { font-weight: 400; font-size: 0.82em; letter-spacing: 0.05em; color: #444; }
-        .sc-agency { font-size: 0.75em; color: #666; margin-top: 0.8rem; letter-spacing: 0.05em; }
-        .sc-rule { border: none; border-top: 1px solid #1a1a1a; margin: 2rem 0 0 0; }
 
-        /* Screenplay Elements */
-        .sc-slug { font-weight: bold; margin: 2rem 0 1rem 0; }
-        .sc-action { margin-bottom: 1.5rem; }
-        .sc-char { text-align: center; width: 50%; margin: 2rem auto 0.2rem auto; }
-        .sc-parenthetical { text-align: center; width: 40%; margin: 0 auto 0.2rem auto; font-size: 0.9em; }
-        .sc-dialogue { text-align: center; width: 70%; margin: 0 auto 1.5rem auto; }
-        .sc-transition { text-align: right; margin: 2rem 0; }
-
-        @media (max-width: 768px) {
-            .script-paper { padding: 2rem; }
-            .sc-char, .sc-dialogue, .sc-parenthetical { width: 100%; text-align: left; margin-left: 0; }
-        }
-        /* Dark script variant — overrides paper metaphor for projects that use black panels */
-        .script-page:has(.sc-dark) {
-            background: #050505;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
-        }
-        .script-paper:has(.sc-dark) {
-            background: #050505;
-            background-image: none;
-            color: #fff;
-            padding: 0;
-        }
 
         .credits-divider { height: 1px; background: rgba(255,255,255,0.1); margin-bottom: 2rem; }
         .credits-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.2em; color: var(--vibrant-red-hud); margin-bottom: 1.5rem; text-transform: uppercase; }

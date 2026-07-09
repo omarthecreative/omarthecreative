@@ -98,11 +98,70 @@ const projects = [
         ]
     },
     {
+        title: "COCA-COLA",
+        subtitle: "Redeclaration Day",
+        letterSpacing: '-0.02em',
+        vimeoId: "1206647980",
+        img: "assets/coca-cola-redeclaration-day.jpg",
+        role: "CREATIVE DIRECTOR, WRITER",
+        desc: "Six statues. Six nations. One song.<br>We turned Coke's iconic 'Hilltop'<br>into a global toast to independence.<br>No logos. Just one word on each bottle:<br>Life. Liberty. Happiness.<br>Because freedom is the real thing.",
+        script: `
+            <div class="sc-header">
+                <div class="sc-brand">COCA-COLA</div>
+                <div class="sc-campaign">"REDECLARATION DAY"</div>
+                <div class="sc-format">SPEC COMMERCIAL — :60 · PRODUCTION DRAFT</div>
+                <div class="sc-byline-role">CREATIVE DIRECTOR, COPY</div>
+                <div class="sc-byline">OMAR SILWANY</div>
+                <div class="sc-agency">MEANWHILE IN JUPITER</div>
+                <hr class="sc-rule">
+            </div>
+
+            <div class="sc-action">MUSIC: "I'd Like to Buy the World a Coke" — Original 1971 recording. Diegetic, starting faint, gaining local instrumentation with each location.</div>
+
+            <div class="sc-slug">01 — LE MARRON INCONNU — Haiti — declared 1804</div>
+            <p class="sc-action">Word on bottle: <strong>Liberty</strong>. Light: late-afternoon gold.</p>
+            <p class="sc-action">The bronze statue of the Unknown Maroon has a Coca-Cola bottle held in his right hand. The bottle is at his lips, mid-drink. The only motion is a small tilt of the bottle and a lift of his chin, his gaze rising toward the sky as the song begins.</p>
+
+            <div class="sc-slug">02 — SIMÓN BOLÍVAR — Valencia, Venezuela — declared 1811</div>
+            <p class="sc-action">Word on bottle: <strong>Life</strong>. Light: midday sun.</p>
+            <p class="sc-action">Simón Bolívar stands atop the stone column, his arm extended holding a bottle. He gives a formal, measured nod of the head. At the bottom of the nod, his eyes cut briefly toward the lens, acknowledging the camera, then returns to stillness.</p>
+
+            <div class="sc-slug">03 — CRISTO REDENTOR — Rio de Janeiro, Brazil — declared 1822</div>
+            <p class="sc-action">Word on bottle: <strong>Happiness</strong>. Light: early-morning gold.</p>
+            <p class="sc-action">His arms are fully open over the city. The statue remains still, but the light flares gently as the sunbeam catches the bottle in his hand. A flock of birds lifts off from the base of the statue as the chorus swells.</p>
+
+            <div class="sc-slug">04 — HỒ CHÍ MINH — Ho Chi Minh City, Vietnam — declared 1945</div>
+            <p class="sc-action">Word on bottle: <strong>Life</strong> (Sự sống). Light: dusk.</p>
+            <p class="sc-action">His extended arm moves an inch closer to the camera, the white Spencerian script facing the lens. He gives a slow, closed-mouth nod of statesmanlike respect. His eyes stay focused on the bottle.</p>
+
+            <div class="sc-slug">05 — REPLICA STATUE OF LIBERTY — Île aux Cygnes, Paris — the idea, returned</div>
+            <p class="sc-action">Word on bottle: <strong>Liberty</strong>. Light: blue hour.</p>
+            <p class="sc-action">Paris skyline. Her torch-arm, gripping the bottle, tilts a few degrees toward the lens, marking the first direct gesture aimed at the camera.</p>
+
+            <div class="sc-slug">06 — STATUE OF LIBERTY — New York Harbor — declared 1776</div>
+            <p class="sc-action">Word on bottle: <strong>Liberty</strong>. Light: dawn.</p>
+            <p class="sc-action">The final rhyme resolves. Her arm raises the bottle toward the lens. She looks directly down the barrel of the camera. The music swells to full volume, resolving on: "It's the real thing."</p>
+
+            <div class="sc-slug">END CARD — DAWN LIGHT</div>
+            <p class="sc-action">Text overlays the scene in Coca-Cola Spencerian script:</p>
+            <p class="sc-dialogue"><strong>250 Years of Life, Liberty & Happiness.</strong></p>
+            <p class="sc-dialogue"><strong>That's the Real Thing.</strong></p>
+        `,
+        credits: [
+            {l: "Client", v: "Coca-Cola (Spec)"},
+            {l: "Creative Director, Copy", v: "Omar Silwany"},
+            {l: "Agency", v: "Meanwhile In Jupiter"},
+            {l: "AI Generation", v: "Google Flow (Veo)"},
+            {l: "Sound Design", v: "Meanwhile In Jupiter"},
+            {l: "Music", v: "Original 1971 'Hilltop' Recording"}
+        ]
+    },
+    {
         title: "SAMSUNG",
         subtitle: "Stay Ahead of Tomorrow",
         letterSpacing: '-0.02em',
         vimeoId: "442857172",
-        img: "assets/04-samsung-stay-ahead-tomorrow.jpg",
+        img: "assets/04-samsung-stay-ahead-tomorrow.png",
         role: "CREATIVE DIRECTOR, WRITER",
         desc: "Samsung wanted to sell 5G devices.<br>We sold Gen Z<br>their own skepticism instead.<br><br>Let our hero argue with her future.<br>Made global markets copy our playbook.<br>Turns out that little 5G icon<br>changes everything.",
         script: `
@@ -244,6 +303,65 @@ const projects = [
         ]
     },
     {
+        title: "FERRARI",
+        subtitle: "La Tempesta",
+        letterSpacing: '-0.01em',
+        vimeoId: "1197064979",
+        img: "assets/ferrari-la-tempesta.jpg",
+        role: "CREATIVE DIRECTOR, WRITER",
+        desc: "Ferrari built a quiet EV.<br>We gave them the storm back.<br><br>Coined a name. Started a petition.<br>A cinematic protest on behalf of the Tifosi.<br>Rosso Corsa or nothing.",
+        script: `
+            <div class="sc-header">
+                <div class="sc-brand">FERRARI</div>
+                <div class="sc-campaign">"LA TEMPESTA"</div>
+                <div class="sc-format">SPEC FILM — 1:15 · TIFOSI CUT</div>
+                <div class="sc-byline-role">CREATIVE DIRECTOR, WRITER</div>
+                <div class="sc-byline">OMAR SILWANY</div>
+                <div class="sc-agency">MEANWHILE IN JUPITER</div>
+                <hr class="sc-rule">
+            </div>
+
+            <div class="sc-slug">ACT I — FINALMENTE</div>
+            <p class="sc-action">Title card fades in: <strong>FINALMENTE.</strong></p>
+            <p class="sc-action">A sheet is pulled from a car in a sterile white room. We reveal a Ferrari Luce painted in Azzurro La Plata. It sits silent under museum lights. A single reflection moves slowly across the hood — light going nowhere.</p>
+            <p class="sc-action">AUDIO: A low, tense synthesizer pulse begins to build.</p>
+
+            <div class="sc-slug">ACT II — CALMA</div>
+            <p class="sc-action">Title card fades in: <strong>CALMA.</strong></p>
+            <p class="sc-action">Intercut between the silent, motionless blue Luce and 122 years of Ferrari fury in Rosso Corsa: Niki Lauda screaming through the Nürburgring, Michael Schumacher flying at Monza, Gilles Villeneuve slides at Jarama, a Tifoso flag snapping in the wind.</p>
+            <p class="sc-action">AUDIO: The historical red footage roars with high-RPM engine screams. The blue Luce footage has absolute, dead silence.</p>
+
+            <div class="sc-slug">ACT III — CORSA O CULO</div>
+            <p class="sc-action">Title card fades in: <strong>CORSA O CULO.</strong></p>
+            <p class="sc-action">A sun-drenched medieval Italian piazza. The blue Luce sits on a low stone plinth. In extreme slow motion, a ripe red tomato strikes the hood. Splat. More tomatoes fly. The blue paint is buried under red pulp. A local grandmother kisses her fingers in approval.</p>
+            <p class="sc-action">AUDIO: Giorgio Moroder's "From Here to Eternity" beat kicks in hard, in sync with the tomato impacts.</p>
+
+            <div class="sc-slug">ACT IV — LA TEMPESTA</div>
+            <p class="sc-action">We see the Luce repainted in Rosso Corsa. It tears down a winding mountain pass at 200 mph. Red light is swallowed and thrown back hotter by the paint.</p>
+            <p class="sc-action">AUDIO: The driving Moroder track peaks, then drops to absolute silence.</p>
+            <p class="sc-action">Title card fades in:</p>
+            <p class="sc-dialogue"><strong>WE CALL IT LA TEMPESTA.</strong></p>
+
+            <div class="sc-slug">CLOSE — BLACK</div>
+            <p class="sc-action">Final cards fade in sequentially:</p>
+            <p class="sc-dialogue">Race into the storm. Not out of it.</p>
+            <p class="sc-dialogue"><strong>Release La Tempesta.</strong></p>
+            <p class="sc-dialogue"><strong>Rosso Corsa or Nothing.</strong></p>
+
+            <div class="sc-slug">END CARD</div>
+            <p class="sc-action">SUPER: <strong>bumperstories.xyz</strong></p>
+            <p class="sc-action">FOOTER: <em>Not affiliated with Ferrari S.p.A. Made by a Tifoso.</em></p>
+        `,
+        credits: [
+            {l: "Client", v: "Ferrari (Spec)"},
+            {l: "Concept & Strategy", v: "Omar Silwany"},
+            {l: "Edit & Assembly", v: "Omar Silwany"},
+            {l: "AI Generation", v: "Google Flow / Gemini Omni Flash"},
+            {l: "Production", v: "Meanwhile In Jupiter"},
+            {l: "Music", v: "Giorgio Moroder / Goblin"}
+        ]
+    },
+    {
         title: "BUD LIGHT",
         subtitle: "Home Advantage",
         letterSpacing: '-0.01em',
@@ -306,59 +424,72 @@ const projects = [
         ]
     },
     {
-        title: "LEGENCE",
-        subtitle: "Built for Building",
+        title: "CAPiTA",
+        subtitle: "Outerspace Living",
         letterSpacing: '-0.02em',
-        vimeoId: "1080884698",
-        img: "assets/06-legence-built-for-building.png",
-        role: "CREATIVE DIRECTOR, ART",
-        desc: "We made infrastructure sexy.<br>$5 billion sexy, to be exact.<br><br>Turned mechanical, electrical, and plumbing<br>into a rallying cry.<br>Made engineers feel like astronauts.<br><br>Helped a company nobody heard of<br>become essential overnight.",
+        vimeoId: "1188239303",
+        img: "assets/capita-outerspace-living.jpg",
+        role: "CREATIVE DIRECTOR, WRITER",
+        desc: "Don't show the rider conquering the mountain.<br>Show them returning to it.<br><br>An astronaut snowboards in 1/6th gravity,<br>turning the lunar crater into a canvas.<br>A reminder that Earth is the only spaceship we have.",
         script: `
             <div class="sc-header">
-                <div class="sc-brand">LEGENCE × BLACKSTONE</div>
-                <div class="sc-campaign">"BUILT FOR BUILDING"</div>
-                <div class="sc-format">BRAND FILM — 2:30 · PRODUCTION DRAFT</div>
-                <div class="sc-byline-role">CREATIVE DIRECTOR, ART</div>
+                <div class="sc-brand">CAPiTA SNOWBOARDS</div>
+                <div class="sc-campaign">"OUTERSPACE LIVING"</div>
+                <div class="sc-format">SPEC COMMERCIAL — :50 · THE OVERVIEW EFFECT</div>
+                <div class="sc-byline-role">CREATIVE DIRECTOR, WRITER</div>
                 <div class="sc-byline">OMAR SILWANY</div>
-                <div class="sc-agency">FUNDAMENTALCO</div>
+                <div class="sc-agency">MEANWHILE IN JUPITER</div>
                 <hr class="sc-rule">
             </div>
-            <div class="sc-slug">FADE IN:</div>
-            <div class="sc-slug">VARIOUS — DATA CENTERS, CONSTRUCTION SITES, FACILITIES</div>
-            <div class="sc-char">VOICEOVER</div>
-            <div class="sc-dialogue">BUSINESSES, INSTITUTIONS AND GOVERNMENTS ARE INVESTING MORE IN THEIR FACILITIES THAN AT ANY OTHER TIME IN U.S. HISTORY — AS THEY BUILD DIGITAL INFRASTRUCTURE, RESHORE MANUFACTURING, AND EXPAND TO MEET GROWING DEMAND.</div>
-            <div class="sc-action">CUT TO: ENGINEERS IN A SERVER ROOM. A SEMICONDUCTOR FAB. AN OPERATING THEATER. THESE ARE THE PLACES THAT RUN THE WORLD.</div>
-            <div class="sc-char">VOICEOVER</div>
-            <div class="sc-dialogue">AT THE SAME TIME, THEY'RE FACING RISING POWER PRICES AND INCREASING PRESSURE FROM STAKEHOLDERS TO MAKE THEIR OPERATIONS MORE ENERGY EFFICIENT AND SUSTAINABLE.</div>
-            <div class="sc-transition">CUT TO:</div>
-            <div class="sc-slug">WIDE SHOT — LEGENCE FIELD TEAMS AT WORK</div>
-            <div class="sc-char">VOICEOVER</div>
-            <div class="sc-dialogue">WE ARE LEGENCE — AND WE'RE HELPING THE WORLD'S LEADING BUSINESSES AND INSTITUTIONS CREATE MODERN, EFFICIENT, AND HEALTHY BUILDINGS THAT ARE LESS COSTLY TO OPERATE AND MORE SUSTAINABLE.</div>
-            <div class="sc-char">VOICEOVER</div>
-            <div class="sc-dialogue">LEGENCE IS ONE OF THE MOST EXPERIENCED AND CAPABLE PROVIDERS OF ENGINEERING, INSTALLATION, AND MAINTENANCE SERVICES FOR MEP SYSTEMS IN THE UNITED STATES.</div>
-            <div class="sc-action">GRAPHICS: A MAP OF THE U.S. — DOTS LIGHTING UP ACROSS 20 STATES.</div>
-            <div class="sc-char">VOICEOVER</div>
-            <div class="sc-dialogue">WE EMPLOY MORE THAN 5,700 ENGINEERS, ENERGY CONSULTANTS, AND CRAFT WORKERS ACROSS OFFICES IN 20 STATES, AND WE GO TO MARKET UNDER WELL-KNOWN BRANDS THAT HAVE LONGSTANDING REPUTATIONS FOR EXCEPTIONAL SERVICE AND QUALITY.</div>
-            <div class="sc-char">VOICEOVER</div>
-            <div class="sc-dialogue">WE ARE THE PREFERRED PARTNER FOR HIGH-GROWTH INDUSTRIES WITH TECHNICALLY DEMANDING BUILDINGS — INCLUDING RESEARCH LABS, DATA CENTERS, SEMICONDUCTOR FABS, PHARMACEUTICAL PRODUCTION FACILITIES, AND HOSPITALS.</div>
-            <div class="sc-char">VOICEOVER</div>
-            <div class="sc-dialogue">WE COUNT MORE THAN 60% OF THE COMPANIES IN THE NASDAQ 100 AS CLIENTS.</div>
-            <div class="sc-action">GRAPHICS: REVENUE GROWTH CHART — 2021 THROUGH 2024.</div>
-            <div class="sc-char">VOICEOVER</div>
-            <div class="sc-dialogue">FROM 2021 THROUGH 2024, WE MORE THAN DOUBLED OUR REVENUES THROUGH A COMBINATION OF ORGANIC AND ACQUISITION GROWTH. AT THE END OF 2024, WE HAD MORE THAN TWO AND A HALF BILLION IN BACKLOG — REFLECTING STRONG DEMAND GOING INTO 2025.</div>
-            <div class="sc-char">VOICEOVER</div>
-            <div class="sc-dialogue">AND WE'RE JUST GETTING STARTED. THERE'S NO LIMIT TO WHAT WE CAN BUILD FOR OUR CUSTOMERS AND SHAREHOLDERS.</div>
-            <div class="sc-char">VOICEOVER</div>
-            <div class="sc-dialogue">WE ARE LEGENCE.</div>
-            <div class="sc-action">SUPER: "LEGENCE. BUILT FOR BUILDING." LOGO. FADE OUT.</div>
+
+            <div class="sc-slug">OPEN — EXT. LUNAR HORIZON — STILL</div>
+            <p class="sc-action">The Artemis II Earthset photograph from April 6, 2026. Earth is setting behind the grey lunar horizon. The frame holds completely still. Zero motion.</p>
+            <p class="sc-action">AUDIO: Absolute silence. Then, faint shortwave static, followed by the voice of Adlai Stevenson from 1965.</p>
+            <div class="sc-char">STEVENSON (V.O.)</div>
+            <div class="sc-dialogue">We travel together, passengers on a little spaceship, dependent on its vulnerable reserves of air and soil...</div>
+
+            <div class="sc-slug">EXT. LUNAR SURFACE — WIDE</div>
+            <p class="sc-action">The camera drifts forward, low to the grey-brown regolith under a black, airless sky. Shadows are absolute. In the distance, a figure in a white spacesuit stands at the rim of a deep, smooth-walled crater.</p>
+            <div class="sc-char">STEVENSON (V.O.)</div>
+            <div class="sc-dialogue">...all committed for our safety to its security and peace.</div>
+
+            <div class="sc-slug">EXT. CRATER RIM — MEDIUM</div>
+            <p class="sc-action">An astronaut in a white AxEMU pressure suit with red trim. A Capita Outerspace Living board rests in the dust. The astronaut shifts weight, stepping into the bindings, looking down into the bowl.</p>
+            <div class="sc-char">STEVENSON (V.O.)</div>
+            <div class="sc-dialogue">Preserved from annihilation only by the care, the work...</div>
+
+            <div class="sc-slug">EXT. CRATER INTERIOR — TRACKING</div>
+            <p class="sc-action">The astronaut drops in. In 1/6th gravity, the fall is floaty and deliberate. A wake of grey dust erupts from the board's edge, rising and hanging suspended in the vacuum. The astronaut carves down the steep wall, arms wide.</p>
+            <div class="sc-char">STEVENSON (V.O.)</div>
+            <div class="sc-dialogue">...and I will say the love, that we give to our fragile craft. We cannot maintain it half fortunate, half miserable, half confident, half despairing...</div>
+
+            <div class="sc-slug">EXT. CRATER WALL — AIRBORNE</div>
+            <p class="sc-action">The rider sweeps up the far wall and launches off the rim. They rise against the black sky. The Earth hangs in the background. At the apex, one gloved hand grabs the board's rail and thrusts the base toward the camera.</p>
+            <p class="sc-action">The underside of the board is revealed: bright teal on the left with the Overview Effect definition; on the dark right side, bold white type reads:</p>
+            <p class="sc-dialogue"><strong>IT WILL NOT FAIL BECAUSE OF ME.</strong></p>
+            <p class="sc-dialogue"><strong>CAPiTA.</strong></p>
+            <div class="sc-char">STEVENSON (V.O.)</div>
+            <div class="sc-dialogue">...half slave to the ancient enemies of man, half free in a liberation of resources. No craft, no crew can travel safely with such vast contradictions.</div>
+
+            <div class="sc-slug">EXT. LUNAR SKY — EMPTY</div>
+            <p class="sc-action">The astronaut drifts out of frame, leaving only the black sky and the Earth. A tiny speck of dust crosses the frame.</p>
+            <div class="sc-char">STEVENSON (V.O.)</div>
+            <div class="sc-dialogue">On their resolution, then, depends the survival of a soul.</div>
+            <div class="sc-transition">CUT TO BLACK.</div>
+            <div class="sc-char">STEVENSON (V.O.)</div>
+            <div class="sc-dialogue">When?</div>
+
+            <div class="sc-slug">CLOSE — EXT. LUNAR HORIZON — STILL</div>
+            <p class="sc-action">The same Earthset photo from the opening. It holds in silence, then fades.</p>
+            <p class="sc-action">SUPER: <strong>CAPiTA OUTERSPACE LIVING 5.5 II · Made at The Mothership</strong></p>
         `,
         credits: [
-            {l: "Client", v: "Legence"},
-            {l: "Creative Director, Art", v: "Omar Silwany"},
-            {l: "Agency", v: "Fundamentalco"},
-            {l: "Edit", v: "Whitehouse Post"},
-            {l: "Post & GFX", v: "Carbon"},
-            {l: "Sound", v: "Sounds Good"}
+            {l: "Client", v: "Capita Snowboards (Spec)"},
+            {l: "Creative Director, Writer", v: "Omar Silwany"},
+            {l: "Production", v: "Meanwhile In Jupiter"},
+            {l: "AI Generation", v: "Google Flow"},
+            {l: "Sound Design", v: "BBC Sound Effects Library"},
+            {l: "Voiceover", v: "Adlai Stevenson (1965 Geneva)"}
         ]
     },
     {
@@ -507,6 +638,11 @@ const projects = [
         credits: [
             {l: "Conceptor", v: "Omar Silwany"},
             {l: "Conceptor", v: "Warren Eakins"},
+            {l: "Agency", v: "Matter Unlimited"},
+            {l: "Director", v: "Dave Meyers"}
+        ]
+    }
+];: "Conceptor", v: "Warren Eakins"},
             {l: "Agency", v: "Matter Unlimited"},
             {l: "Director", v: "Dave Meyers"}
         ]
