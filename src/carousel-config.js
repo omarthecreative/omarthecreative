@@ -322,31 +322,18 @@ const projects = [
                 <hr class="sc-rule">
             </div>
 
-            <div class="sc-slug">ACT I — FINALMENTE</div>
-            <p class="sc-action">Title card fades in: <strong>FINALMENTE.</strong></p>
-            <p class="sc-action">A sheet is pulled from a car in a sterile white room. We reveal a Ferrari Luce painted in Azzurro La Plata. It sits silent under museum lights. A single reflection moves slowly across the hood — light going nowhere.</p>
-            <p class="sc-action">AUDIO: A low, tense synthesizer pulse begins to build.</p>
+            <div class="sc-slug">ACT I — VITTORIA</div>
+            <p class="sc-action">A rapid, rhythmic montage of historic and modern Ferrari Formula 1 victories. We cut forward in time across decades of racing heritage, from the early black-and-white era to contemporary triumphs.</p>
+            <p class="sc-action">AUDIO: The crackling, ecstatic voice of play-by-play announcer (commentatore) Carlo Vanzini screaming in Italian over the roaring engine noise.</p>
 
-            <div class="sc-slug">ACT II — CALMA</div>
-            <p class="sc-action">Title card fades in: <strong>CALMA.</strong></p>
-            <p class="sc-action">Intercut between the silent, motionless blue Luce and 122 years of Ferrari fury in Rosso Corsa: Niki Lauda screaming through the Nürburgring, Michael Schumacher flying at Monza, Gilles Villeneuve slides at Jarama, a Tifoso flag snapping in the wind.</p>
-            <p class="sc-action">AUDIO: The historical red footage roars with high-RPM engine screams. The blue Luce footage has absolute, dead silence.</p>
+            <div class="sc-slug">ACT II — LA TEMPESTA</div>
+            <p class="sc-action">The historic racing footage transitions to a stunning reveal of the new Ferrari Luce in Rosso Corsa, renamed here: <strong>LA TEMPESTA</strong>.</p>
+            <p class="sc-action">We see the car driving at speed through winding mountain passes, framed against a recently erupted Mount Etna glowing in the background.</p>
+            <p class="sc-action">AUDIO: Carlo Vanzini's commentary transitions into the iconic, driving synthesizer hook of "Profondo rosso" by Goblin, the pulsing bassline carrying the film home.</p>
 
-            <div class="sc-slug">ACT III — CORSA O CULO</div>
-            <p class="sc-action">Title card fades in: <strong>CORSA O CULO.</strong></p>
-            <p class="sc-action">A sun-drenched medieval Italian piazza. The blue Luce sits on a low stone plinth. In extreme slow motion, a ripe red tomato strikes the hood. Splat. More tomatoes fly. The blue paint is buried under red pulp. A local grandmother kisses her fingers in approval.</p>
-            <p class="sc-action">AUDIO: Giorgio Moroder's "From Here to Eternity" beat kicks in hard, in sync with the tomato impacts.</p>
-
-            <div class="sc-slug">ACT IV — LA TEMPESTA</div>
-            <p class="sc-action">We see the Luce repainted in Rosso Corsa. It tears down a winding mountain pass at 200 mph. Red light is swallowed and thrown back hotter by the paint.</p>
-            <p class="sc-action">AUDIO: The driving Moroder track peaks, then drops to absolute silence.</p>
-            <p class="sc-action">Title card fades in:</p>
-            <p class="sc-dialogue"><strong>WE CALL IT LA TEMPESTA.</strong></p>
-
-            <div class="sc-slug">CLOSE — BLACK</div>
-            <p class="sc-action">Final cards fade in sequentially:</p>
-            <p class="sc-dialogue">Race into the storm. Not out of it.</p>
-            <p class="sc-dialogue"><strong>Release La Tempesta.</strong></p>
+            <div class="sc-slug">ACT III — CLOSE</div>
+            <p class="sc-action">Title cards fade in sequentially:</p>
+            <p class="sc-dialogue"><strong>La Tempesta.</strong></p>
             <p class="sc-dialogue"><strong>Rosso Corsa or Nothing.</strong></p>
 
             <div class="sc-slug">END CARD</div>
@@ -355,11 +342,11 @@ const projects = [
         `,
         credits: [
             {l: "Client", v: "Ferrari (Spec)"},
-            {l: "Concept & Strategy", v: "Omar Silwany"},
+            {l: "Creative Director", v: "Omar Silwany"},
             {l: "Edit & Assembly", v: "Omar Silwany"},
             {l: "AI Generation", v: "Google Flow / Gemini Omni Flash"},
             {l: "Production", v: "Meanwhile In Jupiter"},
-            {l: "Music", v: "Giorgio Moroder / Goblin"}
+            {l: "Sound", v: "Carlo Vanzini (commentatore) / \"Profondo rosso\" by Goblin"}
         ]
     },
     {
