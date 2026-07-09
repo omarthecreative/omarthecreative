@@ -642,11 +642,6 @@ const projects = [
             {l: "Director", v: "Dave Meyers"}
         ]
     }
-];: "Conceptor", v: "Warren Eakins"},
-            {l: "Agency", v: "Matter Unlimited"},
-            {l: "Director", v: "Dave Meyers"}
-        ]
-    }
 ];
 
 const caseStudies = [
