@@ -724,10 +724,14 @@
             color: #EAE6DE;
             margin-top: 1.1rem;
             text-shadow: 0 2px 16px rgba(0,0,0,.7);
+            white-space: nowrap;
+        }
+        .splash-subtitle a {
+            color: #EAE6DE;
+            text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: .5em;
-            white-space: nowrap;
         }
         /* Mobile adjustment */
         @media (orientation: portrait) and (max-width: 1024px) {
@@ -756,6 +760,7 @@
         body.intro-active .header-name,
         body.intro-active .apex-nav,
         body.intro-active .action-group,
+        body.intro-active #project-display,
         body.intro-active .footer-metadata {
             opacity: 0 !important;
             pointer-events: none !important;
@@ -1365,10 +1370,12 @@
         </div>
         <div class="splash-content">
             <div class="splash-subtitle">
-                <svg class="ico-knight" viewBox="0 0 1052 1600" aria-hidden="true">
-                    <use xlink:href="#knight-mark" href="#knight-mark"></use>
-                </svg>
-                <span class="wire-text">Wire<br>Omar</span>
+                <a href="about.html">
+                    <svg class="ico-knight" viewBox="0 0 1052 1600" aria-hidden="true">
+                        <use xlink:href="#knight-mark" href="#knight-mark"></use>
+                    </svg>
+                    <span class="wire-text">Wire<br>Omar</span>
+                </a>
             </div>
             <h1 class="splash-title">HAVE&nbsp;TASTE.<br>WILL&nbsp;TRAVEL.</h1>
         </div>
