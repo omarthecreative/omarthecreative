@@ -94,6 +94,7 @@ const ApexSound = (function () {
         var vol = (volume !== undefined) ? volume : 1;
 
         function _fire(buf) {
+            if (ctx.state === 'suspended') return;
             var gain = ctx.createGain();
             gain.gain.value = vol;
             var source = ctx.createBufferSource();
@@ -133,6 +134,7 @@ const ApexSound = (function () {
         var vol = (volume !== undefined) ? volume : 1;
 
         function _fireLoop(buf) {
+            if (ctx.state === 'suspended') return;
             var gain = ctx.createGain();
             gain.gain.value = vol;
             var source = ctx.createBufferSource();
@@ -181,6 +183,17 @@ const ApexSound = (function () {
     } else {
         load();
     }
+
+    // Global auto-unlock on first user gesture anywhere
+    function autoUnlock() {
+        init();
+        document.removeEventListener('click', autoUnlock);
+        document.removeEventListener('touchstart', autoUnlock);
+        document.removeEventListener('keydown', autoUnlock);
+    }
+    document.addEventListener('click', autoUnlock);
+    document.addEventListener('touchstart', autoUnlock, { passive: true });
+    document.addEventListener('keydown', autoUnlock);
 
     return { init: init, play: play, startLoop: startLoop, stopLoop: stopLoop };
 
