@@ -194,6 +194,41 @@
                 left: auto;
             }
         }
+
+        .interact-nudge {
+            font-family: var(--mono);
+            font-size: 0.55rem;
+            letter-spacing: 0.25em;
+            color: #FF0015;
+            text-transform: uppercase;
+            opacity: 0.8;
+            animation: pulse-nudge 2s infinite ease-in-out;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            pointer-events: none;
+            display: inline-block;
+        }
+        @keyframes pulse-nudge {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.9; }
+        }
+
+        #glass-nudge {
+            position: fixed;
+            z-index: 100;
+            pointer-events: none;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            text-align: center;
+            bottom: calc(10vh + 160px);
+            right: 8vw;
+        }
+        @media (max-width: 768px) {
+            #glass-nudge {
+                top: 17rem;
+                bottom: auto;
+                right: 2vw;
+                width: clamp(140px, 38vw, 220px);
+            }
+        }
         @media (orientation: landscape) and (max-width: 1366px) {
             .nav-name { top: 3.5rem; left: 3.5rem; font-size: 1.2rem; }
             .menu-trigger { top: 3.5rem; right: 3.5rem; font-size: 0.55rem; }
@@ -294,6 +329,7 @@
         gtag('config', 'G-DCVBRB1LW6');
     </script>
     <!-- Bourbon Glass — drag to reposition on the table -->
+    <div id="glass-nudge" class="interact-nudge">[ POUR A DOUBLE ]</div>
     <div id="bourbon-glass">
         <img src="assets/bourbon-glass.png" alt="">
     </div>
@@ -416,6 +452,27 @@
             }, { passive: false });
             window.addEventListener('touchend', endDrag);
         })();
+
+        // Dismiss nudge on interaction
+        var nudge = document.getElementById('glass-nudge');
+        function dismissNudge() {
+            if (nudge) {
+                nudge.style.opacity = '0';
+                nudge.style.transform = 'translateY(-10px)';
+                setTimeout(function() {
+                    if (nudge && nudge.parentNode) nudge.parentNode.removeChild(nudge);
+                    nudge = null;
+                }, 500);
+            }
+            document.removeEventListener('mousedown', dismissNudge);
+            document.removeEventListener('touchstart', dismissNudge);
+            document.removeEventListener('keydown', dismissNudge);
+            window.removeEventListener('scroll', dismissNudge);
+        }
+        document.addEventListener('mousedown', dismissNudge);
+        document.addEventListener('touchstart', dismissNudge, { passive: true });
+        document.addEventListener('keydown', dismissNudge);
+        window.addEventListener('scroll', dismissNudge, { passive: true });
 
         // Bourbon glass — fade out as user scrolls past hero
         (function() {

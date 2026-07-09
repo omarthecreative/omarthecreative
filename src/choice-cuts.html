@@ -117,6 +117,57 @@
             #knife { left: 42vw; right: auto; }
         }
 
+        .interact-nudge {
+            font-family: var(--mono);
+            font-size: 0.55rem;
+            letter-spacing: 0.25em;
+            color: #FF0015;
+            text-transform: uppercase;
+            opacity: 0.8;
+            animation: pulse-nudge 2s infinite ease-in-out;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            pointer-events: none;
+            display: inline-block;
+        }
+        @keyframes pulse-nudge {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.9; }
+        }
+
+        #knife-nudge {
+            position: fixed;
+            z-index: 100;
+            pointer-events: none;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            text-align: center;
+            bottom: calc(4vh + 144px + 30px);
+            right: 14vw;
+        }
+        @media (max-width: 768px) {
+            #knife-nudge {
+                top: 41vh;
+                bottom: auto;
+                left: 33vw;
+                right: auto;
+                width: clamp(160px, 42vw, 240px);
+            }
+        }
+        @media (orientation: portrait) and (min-width: 600px) and (max-width: 1024px) {
+            #knife-nudge {
+                top: 34vh;
+                bottom: auto;
+                left: 42vw;
+                right: auto;
+                width: clamp(200px, 28vw, 360px);
+            }
+        }
+        @media (orientation: landscape) and (min-width: 768px) {
+            #knife-nudge {
+                left: 42vw;
+                right: auto;
+            }
+        }
+
         /* Full Screen Menu Overlay */
         #apex-menu {
             position: fixed;
@@ -225,6 +276,7 @@
     </div>
 
     <!-- Knife — drag to reposition on the block -->
+    <div id="knife-nudge" class="interact-nudge">[ GRAB THE BLADE ]</div>
     <div id="knife">
         <img src="assets/knife-shadow.png" alt="" aria-hidden="true" style="position:absolute;top:0;left:0;width:100%;height:auto;pointer-events:none;">
         <img src="assets/knife.png" alt="" style="position:relative;">
@@ -497,6 +549,27 @@
                 }
             }
             });
+
+            // Dismiss nudge on interaction
+            var nudge = document.getElementById('knife-nudge');
+            function dismissNudge() {
+                if (nudge) {
+                    nudge.style.opacity = '0';
+                    nudge.style.transform = 'translateY(-10px)';
+                    setTimeout(function() {
+                        if (nudge && nudge.parentNode) nudge.parentNode.removeChild(nudge);
+                        nudge = null;
+                    }, 500);
+                }
+                document.removeEventListener('mousedown', dismissNudge);
+                document.removeEventListener('touchstart', dismissNudge);
+                document.removeEventListener('keydown', dismissNudge);
+                window.removeEventListener('scroll', dismissNudge);
+            }
+            document.addEventListener('mousedown', dismissNudge);
+            document.addEventListener('touchstart', dismissNudge, { passive: true });
+            document.addEventListener('keydown', dismissNudge);
+            window.addEventListener('scroll', dismissNudge, { passive: true });
 
             // Knife — fade out as user scrolls past hero
             (function() {
