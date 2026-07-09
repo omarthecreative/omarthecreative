@@ -2610,7 +2610,42 @@
             }
         }
 
-        document.fonts.ready.then(() => {
+        function waitForFonts(callback) {
+            const typekitLink = document.querySelector('link[href*="typekit.net"]');
+            let doneCalled = false;
+
+            function done() {
+                if (doneCalled) return;
+                doneCalled = true;
+                callback();
+            }
+
+            function loadFonts() {
+                Promise.all([
+                    document.fonts.load('900 15vw griffith-gothic-condensed'),
+                    document.fonts.load('italic 3.5vw lust-stencil-display'),
+                    document.fonts.load('300 10px auger-mono')
+                ]).then(() => {
+                    document.fonts.ready.then(done);
+                }).catch(done);
+            }
+
+            if (typekitLink) {
+                if (typekitLink.sheet) {
+                    loadFonts();
+                } else {
+                    typekitLink.addEventListener('load', loadFonts);
+                    typekitLink.addEventListener('error', done);
+                }
+            } else {
+                loadFonts();
+            }
+
+            // Safety timeout
+            setTimeout(done, 2000);
+        }
+
+        waitForFonts(() => {
             // Clean up immediate styles so that standard classes (grid-active, project-view) control layouts properly
             const immediateStyle = document.getElementById('skip-intro-immediate-style');
             if (immediateStyle) {
