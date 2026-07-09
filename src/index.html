@@ -2622,21 +2622,32 @@
 
             function loadFonts() {
                 Promise.all([
-                    document.fonts.load('900 15vw griffith-gothic-condensed'),
-                    document.fonts.load('italic 3.5vw lust-stencil-display'),
-                    document.fonts.load('300 10px auger-mono')
+                    document.fonts.load('900 12px "griffith-gothic-condensed"'),
+                    document.fonts.load('italic 400 12px "lust-stencil-display"'),
+                    document.fonts.load('300 12px "auger-mono"')
                 ]).then(() => {
                     document.fonts.ready.then(done);
                 }).catch(done);
             }
 
-            if (typekitLink) {
-                if (typekitLink.sheet) {
-                    loadFonts();
-                } else {
-                    typekitLink.addEventListener('load', loadFonts);
-                    typekitLink.addEventListener('error', done);
-                }
+            // Check if Typekit font family is already registered in the browser's FontFaceSet
+            let hasTypekitFonts = false;
+            try {
+                document.fonts.forEach(font => {
+                    const family = font.family.replace(/['"\s]/g, '').toLowerCase();
+                    if (family === 'griffith-gothic-condensed') {
+                        hasTypekitFonts = true;
+                    }
+                });
+            } catch (e) {}
+
+            if (hasTypekitFonts) {
+                loadFonts();
+            } else if (typekitLink) {
+                typekitLink.addEventListener('load', () => {
+                    setTimeout(loadFonts, 50); // Small delay to let browser register `@font-face` rules
+                });
+                typekitLink.addEventListener('error', done);
             } else {
                 loadFonts();
             }
