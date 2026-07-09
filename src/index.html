@@ -490,7 +490,7 @@
             .menu-trigger { font-size: 0.7rem; }
             .footer-metadata { bottom: 4rem; padding: 0 4rem; font-size: 0.7rem; }
             .subtitle { font-size: 4vw; margin-top: -1vw; }
-            .copyright-tag { bottom: 0.8rem; display: block !important; }
+            .copyright-tag.fixed { position: fixed !important; padding: 0 !important; bottom: 0.8rem; display: block !important; }
             
             /* Fixed HUD for Landscape */
             .hud-tl { top: 0.8rem; left: 2rem; }
@@ -509,7 +509,7 @@
                 .action-group { margin-top: 1rem; flex-direction: row; gap: 1rem; }
                 .btn { padding: 0.5rem 1.5rem; }
                 .footer-metadata { bottom: calc(3rem + env(safe-area-inset-bottom)); padding: 0 2rem; font-size: 0.6rem; letter-spacing: 0.2em; }
-                .copyright-tag { bottom: calc(0.3rem + env(safe-area-inset-bottom)) !important; }
+                .copyright-tag.fixed { bottom: calc(0.3rem + env(safe-area-inset-bottom)) !important; }
                 .corner-frame {
                     top: calc(1.5rem + env(safe-area-inset-top));
                     left: calc(1.5rem + env(safe-area-inset-left));
@@ -553,7 +553,7 @@
                 font-size: 0.55rem;
                 letter-spacing: 0.2em;
             }
-            .copyright-tag { bottom: calc(0.3rem + env(safe-area-inset-bottom)) !important; font-size: 0.4rem; opacity: 0.4; display: block !important; }
+            .copyright-tag.fixed { position: fixed !important; padding: 0 !important; bottom: calc(0.3rem + env(safe-area-inset-bottom)) !important; font-size: 0.4rem; opacity: 0.4; display: block !important; }
             .corner-frame {
                 top: calc(1.5rem + env(safe-area-inset-top));
                 left: calc(1rem + env(safe-area-inset-left));
@@ -777,6 +777,13 @@
         }
         .header-name, .apex-nav, .action-group, .footer-metadata, .copyright-tag {
             transition: opacity 0.6s ease;
+        }
+
+        /* Prevent layout shift from scrollbars on landing/project views */
+        html:not(.grid-active),
+        body:not(.grid-active) {
+            overflow: hidden !important;
+            height: 100vh !important;
         }
 
         /* Combined Visual Grid Styles */
