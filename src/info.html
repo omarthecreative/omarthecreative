@@ -127,6 +127,25 @@
             transform: scale(1.01);
         }
 
+        .interact-nudge {
+            font-family: var(--mono);
+            font-size: 0.55rem;
+            letter-spacing: 0.25em;
+            color: #FF0015;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            opacity: 0.8;
+            animation: pulse-nudge 2s infinite ease-in-out;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            pointer-events: none;
+            display: inline-block;
+            z-index: 100;
+        }
+        @keyframes pulse-nudge {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.9; }
+        }
+
         /* HUD ELEMENTS */
         .corner-frame {
             position: fixed;
@@ -725,6 +744,7 @@
 
     <div id="info-scroll-container">
     <div class="info-hero">
+        <div class="interact-nudge" id="info-nudge">[ HIT ME UP ]</div>
         <h1 class="title" id="info-title">OMAR SILWANY</h1>
     </div>
 
@@ -836,6 +856,31 @@
             }
         }, { passive: true });
     }
+
+    // Dismiss nudge on interaction
+    var nudge = document.getElementById('info-nudge');
+    function dismissNudge() {
+        if (nudge) {
+            nudge.style.opacity = '0';
+            nudge.style.transform = 'translateY(-10px)';
+            setTimeout(function() {
+                if (nudge && nudge.parentNode) nudge.parentNode.removeChild(nudge);
+                nudge = null;
+            }, 500);
+        }
+        document.removeEventListener('click', dismissNudge);
+        document.removeEventListener('touchstart', dismissNudge);
+        document.removeEventListener('keydown', dismissNudge);
+        window.removeEventListener('scroll', dismissNudge);
+        var infoScrollEl = document.getElementById('info-scroll-container');
+        if (infoScrollEl) infoScrollEl.removeEventListener('scroll', dismissNudge);
+    }
+    document.addEventListener('click', dismissNudge);
+    document.addEventListener('touchstart', dismissNudge, { passive: true });
+    document.addEventListener('keydown', dismissNudge);
+    window.addEventListener('scroll', dismissNudge, { passive: true });
+    var infoScrollEl = document.getElementById('info-scroll-container');
+    if (infoScrollEl) infoScrollEl.addEventListener('scroll', dismissNudge, { passive: true });
 
     var infoTitle = document.querySelector('.info-hero .title');
     if (infoTitle) {
