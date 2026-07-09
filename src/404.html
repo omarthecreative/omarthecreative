@@ -237,6 +237,25 @@
             text-shadow: 0 0 20px rgba(255, 100, 100, 0.6);
         }
 
+        .interact-nudge {
+            font-family: var(--font-mono);
+            font-size: 0.55rem;
+            letter-spacing: 0.25em;
+            color: var(--vibrant-red-hud);
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+            opacity: 0.8;
+            animation: pulse-nudge 2s infinite ease-in-out;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            pointer-events: none;
+            display: inline-block;
+            z-index: 100;
+        }
+        @keyframes pulse-nudge {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.9; }
+        }
+
         @media (max-width: 1024px) {
             .apex-nav { top: 3.5rem; left: 3.5rem; right: 3.5rem; }
             .nav-name { font-size: 1.2rem; }
@@ -302,6 +321,7 @@
     <div class="signal-stage">
         <p class="signal-copy">Transmission over.</p>
         <button class="signal-action" id="stay-btn">🇺🇸</button>
+        <div class="interact-nudge" id="anthem-nudge">[ SALUTE WITH ME ]</div>
     </div>
 
     <script>
@@ -380,13 +400,34 @@
         (function () {
             var played = false;
             var btn = document.getElementById('stay-btn');
+            var nudge = document.getElementById('anthem-nudge');
+
+            function dismissNudge() {
+                if (nudge) {
+                    nudge.style.opacity = '0';
+                    nudge.style.transform = 'translateY(10px)';
+                    setTimeout(function() {
+                        if (nudge && nudge.parentNode) nudge.parentNode.removeChild(nudge);
+                        nudge = null;
+                    }, 500);
+                }
+                document.removeEventListener('click', dismissNudge);
+                document.removeEventListener('touchstart', dismissNudge);
+                document.removeEventListener('keydown', dismissNudge);
+            }
+
             btn.addEventListener('click', function () {
                 if (played) return;
                 played = true;
                 btn.textContent = '🫡';
                 ApexSound.init();
                 ApexSound.play('anthem', 0.7);
+                dismissNudge();
             });
+
+            document.addEventListener('click', dismissNudge);
+            document.addEventListener('touchstart', dismissNudge, { passive: true });
+            document.addEventListener('keydown', dismissNudge);
         })();
     </script>
 </body>
