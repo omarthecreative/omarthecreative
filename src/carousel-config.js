@@ -103,14 +103,14 @@ const projects = [
         letterSpacing: '-0.02em',
         vimeoId: "1206647980",
         img: "assets/coca-cola-redeclaration-day.jpg",
-        role: "CREATIVE DIRECTOR, WRITER",
+        role: "Creative Director, Art & Copy",
         desc: "Six statues. Six nations. One song.<br>We turned Coke's iconic 'Hilltop'<br>into a global toast to independence.<br>No logos. Just one word on each bottle:<br>Life. Liberty. Happiness.<br>Because freedom is the real thing.",
         script: `
             <div class="sc-header">
                 <div class="sc-brand">COCA-COLA</div>
                 <div class="sc-campaign">"REDECLARATION DAY"</div>
                 <div class="sc-format">SPEC COMMERCIAL — :60 · PRODUCTION DRAFT</div>
-                <div class="sc-byline-role">CREATIVE DIRECTOR, COPY</div>
+                <div class="sc-byline-role">CREATIVE DIRECTOR</div>
                 <div class="sc-byline">OMAR SILWANY</div>
                 <div class="sc-agency">MEANWHILE IN JUPITER</div>
                 <hr class="sc-rule">
@@ -308,14 +308,14 @@ const projects = [
         vimeoId: "1197064979",
         maxDuration: 90,
         img: "assets/ferrari-la-tempesta.jpg",
-        role: "CREATIVE DIRECTOR, WRITER",
+        role: "Creative Director, Art & Copy",
         desc: "Ferrari built a quiet EV.<br>We gave them the storm back.<br><br>Coined a name. Started a petition.<br>A cinematic protest on behalf of the Tifosi.<br>Rosso Corsa or nothing.",
         script: `
             <div class="sc-header">
                 <div class="sc-brand">FERRARI</div>
                 <div class="sc-campaign">"LA TEMPESTA"</div>
                 <div class="sc-format">SPEC FILM — 1:15 · TIFOSI CUT</div>
-                <div class="sc-byline-role">CREATIVE DIRECTOR, WRITER</div>
+                <div class="sc-byline-role">CREATIVE DIRECTOR</div>
                 <div class="sc-byline">OMAR SILWANY</div>
                 <div class="sc-agency">MEANWHILE IN JUPITER</div>
                 <hr class="sc-rule">
@@ -416,14 +416,14 @@ const projects = [
         letterSpacing: '-0.02em',
         vimeoId: "1188239303",
         img: "assets/capita-outerspace-living.jpg",
-        role: "CREATIVE DIRECTOR, WRITER",
+        role: "Creative Director, Art & Copy",
         desc: "Don't show the rider conquering the mountain.<br>Show them returning to it.<br><br>An astronaut snowboards in 1/6th gravity,<br>turning the lunar crater into a canvas.<br>A reminder that Earth is the only spaceship we have.",
         script: `
             <div class="sc-header">
                 <div class="sc-brand">CAPiTA SNOWBOARDS</div>
                 <div class="sc-campaign">"OUTERSPACE LIVING"</div>
                 <div class="sc-format">SPEC COMMERCIAL — :50 · THE OVERVIEW EFFECT</div>
-                <div class="sc-byline-role">CREATIVE DIRECTOR, WRITER</div>
+                <div class="sc-byline-role">CREATIVE DIRECTOR</div>
                 <div class="sc-byline">OMAR SILWANY</div>
                 <div class="sc-agency">MEANWHILE IN JUPITER</div>
                 <hr class="sc-rule">
