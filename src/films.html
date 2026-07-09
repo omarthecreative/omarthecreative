@@ -393,6 +393,204 @@
                 height: calc(1.5rem + env(safe-area-inset-bottom));
             }
         }
+
+        /* --- INTEL & SCRIPT OVERLAYS SYSTEM --- */
+        #intel-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.98);
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+        .intel-content {
+            width: 100%;
+            max-width: 800px;
+            font-family: var(--serif);
+            color: white;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            max-height: 80vh;
+            box-sizing: border-box;
+        }
+        .intel-scroll-area {
+            overflow-y: auto;
+            padding-right: 2rem;
+            flex: 1;
+            box-sizing: border-box;
+        }
+        .intel-scroll-area::-webkit-scrollbar { width: 2px; }
+        .intel-scroll-area::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        .intel-scroll-area::-webkit-scrollbar-thumb { background: var(--vibrant-red); }
+
+        .intel-role { 
+            color: var(--vibrant-red-hud); 
+            font-family: var(--mono); 
+            font-size: 0.7rem; 
+            letter-spacing: 0.3em; 
+            margin-bottom: 2rem; 
+            text-transform: uppercase; 
+        }
+        .intel-desc { 
+            font-size: 1.8rem; 
+            line-height: 1.4; 
+            letter-spacing: -0.01em; 
+            margin-bottom: 3rem; 
+            text-wrap: pretty; 
+        }
+        .intel-close { 
+            position: absolute; 
+            top: 2rem; 
+            right: 2rem; 
+            font-family: var(--mono); 
+            font-size: 0.8rem; 
+            color: var(--vibrant-red-hud); 
+            cursor: pointer; 
+            letter-spacing: 0.2em; 
+            z-index: 3100; 
+            text-transform: uppercase;
+        }
+        
+        .credits-drawer {
+            display: none;
+            margin-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .credits-drawer.active { display: block; }
+        
+        .credits-divider { height: 1px; background: rgba(255,255,255,0.1); margin-bottom: 2rem; }
+        .credits-label { 
+            font-family: var(--mono); 
+            font-size: 0.6rem; 
+            letter-spacing: 0.2em; 
+            color: var(--vibrant-red-hud); 
+            margin-bottom: 1.5rem; 
+            text-transform: uppercase; 
+        }
+        
+        .credits-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-family: var(--mono); 
+            font-size: 0.65rem; 
+            letter-spacing: 0.05em; 
+            text-transform: uppercase; 
+            color: rgba(255,255,255,0.6); 
+        }
+        .credits-table tr { border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .credits-table td { padding: 0.8rem 0; vertical-align: top; text-align: left; }
+        .credits-table .c-label { width: 40%; color: rgba(255,255,255,0.3); }
+        .credits-table .c-value { color: #FFFFFF; font-weight: 700; }
+
+        .intel-footer { 
+            margin-top: 2rem; 
+            padding-top: 1rem; 
+            border-top: 1px solid rgba(255,255,255,0.05); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: flex-start; 
+        }
+        .intel-hint { 
+            font-family: var(--mono); 
+            font-size: 0.65rem; 
+            letter-spacing: 0.15em; 
+            color: rgba(255,255,255,0.5); 
+            text-transform: uppercase; 
+        }
+
+        #script-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 3500;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        /* Screenplay Layout Styles */
+        .script-page {
+            width: 100%;
+            max-width: 850px;
+            height: 90vh;
+            background: #fdfdfd; /* Off-white paper */
+            box-shadow: 0 0 50px rgba(0,0,0,0.5), inset 0 0 100px rgba(0,0,0,0.05);
+            position: relative;
+            overflow-y: auto;
+            transform: rotate(-0.5deg); /* Slight physical tilt */
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+        /* Paper texture */
+        .script-paper {
+            padding: 4rem 6rem;
+            min-height: 100%;
+            background-image: 
+                radial-gradient(circle at 2px 2px, rgba(0,0,0,0.02) 1px, transparent 0);
+            background-size: 40px 40px;
+            color: #1a1a1a;
+            font-family: "Courier Prime", "Courier New", Courier, monospace;
+            line-height: 1.2;
+            text-transform: uppercase;
+            box-sizing: border-box;
+        }
+        .script-close { 
+            position: fixed; 
+            top: 2rem; 
+            right: 2rem; 
+            font-family: var(--mono); 
+            font-size: 0.8rem; 
+            color: var(--vibrant-red-hud); 
+            cursor: pointer; 
+            letter-spacing: 0.2em; 
+            z-index: 3600; 
+            text-transform: uppercase;
+        }
+        
+        /* Production Header */
+        .sc-header { text-align: center; margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 2px solid #1a1a1a; }
+        .sc-brand { font-size: 1.1em; font-weight: 700; letter-spacing: 0.15em; margin-bottom: 0.4rem; }
+        .sc-campaign { font-size: 0.95em; margin-bottom: 1.5rem; font-style: normal; }
+        .sc-format { font-size: 0.75em; letter-spacing: 0.08em; color: #444; margin-bottom: 1.8rem; }
+        .sc-byline { font-size: 0.82em; line-height: 2; margin-bottom: 0.4rem; font-weight: 700; }
+        .sc-byline-role { font-weight: 400; font-size: 0.82em; letter-spacing: 0.05em; color: #444; }
+        .sc-agency { font-size: 0.75em; color: #666; margin-top: 0.8rem; letter-spacing: 0.05em; }
+        .sc-rule { border: none; border-top: 1px solid #1a1a1a; margin: 2rem 0 0 0; }
+
+        /* Screenplay Elements */
+        .sc-slug { font-weight: bold; margin: 2rem 0 1rem 0; text-align: left; }
+        .sc-action { margin-bottom: 1.5rem; text-align: left; }
+        .sc-char { text-align: center; width: 50%; margin: 2rem auto 0.2rem auto; }
+        .sc-parenthetical { text-align: center; width: 40%; margin: 0 auto 0.2rem auto; font-size: 0.9em; }
+        .sc-dialogue { text-align: center; width: 70%; margin: 0 auto 1.5rem auto; }
+        .sc-transition { text-align: right; margin: 2rem 0; }
+
+        .script-page:has(.sc-dark) {
+            background: #050505;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
+        .script-paper:has(.sc-dark) {
+            background: #050505;
+            background-image: none;
+            color: #fff;
+            padding: 0;
+        }
+
+        @media (max-width: 768px) {
+            .intel-content { max-height: 90vh; }
+            .intel-desc { font-size: 1.3rem; margin-bottom: 2rem; }
+            .credits-table { font-size: 0.55rem; }
+            .credits-table .c-label { width: 50%; }
+            .script-paper { padding: 2rem; }
+            .sc-char, .sc-dialogue, .sc-parenthetical { width: 100%; text-align: left; margin-left: 0; }
+        }
     </style>
     
     <link rel="icon" type="image/png" href="/favicon-white.png">
@@ -906,7 +1104,11 @@
             if (e.key === ' ') { e.preventDefault(); document.getElementById('video-pause').click(); }
             if (e.key === 'm' || e.key === 'M') document.getElementById('video-audio-toggle').click();
             if (e.key === 'r' || e.key === 'R') restartVideo();
-            if (e.key === 'Escape') { e.preventDefault(); document.getElementById('close-video').click(); }
+            if (e.key === 'Escape') { 
+                e.preventDefault(); 
+                e.stopImmediatePropagation();
+                document.getElementById('close-video').click(); 
+            }
         }
         window.addEventListener('keydown', handleVideoKeydown);
 
@@ -923,15 +1125,44 @@
         function stopFocusLock() { clearInterval(focusInterval); }
 
         // --- INTEL LOGIC ---
-        document.getElementById('intel-btn').onclick = () => {
+        const intelBtn = document.getElementById('intel-btn');
+        intelBtn.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && intelOverlay.style.display === 'flex') {
+                e.preventDefault();
+            }
+        });
+
+        intelBtn.onclick = () => {
             const p = projects[currentIndex];
             document.getElementById('intel-role').textContent = p.role;
             document.getElementById('intel-desc').innerHTML = p.desc;
-            document.getElementById('credits-table').innerHTML = p.credits.map(c => `<tr><td class="c-label">${c.l}</td><td class="c-value">${c.v}</td></tr>`).join('');
+            
+            const creditsTable = document.getElementById('credits-table');
+            const creditsDrawer = document.getElementById('credits-drawer');
+            const scriptHint = document.getElementById('script-hint');
+            const intelHint = document.getElementById('intel-hint');
+            const intelScrollArea = document.getElementById('intel-scroll-area');
+            
+            creditsTable.innerHTML = p.credits.map(c => `<tr><td class="c-label">${c.l}</td><td class="c-value">${c.v}</td></tr>`).join('');
             document.getElementById('script-content').innerHTML = p.script || 'SCRIPT PENDING...';
+            
+            // Credits are always visible by default on the films detail page
+            creditsDrawer.classList.add('active');
+            if (intelHint) intelHint.style.display = 'none';
+            
+            // Immediately expose script S hint if script exists
+            if (p.script) {
+                scriptHint.style.display = 'block';
+            } else {
+                scriptHint.style.display = 'none';
+            }
+            
+            if (intelScrollArea) intelScrollArea.scrollTop = 0;
+            
             intelOverlay.style.display = 'flex';
             document.body.classList.add('modal-active');
             markAsViewed(`v-${currentIndex}`);
+            intelOverlay.focus();
         };
 
         document.getElementById('close-intel').onclick = () => {
@@ -944,17 +1175,57 @@
             if (intelOverlay.style.display !== 'flex') document.body.classList.remove('modal-active');
         };
 
-        // --- ESCAPE HANDLING ---
-        window.onkeydown = (e) => {
-            if (e.key === 'Escape') {
-                if (document.getElementById('apex-menu').style.display === 'flex') { toggleMenu(false); return; }
-                if (videoModal.style.display === 'flex') { document.getElementById('close-video').onclick(); return; }
-                if (scriptOverlay.style.display === 'flex') { document.getElementById('close-script').onclick(); return; }
-                if (intelOverlay.style.display === 'flex') { document.getElementById('close-intel').onclick(); return; }
-                if (isProjectView) { closeProjectView(); }
-                else { window.location.href = 'index.html'; }
+        // Tap script hint to open Script on mobile (mirrors S key)
+        document.getElementById('script-hint').onclick = () => {
+            const p = projects[currentIndex];
+            if (p.script) {
+                scriptOverlay.style.display = 'flex';
+                document.body.classList.add('modal-active');
             }
         };
+
+        // --- KEYBOARD HANDLING ---
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (document.getElementById('apex-menu').style.display === 'flex') { 
+                    toggleMenu(false); 
+                    e.stopImmediatePropagation(); 
+                    return; 
+                }
+                if (videoModal.style.display === 'flex') { 
+                    document.getElementById('close-video').onclick(); 
+                    e.stopImmediatePropagation(); 
+                    return; 
+                }
+                if (scriptOverlay.style.display === 'flex') { 
+                    document.getElementById('close-script').onclick(); 
+                    e.stopImmediatePropagation(); 
+                    return; 
+                }
+                if (intelOverlay.style.display === 'flex') { 
+                    document.getElementById('close-intel').onclick(); 
+                    e.stopImmediatePropagation(); 
+                    return; 
+                }
+                if (isProjectView) { 
+                    closeProjectView(); 
+                    e.stopImmediatePropagation(); 
+                    return; 
+                }
+                else { 
+                    window.location.href = 'index.html'; 
+                }
+            }
+
+            if (e.key === 's' || e.key === 'S') {
+                if (intelOverlay.style.display === 'flex') {
+                    const p = projects[currentIndex];
+                    if (p.script) {
+                        scriptOverlay.style.display = 'flex';
+                    }
+                }
+            }
+        });
 
         // Initialize from URL
         const params = new URLSearchParams(window.location.search);
