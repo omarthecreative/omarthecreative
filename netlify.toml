@@ -7,8 +7,13 @@
   status = 200
 
 [[redirects]]
-  from = "/info"
-  to = "/info.html"
+  from = "/about"
+  to = "/about.html"
+  status = 200
+
+[[redirects]]
+  from = "/films"
+  to = "/films.html"
   status = 200
 
 [[redirects]]
