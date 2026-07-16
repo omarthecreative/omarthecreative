@@ -45,3 +45,8 @@
   from = "/IMMORTAL"
   to = "/IMMORTAL/index.html"
   status = 200
+
+[[redirects]]
+  from = "/project/holiday-plus-one"
+  to = "https://meanwhileinjupiter.com/holiday/2025/piece/"
+  status = 301
