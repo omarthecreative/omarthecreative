@@ -18,6 +18,15 @@
       --gold: #D4AF37;
       --gray: #666666;
       --gray-light: #999999;
+
+      /* Quadrille grid - page ground only, never over photography.
+         Adapted from the MIJ site (80px cell, rgba(255,255,255,0.05)).
+         Deck ground is pure black, so the line sits a touch lower. */
+      --grid-cell: 80px;
+      --grid-line: rgba(255, 255, 255, 0.045);
+      --grid-bg:
+        linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
       
       /* Typography - Roc Grotesk family */
       --font-heavy: 'roc-grotesk', sans-serif;
@@ -72,13 +81,32 @@
       background: transparent;
     }
     
-    /* Black background as pseudo-element so content can float over footer */
+    /* Black background as pseudo-element so content can float over footer.
+       The quadrille grid is painted onto this ground, under all type. */
     .slide:not(.slide--image)::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: var(--black);
+      background-color: var(--black);
+      background-image: var(--grid-bg);
+      background-size: var(--grid-cell) var(--grid-cell);
+      background-position: center center;
+      pointer-events: none;
       z-index: 1;
+    }
+
+    /* Image slides: grid on the page ground beneath the photograph.
+       It only shows in the letterbox around a contained image. */
+    .slide--image::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: var(--black);
+      background-image: var(--grid-bg);
+      background-size: var(--grid-cell) var(--grid-cell);
+      background-position: center center;
+      pointer-events: none;
+      z-index: 0;
     }
     
     /* Image slides should not have the black pseudo-element overlay */
@@ -682,6 +710,7 @@
     
     /* Mobile Portrait (max-width: 480px) */
     @media (max-width: 480px) {
+      :root { --grid-cell: 56px; }
       .slide {
         padding: 10vw 6vw;
         justify-content: center;
@@ -1262,7 +1291,7 @@
     <div class="stack text-center">
       <p class="type-label mb-4">Every Listen Keeps Them Alive</p>
       <p class="type-body-large color-white mb-2"><span class="slide-30-line-1">T-shirts at the memorial.</span> <span class="slide-30-line-2">Programs&nbsp;at&nbsp;the&nbsp;service.</span></p>
-      <p class="type-body-large color-white mb-2"><span class="sentence-1">A QR code on an urn.</span> <span class="sentence-2">A message on a headstone.</span></p>
+      <p class="type-body-large color-white mb-2"><span class="sentence-1">An urn with a wireless speaker.</span> <span class="sentence-2">A message on a headstone.</span></p>
       <p class="type-body-large color-white mb-4">Not a logo. A last word from&nbsp;the&nbsp;one&nbsp;you&nbsp;lost.</p>
       <p class="type-headline quote">"I may be gone.<br class="desktop-only">But my show goes on forever."</p>
     </div>
