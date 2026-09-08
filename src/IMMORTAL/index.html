@@ -18,6 +18,15 @@
       --gold: #D4AF37;
       --gray: #666666;
       --gray-light: #999999;
+
+      /* Quadrille grid - page ground only, never over photography.
+         Adapted from the MIJ site (80px cell, rgba(255,255,255,0.05)).
+         Deck ground is pure black, so the line sits a touch lower. */
+      --grid-cell: 80px;
+      --grid-line: rgba(255, 255, 255, 0.045);
+      --grid-bg:
+        linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
       
       /* Typography - Roc Grotesk family */
       --font-heavy: 'roc-grotesk', sans-serif;
@@ -72,13 +81,32 @@
       background: transparent;
     }
     
-    /* Black background as pseudo-element so content can float over footer */
+    /* Black background as pseudo-element so content can float over footer.
+       The quadrille grid is painted onto this ground, under all type. */
     .slide:not(.slide--image)::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: var(--black);
+      background-color: var(--black);
+      background-image: var(--grid-bg);
+      background-size: var(--grid-cell) var(--grid-cell);
+      background-position: center center;
+      pointer-events: none;
       z-index: 1;
+    }
+
+    /* Image slides: grid on the page ground beneath the photograph.
+       It only shows in the letterbox around a contained image. */
+    .slide--image::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: var(--black);
+      background-image: var(--grid-bg);
+      background-size: var(--grid-cell) var(--grid-cell);
+      background-position: center center;
+      pointer-events: none;
+      z-index: 0;
     }
     
     /* Image slides should not have the black pseudo-element overlay */
@@ -131,6 +159,26 @@
       -webkit-user-select: none !important;
     }
     
+    /* Slide 30: generated urn still as the ground. The photo covers the
+       slide, a scrim keeps the type legible, the grid stays under it. */
+    .slide--photo::after {
+      display: none !important;
+    }
+    .slide--photo .slide-bg-img {
+      object-fit: cover !important;
+      object-position: center center !important;
+      opacity: 0.85;
+    }
+    .slide--photo .slide-scrim {
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: 1 !important;
+      pointer-events: none !important;
+      background:
+        radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.35) 45%, rgba(0, 0, 0, 0.15) 100%),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.1) 60%, rgba(0, 0, 0, 0.6) 100%);
+    }
+
     /* Content floats above background and footer */
     .slide .stack,
     .slide > * {
@@ -682,6 +730,7 @@
     
     /* Mobile Portrait (max-width: 480px) */
     @media (max-width: 480px) {
+      :root { --grid-cell: 56px; }
       .slide {
         padding: 10vw 6vw;
         justify-content: center;
@@ -1258,12 +1307,18 @@
   <!-- ============================================
        SLIDE 30 - CELEBRATIONS OF LIFE
        ============================================ -->
-  <section class="slide" id="slide-30">
+  <section class="slide slide--image slide--photo" id="slide-30">
+    <!-- Urn options: swap the src to compare. Generated 2026-09-07, Nano Banana Pro. -->
+    <img src="images/urn-option-4.jpg" alt="" class="slide-bg-img">
+    <!-- <img src="images/urn-option-2.jpg" alt="" class="slide-bg-img"> -->
+    <!-- <img src="images/urn-option-3.jpg" alt="" class="slide-bg-img"> -->
+    <!-- <img src="images/urn-option-1.jpg" alt="" class="slide-bg-img"> -->
+    <div class="slide-scrim" aria-hidden="true"></div>
     <div class="stack text-center">
       <p class="type-label mb-4">Every Listen Keeps Them Alive</p>
       <p class="type-body-large color-white mb-2"><span class="slide-30-line-1">T-shirts at the memorial.</span> <span class="slide-30-line-2">Programs&nbsp;at&nbsp;the&nbsp;service.</span></p>
-      <p class="type-body-large color-white mb-2"><span class="sentence-1">A QR code on an urn.</span> <span class="sentence-2">A message on a headstone.</span></p>
-      <p class="type-body-large color-white mb-4">Not a logo. A last word from&nbsp;the&nbsp;one&nbsp;you&nbsp;lost.</p>
+      <p class="type-body-large color-white mb-2"><span class="sentence-1">An urn with a wireless speaker.</span> <span class="sentence-2">A message on a headstone.</span></p>
+      <p class="type-body-large color-white mb-4">More than a logo. A last word from&nbsp;the&nbsp;one&nbsp;you&nbsp;lost.</p>
       <p class="type-headline quote">"I may be gone.<br class="desktop-only">But my show goes on forever."</p>
     </div>
   </section>
@@ -1361,7 +1416,9 @@
       <p class="divider-symbol">∞</p>
       <p class="type-small mb-1">A proactive pitch by</p>
       <p class="type-body color-gold mb-1">Omar Silwany</p>
-      <p class="type-small">Creative Director & Writer</p>
+      <p class="type-small mb-2">Creative Director & Writer</p>
+      <p class="type-small mb-1">Concert photography by Pooneh Ghana</p>
+      <p class="type-small">Urn image generated with Higgsfield</p>
     </div>
   </section>
 
