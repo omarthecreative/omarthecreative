@@ -17,7 +17,8 @@
                 const seenIntro = localStorage.getItem('omar_seen_intro') === 'true';
                 const hasProject = params.get('p') !== null;
                 const hasFilter = params.get('filter') !== null;
-                if (hasProject || hasFilter || seenIntro) {
+                const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (hasProject || hasFilter || seenIntro || reducedMotion) {
                     document.documentElement.classList.add('skip-intro-immediate');
                     
                     const rules = [
@@ -25,7 +26,7 @@
                     ];
                     
                     // If going straight to the grid view (no project detail view active), hide hero and show grid immediately
-                    if (!hasProject && (hasFilter || seenIntro)) {
+                    if (!hasProject && (hasFilter || seenIntro || reducedMotion)) {
                         rules.push('#project-display, #action-group, #bg-container { display: none !important; }');
                         rules.push('#combined-grid-view { display: block !important; opacity: 1 !important; transform: translateY(0) !important; }');
                     }
@@ -2518,9 +2519,10 @@
         function initIntro() {
             const params = new URLSearchParams(window.location.search);
             const seenIntro = localStorage.getItem('omar_seen_intro') === 'true';
-            
-            // If direct link to project, deep link, or intro already seen, skip intro
-            if (params.get('p') !== null || params.get('filter') !== null || seenIntro) {
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            // If direct link to project, deep link, intro already seen, or reduced motion, skip intro
+            if (params.get('p') !== null || params.get('filter') !== null || seenIntro || reducedMotion) {
                 const splash = document.getElementById('standoff-splash');
                 if (splash) splash.style.display = 'none';
                 document.body.classList.remove('intro-active');
@@ -2813,7 +2815,8 @@
             const pIndex = params.get('p');
             const filterParam = params.get('filter');
             const seenIntro = localStorage.getItem('omar_seen_intro') === 'true';
-            
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
             if (pIndex !== null && projects[pIndex]) {
                 const splash = document.getElementById('standoff-splash');
                 if (splash) splash.style.display = 'none';
@@ -2848,7 +2851,7 @@
                 document.documentElement.classList.add('ready');
                 initVisualGrid();
                 applyGridFilter(filterParam);
-            } else if (seenIntro) {
+            } else if (seenIntro || reducedMotion) {
                 const splash = document.getElementById('standoff-splash');
                 if (splash) splash.style.display = 'none';
                 document.body.classList.remove('intro-active');

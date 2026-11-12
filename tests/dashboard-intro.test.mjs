@@ -377,5 +377,85 @@ for (const offline of [false, true]) {
         await done(page);
       }
     });
+    async function assertNoIntro(page) {
+      assert.equal(await css(page, '#standoff-splash', 'display'), 'none');
+      assert.equal(await page.evaluate(() => document.documentElement.classList.contains('dash-intro')), false);
+      assert.equal(await css(page, '#portal', 'transform'), 'none');
+      assert.equal(await page.evaluate(() => 'mounted' in window.__marks || 'introStart' in window.__marks), false);
+    }
+
+    test('returning visitor: no intro', async () => {
+      const page = await open({ offline, seen: true });
+      try {
+        await until(page, () => document.body.classList.contains('grid-active'), 5000);
+        await page.waitForTimeout(500);
+        await assertNoIntro(page);
+      } finally {
+        await done(page);
+      }
+    });
+
+    test('?filter=films: no intro, filter applied', async () => {
+      const page = await open({ offline, path: '/?filter=films' });
+      try {
+        await until(page, () => document.body.classList.contains('grid-active'), 5000);
+        await page.waitForTimeout(500);
+        await assertNoIntro(page);
+        assert.equal(await page.getAttribute('.filter-btn.active', 'data-filter'), 'films');
+      } finally {
+        await done(page);
+      }
+    });
+
+    test('?p=0: no intro, project view', async () => {
+      const page = await open({ offline, path: '/?p=0' });
+      try {
+        await until(page, () => document.body.classList.contains('project-view'), 5000);
+        await page.waitForTimeout(500);
+        await assertNoIntro(page);
+      } finally {
+        await done(page);
+      }
+    });
+
+    test('reduced motion: no intro, grid active at 500ms', async () => {
+      const page = await open({ offline, reduced: true });
+      try {
+        await page.waitForTimeout(500);
+        // What the visitor sees at 500ms: no intro, grid on screen (head script's immediate style).
+        assert.equal(await css(page, '#standoff-splash', 'display'), 'none');
+        assert.equal(await css(page, '#combined-grid-view', 'display'), 'block');
+        // grid-active itself waits on the page's existing font gate (2s safety timeout when Typekit fails).
+        await until(page, () => document.body.classList.contains('grid-active'), 2500);
+        await assertNoIntro(page);
+      } finally {
+        await done(page);
+      }
+    });
+
+    test('Wire Omar navigates to about.html during the hold', async () => {
+      const page = await open({ offline });
+      try {
+        await mounted(page);
+        await page.waitForTimeout(300);
+        await countExits(page);
+        await page.click('#dash-wire');
+        await page.waitForURL(/about\.html$/, { timeout: 5000 });
+      } finally {
+        await done(page);
+      }
+    });
+
+    test('Wire Omar by keyboard (Enter) navigates, does not skip', async () => {
+      const page = await open({ offline });
+      try {
+        await mounted(page);
+        await page.focus('#dash-wire');
+        await page.keyboard.press('Enter');
+        await page.waitForURL(/about\.html$/, { timeout: 5000 });
+      } finally {
+        await done(page);
+      }
+    });
   });
 }

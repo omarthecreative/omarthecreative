@@ -32,6 +32,16 @@
         setScales();
         root.classList.add('dash-intro');
         window.addEventListener('resize', setScales);
+
+        // Wire Omar is a real link: keep its click and Enter away from the
+        // page's document-level skip handlers so it navigates.
+        var wire = document.getElementById('dash-wire');
+        if (wire) {
+            wire.addEventListener('click', function (e) { e.stopPropagation(); });
+            wire.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') e.stopPropagation();
+            });
+        }
     }
 
     function pushIn(onDone) {
