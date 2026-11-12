@@ -1,0 +1,70 @@
+/* Dashboard intro: window.DashIntro
+   mount()        places the live grid in the dashboard's screen frame (adds html.dash-intro)
+   pushIn(onDone) pushes the scene in until the screen's edges meet the window's,
+                  then removes the intro layer and calls onDone once.
+   Geometry lives in dashboard-intro.css; this file only sets the two
+   artwork scales and runs the state changes. */
+(function () {
+    'use strict';
+
+    var PUSH_TIMEOUT_MS = 1300; // push-in is 1000ms; finish even if transitionend never fires
+    var root = document.documentElement;
+    var mounted = false;
+    var state = 'idle'; // idle -> pushing -> done
+
+    function isPhone() {
+        return window.matchMedia('(max-width: 760px)').matches;
+    }
+
+    function setScales() {
+        var w = window.innerWidth;
+        var h = window.innerHeight;
+        root.style.setProperty('--dash-fit', String(Math.min(w / 1440, h / 900)));
+        var shield = document.getElementById('dash-shield');
+        // offsetHeight is layout size, unaffected by the push-in transform.
+        var shieldPx = shield ? shield.offsetHeight : 0;
+        root.style.setProperty('--dash-ss', String(shieldPx / (isPhone() ? 260 : 400)));
+    }
+
+    function mount() {
+        if (mounted) return;
+        mounted = true;
+        setScales();
+        root.classList.add('dash-intro');
+        window.addEventListener('resize', setScales);
+    }
+
+    function pushIn(onDone) {
+        if (state !== 'idle') return;
+        state = 'pushing';
+
+        var portal = document.getElementById('portal');
+        var splash = document.getElementById('standoff-splash');
+        var timer = null;
+
+        function finish() {
+            if (state !== 'pushing') return;
+            state = 'done';
+            clearTimeout(timer);
+            if (portal) portal.removeEventListener('transitionend', onEnd);
+            window.removeEventListener('resize', setScales);
+            root.classList.remove('dash-intro', 'dash-pushing');
+            if (splash) splash.style.display = 'none';
+            if (typeof onDone === 'function') onDone();
+        }
+        function onEnd(e) {
+            if (e.target === portal && e.propertyName === 'transform') finish();
+        }
+
+        if (portal) portal.addEventListener('transitionend', onEnd);
+        timer = setTimeout(finish, PUSH_TIMEOUT_MS);
+        if (!mounted) {
+            // Nothing to push into; land immediately.
+            finish();
+            return;
+        }
+        root.classList.add('dash-pushing');
+    }
+
+    window.DashIntro = { mount: mount, pushIn: pushIn };
+})();

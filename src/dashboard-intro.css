@@ -1,0 +1,460 @@
+/* ==========================================================================
+   Dashboard intro (index.html, first visit only)
+
+   The live grid (#portal) sits in its normal grid state behind this layer,
+   scaled by --dash-k about a fixed point so its first screenful fills the
+   transparent screen frame (#dash-screen). The push-in scales the scene by
+   1/k and the grid back to 1 about the same point, so the two meet the
+   window's edges together. Artwork ported from
+   docs/superpowers/artwork/{Main,Phone}.dc.html.
+   ========================================================================== */
+
+:root {
+    --dash-k: 0.48;
+    --dash-left: 47vw;
+    --dash-top: 43vh;
+    --dash-shield: 34vh;
+    --dash-ox: calc(var(--dash-left) / (1 - var(--dash-k)));
+    --dash-oy: calc(var(--dash-top) / (1 - var(--dash-k)));
+    --dash-w: calc(var(--dash-k) * 100vw);
+    --dash-h: calc(var(--dash-k) * 100vh);
+    --dash-ease: cubic-bezier(0.7, 0, 0.2, 1);
+    --dash-push: 1000ms;
+    /* Set by DashIntro.mount() on mount and resize. */
+    --dash-fit: 1;   /* furniture: min(innerWidth / 1440, innerHeight / 900) */
+    --dash-ss: 1;    /* windshield overlays: windshield height / artwork windshield height */
+}
+@media (max-width: 760px) {
+    :root {
+        --dash-k: 0.62;
+        --dash-left: 19vw;
+        --dash-top: 32vh;
+        --dash-shield: 26vh;
+    }
+}
+
+/* ---- The grid, placed in the screen ------------------------------------ */
+
+html.dash-intro,
+html.dash-intro body {
+    overflow: hidden !important;
+}
+html.dash-intro #portal {
+    transform-origin: var(--dash-ox) var(--dash-oy);
+    transform: scale(var(--dash-k));
+    clip-path: inset(0 0 calc(100% - 100vh) 0);
+}
+/* Grid chrome that lives outside #portal stays hidden until the push-in lands. */
+html.dash-intro .copyright-tag.fixed {
+    opacity: 0 !important;
+}
+
+/* ---- Scene ------------------------------------------------------------- */
+
+#dash-scene {
+    position: absolute;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    pointer-events: auto;      /* the whole scene, screen included, catches click-to-skip */
+    transform-origin: var(--dash-ox) var(--dash-oy);
+    color: #FFFFFF;
+    font-family: var(--display);
+}
+
+/* Windshield band. No z-index and no clipping, so the doll can stand over the dash. */
+#dash-shield {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--dash-shield);
+}
+.dash-sky {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.dash-ink { stroke: #1A1020; stroke-width: 3; stroke-linejoin: round; }
+.dash-road { transform-origin: 720px 262px; animation: dash-drive .7s linear infinite; }
+@keyframes dash-drive { from { transform: scale(1); } to { transform: scale(2); } }
+
+/* Banner plane */
+.dash-banner {
+    position: absolute;
+    z-index: 1;
+    top: calc(104px * var(--dash-ss));
+    left: 8.5%;
+    right: 8.5%;
+    height: calc(64px * var(--dash-ss));
+    overflow: hidden;
+}
+.dash-fly {
+    position: absolute;
+    top: 0;
+    display: flex;
+    align-items: center;
+    width: max-content;
+    animation: dash-fly 16s linear infinite;
+    animation-delay: -7s;
+}
+@keyframes dash-fly { from { left: 0; transform: translateX(-100%); } to { left: 100%; transform: translateX(0); } }
+#standoff-splash h1.dash-headline {
+    margin: 0;
+    padding: calc(4px * var(--dash-ss)) calc(16px * var(--dash-ss));
+    background: #F2EFE9;
+    border: calc(3px * var(--dash-ss)) solid #1A1020;
+    color: var(--vibrant-red);
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: calc(36px * var(--dash-ss));
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-shadow: none;
+}
+.dash-towline {
+    width: calc(48px * var(--dash-ss));
+    height: calc(3px * var(--dash-ss));
+    background: #1A1020;
+}
+.dash-plane {
+    display: block;
+    width: calc(84px * var(--dash-ss));
+    height: calc(44px * var(--dash-ss));
+}
+
+/* Rear-view mirror with the rider */
+.dash-mirror {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.dash-mirror-stem {
+    width: calc(18px * var(--dash-ss));
+    height: calc(30px * var(--dash-ss));
+    background: #0B0B0C;
+}
+.dash-mirror-glass {
+    width: calc(230px * var(--dash-ss));
+    height: calc(60px * var(--dash-ss));
+    box-sizing: border-box;
+    border: calc(7px * var(--dash-ss)) solid #0B0B0C;
+    border-radius: calc(16px * var(--dash-ss));
+    overflow: hidden;
+    background: #3A3A3A;
+}
+.dash-mirror-glass svg { display: block; width: 100%; height: 100%; }
+.dash-rider { animation: dash-gallop .36s ease-in-out infinite; }
+@keyframes dash-gallop { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.2px); } }
+
+/* Minimap */
+.dash-minimap {
+    position: absolute;
+    z-index: 1;
+    top: calc(44px * var(--dash-ss));
+    right: 11%;
+    width: calc(96px * var(--dash-ss));
+    height: calc(96px * var(--dash-ss));
+    box-sizing: border-box;
+    border-radius: 50%;
+    border: calc(4px * var(--dash-ss)) solid #F2EFE9;
+    background: #1A1020;
+    overflow: hidden;
+}
+.dash-minimap svg { display: block; width: 100%; height: 100%; }
+
+/* Bobblehead doll, standing on the dash cap */
+.dash-doll {
+    position: absolute;
+    z-index: 4;
+    left: 42%;
+    top: calc(var(--dash-shield) + 30px * var(--dash-ss));
+    width: calc(150px * var(--dash-ss));
+    transform: translateY(-100%);
+}
+.dash-doll svg { display: block; width: 100%; height: auto; }
+.dash-doll-top {
+    width: 100%;
+    aspect-ratio: 150 / 140;
+    transform-origin: 50% 100%;
+    animation: dash-sway 2.4s ease-in-out infinite;
+}
+.dash-doll-top svg { height: 100%; overflow: visible; }
+.dash-doll-base { margin-top: calc(-2px * var(--dash-ss)); }
+html.dash-pushing .dash-doll-top { animation: dash-sway-hard .5s ease-in-out infinite; }
+@keyframes dash-sway { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+@keyframes dash-sway-hard { 0%, 100% { transform: rotate(-14deg); } 50% { transform: rotate(14deg); } }
+.dash-spring { fill: none; stroke: #A8A39A; stroke-width: 4; stroke-linejoin: round; }
+.dash-spec { fill: #33415C; stroke: #0B0B0C; stroke-width: 5; stroke-linejoin: round; }
+.dash-zip { stroke: #F2EFE9; stroke-width: 3; }
+
+/* ---- Dash body --------------------------------------------------------- */
+
+#dash-body {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+/* The dash surface, with the screen cut out of it. */
+.dash-surface {
+    position: absolute;
+    z-index: 2;
+    top: var(--dash-shield);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, #17171A 0px, #0E0E10 calc(460px * var(--dash-fit)));
+    --hl: var(--dash-left);
+    --ht: calc(var(--dash-top) - var(--dash-shield));
+    --hr: calc(var(--dash-left) + var(--dash-w));
+    --hb: calc(var(--dash-top) - var(--dash-shield) + var(--dash-h));
+    clip-path: polygon(evenodd,
+        0 0, 100% 0, 100% 100%, 0 100%, 0 0,
+        var(--hl) var(--ht), var(--hr) var(--ht), var(--hr) var(--hb), var(--hl) var(--hb), var(--hl) var(--ht));
+}
+.dash-cap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: calc(46px * var(--dash-fit));
+    background: linear-gradient(180deg, #2C2C31 0%, #1B1B1E 45%, #111113 100%);
+}
+.dash-cap::after {
+    content: "";
+    position: absolute;
+    top: calc(12px * var(--dash-fit));
+    left: 0;
+    right: 0;
+    border-top: 1px dashed rgba(255, 255, 255, 0.28);
+}
+.dash-vent {
+    position: absolute;
+    top: calc(46px * var(--dash-fit));
+    left: 0;
+    right: 0;
+    height: calc(26px * var(--dash-fit));
+    box-sizing: border-box;
+    border-top: 1px solid #8C9098;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    background: repeating-linear-gradient(180deg, #060607 0px, #060607 5px, #26262B 5px, #26262B 7px);
+}
+
+/* Furniture: a 1440-wide design-space box, origin at the dash's top-left. */
+.dash-furniture {
+    position: absolute;
+    z-index: 3;
+    top: var(--dash-shield);
+    left: 0;
+    width: 1440px;
+    height: 0;
+    transform: scale(var(--dash-fit));
+    transform-origin: 0 0;
+}
+.dash-furniture > * { position: absolute; }
+.dash-furniture svg { display: block; width: 100%; height: 100%; }
+.dash-cluster { left: 86px; top: -8px; width: 340px; height: 120px; }
+.dash-wheel { left: 36px; top: -70px; width: 440px; height: 440px; }
+.dash-knee {
+    left: 110px;
+    top: 392px;
+    width: 280px;
+    box-sizing: border-box;
+    padding: 28px 40px 22px;
+    border: 1px solid #2A2A2E;
+    border-radius: 20px;
+    background: linear-gradient(180deg, #1A1A1D 0%, #0D0D0F 100%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+.dash-knee::before {
+    content: "";
+    position: absolute;
+    top: 12px;
+    left: 20px;
+    right: 20px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.24);
+}
+.dash-knee .dash-dial { flex: none; width: 64px; height: 64px; }
+.dash-knee .dash-wire-slot { flex: none; width: 76px; height: 76px; }
+.dash-pedals { left: 150px; top: 540px; display: flex; align-items: flex-end; gap: 44px; }
+.dash-pedal-brake {
+    width: 124px;
+    height: 84px;
+    box-sizing: border-box;
+    border: 3px solid #5E636B;
+    border-radius: 12px;
+    background: repeating-linear-gradient(90deg, #B9BCC2 0px, #B9BCC2 14px, #1A1A1D 14px, #1A1A1D 20px);
+}
+.dash-pedal-gas {
+    width: 62px;
+    height: 150px;
+    box-sizing: border-box;
+    border: 3px solid #5E636B;
+    border-radius: 12px;
+    background: repeating-linear-gradient(180deg, #B9BCC2 0px, #B9BCC2 14px, #1A1A1D 14px, #1A1A1D 20px);
+    transform: rotate(4deg);
+}
+.dash-rim-o { fill: none; stroke: #4A4A52; stroke-width: 42; stroke-linejoin: round; }
+.dash-rim { fill: none; stroke: #0B0B0D; stroke-width: 37; stroke-linejoin: round; }
+.dash-stitch { fill: none; stroke: #8A8A94; stroke-width: 1.5; stroke-dasharray: 3 5; }
+.dash-sheen { fill: none; stroke: #FFFFFF; stroke-width: 6; stroke-linecap: round; opacity: .18; }
+.dash-chrome-s { fill: none; stroke: url(#dash-chrome); stroke-width: 4; stroke-linecap: round; }
+.dash-chrome-f { fill: url(#dash-chrome); }
+.dash-ticks { fill: none; stroke: #D0D3D8; stroke-width: 5; stroke-dasharray: 1.5 9.8; }
+.dash-needle { fill: none; stroke: var(--vibrant-red-hud); stroke-width: 2.5; stroke-linecap: round; }
+
+/* ---- Screen frame ------------------------------------------------------ */
+
+/* The element's box is the frame rect; the bezel is drawn outside it. Opaque
+   until the grid is mounted behind it, then transparent. */
+#dash-screen {
+    position: absolute;
+    z-index: 3;
+    left: var(--dash-left);
+    top: var(--dash-top);
+    width: var(--dash-w);
+    height: var(--dash-h);
+    background: var(--bg, #050505);
+    box-shadow:
+        0 0 0 calc(10px * var(--dash-fit)) #000000,
+        0 0 0 calc(11px * var(--dash-fit)) #5E636B,
+        0 calc(24px * var(--dash-fit)) calc(48px * var(--dash-fit)) calc(11px * var(--dash-fit)) rgba(0, 0, 0, 0.6);
+}
+html.dash-intro #dash-screen { background: transparent; }
+
+/* ---- Start button: Wire Omar ------------------------------------------- */
+
+/* Sits in the knee panel's slot (design x 273, y 421 from the dash top). */
+#dash-wire {
+    position: absolute;
+    z-index: 5;
+    left: calc(273px * var(--dash-fit));
+    top: calc(var(--dash-shield) + 421px * var(--dash-fit));
+    width: calc(76px * var(--dash-fit));
+    height: calc(76px * var(--dash-fit));
+    box-sizing: border-box;
+    border-radius: 50%;
+    border: calc(3px * var(--dash-fit)) solid #C9CDD3;
+    box-shadow: 0 0 0 1px #5E636B, inset 0 0 0 calc(4px * var(--dash-fit)) #151517, 0 calc(6px * var(--dash-fit)) calc(14px * var(--dash-fit)) rgba(0, 0, 0, 0.6);
+    background: #070708;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: calc(3px * var(--dash-fit));
+    color: #FFFFFF;
+    text-decoration: none;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 700;
+    font-size: calc(14px * var(--dash-fit));
+    line-height: 1.05;
+    text-align: center;
+    pointer-events: auto;
+    cursor: pointer;
+}
+#dash-wire:hover { color: var(--vibrant-red-hud); }
+#dash-wire:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 2px; }
+#dash-wire svg {
+    display: block;
+    width: auto;
+    height: calc(16px * var(--dash-fit));
+    fill: currentColor;
+}
+
+/* ---- Push-in ----------------------------------------------------------- */
+
+html.dash-pushing #dash-scene {
+    transform: scale(calc(1 / var(--dash-k)));
+    transition: transform var(--dash-push) var(--dash-ease);
+}
+html.dash-pushing #portal {
+    transform: scale(1);
+    transition: transform var(--dash-push) var(--dash-ease);
+}
+
+/* ---- Phone ------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+    .dash-furniture { display: none; }
+
+    .dash-banner { top: calc(62px * var(--dash-ss)); left: 0; right: 0; height: calc(44px * var(--dash-ss)); }
+    .dash-fly { animation-duration: 12s; animation-delay: -5s; }
+    #standoff-splash h1.dash-headline {
+        padding: calc(3px * var(--dash-ss)) calc(10px * var(--dash-ss));
+        border-width: calc(2px * var(--dash-ss));
+        font-size: calc(20px * var(--dash-ss));
+    }
+    .dash-towline { width: calc(28px * var(--dash-ss)); height: calc(2px * var(--dash-ss)); }
+    .dash-plane { width: calc(54px * var(--dash-ss)); height: calc(28px * var(--dash-ss)); }
+
+    .dash-mirror-stem { width: calc(10px * var(--dash-ss)); height: calc(22px * var(--dash-ss)); }
+    .dash-mirror-glass {
+        width: calc(120px * var(--dash-ss));
+        height: calc(34px * var(--dash-ss));
+        border-width: calc(5px * var(--dash-ss));
+        border-radius: calc(10px * var(--dash-ss));
+    }
+
+    .dash-minimap {
+        top: calc(16px * var(--dash-ss));
+        right: calc(16px * var(--dash-ss));
+        width: calc(64px * var(--dash-ss));
+        height: calc(64px * var(--dash-ss));
+        border-width: calc(3px * var(--dash-ss));
+    }
+
+    .dash-doll {
+        left: calc(130px * var(--dash-ss));
+        top: calc(var(--dash-shield) + 16px * var(--dash-ss));
+        width: calc(100px * var(--dash-ss));
+    }
+
+    .dash-surface { background: #050505; }
+    .dash-cap { height: calc(30px * var(--dash-ss)); }
+    .dash-cap::after { top: calc(9px * var(--dash-ss)); }
+    .dash-vent {
+        top: calc(30px * var(--dash-ss));
+        height: calc(18px * var(--dash-ss));
+        background: repeating-linear-gradient(180deg, #060607 0px, #060607 4px, #26262B 4px, #26262B 6px);
+    }
+
+    #dash-screen {
+        box-shadow:
+            0 0 0 6px #000000,
+            0 0 0 7px #5E636B,
+            0 16px 32px 7px rgba(0, 0, 0, 0.6);
+    }
+
+    /* No knee panel on the phone: the button sits in the left margin, level with the screen's foot. */
+    #dash-wire {
+        left: calc(var(--dash-left) / 2 - 30px);
+        top: calc(var(--dash-top) + var(--dash-h) - 60px);
+        width: 60px;
+        height: 60px;
+        border-width: 2px;
+        box-shadow: 0 0 0 1px #5E636B, inset 0 0 0 3px #151517, 0 4px 10px rgba(0, 0, 0, 0.6);
+        gap: 2px;
+        font-size: 11px;
+    }
+    #dash-wire svg { height: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dash-road, .dash-fly, .dash-rider, .dash-doll-top,
+    html.dash-pushing .dash-doll-top { animation: none; }
+}

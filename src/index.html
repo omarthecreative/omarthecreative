@@ -69,6 +69,7 @@
     <link rel="stylesheet" href="https://use.typekit.net/niv4qrq.css">
     <link rel="stylesheet" href="base.css">
     <link rel="stylesheet" href="video-overlay.css">
+    <link rel="stylesheet" href="dashboard-intro.css?v=1">
     <script src="https://player.vimeo.com/api/player.js"></script>
     <script src="carousel-config.js"></script>
     <style>
@@ -629,7 +630,7 @@
             body.paladin-landing .title{font-size:clamp(40px,15vw,90px)}
         }
 
-        /* Timed Standoff Splash Screen with Vertical Split Slide */
+        /* Timed intro layer: the dashboard scene (dashboard-intro.css) */
         #standoff-splash {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -644,114 +645,6 @@
             visibility: hidden;
             opacity: 0;
         }
-        .split-panel {
-            position: absolute;
-            top: 0;
-            width: 50vw;
-            height: 100vh;
-            overflow: hidden;
-            transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);
-            pointer-events: auto;
-        }
-        .split-left {
-            left: 0;
-        }
-        .split-right {
-            right: 0;
-        }
-        .split-bg-inner {
-            position: absolute;
-            top: 0;
-            width: 100vw;
-            height: 100vh;
-            background-size: cover;
-            background-position: center 42%;
-            filter: grayscale(1) contrast(1.12) brightness(0.62);
-        }
-        .split-bg-inner::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            background: linear-gradient(90deg, rgba(5,5,5,.74) 0%, rgba(5,5,5,.32) 34%, rgba(5,5,5,0) 60%),
-                        linear-gradient(0deg, rgba(5,5,5,.66) 0%, rgba(5,5,5,0) 42%);
-        }
-        .split-left .split-bg-inner {
-            left: 0;
-        }
-        .split-right .split-bg-inner {
-            left: -50vw;
-        }
-        
-        #standoff-splash.split-active .split-left {
-            transform: translateX(-100%);
-        }
-        #standoff-splash.split-active .split-right {
-            transform: translateX(100%);
-        }
-
-        /* Splash Overlay Elements */
-        .splash-content {
-            position: absolute;
-            left: 6vw;
-            bottom: 14vh;
-            top: auto;
-            display: flex;
-            flex-direction: column-reverse;
-            align-items: flex-start;
-            text-align: left;
-            width: auto !important;
-            transform: none;
-            z-index: 1060;
-            pointer-events: none;
-            transition: opacity 0.6s ease;
-        }
-        #standoff-splash.split-active .splash-content {
-            opacity: 0;
-        }
-        .splash-title {
-            font-family: var(--display);
-            font-size: clamp(40px, 9vw, 150px);
-            line-height: .86;
-            letter-spacing: -.02em;
-            text-transform: uppercase;
-            color: #bb0006;
-            text-shadow: 0 4px 34px rgba(0,0,0,.6);
-            text-align: left;
-            white-space: normal;
-        }
-        .splash-subtitle {
-            font-family: 'lust-stencil-display', var(--serif);
-            font-style: italic;
-            font-size: clamp(16px, 2.1vw, 30px);
-            color: #EAE6DE;
-            margin-top: 1.1rem;
-            text-shadow: 0 2px 16px rgba(0,0,0,.7);
-            white-space: normal;
-            line-height: 1.1;
-            letter-spacing: -0.01em;
-        }
-        .splash-subtitle a {
-            color: #EAE6DE;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: .5em;
-        }
-        /* Mobile adjustment */
-        @media (orientation: portrait) and (max-width: 1024px) {
-            .splash-title { font-size: clamp(44px, 13vw, 120px); white-space: normal; }
-            .split-bg-inner { background-position: 30% 42%; }
-            .split-right .split-bg-inner { left: -50vw; }
-            .splash-content { left: 6vw; bottom: 16vh; }
-            .splash-subtitle { font-size: clamp(15px, 3.4vw, 26px); }
-        }
-        @media (max-width: 480px) {
-            .splash-title { font-size: clamp(40px, 15vw, 90px); }
-            .split-bg-inner { background-position: 28% 42%; }
-            .splash-content { left: 5vw; bottom: 14vh; }
-        }
-
         /* Typewriter spans for footer */
         .typing-text {
             display: inline-block;
@@ -792,7 +685,6 @@
         }
 
         /* Prevent FOUT layout shifts by hiding text elements until fonts are fully loaded */
-        html:not(.ready) .splash-content,
         html:not(.ready) .copyright-tag {
             opacity: 0 !important;
         }
@@ -1377,22 +1269,286 @@
     <div id="page-fade"></div>
 
     <div id="standoff-splash">
-        <div class="split-panel split-left">
-            <div class="split-bg-inner" style="background-image: url('assets/paladin-standoff-bg.jpg');"></div>
-        </div>
-        <div class="split-panel split-right">
-            <div class="split-bg-inner" style="background-image: url('assets/paladin-standoff-bg.jpg');"></div>
-        </div>
-        <div class="splash-content">
-            <div class="splash-subtitle">
-                <a href="about.html">
-                    <svg class="ico-knight" viewBox="0 0 1052 1600" aria-hidden="true">
-                        <use xlink:href="#knight-mark" href="#knight-mark"></use>
+        <div id="dash-scene">
+            <div id="dash-shield">
+                <svg class="dash-sky" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+                    <defs>
+                        <linearGradient id="dash-sky-grad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0" stop-color="#FF4F8B"></stop>
+                            <stop offset="0.7" stop-color="#FF7A3D"></stop>
+                            <stop offset="1" stop-color="#FFC46B"></stop>
+                        </linearGradient>
+                        <g id="dash-palm">
+                            <path d="M-6 0 Q-14 -70 2 -140 L10 -140 Q-2 -70 8 0 Z" fill="#6B3A2E"></path>
+                            <g fill="#0F6B5E">
+                                <path d="M6 -142 Q-34 -186 -78 -150 Q-36 -162 6 -142 Z"></path>
+                                <path d="M6 -142 Q46 -186 90 -150 Q48 -162 6 -142 Z"></path>
+                                <path d="M6 -142 Q-40 -150 -66 -108 Q-34 -134 6 -142 Z"></path>
+                                <path d="M6 -142 Q52 -150 78 -108 Q46 -134 6 -142 Z"></path>
+                                <path d="M6 -142 Q-14 -196 -40 -200 Q-10 -180 6 -142 Z"></path>
+                                <path d="M6 -142 Q26 -196 52 -200 Q22 -180 6 -142 Z"></path>
+                            </g>
+                        </g>
+                    </defs>
+                    <rect x="0" y="0" width="1440" height="262" fill="url(#dash-sky-grad)"></rect>
+                    <circle cx="720" cy="232" r="74" fill="#FFE08A"></circle>
+                    <rect x="0" y="150" width="1440" height="10" fill="#FF8FB0" opacity="0.5"></rect>
+                    <rect x="0" y="182" width="1440" height="6" fill="#FFB199" opacity="0.5"></rect>
+                    <g class="dash-ink">
+                        <rect x="0" y="234" width="1440" height="28" fill="#16B5B0"></rect>
+                        <polygon points="760,262 900,196 1010,226 1140,170 1300,222 1440,190 1440,262" fill="#7A2E6E"></polygon>
+                        <rect x="0" y="262" width="1440" height="138" fill="#2B2140"></rect>
+                        <polygon points="720,262 380,400 90,400" fill="#F2A07B"></polygon>
+                        <polygon points="720,262 1060,400 1350,400" fill="#F2A07B"></polygon>
+                        <polygon points="720,262 380,400 1060,400" fill="#3A2E55"></polygon>
+                        <rect x="196" y="196" width="170" height="66" fill="#3BC9C3"></rect>
+                        <rect x="880" y="176" width="150" height="86" fill="#FFB199"></rect>
+                        <rect x="1046" y="142" width="190" height="120" fill="#F25F8A"></rect>
+                        <rect x="1252" y="190" width="130" height="72" fill="#FFD27A"></rect>
+                    </g>
+                    <g class="dash-road">
+                        <g fill="#F2EFE9">
+                            <polygon points="719.55,265 720.45,265 720.68,266.5 719.32,266.5"></polygon>
+                            <polygon points="719.1,268 720.9,268 721.35,271 718.65,271"></polygon>
+                            <polygon points="718.2,274 721.8,274 722.7,280 717.3,280"></polygon>
+                            <polygon points="716.4,286 723.6,286 725.4,298 714.6,298"></polygon>
+                            <polygon points="712.8,310 727.2,310 730.8,334 709.2,334"></polygon>
+                            <polygon points="705.6,358 734.4,358 741.6,406 698.4,406"></polygon>
+                        </g>
+                        <g fill="#FFD9B8">
+                            <polygon points="712.6,265 711.3,265 706.95,266.5 708.9,266.5"></polygon>
+                            <polygon points="705.2,268 702.6,268 693.9,271 697.9,271"></polygon>
+                            <polygon points="690.5,274 685.2,274 667.8,280 675.7,280"></polygon>
+                            <polygon points="661,286 650.4,286 615.6,298 631.4,298"></polygon>
+                            <polygon points="601.9,310 580.8,310 511.2,334 542.9,334"></polygon>
+                            <polygon points="483.8,358 441.6,358 302.4,406 365.8,406"></polygon>
+                            <polygon points="727.4,265 728.7,265 733.05,266.5 731.1,266.5"></polygon>
+                            <polygon points="734.8,268 737.4,268 746.1,271 742.1,271"></polygon>
+                            <polygon points="749.5,274 754.8,274 772.2,280 764.3,280"></polygon>
+                            <polygon points="779,286 789.6,286 824.4,298 808.6,298"></polygon>
+                            <polygon points="838.1,310 859.2,310 928.8,334 897.1,334"></polygon>
+                            <polygon points="956.2,358 998.4,358 1137.6,406 1074.2,406"></polygon>
+                        </g>
+                    </g>
+                    <g fill="#1A1020">
+                        <rect x="212" y="210" width="26" height="12"></rect><rect x="250" y="210" width="26" height="12"></rect><rect x="288" y="210" width="26" height="12"></rect><rect x="326" y="210" width="26" height="12"></rect>
+                        <rect x="212" y="234" width="26" height="12"></rect><rect x="250" y="234" width="26" height="12"></rect><rect x="288" y="234" width="26" height="12"></rect><rect x="326" y="234" width="26" height="12"></rect>
+                        <rect x="896" y="192" width="24" height="14"></rect><rect x="932" y="192" width="24" height="14"></rect><rect x="968" y="192" width="24" height="14"></rect>
+                        <rect x="896" y="220" width="24" height="14"></rect><rect x="932" y="220" width="24" height="14"></rect><rect x="968" y="220" width="24" height="14"></rect>
+                        <rect x="1064" y="160" width="30" height="14"></rect><rect x="1108" y="160" width="30" height="14"></rect><rect x="1152" y="160" width="30" height="14"></rect><rect x="1196" y="160" width="30" height="14"></rect>
+                        <rect x="1064" y="190" width="30" height="14"></rect><rect x="1108" y="190" width="30" height="14"></rect><rect x="1152" y="190" width="30" height="14"></rect><rect x="1196" y="190" width="30" height="14"></rect>
+                        <rect x="1064" y="220" width="30" height="14"></rect><rect x="1108" y="220" width="30" height="14"></rect><rect x="1152" y="220" width="30" height="14"></rect><rect x="1196" y="220" width="30" height="14"></rect>
+                        <rect x="1268" y="206" width="22" height="12"></rect><rect x="1304" y="206" width="22" height="12"></rect><rect x="1340" y="206" width="22" height="12"></rect>
+                    </g>
+                    <use href="#dash-palm" class="dash-ink" transform="translate(300 340) scale(1.25)"></use>
+                    <use href="#dash-palm" class="dash-ink" transform="translate(500 296) scale(0.8)"></use>
+                    <use href="#dash-palm" class="dash-ink" transform="translate(900 296) scale(-0.8 0.8)"></use>
+                    <use href="#dash-palm" class="dash-ink" transform="translate(1150 344) scale(-1.3 1.3)"></use>
+                    <path d="M150 400 Q720 326 1290 400 Z" fill="#0E0E11" class="dash-ink"></path>
+                    <path d="M330 396 Q720 346 1110 396" fill="none" stroke="#5A5A66" stroke-width="3"></path>
+                    <path d="M420 388 Q720 352 1020 388" fill="none" stroke="#F2EFE9" opacity="0.35" stroke-width="4"></path>
+                    <polygon points="0,0 150,0 40,400 0,400" fill="#0B0B0C"></polygon>
+                    <polygon points="1440,0 1290,0 1400,400 1440,400" fill="#0B0B0C"></polygon>
+                    <rect x="0" y="0" width="1440" height="22" fill="#0B0B0C"></rect>
+                </svg>
+
+                <div class="dash-banner">
+                    <div class="dash-fly">
+                        <h1 class="dash-headline">HAVE TASTE. WILL TRAVEL.</h1>
+                        <div class="dash-towline" aria-hidden="true"></div>
+                        <svg class="dash-plane" viewBox="0 0 66 34" aria-hidden="true">
+                            <g class="dash-ink">
+                                <path d="M6 16 L4 4 L14 12 Z" fill="#E0281E"></path>
+                                <path d="M4 18 Q6 12 20 11 L46 10 Q58 11 60 17 Q58 23 46 23 L18 22 Q8 22 4 18 Z" fill="#F2EFE9"></path>
+                                <path d="M38 11 Q44 4 50 11 Z" fill="#33415C"></path>
+                                <path d="M26 18 L40 18 L34 29 L24 29 Z" fill="#E0281E"></path>
+                            </g>
+                            <rect x="60" y="5" width="3" height="24" rx="1.5" fill="#1A1020"></rect>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="dash-mirror" aria-hidden="true">
+                    <div class="dash-mirror-stem"></div>
+                    <div class="dash-mirror-glass">
+                        <svg viewBox="0 0 216 46" preserveAspectRatio="xMidYMid slice">
+                            <rect x="0" y="0" width="216" height="26" fill="#8E8E8E"></rect>
+                            <rect x="0" y="18" width="216" height="8" fill="#B5B5B5"></rect>
+                            <polygon points="0,26 30,16 52,20 80,12 110,22 150,14 180,20 216,15 216,26" fill="#5C5C5C"></polygon>
+                            <rect x="0" y="26" width="216" height="20" fill="#3A3A3A"></rect>
+                            <polygon points="100,26 116,26 170,46 46,46" fill="#262626"></polygon>
+                            <polygon points="107.5,28 108.5,28 109,31 107,31" fill="#B5B5B5"></polygon>
+                            <circle cx="95" cy="35" r="4" fill="#9A9A9A" opacity="0.5"></circle>
+                            <circle cx="89" cy="37" r="3" fill="#9A9A9A" opacity="0.4"></circle>
+                            <g class="dash-rider" fill="#0A0A0A">
+                                <ellipse cx="108" cy="33" rx="9" ry="4.5"></ellipse>
+                                <polygon points="114,31 119,24 122,25 118,33"></polygon>
+                                <polygon points="119,24 125,25 124,28 120,27"></polygon>
+                                <polygon points="101,36 103,36 100,43 98.5,43"></polygon>
+                                <polygon points="105,36 106.6,36 106,43 104.4,43"></polygon>
+                                <polygon points="111,36 112.6,36 114,43 112.4,43"></polygon>
+                                <polygon points="115,35 116.6,35 119.5,42 118,42.5"></polygon>
+                                <path d="M99 31 Q94 32 95 37" fill="none" stroke="#0A0A0A" stroke-width="1.5"></path>
+                                <polygon points="106,29 111,29 110.5,21 106.5,21"></polygon>
+                                <circle cx="108.5" cy="19" r="2"></circle>
+                                <rect x="104.5" y="17.2" width="8" height="1.2"></rect>
+                                <rect x="106.5" y="14.5" width="4" height="3"></rect>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="dash-minimap" aria-hidden="true">
+                    <svg viewBox="0 0 96 96">
+                        <rect x="0" y="0" width="96" height="96" fill="#2B2140"></rect>
+                        <path d="M0 0 H96 V22 Q72 28 48 24 Q24 20 0 26 Z" fill="#16B5B0"></path>
+                        <path d="M0 26 Q24 20 48 24 Q72 28 96 22" fill="none" stroke="#F2D7A0" stroke-width="5"></path>
+                        <rect x="0" y="32" width="96" height="6" fill="#5A4E78"></rect>
+                        <rect x="44" y="32" width="12" height="64" fill="#5A4E78"></rect>
+                        <rect x="0" y="64" width="96" height="6" fill="#5A4E78"></rect>
+                        <rect x="49.5" y="44" width="1" height="8" fill="#F2EFE9"></rect>
+                        <rect x="49.5" y="84" width="1" height="8" fill="#F2EFE9"></rect>
+                        <rect x="6" y="42" width="30" height="18" fill="#3BC9C3"></rect>
+                        <rect x="6" y="74" width="30" height="22" fill="#FFB199"></rect>
+                        <rect x="62" y="42" width="14" height="18" fill="#FFB199"></rect>
+                        <rect x="80" y="42" width="16" height="18" fill="#F25F8A"></rect>
+                        <rect x="62" y="74" width="34" height="22" fill="#FFD27A"></rect>
+                        <circle cx="40" cy="46" r="2.5" fill="#0F6B5E"></circle>
+                        <circle cx="40" cy="58" r="2.5" fill="#0F6B5E"></circle>
+                        <circle cx="40" cy="80" r="2.5" fill="#0F6B5E"></circle>
+                        <circle cx="60" cy="46" r="2.5" fill="#0F6B5E"></circle>
+                        <circle cx="60" cy="58" r="2.5" fill="#0F6B5E"></circle>
+                        <circle cx="60" cy="80" r="2.5" fill="#0F6B5E"></circle>
+                        <circle cx="50" cy="27" r="5" fill="#FF0015" stroke="#FFFFFF" stroke-width="2"></circle>
+                        <polygon points="50,58 57,75 50,71 43,75" fill="#FFFFFF" stroke="#0B0B0C" stroke-width="1.5"></polygon>
                     </svg>
-                    <span class="wire-text">Wire<br>Omar</span>
-                </a>
+                </div>
+
+                <div class="dash-doll" aria-hidden="true">
+                    <div class="dash-doll-top">
+                        <svg viewBox="0 0 150 140">
+                            <g class="dash-ink">
+                                <rect x="39" y="54" width="18" height="50" rx="9" fill="#E0281E" transform="rotate(-25 48 104)"></rect>
+                                <rect x="118" y="80" width="18" height="50" rx="9" fill="#E0281E" transform="rotate(62 127 96)"></rect>
+                                <circle cx="24" cy="50" r="9" fill="#C68A5E"></circle>
+                                <circle cx="144" cy="87" r="9" fill="#C68A5E"></circle>
+                                <path d="M46 94 Q75 84 104 94 L108 140 L42 140 Z" fill="#E0281E"></path>
+                                <path d="M62 90 Q75 100 88 90 L88 84 L62 84 Z" fill="#F2EFE9"></path>
+                                <ellipse cx="41" cy="50" rx="6" ry="9" fill="#C68A5E"></ellipse>
+                                <ellipse cx="109" cy="50" rx="6" ry="9" fill="#C68A5E"></ellipse>
+                                <ellipse cx="75" cy="46" rx="34" ry="38" fill="#C68A5E"></ellipse>
+                                <path d="M42 52 Q42 94 75 98 Q108 94 108 52 Q100 64 90 61 Q75 56 60 61 Q50 64 42 52 Z" fill="#0A0A0A"></path>
+                            </g>
+                            <line x1="75" y1="98" x2="75" y2="140" class="dash-zip"></line>
+                            <path d="M66 70 Q75 75 84 70" fill="none" stroke="#C68A5E" stroke-width="3"></path>
+                            <rect x="45" y="35" width="27" height="18" rx="4" class="dash-spec"></rect>
+                            <rect x="78" y="35" width="27" height="18" rx="4" class="dash-spec"></rect>
+                            <rect x="71" y="39" width="8" height="5" fill="#0B0B0C"></rect>
+                            <ellipse cx="62" cy="20" rx="10" ry="5" fill="#FFFFFF" opacity="0.35"></ellipse>
+                        </svg>
+                    </div>
+                    <svg class="dash-doll-base" viewBox="0 0 150 90">
+                        <polyline points="62,0 88,5 62,10 88,15 62,20 88,24" class="dash-spring"></polyline>
+                        <g class="dash-ink">
+                            <path d="M50 24 L100 24 L104 68 L82 68 L75 42 L68 68 L46 68 Z" fill="#E0281E"></path>
+                            <rect x="40" y="64" width="30" height="11" rx="5" fill="#F2EFE9"></rect>
+                            <rect x="80" y="64" width="30" height="11" rx="5" fill="#F2EFE9"></rect>
+                            <ellipse cx="75" cy="81" rx="62" ry="8" fill="#0B0B0C"></ellipse>
+                            <ellipse cx="75" cy="77" rx="56" ry="7" fill="#2A2A2E"></ellipse>
+                        </g>
+                    </svg>
+                </div>
             </div>
-            <h1 class="splash-title">HAVE&nbsp;TASTE.<br>WILL&nbsp;TRAVEL.</h1>
+
+            <div id="dash-body">
+                <div class="dash-surface" aria-hidden="true">
+                    <div class="dash-cap"></div>
+                    <div class="dash-vent"></div>
+                </div>
+                <div class="dash-furniture" aria-hidden="true">
+                    <div class="dash-cluster">
+                        <svg viewBox="0 0 340 120">
+                            <path d="M0 120 Q10 10 170 6 Q330 10 340 120 Z" fill="#0A0A0B" stroke="#2A2A2E"></path>
+                            <circle cx="75" cy="66" r="44" fill="#050506"></circle>
+                            <circle cx="75" cy="66" r="44" class="dash-chrome-s"></circle>
+                            <circle cx="75" cy="66" r="35" class="dash-ticks"></circle>
+                            <path d="M75 66 L49 46" class="dash-needle"></path>
+                            <circle cx="75" cy="66" r="5" fill="#2A2A2E"></circle>
+                            <circle cx="265" cy="66" r="44" fill="#050506"></circle>
+                            <circle cx="265" cy="66" r="44" class="dash-chrome-s"></circle>
+                            <circle cx="265" cy="66" r="35" class="dash-ticks"></circle>
+                            <path d="M265 66 L291 42" class="dash-needle"></path>
+                            <circle cx="265" cy="66" r="5" fill="#2A2A2E"></circle>
+                            <rect x="138" y="44" width="64" height="42" rx="6" fill="#050506" stroke="#2A2A2E"></rect>
+                            <rect x="150" y="56" width="40" height="3" fill="#D0D3D8"></rect>
+                            <rect x="150" y="66" width="26" height="3" fill="#5E636B"></rect>
+                        </svg>
+                    </div>
+                    <div class="dash-knee">
+                        <svg class="dash-dial" viewBox="0 0 110 110">
+                            <circle cx="55" cy="55" r="51" fill="#0A0A0B"></circle>
+                            <circle cx="55" cy="55" r="51" class="dash-chrome-s"></circle>
+                            <circle cx="16.9" cy="33" r="2" fill="#D0D3D8"></circle>
+                            <circle cx="40" cy="13.7" r="2" fill="#D0D3D8"></circle>
+                            <circle cx="70" cy="13.7" r="2" fill="#D0D3D8"></circle>
+                            <circle cx="93.1" cy="33" r="2" fill="#D0D3D8"></circle>
+                            <circle cx="55" cy="55" r="30" fill="#151517" stroke="#3A3A41"></circle>
+                            <circle cx="55" cy="55" r="22" fill="#0B0B0D" stroke="#2A2A2E"></circle>
+                            <rect x="53.5" y="27" width="3" height="16" rx="1.5" fill="#FFFFFF" transform="rotate(-20 55 55)"></rect>
+                        </svg>
+                        <div class="dash-wire-slot"></div>
+                    </div>
+                    <div class="dash-pedals">
+                        <div class="dash-pedal-brake"></div>
+                        <div class="dash-pedal-gas"></div>
+                    </div>
+                    <div class="dash-wheel">
+                        <svg viewBox="0 0 440 440">
+                            <defs>
+                                <linearGradient id="dash-chrome" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0" stop-color="#FFFFFF"></stop>
+                                    <stop offset="0.38" stop-color="#C9CDD3"></stop>
+                                    <stop offset="0.5" stop-color="#5E636B"></stop>
+                                    <stop offset="0.62" stop-color="#E6E8EB"></stop>
+                                    <stop offset="1" stop-color="#8C9098"></stop>
+                                </linearGradient>
+                            </defs>
+                            <path d="M30 190 L150 178 L150 186 L32 200 Z" class="dash-chrome-f"></path>
+                            <path d="M410 190 L290 178 L290 186 L408 200 Z" class="dash-chrome-f"></path>
+                            <path d="M36 198 L152 188 L152 252 L46 270 Z" fill="#121214"></path>
+                            <path d="M404 198 L288 188 L288 252 L394 270 Z" fill="#121214"></path>
+                            <path d="M192 262 L248 262 L262 386 L178 386 Z" fill="#121214"></path>
+                            <path d="M200 296 L240 296 L249 376 L191 376 Z" class="dash-chrome-f"></path>
+                            <path d="M211 310 L229 310 L234 362 L206 362 Z" fill="#121214"></path>
+                            <path d="M50 272 L150 255" class="dash-chrome-s"></path>
+                            <path d="M390 272 L290 255" class="dash-chrome-s"></path>
+                            <path class="dash-rim-o" d="M74.5 332 A190 190 0 1 1 365.5 332 Q330 392 270 396 L170 396 Q110 392 74.5 332 Z"></path>
+                            <path class="dash-rim" d="M74.5 332 A190 190 0 1 1 365.5 332 Q330 392 270 396 L170 396 Q110 392 74.5 332 Z"></path>
+                            <path class="dash-stitch" d="M74.5 332 A190 190 0 1 1 365.5 332 Q330 392 270 396 L170 396 Q110 392 74.5 332 Z"></path>
+                            <path class="dash-sheen" d="M40.6 126.3 A198 198 0 0 1 152.3 24"></path>
+                            <path class="dash-sheen" d="M319 38.5 A198 198 0 0 1 382.2 96.4"></path>
+                            <rect x="213" y="3" width="14" height="34" rx="3" fill="#E0281E"></rect>
+                            <rect x="146" y="164" width="148" height="112" rx="30" fill="#151517"></rect>
+                            <rect x="146" y="164" width="148" height="112" rx="30" class="dash-chrome-s"></rect>
+                            <circle cx="220" cy="220" r="24" fill="#0B0B0D"></circle>
+                            <circle cx="220" cy="220" r="24" class="dash-chrome-s"></circle>
+                            <rect x="72" y="212" width="26" height="14" rx="4" fill="#2A2A2E"></rect>
+                            <rect x="104" y="210" width="12" height="18" rx="5" fill="#2A2A2E"></rect>
+                            <rect x="122" y="209" width="9" height="20" rx="4" class="dash-chrome-f"></rect>
+                            <rect x="342" y="212" width="26" height="14" rx="4" fill="#2A2A2E"></rect>
+                            <rect x="324" y="210" width="12" height="18" rx="5" fill="#2A2A2E"></rect>
+                            <rect x="309" y="209" width="9" height="20" rx="4" class="dash-chrome-f"></rect>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div id="dash-screen" aria-hidden="true"></div>
+
+            <a id="dash-wire" href="about.html">
+                <svg viewBox="0 0 1052 1600" aria-hidden="true"><use xlink:href="#knight-mark" href="#knight-mark"></use></svg>
+                <span>Wire<br>Omar</span>
+            </a>
         </div>
     </div>
 
@@ -1456,6 +1612,7 @@
         <div class="hud-tag hud-br" id="bat-status">[ BAT: 00% ]</div>
     </div>
 
+    <script src="dashboard-intro.js?v=1"></script>
     <script src="apex-sound.js?v=3"></script>
     <script>
 
@@ -2384,6 +2541,11 @@
             }
 
             document.body.classList.add('intro-active');
+            // The grid goes into its normal state now, and the dashboard shows it
+            // scaled down inside its screen for the hold.
+            enterGridState();
+            initVisualGrid();
+            if (window.DashIntro) DashIntro.mount();
             const timerEl = document.getElementById('intro-timer');
             const lutToggle = document.getElementById('lut-toggle');
             if (timerEl) {
