@@ -82,3 +82,6 @@ Archive/
 # Resume PDF is a live site asset, not a working file
 !src/assets/Omar_Y_Silwany_Creative_Director.pdf
 src/IMMORTAL/images/ref-spotify-mark.png
+
+# Test harness deps (local only)
+tests/node_modules/
