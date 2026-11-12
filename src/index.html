@@ -635,15 +635,7 @@
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: 1050;
-            display: flex;
             pointer-events: none;
-            visibility: visible;
-            opacity: 1;
-            transition: visibility 0s linear 1.2s, opacity 0.5s ease 1.2s;
-        }
-        #standoff-splash.split-active {
-            visibility: hidden;
-            opacity: 0;
         }
         /* Typewriter spans for footer */
         .typing-text {
@@ -2554,6 +2546,9 @@
             }
             if (lutToggle) lutToggle.style.display = 'none';
 
+            // One exit, whichever comes first: click, key, or the 3s timer.
+            // Grid state was entered at mount; the push-in lands on it.
+            let introExiting = false;
             function skipIntro() {
                 if (introTimer) {
                     clearTimeout(introTimer);
@@ -2564,20 +2559,21 @@
                     countdownInterval = null;
                 }
 
-                const splash = document.getElementById('standoff-splash');
-                if (splash && !splash.classList.contains('split-active')) {
-                    if (typeof ApexSound !== 'undefined') {
-                        ApexSound.init();
-                        ApexSound.play('shutter');
-                    }
-                    splash.classList.add('split-active');
+                if (introExiting) return;
+                introExiting = true;
+                if (typeof ApexSound !== 'undefined') {
+                    ApexSound.init();
+                    ApexSound.play('shutter');
+                }
+                DashIntro.pushIn(() => {
                     document.body.classList.remove('intro-active');
-                    enterGridState();
                     if (timerEl) timerEl.style.display = 'none';
                     if (lutToggle) lutToggle.style.display = 'block';
-                    
-                    initVisualGrid();
-                }
+                    const gridContainer = document.getElementById('grid-scroll-container');
+                    if (gridContainer && !document.activeElement?.closest?.('a, button, input')) {
+                        gridContainer.focus({ preventScroll: true });
+                    }
+                });
             }
 
             // Keyboard/Click listeners to skip
@@ -2614,21 +2610,8 @@
 
             // Auto skip after 3 seconds
             introTimer = setTimeout(() => {
-                clearInterval(countdownInterval);
-                const splash = document.getElementById('standoff-splash');
-                if (splash && !splash.classList.contains('split-active')) {
-                    if (typeof ApexSound !== 'undefined') {
-                        ApexSound.init();
-                        ApexSound.play('shutter');
-                    }
-                    splash.classList.add('split-active');
-                    document.body.classList.remove('intro-active');
-                    enterGridState();
-                    if (timerEl) timerEl.style.display = 'none';
-                    if (lutToggle) lutToggle.style.display = 'block';
-                    
-                    initVisualGrid();
-                }
+                introTimer = null;
+                skipIntro();
             }, 3000);
         }
 

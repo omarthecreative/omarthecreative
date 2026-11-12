@@ -31,6 +31,21 @@ async function open({ path: p = '/', seen = false, reduced = false, offline = fa
       (route) => route.abort()
     );
   }
+  // Page-clock timestamps of the intro's state changes, immune to test-runner lag.
+  await context.addInitScript(() => {
+    window.__marks = {};
+    const mark = (k) => { if (!(k in window.__marks)) window.__marks[k] = performance.now(); };
+    const check = () => {
+      const h = document.documentElement.classList;
+      if (document.body && document.body.classList.contains('intro-active')) mark('introStart');
+      if (h.contains('dash-intro')) mark('mounted');
+      if (h.contains('dash-pushing')) mark('pushStart');
+      if ('pushStart' in window.__marks && !h.contains('dash-pushing')) mark('pushEnd');
+    };
+    new MutationObserver(check).observe(document, { attributes: true, subtree: true, attributeFilter: ['class'] });
+    window.addEventListener('click', () => mark('skip'), true);
+    window.addEventListener('keydown', () => mark('skip'), true);
+  });
   const page = await context.newPage();
   page.vw = viewport.width;
   page.vh = viewport.height;
@@ -103,20 +118,63 @@ function assertFits(s, p, tol, label = '') {
     assert.ok(Math.abs(s[k] - p[k]) <= tol, `${label}${k}: frame ${s[k].toFixed(2)} vs grid ${p[k].toFixed(2)}`);
   }
 }
+// Grid in its normal state, intro layer gone.
+async function endState(page, timeout) {
+  await until(page, () => {
+    const portal = document.getElementById('portal');
+    const splash = document.getElementById('standoff-splash');
+    const cs = getComputedStyle(portal);
+    return cs.transform === 'none' && cs.clipPath === 'none' && getComputedStyle(splash).display === 'none'
+      && !document.documentElement.classList.contains('dash-intro')
+      && !document.documentElement.classList.contains('dash-pushing');
+  }, timeout);
+}
+async function assertEndState(page) {
+  assert.equal(await css(page, '#portal', 'transform'), 'none');
+  assert.equal(await css(page, '#portal', 'clipPath'), 'none');
+  assert.equal(await css(page, '#standoff-splash', 'display'), 'none');
+  const html = await page.evaluate(() => document.documentElement.className);
+  assert.ok(!/dash-intro|dash-pushing/.test(html), html);
+  assert.equal(await page.evaluate(() => document.body.classList.contains('intro-active')), false);
+  const p = await rect(page, '#portal');
+  assert.ok(p.left === 0 && p.top === 0 && Math.abs(p.width - page.vw) <= 1, JSON.stringify(p));
+  // The grid page scrolls in its own fixed container (html/body never scroll on the grid page).
+  const scrolled = await page.evaluate(() => {
+    const c = document.getElementById('grid-scroll-container');
+    c.scrollTop = 400;
+    return c.scrollTop;
+  });
+  assert.equal(scrolled, 400);
+}
+// Count shutter sounds and pushIn calls from here on.
+async function countExits(page) {
+  await page.evaluate(() => {
+    window.__shutters = 0;
+    window.__pushIns = 0;
+    if (typeof ApexSound !== 'undefined') { // script-scope const, not on window
+      const play = ApexSound.play;
+      ApexSound.play = function (name) {
+        if (name === 'shutter') window.__shutters++;
+        try { return play.apply(this, arguments); } catch (e) { /* no audio in headless */ }
+      };
+    }
+    const push = DashIntro.pushIn;
+    DashIntro.pushIn = function () { window.__pushIns++; return push.apply(this, arguments); };
+  });
+}
 async function done(page) {
   await page.context().close();
 }
 
 for (const offline of [false, true]) {
   const mode = offline ? 'offline' : 'online';
-  describe(`[${mode}]`, { concurrency: 2 }, () => {
+  describe(`[${mode}]`, { concurrency: 1 }, () => {
     test('baseline: first visit ends on the grid', async () => {
       const page = await open({ offline });
       try {
         await introStart(page);
-        // Old exit hides the splash ~1.2s after the 3s hold; headless software
-        // rendering stretches that, so poll to a deadline instead of sleeping.
-        await until(page, () => getComputedStyle(document.getElementById('standoff-splash')).visibility === 'hidden', 8000);
+        // Headless software rendering stretches timings, so poll to a deadline.
+        await until(page, () => getComputedStyle(document.getElementById('standoff-splash')).display === 'none', 8000);
         assert.equal(await page.evaluate(() => document.body.classList.contains('grid-active')), true);
       } finally {
         await done(page);
@@ -186,6 +244,135 @@ for (const offline of [false, true]) {
         assert.equal(await page.locator('#standoff-splash h1').count(), 1);
         const h = await rect(page, '#standoff-splash h1');
         assert.ok(h.left < page.vw && h.right > 0 && h.width > 0, JSON.stringify(h));
+      } finally {
+        await done(page);
+      }
+    });
+    for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
+      test(`after hold and push-in the grid is in its normal state (${viewport.width}x${viewport.height})`, async () => {
+        const page = await open({ offline, viewport });
+        try {
+          await introStart(page);
+          await page.waitForTimeout(4400);
+          await endState(page, 3000); // slack for headless software rendering; timings asserted below
+          const m = await page.evaluate(() => window.__marks);
+          const hold = m.pushStart - m.introStart, push = m.pushEnd - m.pushStart;
+          assert.ok(hold >= 2950 && hold <= 3600, `hold ${hold.toFixed(0)}ms`);
+          assert.ok(push <= 1400, `push-in ${push.toFixed(0)}ms`);
+          await assertEndState(page);
+        } finally {
+          await done(page);
+        }
+      });
+    }
+
+    test('mid push-in, frame and grid edges still coincide', async (t) => {
+      const page = await open({ offline });
+      try {
+        await mounted(page);
+        await until(page, () => document.documentElement.classList.contains('dash-pushing'), 5000);
+        const samples = await page.evaluate(() => new Promise((resolve) => {
+          const out = [];
+          const t0 = performance.now();
+          const portal = document.getElementById('portal');
+          const screen = document.getElementById('dash-screen');
+          (function frame() {
+            const pushing = document.documentElement.classList.contains('dash-pushing');
+            if (!pushing || performance.now() - t0 > 1500) return resolve(out);
+            const s = screen.getBoundingClientRect();
+            const p = portal.getBoundingClientRect();
+            const scale = p.width / portal.offsetWidth;
+            out.push({
+              pushing,
+              s: { left: s.left, top: s.top, width: s.width, height: s.height },
+              // visible part of the grid is its first screenful: 100vh, scaled
+              p: { left: p.left, top: p.top, width: p.width, height: window.innerHeight * scale },
+              scale,
+            });
+            requestAnimationFrame(frame);
+          })();
+        }));
+        const mid = samples.filter((x) => x.pushing && x.scale > 0.5 && x.scale < 0.99);
+        assert.ok(mid.length >= 1, `no mid-push samples: ${JSON.stringify(samples.map((x) => x.scale))}`);
+        for (const x of mid) assertFits(x.s, x.p, 2, `scale ${x.scale.toFixed(3)} `);
+        const worst = Math.max(...mid.flatMap((x) => ['left', 'top', 'width', 'height'].map((k) => Math.abs(x.s[k] - x.p[k]))));
+        t.diagnostic(`${mid.length} mid-push frames, worst edge error ${worst.toFixed(3)}px`);
+      } finally {
+        await done(page);
+      }
+    });
+
+    test('click skips: end state within 1400ms of the click (page clock)', async () => {
+      const page = await open({ offline });
+      try {
+        await mounted(page);
+        await page.waitForTimeout(500);
+        await page.mouse.click(page.vw * 0.75, page.vh * 0.6); // on the screen
+        await endState(page, 6000);
+        const m = await page.evaluate(() => window.__marks);
+        assert.ok(m.pushEnd - m.skip <= 1400, `skip to end state ${(m.pushEnd - m.skip).toFixed(0)}ms`);
+        await assertEndState(page);
+        assert.ok(!/\?p=|project/.test(page.url()), page.url()); // the click did not open a tile
+      } finally {
+        await done(page);
+      }
+    });
+
+    test('Escape skips: end state within 1400ms (page clock)', async () => {
+      const page = await open({ offline });
+      try {
+        await mounted(page);
+        await page.waitForTimeout(500);
+        await page.keyboard.press('Escape');
+        await endState(page, 6000);
+        const m = await page.evaluate(() => window.__marks);
+        assert.ok(m.pushEnd - m.skip <= 1400, `skip to end state ${(m.pushEnd - m.skip).toFixed(0)}ms`);
+        await assertEndState(page);
+      } finally {
+        await done(page);
+      }
+    });
+
+    test('click then timer: pushIn runs once', async () => {
+      const page = await open({ offline });
+      try {
+        await introStart(page);
+        await countExits(page);
+        assert.ok(!('pushStart' in await page.evaluate(() => window.__marks)), 'counters attached too late');
+        // Clicks scheduled on the page clock, so runner lag cannot reorder them against the 3s timer.
+        await page.evaluate(() => {
+          const at = (ms, fn) => setTimeout(fn, Math.max(0, window.__marks.introStart + ms - performance.now()));
+          const click = () => document.getElementById('dash-shield').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+          at(2850, click); // just before the timer
+          at(3150, click); // again, mid push-in
+        });
+        await endState(page, 6000);
+        await page.waitForTimeout(300);
+        assert.equal(await page.evaluate(() => window.__shutters), 1);
+        assert.equal(await page.evaluate(() => window.__pushIns), 1);
+        await assertEndState(page);
+      } finally {
+        await done(page);
+      }
+    });
+
+    test('tab hidden during push-in still finishes', async () => {
+      const page = await open({ offline });
+      try {
+        await mounted(page);
+        await page.evaluate(() => {
+          // Hidden tabs do not deliver transitionend.
+          window.addEventListener('transitionend', (e) => e.stopImmediatePropagation(), true);
+        });
+        await page.keyboard.press('Enter');
+        await until(page, () => document.documentElement.classList.contains('dash-pushing'), 1000).catch(() => {});
+        await page.evaluate(() => {
+          Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
+          Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'hidden' });
+          document.dispatchEvent(new Event('visibilitychange'));
+        });
+        await page.waitForTimeout(1500);
+        await assertEndState(page);
       } finally {
         await done(page);
       }

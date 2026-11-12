@@ -47,6 +47,7 @@
             state = 'done';
             clearTimeout(timer);
             if (portal) portal.removeEventListener('transitionend', onEnd);
+            document.removeEventListener('visibilitychange', onHidden);
             window.removeEventListener('resize', setScales);
             root.classList.remove('dash-intro', 'dash-pushing');
             if (splash) splash.style.display = 'none';
@@ -55,11 +56,16 @@
         function onEnd(e) {
             if (e.target === portal && e.propertyName === 'transform') finish();
         }
+        // Hidden tabs throttle timers and skip transitions: land now.
+        function onHidden() {
+            if (document.hidden) finish();
+        }
 
         if (portal) portal.addEventListener('transitionend', onEnd);
+        document.addEventListener('visibilitychange', onHidden);
         timer = setTimeout(finish, PUSH_TIMEOUT_MS);
-        if (!mounted) {
-            // Nothing to push into; land immediately.
+        if (!mounted || document.hidden) {
+            // Nothing to push into, or nobody watching: land immediately.
             finish();
             return;
         }
