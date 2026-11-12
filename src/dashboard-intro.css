@@ -290,7 +290,8 @@ html.dash-pushing .dash-doll-top { animation: dash-sway-hard .5s ease-in-out inf
 }
 .dash-knee .dash-dial { flex: none; width: 64px; height: 64px; }
 .dash-knee .dash-wire-slot { flex: none; width: 76px; height: 76px; }
-.dash-pedals { left: 150px; top: 540px; display: flex; align-items: flex-end; gap: 44px; }
+/* Footwell: tops aligned so both pedals show at the window's lower edge. */
+.dash-pedals { left: 150px; top: 532px; display: flex; align-items: flex-start; gap: 44px; }
 .dash-pedal-brake {
     width: 124px;
     height: 84px;
@@ -440,18 +441,19 @@ html.dash-pushing #portal {
             0 16px 32px 7px rgba(0, 0, 0, 0.6);
     }
 
-    /* No knee panel on the phone: the button sits in the left margin, level with the screen's foot. */
+    /* No knee panel on the phone: the button sits centred in the margin left of the
+       bezel (bezel is 7px wide), level with the screen's foot. */
     #dash-wire {
-        left: calc(var(--dash-left) / 2 - 30px);
-        top: calc(var(--dash-top) + var(--dash-h) - 60px);
-        width: 60px;
-        height: 60px;
+        left: calc((var(--dash-left) - 7px) / 2 - 27px);
+        top: calc(var(--dash-top) + var(--dash-h) - 54px);
+        width: 54px;
+        height: 54px;
         border-width: 2px;
         box-shadow: 0 0 0 1px #5E636B, inset 0 0 0 3px #151517, 0 4px 10px rgba(0, 0, 0, 0.6);
         gap: 2px;
-        font-size: 11px;
+        font-size: 10px;
     }
-    #dash-wire svg { height: 12px; }
+    #dash-wire svg { height: 11px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
