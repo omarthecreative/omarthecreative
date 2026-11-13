@@ -25,7 +25,7 @@ after(async () => {
 async function open({ path: p = '/', seen = false, reduced = false, offline = false, viewport = { width: 1440, height: 900 }, routes = [] } = {}) {
   const context = await browser.newContext({ viewport, reducedMotion: reduced ? 'reduce' : 'no-preference' });
   for (const [match, handler] of routes) await context.route(match, handler);
-  if (seen) await context.addInitScript(() => localStorage.setItem('omar_seen_intro', 'true'));
+  if (seen) await context.addInitScript(() => sessionStorage.setItem('omar_intro_session', '1'));
   if (offline) {
     await context.route(
       (url) => BLOCKED.some((h) => url.hostname === h || url.hostname.endsWith('.' + h)),

@@ -7,6 +7,20 @@
     <meta name="description" content="Creative Director. Writer. And More. Over the last 10 years, my focus is on brand actions, films and campaigns that create value and move culture. More recently, my focus is on deploying frontier technology to amplify human creativity and craft.">
 
     <script>
+        // Private modes can block storage, and then every read throws. Swap in
+        // an in-memory copy so the page's scripts still run. Nothing persists.
+        ['localStorage', 'sessionStorage'].forEach(function (k) {
+            try { window[k].getItem('_'); return; } catch (e) {}
+            var m = {};
+            var mem = {
+                getItem: function (i) { return Object.prototype.hasOwnProperty.call(m, i) ? m[i] : null; },
+                setItem: function (i, v) { m[i] = String(v); },
+                removeItem: function (i) { delete m[i]; },
+                clear: function () { m = {}; }
+            };
+            try { Object.defineProperty(window, k, { configurable: true, value: mem }); } catch (e) {}
+        });
+
         // Immediate check for start parameter and intro seen state to avoid flash
         (function() {
             try {
@@ -14,7 +28,10 @@
                 if (params.has('start')) {
                     document.documentElement.classList.add('starting');
                 }
-                const seenIntro = localStorage.getItem('omar_seen_intro') === 'true';
+                // The intro plays once per browser session. Storage can throw
+                // (private modes); then the intro plays.
+                let seenIntro = false;
+                try { seenIntro = sessionStorage.getItem('omar_intro_session') === '1'; } catch (e) { seenIntro = false; }
                 const hasProject = params.get('p') !== null;
                 const hasFilter = params.get('filter') !== null;
                 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -40,6 +57,7 @@
                     // hides #bg-container until the grid takes over, so the
                     // full-size film backgrounds don't download during the intro.
                     document.documentElement.classList.add('dash-first');
+                    try { sessionStorage.setItem('omar_intro_session', '1'); } catch (e) {}
                 }
             } catch (e) {
                 console.error("Intro bypass check failed:", e);
@@ -1674,7 +1692,7 @@
             document.body.classList.add('grid-active');
             document.documentElement.classList.add('grid-active');
             document.body.classList.remove('paladin-landing');
-            localStorage.setItem('omar_seen_intro', 'true');
+            try { localStorage.setItem('omar_seen_intro', 'true'); } catch (e) {}
             const wrapper = document.querySelector('.portal-wrapper');
             if (wrapper) {
                 const temp = wrapper.style.display;
@@ -1838,7 +1856,10 @@
         // - From project details: transition back to grid smoothly (no reload)
         document.querySelector('.header-name').addEventListener('click', (e) => {
             if (document.body.classList.contains('grid-active')) {
-                localStorage.removeItem('omar_seen_intro');
+                try {
+                    localStorage.removeItem('omar_seen_intro');
+                    sessionStorage.removeItem('omar_intro_session');
+                } catch (e) {}
             } else if (document.body.classList.contains('project-view')) {
                 e.preventDefault();
                 currentIndex = -1;
@@ -2562,11 +2583,12 @@
 
         function initIntro() {
             const params = new URLSearchParams(window.location.search);
-            const seenIntro = localStorage.getItem('omar_seen_intro') === 'true';
+            let seenIntro = false;
+            try { seenIntro = sessionStorage.getItem('omar_intro_session') === '1'; } catch (e) { seenIntro = false; }
             const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
             // If direct link to project, deep link, intro already seen, or reduced motion, skip intro.
-            // dashFirstVisit wins: mountDashboardEarly() has already marked the intro as seen.
+            // dashFirstVisit wins: the head script has already marked this session as seen.
             if (!dashFirstVisit && (params.get('p') !== null || params.get('filter') !== null || seenIntro || reducedMotion)) {
                 const splash = document.getElementById('standoff-splash');
                 if (splash) splash.style.display = 'none';
@@ -2867,7 +2889,7 @@
         // page is still dark (html.dash-loading). Once the fonts and the screen's
         // pictures are ready, the page appears and the intro starts together, so
         // the dashboard never shows an empty screen and skips work from frame one.
-        // Read once here: enterGridState() stores omar_seen_intro straight away.
+        // Read once here: the head script has already marked this session as seen.
         const dashFirstVisit = document.documentElement.classList.contains('dash-first');
         (function mountDashboardEarly() {
             if (!dashFirstVisit) return;
@@ -2885,7 +2907,8 @@
             const params = new URLSearchParams(window.location.search);
             const pIndex = params.get('p');
             const filterParam = params.get('filter');
-            const seenIntro = localStorage.getItem('omar_seen_intro') === 'true';
+            let seenIntro = false;
+            try { seenIntro = sessionStorage.getItem('omar_intro_session') === '1'; } catch (e) { seenIntro = false; }
             const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
             if (pIndex !== null && projects[pIndex]) {
