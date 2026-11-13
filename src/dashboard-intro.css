@@ -186,7 +186,8 @@ html.dash-intro .copyright-tag.fixed {
     background: #1A1020;
     overflow: hidden;
 }
-.dash-minimap svg { display: block; width: 100%; height: 100%; }
+.dash-minimap svg,
+.dash-minimap img { display: block; width: 100%; height: 100%; }
 
 /* First visit: the page stays dark until the fonts and the screen's pictures
    are ready, then the dashboard appears complete and the intro starts. */

@@ -363,5 +363,35 @@ for (const offline of [false, true]) {
         assert.deepEqual(media(page).filter((u) => /clip\.mp4$/.test(u)), []);
       } finally { await close(page); }
     });
+
+    // — Task 4: Miami Beach minimap and mirror field —
+    test('miami-beach: minimap image is the scene file and has loaded', async () => {
+      const page = await open({ offline });
+      try {
+        await introStart(page);
+        assert.match(await page.getAttribute('.dash-minimap img', 'src'), /miami-beach\/minimap\.svg$/);
+        assert.ok(await page.evaluate(() => document.querySelector('.dash-minimap img').naturalWidth > 0));
+        assert.notEqual(await css(page, '.dash-minimap img', 'display'), 'none');
+        assert.equal(await page.locator('.dash-minimap svg').count(), 0);
+      } finally { await close(page); }
+    });
+
+    test('minimap 404: inline minimap still shown', async () => {
+      const page = await open({ offline, routes: [['**/scenes/miami-beach/minimap.svg', (r) => r.fulfill({ status: 404, body: 'not found' })]] });
+      try {
+        await introStart(page);
+        await page.waitForTimeout(300);
+        assert.equal(await page.locator('.dash-minimap img').count(), 0);
+        assert.equal(await css(page, '.dash-minimap svg', 'display'), 'block');
+        assert.deepEqual(page.errors, []);
+      } finally { await close(page); }
+    });
+
+    test('mirror gag recorded', async () => {
+      const page = await open({ offline });
+      try {
+        assert.equal(await page.getAttribute('.dash-mirror', 'data-gag'), 'paladin');
+      } finally { await close(page); }
+    });
   });
 }

@@ -182,12 +182,35 @@
                 done();
             });
         });
+        holdDarkFor(ready);
+        still.src = src;
+    }
+
+    // The page stays dark for this picture too, at most STILL_WAIT_MS.
+    function holdDarkFor(ready) {
         var cap = new Promise(function (r) { setTimeout(r, STILL_WAIT_MS); });
         window.__dashPicsReady = Promise.all([
             window.__dashPicsReady || Promise.resolve(),
             Promise.race([ready, cap])
         ]);
-        still.src = src;
+    }
+
+    // The scene's minimap replaces the inline one once it loads. On an error
+    // the inline minimap stays.
+    function showMinimap(src) {
+        var box = document.querySelector('.dash-minimap');
+        if (!box) return;
+        var img = new Image();
+        img.alt = '';
+        holdDarkFor(new Promise(function (done) {
+            img.onload = function () {
+                while (box.firstChild) box.removeChild(box.firstChild);
+                box.appendChild(img);
+                done();
+            };
+            img.onerror = done;
+        }));
+        img.src = src;
     }
 
     // Plays once over the still. Until it can play, and if it never can, the
@@ -232,6 +255,9 @@
             writeStore('omar_last_line', line);
             scene = picked;
             if (typeof picked.still === 'string' && picked.still) showStill(picked.still);
+            if (typeof picked.minimap === 'string' && picked.minimap) showMinimap(picked.minimap);
+            var mirror = document.querySelector('.dash-mirror');
+            if (mirror && typeof picked.mirror === 'string') mirror.setAttribute('data-gag', picked.mirror);
             return { sceneId: picked.id, line: line };
         } catch (e) {
             return fallback;
