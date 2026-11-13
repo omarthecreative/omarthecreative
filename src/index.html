@@ -75,7 +75,7 @@
     <link rel="stylesheet" href="https://use.typekit.net/niv4qrq.css">
     <link rel="stylesheet" href="base.css">
     <link rel="stylesheet" href="video-overlay.css">
-    <link rel="stylesheet" href="dashboard-intro.css?v=3">
+    <link rel="stylesheet" href="dashboard-intro.css?v=4">
     <script src="https://player.vimeo.com/api/player.js"></script>
     <script src="carousel-config.js"></script>
     <script>
@@ -84,11 +84,29 @@
         function gridThumb(src) {
             return 'assets/thumbs/' + src.replace(/^assets\//, '').replace(/\//g, '__').replace(/\.[^.]+$/, '') + '.jpg';
         }
-        // Start the film tiles now, during the font wait, so the dashboard's
-        // screen has pictures when the intro starts.
-        if (new URLSearchParams(location.search).get('p') === null) {
-            projects.forEach(function (p) { new Image().src = gridThumb(p.img); });
-        }
+        // Start the film tiles now, so the dashboard's screen has its pictures.
+        (function () {
+            var root = document.documentElement;
+            if (root.classList.contains('dash-first')) {
+                // First visit: keep the page dark (html.dash-loading) until the
+                // fonts and the film tiles have loaded, so the dashboard first
+                // appears complete. The tiles never add more than 1.5s.
+                root.classList.add('dash-loading');
+                var pics = projects.map(function (p) {
+                    return new Promise(function (done) {
+                        var im = new Image();
+                        im.onload = im.onerror = done;
+                        im.src = gridThumb(p.img);
+                    });
+                });
+                var cap = new Promise(function (r) { setTimeout(r, 1500); });
+                window.__dashPicsReady = Promise.race([Promise.all(pics), cap]);
+                // Failsafe: show the page even if the main script never runs.
+                setTimeout(function () { root.classList.remove('dash-loading'); }, 4000);
+            } else if (new URLSearchParams(location.search).get('p') === null) {
+                projects.forEach(function (p) { new Image().src = gridThumb(p.img); });
+            }
+        })();
     </script>
     <style>
         :root {
@@ -1655,7 +1673,6 @@
         function enterGridState() {
             document.body.classList.add('grid-active');
             document.documentElement.classList.add('grid-active');
-            document.documentElement.classList.remove('dash-first');
             document.body.classList.remove('paladin-landing');
             localStorage.setItem('omar_seen_intro', 'true');
             const wrapper = document.querySelector('.portal-wrapper');
@@ -2548,8 +2565,9 @@
             const seenIntro = localStorage.getItem('omar_seen_intro') === 'true';
             const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-            // If direct link to project, deep link, intro already seen, or reduced motion, skip intro
-            if (params.get('p') !== null || params.get('filter') !== null || seenIntro || reducedMotion) {
+            // If direct link to project, deep link, intro already seen, or reduced motion, skip intro.
+            // dashFirstVisit wins: mountDashboardEarly() has already marked the intro as seen.
+            if (!dashFirstVisit && (params.get('p') !== null || params.get('filter') !== null || seenIntro || reducedMotion)) {
                 const splash = document.getElementById('standoff-splash');
                 if (splash) splash.style.display = 'none';
                 document.body.classList.remove('intro-active');
@@ -2562,11 +2580,14 @@
             }
 
             document.body.classList.add('intro-active');
-            // The grid goes into its normal state now, and the dashboard shows it
-            // scaled down inside its screen for the hold.
-            enterGridState();
-            initVisualGrid();
-            if (window.DashIntro) DashIntro.mount();
+            // The grid is in its normal state and the dashboard shows it scaled
+            // down inside its screen for the hold. Normally already done by
+            // mountDashboardEarly(); this covers any path that skipped it.
+            if (!document.documentElement.classList.contains('dash-intro')) {
+                enterGridState();
+                initVisualGrid();
+                if (window.DashIntro) DashIntro.mount();
+            }
             const timerEl = document.getElementById('intro-timer');
             const lutToggle = document.getElementById('lut-toggle');
             if (timerEl) {
@@ -2596,6 +2617,7 @@
                 }
                 DashIntro.pushIn(() => {
                     document.body.classList.remove('intro-active');
+                    document.documentElement.classList.remove('dash-first');
                     preloadHeroBackgrounds();
                     if (timerEl) timerEl.style.display = 'none';
                     if (lutToggle) lutToggle.style.display = 'block';
@@ -2841,6 +2863,19 @@
             setTimeout(done, 2000);
         }
 
+        // First visit: put the live grid in the dashboard's screen now, while the
+        // page is still dark (html.dash-loading). Once the fonts and the screen's
+        // pictures are ready, the page appears and the intro starts together, so
+        // the dashboard never shows an empty screen and skips work from frame one.
+        // Read once here: enterGridState() stores omar_seen_intro straight away.
+        const dashFirstVisit = document.documentElement.classList.contains('dash-first');
+        (function mountDashboardEarly() {
+            if (!dashFirstVisit) return;
+            enterGridState();
+            initVisualGrid();
+            if (window.DashIntro) DashIntro.mount();
+        })();
+
         waitForFonts(() => {
             // Clean up immediate styles so that standard classes (grid-active, project-view) control layouts properly
             const immediateStyle = document.getElementById('skip-intro-immediate-style');
@@ -2887,7 +2922,7 @@
                 document.documentElement.classList.add('ready');
                 initVisualGrid();
                 applyGridFilter(filterParam);
-            } else if (seenIntro || reducedMotion) {
+            } else if (!dashFirstVisit && (seenIntro || reducedMotion)) {
                 const splash = document.getElementById('standoff-splash');
                 if (splash) splash.style.display = 'none';
                 document.body.classList.remove('intro-active');
@@ -2897,7 +2932,12 @@
             } else {
                 renderPaladinHero();
                 document.documentElement.classList.add('ready');
-                initIntro();
+                // Show the page and start the intro once the screen's pictures
+                // are in too (usually already; never more than 1.5s after load).
+                (window.__dashPicsReady || Promise.resolve()).then(() => {
+                    document.documentElement.classList.remove('dash-loading');
+                    initIntro();
+                });
             }
         });
 

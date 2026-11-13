@@ -46,6 +46,26 @@ async function open({ path: p = '/', seen = false, reduced = false, offline = fa
     new MutationObserver(check).observe(document, { attributes: true, subtree: true, attributeFilter: ['class'] });
     window.addEventListener('click', () => mark('skip'), true);
     window.addEventListener('keydown', () => mark('skip'), true);
+    // First frame the dashboard is visible: are its screen's pictures loaded,
+    // and how opaque is the first tile? Then watch tile opacity after landing.
+    const frame = () => {
+      const html = document.documentElement;
+      const splash = document.getElementById('standoff-splash');
+      const shown = splash && getComputedStyle(splash).display !== 'none' && getComputedStyle(splash).visibility === 'visible';
+      if (shown && !window.__firstShown && typeof projects !== 'undefined') {
+        const films = new Set(projects.map((p) => new URL(gridThumb(p.img), location.href).href));
+        const done = performance.getEntriesByType('resource').filter((e) => films.has(e.name) && e.responseEnd > 0).length;
+        const card = document.querySelector('.grid-card');
+        window.__firstShown = { t: performance.now(), picsDone: done, picsTotal: films.size, card: card ? +getComputedStyle(card).opacity : null, mounted: html.classList.contains('dash-intro') };
+      }
+      if ('pushEnd' in window.__marks) {
+        const card = document.querySelector('.grid-card');
+        window.__afterLanding = (window.__afterLanding || []).concat(card ? +getComputedStyle(card).opacity : 1);
+        if (window.__afterLanding.length > 20) return;
+      }
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
     // The doll's size as first laid out, before the intro mounts.
     document.addEventListener('DOMContentLoaded', () => {
       const d = document.querySelector('.dash-doll');
@@ -115,9 +135,14 @@ async function visibleRect(page, sel) {
 async function css(page, sel, prop) {
   return page.evaluate(([sel, prop]) => getComputedStyle(document.querySelector(sel))[prop], [sel, prop]);
 }
-// The dashboard is mounted (grid placed in the screen) when html.dash-intro appears.
+// The dashboard is up: grid placed in the screen (html.dash-intro), page visible
+// (no html.dash-loading) and the intro running (body.intro-active). On a first
+// visit the grid is built earlier, behind the dark page; visitors can only see
+// and click it from here.
 async function mounted(page) {
-  await until(page, () => document.documentElement.classList.contains('dash-intro'), 8000);
+  await until(page, () => document.documentElement.classList.contains('dash-intro')
+    && !document.documentElement.classList.contains('dash-loading')
+    && document.body.classList.contains('intro-active'), 8000);
 }
 function assertFits(s, p, tol, label = '') {
   for (const k of ['left', 'top', 'width', 'height']) {
@@ -407,6 +432,42 @@ for (const offline of [false, true]) {
         await until(page, () => document.body.classList.contains('grid-active'), 5000);
         await page.waitForTimeout(500);
         await assertNoIntro(page);
+      } finally {
+        await done(page);
+      }
+    });
+
+    test('the dashboard first appears with its screen pictures loaded and tiles showing', async () => {
+      const page = await open({ offline });
+      try {
+        await until(page, () => !!window.__firstShown, 8000);
+        const f = await page.evaluate(() => window.__firstShown);
+        assert.equal(f.mounted, true, 'grid not in the screen when the dashboard appeared');
+        assert.equal(f.picsDone, f.picsTotal, `${f.picsDone}/${f.picsTotal} screen pictures loaded when the dashboard appeared`);
+        assert.equal(f.card, 1, `first tile opacity ${f.card} (should not fade in)`);
+      } finally {
+        await done(page);
+      }
+    });
+
+    test('tiles do not fade in again after landing', async () => {
+      const page = await open({ offline });
+      try {
+        await introStart(page);
+        await until(page, () => (window.__afterLanding || []).length > 20, 9000);
+        const ops = await page.evaluate(() => window.__afterLanding);
+        assert.ok(ops.every((o) => o === 1), `tile opacity after landing: ${ops.join(',')}`);
+      } finally {
+        await done(page);
+      }
+    });
+
+    test('a picture that never arrives does not hold the page dark for long', async () => {
+      const page = await open({ offline, routes: [['**/assets/thumbs/ferrari-la-tempesta.jpg', (r) => setTimeout(() => r.abort().catch(() => {}), 4000)]] });
+      try {
+        await until(page, () => !!window.__firstShown, 6000);
+        const t = await page.evaluate(() => window.__firstShown.t);
+        assert.ok(t < 2600, `dashboard appeared at ${Math.round(t)}ms`);
       } finally {
         await done(page);
       }
