@@ -1,21 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
 <rect width="96" height="96" fill="#2B2140"/>
-<rect x="6" y="4" width="32" height="20" fill="#F25F8A"/>
-<rect x="6" y="36" width="14" height="22" fill="#FFB199"/>
-<rect x="24" y="36" width="14" height="22" fill="#3BC9C3"/>
-<rect x="6" y="70" width="32" height="22" fill="#FFD27A"/>
-<rect x="0" y="27" width="50" height="6" fill="#5A4E78"/>
-<rect x="0" y="61" width="50" height="6" fill="#5A4E78"/>
-<rect x="44" y="0" width="12" height="96" fill="#5A4E78"/>
-<rect x="49.5" y="30" width="1" height="8" fill="#F2EFE9"/>
-<rect x="49.5" y="46" width="1" height="8" fill="#F2EFE9"/>
-<rect x="49.5" y="82" width="1" height="8" fill="#F2EFE9"/>
-<rect x="56" y="0" width="13" height="96" fill="#1F6B4E"/>
-<circle cx="62" cy="10" r="2.5" fill="#0F6B5E"/><circle cx="62" cy="28" r="2.5" fill="#0F6B5E"/>
-<circle cx="62" cy="46" r="2.5" fill="#0F6B5E"/><circle cx="62" cy="64" r="2.5" fill="#0F6B5E"/>
-<circle cx="62" cy="82" r="2.5" fill="#0F6B5E"/>
-<path d="M69 0 H80 Q76 24 81 48 Q85 72 79 96 H69 Z" fill="#F2D7A0"/>
-<path d="M80 0 Q76 24 81 48 Q85 72 79 96 H96 V0 Z" fill="#16B5B0"/>
-<circle cx="50" cy="14" r="5" fill="#FF0015" stroke="#FFFFFF" stroke-width="2"/>
-<polygon points="50,58 57,75 50,71 43,75" fill="#FFFFFF" stroke="#0B0B0C" stroke-width="1.5"/>
+<rect x="58" y="4" width="32" height="20" fill="#F25F8A"/>
+<rect x="76" y="36" width="14" height="22" fill="#FFB199"/>
+<rect x="58" y="36" width="14" height="22" fill="#3BC9C3"/>
+<rect x="58" y="70" width="32" height="22" fill="#FFD27A"/>
+<rect x="46" y="27" width="50" height="6" fill="#5A4E78"/>
+<rect x="46" y="61" width="50" height="6" fill="#5A4E78"/>
+<rect x="40" y="0" width="12" height="96" fill="#5A4E78"/>
+<rect x="45.5" y="30" width="1" height="8" fill="#F2EFE9"/>
+<rect x="45.5" y="46" width="1" height="8" fill="#F2EFE9"/>
+<rect x="45.5" y="82" width="1" height="8" fill="#F2EFE9"/>
+<rect x="27" y="0" width="13" height="96" fill="#1F6B4E"/>
+<circle cx="34" cy="10" r="2.5" fill="#0F6B5E"/><circle cx="34" cy="28" r="2.5" fill="#0F6B5E"/>
+<circle cx="34" cy="46" r="2.5" fill="#0F6B5E"/><circle cx="34" cy="64" r="2.5" fill="#0F6B5E"/>
+<circle cx="34" cy="82" r="2.5" fill="#0F6B5E"/>
+<path d="M27 0 H16 Q20 24 15 48 Q11 72 17 96 H27 Z" fill="#F2D7A0"/>
+<path d="M16 0 Q20 24 15 48 Q11 72 17 96 H0 V0 Z" fill="#16B5B0"/>
+<circle cx="46" cy="14" r="5" fill="#FF0015" stroke="#FFFFFF" stroke-width="2"/>
+<polygon points="46,58 53,75 46,71 39,75" fill="#FFFFFF" stroke="#0B0B0C" stroke-width="1.5"/>
 </svg>
