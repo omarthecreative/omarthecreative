@@ -182,18 +182,46 @@ html.dash-intro .copyright-tag.fixed {
     top: calc(var(--dash-shield) + 30px * var(--dash-ss));
     width: calc(150px * var(--dash-ss));
     transform: translateY(-100%);
+    /* Hops off the dash once per dance loop; `translate` composes with the transform above. */
+    animation: dash-hop 1.6s linear infinite;
 }
 .dash-doll svg { display: block; width: 100%; height: auto; }
 .dash-doll-top {
     width: 100%;
     aspect-ratio: 150 / 140;
     transform-origin: 50% 100%;
-    animation: dash-sway 2.4s ease-in-out infinite;
+    animation: dash-dance 1.6s ease-in-out infinite;
+}
+/* The raised arm waves, pivoting at the shoulder. */
+.dash-doll-wave {
+    transform-box: view-box;
+    transform-origin: 48px 102px;
+    animation: dash-wave .4s ease-in-out infinite;
 }
 .dash-doll-top svg { height: 100%; overflow: visible; }
 .dash-doll-base { margin-top: calc(-2px * var(--dash-ss)); }
 html.dash-pushing .dash-doll-top { animation: dash-sway-hard .5s ease-in-out infinite; }
-@keyframes dash-sway { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+/* Excited for a visitor: three quick wiggles, a stretch up into the hop,
+   a squash on landing, then a smaller wobble to settle. Origin is the
+   doll's feet, so stretch and squash never lift the body off its spring. */
+@keyframes dash-dance {
+    0%   { transform: rotate(0deg) scale(1, 1); }
+    8%   { transform: rotate(-13deg) scale(1.02, 0.98); }
+    18%  { transform: rotate(13deg) scale(1.02, 0.98); }
+    28%  { transform: rotate(-13deg) scale(1.02, 0.98); }
+    38%  { transform: rotate(13deg) scale(1.02, 0.98); }
+    48%  { transform: rotate(0deg) scale(0.94, 1.08); }
+    62%  { transform: rotate(0deg) scale(1.08, 0.92); }
+    74%  { transform: rotate(-7deg) scale(1, 1); }
+    86%  { transform: rotate(5deg) scale(1, 1); }
+    100% { transform: rotate(0deg) scale(1, 1); }
+}
+@keyframes dash-hop {
+    0%, 40% { translate: 0 0; animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1); }
+    50%     { translate: 0 -9%; animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.3); }
+    60%, 100% { translate: 0 0; }
+}
+@keyframes dash-wave { 0%, 100% { transform: rotate(-18deg); } 50% { transform: rotate(22deg); } }
 @keyframes dash-sway-hard { 0%, 100% { transform: rotate(-14deg); } 50% { transform: rotate(14deg); } }
 .dash-spring { fill: none; stroke: #A8A39A; stroke-width: 4; stroke-linejoin: round; }
 .dash-spec { fill: #33415C; stroke: #0B0B0C; stroke-width: 5; stroke-linejoin: round; }
@@ -457,6 +485,6 @@ html.dash-pushing #portal {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .dash-road, .dash-fly, .dash-rider, .dash-doll-top,
+    .dash-road, .dash-fly, .dash-rider, .dash-doll, .dash-doll-top, .dash-doll-wave,
     html.dash-pushing .dash-doll-top { animation: none; }
 }
