@@ -24,7 +24,8 @@ const TYPES = {
   '.pdf': 'application/pdf',
 };
 
-export function startServer(rootDir) {
+// cacheControl: 'no-store' for tests; pass Netlify's 'public,max-age=0,must-revalidate' to mimic live.
+export function startServer(rootDir, { cacheControl = 'no-store' } = {}) {
   const root = path.resolve(rootDir);
   const server = http.createServer(async (req, res) => {
     try {
@@ -38,7 +39,7 @@ export function startServer(rootDir) {
       const body = await fs.readFile(file);
       res.writeHead(200, {
         'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream',
-        'Cache-Control': 'no-store',
+        'Cache-Control': cacheControl,
       });
       res.end(body);
     } catch {

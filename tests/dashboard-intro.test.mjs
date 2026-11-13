@@ -22,8 +22,9 @@ after(async () => {
   await server?.close();
 });
 
-async function open({ path: p = '/', seen = false, reduced = false, offline = false, viewport = { width: 1440, height: 900 } } = {}) {
+async function open({ path: p = '/', seen = false, reduced = false, offline = false, viewport = { width: 1440, height: 900 }, routes = [] } = {}) {
   const context = await browser.newContext({ viewport, reducedMotion: reduced ? 'reduce' : 'no-preference' });
+  for (const [match, handler] of routes) await context.route(match, handler);
   if (seen) await context.addInitScript(() => localStorage.setItem('omar_seen_intro', 'true'));
   if (offline) {
     await context.route(
@@ -406,6 +407,55 @@ for (const offline of [false, true]) {
         await until(page, () => document.body.classList.contains('grid-active'), 5000);
         await page.waitForTimeout(500);
         await assertNoIntro(page);
+      } finally {
+        await done(page);
+      }
+    });
+
+    test('grid tiles use the small copies, and every copy exists', async () => {
+      const page = await open({ offline });
+      try {
+        await mounted(page);
+        const tiles = await page.evaluate(async () => {
+          const urls = [...document.querySelectorAll('.card-img')].map((el) => el.style.backgroundImage.slice(5, -2));
+          const status = await Promise.all(urls.map((u) => fetch(u, { method: 'HEAD' }).then((r) => r.status)));
+          return { count: projects.length + caseStudies.length, urls, status };
+        });
+        assert.equal(tiles.urls.length, tiles.count);
+        tiles.urls.forEach((u, i) => {
+          assert.ok(u.startsWith('assets/thumbs/'), `tile ${i} uses ${u}`);
+          assert.equal(tiles.status[i], 200, `missing small copy ${u}: run scripts/make-grid-thumbs.py`);
+        });
+      } finally {
+        await done(page);
+      }
+    });
+
+    test('no full-size project or hero pictures download during the hold', async () => {
+      const page = await open({ offline });
+      try {
+        await mounted(page);
+        await until(page, () => 'pushStart' in window.__marks, 8000);
+        const early = await page.evaluate(() => {
+          const full = new Set([...projects, ...caseStudies].map((p) => new URL(p.img, location.href).href));
+          const pushStart = window.__marks.pushStart;
+          return performance.getEntriesByType('resource')
+            .filter((e) => e.startTime < pushStart)
+            .map((e) => e.name.split('?')[0])
+            .filter((u) => full.has(u) || /-bg(-comp)?\.jpe?g$|crowd-surf/.test(u) && !u.includes('/thumbs/'));
+        });
+        assert.deepEqual(early, [], 'full-size pictures requested during the hold');
+      } finally {
+        await done(page);
+      }
+    });
+
+    test('a tile without a small copy falls back to the full picture', async () => {
+      const page = await open({ offline, routes: [['**/assets/thumbs/ferrari-la-tempesta.jpg', (r) => r.fulfill({ status: 404 })]] });
+      try {
+        await mounted(page);
+        await until(page, () => [...document.querySelectorAll('.card-img')]
+          .some((el) => el.style.backgroundImage.includes('assets/ferrari-la-tempesta.jpg')), 5000);
       } finally {
         await done(page);
       }

@@ -35,6 +35,11 @@
                     style.id = 'skip-intro-immediate-style';
                     style.textContent = rules.join('\n');
                     document.head.appendChild(style);
+                } else {
+                    // First visit: the dashboard intro will play. dashboard-intro.css
+                    // hides #bg-container until the grid takes over, so the
+                    // full-size film backgrounds don't download during the intro.
+                    document.documentElement.classList.add('dash-first');
                 }
             } catch (e) {
                 console.error("Intro bypass check failed:", e);
@@ -70,9 +75,21 @@
     <link rel="stylesheet" href="https://use.typekit.net/niv4qrq.css">
     <link rel="stylesheet" href="base.css">
     <link rel="stylesheet" href="video-overlay.css">
-    <link rel="stylesheet" href="dashboard-intro.css?v=2">
+    <link rel="stylesheet" href="dashboard-intro.css?v=3">
     <script src="https://player.vimeo.com/api/player.js"></script>
     <script src="carousel-config.js"></script>
+    <script>
+        // Grid tiles use small copies made by scripts/make-grid-thumbs.py.
+        // Keep this naming rule in step with that script.
+        function gridThumb(src) {
+            return 'assets/thumbs/' + src.replace(/^assets\//, '').replace(/\//g, '__').replace(/\.[^.]+$/, '') + '.jpg';
+        }
+        // Start the film tiles now, during the font wait, so the dashboard's
+        // screen has pictures when the intro starts.
+        if (new URLSearchParams(location.search).get('p') === null) {
+            projects.forEach(function (p) { new Image().src = gridThumb(p.img); });
+        }
+    </script>
     <style>
         :root {
             --vibrant-red: #C5002C;
@@ -1608,7 +1625,7 @@
     </div>
 
     <script src="dashboard-intro.js?v=2"></script>
-    <script src="apex-sound.js?v=3"></script>
+    <script src="apex-sound.js?v=4"></script>
     <script>
 
         function toggleMenu(show) {
@@ -1638,6 +1655,7 @@
         function enterGridState() {
             document.body.classList.add('grid-active');
             document.documentElement.classList.add('grid-active');
+            document.documentElement.classList.remove('dash-first');
             document.body.classList.remove('paladin-landing');
             localStorage.setItem('omar_seen_intro', 'true');
             const wrapper = document.querySelector('.portal-wrapper');
@@ -2376,7 +2394,13 @@
         const projectDisplay = document.getElementById('project-display');
 
         // Preload all background images
-        Object.values(HEADLINE_BACKGROUNDS).forEach(bg => { new Image().src = bg.img; });
+        // On a first visit, wait until the dashboard intro lands, so these
+        // don't compete with the grid tiles (preloadHeroBackgrounds is called
+        // from the intro's landing callback).
+        function preloadHeroBackgrounds() {
+            Object.values(HEADLINE_BACKGROUNDS).forEach(bg => { new Image().src = bg.img; });
+        }
+        if (!document.documentElement.classList.contains('dash-first')) preloadHeroBackgrounds();
 
         // Rotating entry: cycles 0–3, HULLABAWHO (idx 4) is never a start
         function getActiveWords() {
@@ -2572,6 +2596,7 @@
                 }
                 DashIntro.pushIn(() => {
                     document.body.classList.remove('intro-active');
+                    preloadHeroBackgrounds();
                     if (timerEl) timerEl.style.display = 'none';
                     if (lutToggle) lutToggle.style.display = 'block';
                     const gridContainer = document.getElementById('grid-scroll-container');
@@ -2669,8 +2694,9 @@
 
                 const metaType = item.type === 'film' ? '[ FILM ]' : '[ CASE STUDY ]';
 
+                const thumb = gridThumb(item.img);
                 card.innerHTML = `
-                    <div class="card-img" style="background-image: url('${item.img}')"></div>
+                    <div class="card-img" style="background-image: url('${thumb}')"></div>
                     <div class="card-overlay"></div>
                     <div class="card-content">
                         <h3 class="card-title">${preventWidows(item.subtitle)}</h3>
@@ -2714,6 +2740,13 @@
                 });
 
                 container.appendChild(card);
+
+                // A new project without a small copy still shows its picture.
+                const probe = new Image();
+                probe.onerror = () => {
+                    card.querySelector('.card-img').style.backgroundImage = `url('${item.img}')`;
+                };
+                probe.src = thumb;
             });
 
             // Wire up filter UI

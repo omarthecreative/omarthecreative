@@ -39,23 +39,37 @@ const ApexSound = (function () {
     // When a buffer arrives, pre-decode if ctx exists, then flush any
     // play/startLoop calls that were queued while the fetch was in flight.
     function load() {
-        Object.keys(_sounds).forEach(function (name) {
-            fetch(_base + _sounds[name] + '.' + _ext)
-                .then(function (r) { return r.arrayBuffer(); })
-                .then(function (ab) {
-                    _raw[name] = ab;
-                    if (ctx) _decodeOne(name);
-                    // Fire any sounds queued before this buffer arrived.
-                    // ctx is already running at this point (init() was called
-                    // from a prior gesture), so source.start() is safe here.
-                    var cbs = _fetchQueue[name];
-                    if (cbs) {
-                        delete _fetchQueue[name];
-                        cbs.forEach(function (fn) { fn(); });
-                    }
-                })
-                .catch(function () {});
-        });
+        // Landing-page first visit (html.dash-first): only the shutter plays
+        // during the dashboard intro. Fetch it now and the rest after the page
+        // loads, so ~1.9 MB of audio doesn't hold up the grid tiles. Every
+        // other page and visit fetches everything at once, as before.
+        var names = Object.keys(_sounds);
+        if (document.documentElement.classList.contains('dash-first') && document.readyState !== 'complete') {
+            fetchSound('shutter');
+            window.addEventListener('load', function () {
+                names.forEach(function (name) { if (name !== 'shutter') fetchSound(name); });
+            }, { once: true });
+            return;
+        }
+        names.forEach(fetchSound);
+    }
+
+    function fetchSound(name) {
+        fetch(_base + _sounds[name] + '.' + _ext)
+            .then(function (r) { return r.arrayBuffer(); })
+            .then(function (ab) {
+                _raw[name] = ab;
+                if (ctx) _decodeOne(name);
+                // Fire any sounds queued before this buffer arrived.
+                // ctx is already running at this point (init() was called
+                // from a prior gesture), so source.start() is safe here.
+                var cbs = _fetchQueue[name];
+                if (cbs) {
+                    delete _fetchQueue[name];
+                    cbs.forEach(function (fn) { fn(); });
+                }
+            })
+            .catch(function () {});
     }
 
     // Create AudioContext on first gesture and decode all fetched buffers.
