@@ -26,12 +26,17 @@
         root.style.setProperty('--dash-ss', String(shieldPx / (isPhone() ? 260 : 400)));
     }
 
+    // Size the artwork now, before first paint. This script loads after the
+    // splash markup, so #dash-shield exists. Waiting for mount() showed the
+    // CSS default scale (1) first, and the doll and banner visibly shrank.
+    setScales();
+    window.addEventListener('resize', setScales);
+
     function mount() {
         if (mounted) return;
         mounted = true;
         setScales();
         root.classList.add('dash-intro');
-        window.addEventListener('resize', setScales);
 
         // Wire Omar is a real link: keep its click and Enter away from the
         // page's document-level skip handlers so it navigates.

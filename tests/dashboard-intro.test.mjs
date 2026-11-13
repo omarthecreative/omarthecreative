@@ -45,6 +45,11 @@ async function open({ path: p = '/', seen = false, reduced = false, offline = fa
     new MutationObserver(check).observe(document, { attributes: true, subtree: true, attributeFilter: ['class'] });
     window.addEventListener('click', () => mark('skip'), true);
     window.addEventListener('keydown', () => mark('skip'), true);
+    // The doll's size as first laid out, before the intro mounts.
+    document.addEventListener('DOMContentLoaded', () => {
+      const d = document.querySelector('.dash-doll');
+      window.__dollEarly = d ? d.offsetWidth : null;
+    });
   });
   const page = await context.newPage();
   page.vw = viewport.width;
@@ -52,7 +57,7 @@ async function open({ path: p = '/', seen = false, reduced = false, offline = fa
   await page.goto(server.url + p);
   return page;
 }
-// The 3000ms hold starts when the page's fonts gate opens, not at navigation.
+// The 5000ms hold starts when the page's fonts gate opens, not at navigation.
 // Every timed wait counts from here.
 async function introStart(page) {
   await page.waitForFunction(() => document.body.classList.contains('intro-active'), null, { timeout: 8000, polling: 50 });
@@ -174,7 +179,7 @@ for (const offline of [false, true]) {
       try {
         await introStart(page);
         // Headless software rendering stretches timings, so poll to a deadline.
-        await until(page, () => getComputedStyle(document.getElementById('standoff-splash')).display === 'none', 8000);
+        await until(page, () => getComputedStyle(document.getElementById('standoff-splash')).display === 'none', 10000);
         assert.equal(await page.evaluate(() => document.body.classList.contains('grid-active')), true);
       } finally {
         await done(page);
@@ -188,6 +193,17 @@ for (const offline of [false, true]) {
           await mounted(page);
           const r = await rect(page, '#dash-screen');
           assert.ok(Math.abs(r.width / r.height - viewport.width / viewport.height) < 0.01, `${r.width}x${r.height}`);
+        } finally {
+          await done(page);
+        }
+      });
+      test(`doll keeps one size from first layout to the hold (${size})`, async () => {
+        const page = await open({ offline, viewport });
+        try {
+          await mounted(page);
+          const [early, now] = await page.evaluate(() => [window.__dollEarly, document.querySelector('.dash-doll').offsetWidth]);
+          assert.ok(early > 0, `early width ${early}`);
+          assert.ok(Math.abs(early - now) <= 1, `doll ${early}px at load, ${now}px at mount`);
         } finally {
           await done(page);
         }
@@ -253,11 +269,11 @@ for (const offline of [false, true]) {
         const page = await open({ offline, viewport });
         try {
           await introStart(page);
-          await page.waitForTimeout(4400);
+          await page.waitForTimeout(6400);
           await endState(page, 3000); // slack for headless software rendering; timings asserted below
           const m = await page.evaluate(() => window.__marks);
           const hold = m.pushStart - m.introStart, push = m.pushEnd - m.pushStart;
-          assert.ok(hold >= 2950 && hold <= 3600, `hold ${hold.toFixed(0)}ms`);
+          assert.ok(hold >= 4950 && hold <= 5600, `hold ${hold.toFixed(0)}ms`);
           assert.ok(push <= 1400, `push-in ${push.toFixed(0)}ms`);
           await assertEndState(page);
         } finally {
@@ -270,7 +286,7 @@ for (const offline of [false, true]) {
       const page = await open({ offline });
       try {
         await mounted(page);
-        await until(page, () => document.documentElement.classList.contains('dash-pushing'), 5000);
+        await until(page, () => document.documentElement.classList.contains('dash-pushing'), 7000);
         const samples = await page.evaluate(() => new Promise((resolve) => {
           const out = [];
           const t0 = performance.now();
@@ -339,14 +355,14 @@ for (const offline of [false, true]) {
         await introStart(page);
         await countExits(page);
         assert.ok(!('pushStart' in await page.evaluate(() => window.__marks)), 'counters attached too late');
-        // Clicks scheduled on the page clock, so runner lag cannot reorder them against the 3s timer.
+        // Clicks scheduled on the page clock, so runner lag cannot reorder them against the 5s timer.
         await page.evaluate(() => {
           const at = (ms, fn) => setTimeout(fn, Math.max(0, window.__marks.introStart + ms - performance.now()));
           const click = () => document.getElementById('dash-shield').dispatchEvent(new MouseEvent('click', { bubbles: true }));
-          at(2850, click); // just before the timer
-          at(3150, click); // again, mid push-in
+          at(4850, click); // just before the timer
+          at(5150, click); // again, mid push-in
         });
-        await endState(page, 6000);
+        await endState(page, 8000);
         await page.waitForTimeout(300);
         assert.equal(await page.evaluate(() => window.__shutters), 1);
         assert.equal(await page.evaluate(() => window.__pushIns), 1);

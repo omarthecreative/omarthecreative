@@ -1600,12 +1600,12 @@
         <!-- HUD Elements -->
         <div class="hud-tag hud-tl" id="hud-tc">[ TC 00:00:00:00 ]</div>
         <div class="hud-tag hud-tr" id="lut-toggle">[ LUT: REC.709 ]</div>
-        <div class="hud-tag hud-tr" id="intro-timer" style="display: none; color: var(--vibrant-red-hud);">[ DISPATCH IN: 03.00 ]</div>
+        <div class="hud-tag hud-tr" id="intro-timer" style="display: none; color: var(--vibrant-red-hud);">[ DISPATCH IN: 05.00 ]</div>
         <div class="hud-tag hud-bl" id="hud-fps">[ 24 FPS ]</div>
         <div class="hud-tag hud-br" id="bat-status">[ BAT: 00% ]</div>
     </div>
 
-    <script src="dashboard-intro.js?v=1"></script>
+    <script src="dashboard-intro.js?v=2"></script>
     <script src="apex-sound.js?v=3"></script>
     <script>
 
@@ -2512,9 +2512,10 @@
         }
 
         // — TIMED INTRO SPLIT SCREEN & FOOTER TYPEWRITER SYSTEM —
+        const INTRO_HOLD_MS = 5000; // time to look at the dashboard before the push-in
         let introTimer = null;
         let countdownInterval = null;
-        let introTimeLeft = 3.0;
+        let introTimeLeft = INTRO_HOLD_MS / 1000;
 
         function initIntro() {
             const params = new URLSearchParams(window.location.search);
@@ -2544,7 +2545,7 @@
             const lutToggle = document.getElementById('lut-toggle');
             if (timerEl) {
                 timerEl.style.display = 'block';
-                timerEl.textContent = `[ DISPATCH IN: 03.00 ]`;
+                timerEl.textContent = `[ DISPATCH IN: 05.00 ]`;
             }
             if (lutToggle) lutToggle.style.display = 'none';
 
@@ -2610,11 +2611,11 @@
                 }
             }, 100);
 
-            // Auto skip after 3 seconds
+            // Auto skip after the hold
             introTimer = setTimeout(() => {
                 introTimer = null;
                 skipIntro();
-            }, 3000);
+            }, INTRO_HOLD_MS);
         }
 
         function initVisualGrid() {
