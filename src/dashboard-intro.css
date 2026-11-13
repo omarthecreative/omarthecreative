@@ -78,6 +78,20 @@ html.dash-intro .copyright-tag.fixed {
     width: 100%;
     height: 100%;
 }
+/* A scene's still and clip, under the windshield's frame. Cropped like the
+   drawn scene (xMidYMax slice). Shown only once loaded; [hidden] until then. */
+#dash-still,
+#dash-clip {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 100%;
+}
+#dash-still[hidden],
+#dash-clip[hidden] { display: none; }
+#dash-shield.dash-has-still #dash-drawn { display: none; }
 
 .dash-ink { stroke: #1A1020; stroke-width: 3; stroke-linejoin: round; }
 .dash-road { transform-origin: 720px 262px; animation: dash-drive .7s linear infinite; }

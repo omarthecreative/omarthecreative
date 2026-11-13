@@ -5,6 +5,8 @@
    applyScene()   picks a scene and a banner line from window.DashScenes
                   (dashboard-scenes.js) and writes them into the intro markup.
                   Runs once at load, on a first visit, while the page is dark.
+   startClip()    starts the scene's clip, if it has one and its still loaded.
+                  Called when the hold starts, never when the intro is skipped.
    localDate, pickScene, liveBanner, pickLine: the pure parts of that pick.
    Geometry lives in dashboard-intro.css; this file only sets the two
    artwork scales and runs the state changes. */
@@ -70,6 +72,8 @@
             window.removeEventListener('resize', setScales);
             root.classList.remove('dash-intro', 'dash-pushing');
             if (splash) splash.style.display = 'none';
+            var clip = document.getElementById('dash-clip');
+            if (clip && !clip.paused) clip.pause();
             if (typeof onDone === 'function') onDone();
         }
         function onEnd(e) {
@@ -153,7 +157,60 @@
         return pool.length ? pickFrom(pool, rnd) : DEFAULT_LINE;
     }
 
-    var scene = null; // the scene on screen, once applyScene has run
+    var STILL_WAIT_MS = 1500; // longest the page stays dark waiting for a still
+
+    var scene = null;        // the scene on screen, once applyScene has run
+    var stillLoaded = false;
+
+    // The still replaces the drawn scene only once it has loaded. The page
+    // stays dark (html.dash-loading) until it does, for at most STILL_WAIT_MS.
+    function showStill(src) {
+        var still = document.getElementById('dash-still');
+        var shield = document.getElementById('dash-shield');
+        if (!still || !shield) return;
+        var ready = new Promise(function (done) {
+            still.addEventListener('load', function () {
+                stillLoaded = true;
+                still.hidden = false;
+                shield.classList.add('dash-has-still');
+                done();
+            });
+            still.addEventListener('error', function () {
+                stillLoaded = false;
+                still.hidden = true;
+                shield.classList.remove('dash-has-still');
+                done();
+            });
+        });
+        var cap = new Promise(function (r) { setTimeout(r, STILL_WAIT_MS); });
+        window.__dashPicsReady = Promise.all([
+            window.__dashPicsReady || Promise.resolve(),
+            Promise.race([ready, cap])
+        ]);
+        still.src = src;
+    }
+
+    // Plays once over the still. Until it can play, and if it never can, the
+    // still stays.
+    function startClip() {
+        try {
+            if (!scene || !scene.clip || !stillLoaded) return;
+            var clip = document.getElementById('dash-clip');
+            if (!clip || clip.getAttribute('src')) return;
+            clip.loop = false;
+            clip.addEventListener('canplay', function onCanPlay() {
+                clip.removeEventListener('canplay', onCanPlay);
+                var played = clip.play();
+                clip.hidden = false;
+                if (played && typeof played.catch === 'function') {
+                    played.catch(function () { clip.hidden = true; });
+                }
+            });
+            clip.addEventListener('error', function () { clip.hidden = true; });
+            clip.src = isPhone() && scene.clipSmall ? scene.clipSmall : scene.clip;
+            clip.load();
+        } catch (e) {}
+    }
 
     // Never throws. On any failure the markup stays as written: the drawn scene
     // and the headline.
@@ -174,6 +231,7 @@
             writeStore('omar_last_scene', picked.id);
             writeStore('omar_last_line', line);
             scene = picked;
+            if (typeof picked.still === 'string' && picked.still) showStill(picked.still);
             return { sceneId: picked.id, line: line };
         } catch (e) {
             return fallback;
@@ -186,6 +244,7 @@
         mount: mount,
         pushIn: pushIn,
         applyScene: applyScene,
+        startClip: startClip,
         localDate: localDate,
         pickScene: pickScene,
         liveBanner: liveBanner,

@@ -93,7 +93,7 @@
     <link rel="stylesheet" href="https://use.typekit.net/niv4qrq.css">
     <link rel="stylesheet" href="base.css">
     <link rel="stylesheet" href="video-overlay.css">
-    <link rel="stylesheet" href="dashboard-intro.css?v=4">
+    <link rel="stylesheet" href="dashboard-intro.css?v=5">
     <script src="https://player.vimeo.com/api/player.js"></script>
     <script src="carousel-config.js"></script>
     <script>
@@ -1317,6 +1317,10 @@
     <div id="standoff-splash">
         <div id="dash-scene">
             <div id="dash-shield">
+                <!-- A scene's still and clip sit under the windshield's frame
+                     (dashboard-scenes.js). Without a still, #dash-drawn shows. -->
+                <img id="dash-still" alt="" hidden>
+                <video id="dash-clip" muted playsinline preload="none" hidden></video>
                 <svg class="dash-sky" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
                     <defs>
                         <linearGradient id="dash-sky-grad" x1="0" y1="0" x2="0" y2="1">
@@ -1336,6 +1340,7 @@
                             </g>
                         </g>
                     </defs>
+                    <g id="dash-drawn">
                     <rect x="0" y="0" width="1440" height="262" fill="url(#dash-sky-grad)"></rect>
                     <circle cx="720" cy="232" r="74" fill="#FFE08A"></circle>
                     <rect x="0" y="150" width="1440" height="10" fill="#FF8FB0" opacity="0.5"></rect>
@@ -1390,6 +1395,7 @@
                     <use href="#dash-palm" class="dash-ink" transform="translate(500 296) scale(0.8)"></use>
                     <use href="#dash-palm" class="dash-ink" transform="translate(900 296) scale(-0.8 0.8)"></use>
                     <use href="#dash-palm" class="dash-ink" transform="translate(1150 344) scale(-1.3 1.3)"></use>
+                    </g>
                     <path d="M150 400 Q720 326 1290 400 Z" fill="#0E0E11" class="dash-ink"></path>
                     <path d="M330 396 Q720 346 1110 396" fill="none" stroke="#5A5A66" stroke-width="3"></path>
                     <path d="M420 388 Q720 352 1020 388" fill="none" stroke="#F2EFE9" opacity="0.35" stroke-width="4"></path>
@@ -1661,7 +1667,7 @@
     </div>
 
     <script src="dashboard-scenes.js?v=1"></script>
-    <script src="dashboard-intro.js?v=3"></script>
+    <script src="dashboard-intro.js?v=4"></script>
     <script src="apex-sound.js?v=4"></script>
     <script>
 
@@ -2603,6 +2609,8 @@
             }
 
             document.body.classList.add('intro-active');
+            // The hold starts now: a scene's clip, if it has one, starts with it.
+            if (window.DashIntro && DashIntro.startClip) DashIntro.startClip();
             // The grid is in its normal state and the dashboard shows it scaled
             // down inside its screen for the hold. Normally already done by
             // mountDashboardEarly(); this covers any path that skipped it.

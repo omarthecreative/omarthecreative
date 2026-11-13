@@ -5,10 +5,12 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
+import fs from 'node:fs/promises';
 import { startServer } from './serve.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SRC = path.join(HERE, '..', 'src');
+const FIXTURES = path.join(HERE, 'fixtures');
 const BLOCKED = ['use.typekit.net', 'p.typekit.net', 'player.vimeo.com', 'googletagmanager.com', 'google-analytics.com'];
 
 let server;
@@ -84,6 +86,43 @@ const HEAD = 'HAVE TASTE. WILL TRAVEL.';
 const LINES = ['ART BASEL. BASK RESPONSIBLY.', 'ART BASEL. BYO BANANA.', 'ART BASEL. NOD KNOWINGLY.',
                "ART BASEL. YES, IT'S ART.", 'ART BASEL. PARK IN FORT LAUDERDALE.'];
 const IN_WINDOW = '2026-12-03T17:00:00Z';
+// Routes for a page whose scenes file holds just this scene and no banners.
+// Media under test-media/ come from tests/fixtures/ (clip-small.mp4 is clip.mp4);
+// any other name there is a 404.
+function withScene(scene, { delayMs = 0 } = {}) {
+  const body = `window.DashScenes = { scenes: [${JSON.stringify({ id: 'test-scene', timezone: 'America/New_York', ...scene })}], banners: [] };`;
+  return [
+    ['**/dashboard-scenes.js*', (r) => r.fulfill({ contentType: 'text/javascript', body })],
+    ['**/test-media/**', async (r) => {
+      const name = path.basename(new URL(r.request().url()).pathname).replace('clip-small', 'clip');
+      if (delayMs) await new Promise((d) => setTimeout(d, delayMs));
+      try {
+        const buf = await fs.readFile(path.join(FIXTURES, name));
+        await r.fulfill({ body: buf, contentType: name.endsWith('.mp4') ? 'video/mp4' : 'image/jpeg' });
+      } catch {
+        await r.fulfill({ status: 404, body: 'not found' });
+      }
+    }],
+  ];
+}
+const STILL = 'test-media/still.jpg';
+const CLIP = 'test-media/clip.mp4';
+// State of the windshield at the moment the page stops being dark.
+const firstShown = () => {
+  let sawLoading = false;
+  new MutationObserver((_, obs) => {
+    const h = document.documentElement;
+    if (h.classList.contains('dash-loading')) { sawLoading = true; return; }
+    if (!sawLoading) return;
+    const still = document.getElementById('dash-still');
+    window.__firstShown = {
+      stillReady: still.complete && still.naturalWidth > 0 && !still.hidden,
+      drawn: getComputedStyle(document.getElementById('dash-drawn')).display,
+    };
+    obs.disconnect();
+  }).observe(document, { attributes: true, subtree: true, attributeFilter: ['class'] });
+};
+const media = (page) => page.requested.filter((u) => /test-media/.test(u));
 async function headline(page) {
   return (await page.textContent('.dash-headline')).trim();
 }
@@ -115,7 +154,7 @@ for (const offline of [false, true]) {
       try {
         assert.equal(await hasClass(page, 'html', 'dash-first'), true);
         await introStart(page);
-        await page.waitForTimeout(6600);
+        await landed(page);
         assert.deepEqual(page.errors, []);
         assert.equal(await css(page, '#portal', 'transform'), 'none');
       } finally { await close(page); }
@@ -232,6 +271,96 @@ for (const offline of [false, true]) {
           await page.waitForTimeout(250);
         }
         assert.ok(samples.some((r) => r.left >= 0 && r.right <= 390), JSON.stringify(samples));
+      } finally { await close(page); }
+    });
+
+    // — Task 3: still and clip under the windshield —
+    test('no still: #dash-drawn is rendered, no still or clip requested', async () => {
+      const page = await open({ offline });
+      try {
+        await introStart(page);
+        assert.notEqual(await css(page, '#dash-drawn', 'display'), 'none');
+        assert.equal(await page.getAttribute('#dash-still', 'src'), null);
+        assert.equal(await page.getAttribute('#dash-clip', 'src'), null);
+        assert.equal(await page.evaluate(() => document.getElementById('dash-still').hidden && document.getElementById('dash-clip').hidden), true);
+      } finally { await close(page); }
+    });
+
+    test('still: visible on the first shown frame, #dash-drawn display none', async () => {
+      const page = await open({ offline, routes: withScene({ still: STILL }, { delayMs: 800 }), init: [firstShown] });
+      try {
+        await introStart(page);
+        assert.deepEqual(await page.evaluate(() => window.__firstShown), { stillReady: true, drawn: 'none' });
+        assert.equal(await hasClass(page, '#dash-shield', 'dash-has-still'), true);
+        // Pillars, roof and hood stay drawn over the still.
+        const frame = await page.evaluate(() => [...document.querySelectorAll('.dash-sky > :not(defs):not(#dash-drawn)')]
+          .filter((el) => getComputedStyle(el).display !== 'none').length);
+        assert.ok(frame >= 6, `frame parts showing: ${frame}`);
+      } finally { await close(page); }
+    });
+
+    test('still 404: #dash-drawn stays rendered, no page errors', async () => {
+      const page = await open({ offline, routes: withScene({ still: 'test-media/missing.jpg', clip: CLIP }) });
+      try {
+        await introStart(page);
+        await page.waitForTimeout(500);
+        assert.notEqual(await css(page, '#dash-drawn', 'display'), 'none');
+        assert.equal(await hasClass(page, '#dash-shield', 'dash-has-still'), false);
+        assert.equal(await page.evaluate(() => document.getElementById('dash-still').hidden), true);
+        assert.deepEqual(media(page).filter((u) => /clip/.test(u)), []);
+        assert.deepEqual(page.errors, []);
+      } finally { await close(page); }
+    });
+
+    test('clip: plays once, ended or paused at the end, never loops', async () => {
+      const page = await open({ offline, routes: withScene({ still: STILL, clip: CLIP }) });
+      try {
+        await introStart(page);
+        await page.waitForFunction(() => document.getElementById('dash-clip').ended, null, { timeout: 4000, polling: 50 });
+        const v = await page.evaluate(() => {
+          const el = document.getElementById('dash-clip');
+          return { loop: el.loop, hidden: el.hidden, played: el.played.length, atEnd: el.currentTime >= el.duration - 0.05, src: el.currentSrc };
+        });
+        assert.equal(v.loop, false);
+        assert.equal(v.hidden, false);
+        assert.equal(v.played, 1);
+        assert.equal(v.atEnd, true);
+        assert.match(v.src, /test-media\/clip\.mp4$/);
+        assert.deepEqual(page.errors, []);
+      } finally { await close(page); }
+    });
+
+    test('clip 404: still stays, intro lands on time', async () => {
+      const page = await open({ offline, routes: withScene({ still: STILL, clip: 'test-media/missing.mp4' }) });
+      try {
+        await introStart(page);
+        await landed(page);
+        const m = await page.evaluate(() => window.__marks);
+        const took = m.pushEnd - m.introStart;
+        assert.ok(took >= 5000 && took <= 6600, `introStart to pushEnd: ${took}ms`);
+        assert.equal(await page.evaluate(() => document.getElementById('dash-clip').hidden), true);
+        assert.equal(await hasClass(page, '#dash-shield', 'dash-has-still'), true);
+        assert.deepEqual(page.errors, []);
+      } finally { await close(page); }
+    });
+
+    test('skipped intro (session key set) requests neither still nor clip', async () => {
+      const page = await open({ offline, seen: true, routes: withScene({ still: STILL, clip: CLIP }) });
+      try {
+        await page.waitForFunction(() => document.body.classList.contains('grid-active'));
+        await page.waitForTimeout(1500);
+        assert.deepEqual(media(page), []);
+      } finally { await close(page); }
+    });
+
+    test('phone uses clipSmall', async () => {
+      const page = await open({ offline, viewport: { width: 390, height: 844 },
+        routes: withScene({ still: STILL, clip: CLIP, clipSmall: 'test-media/clip-small.mp4' }) });
+      try {
+        await introStart(page);
+        await page.waitForFunction(() => !document.getElementById('dash-clip').hidden, null, { timeout: 4000, polling: 50 });
+        assert.match(await page.evaluate(() => document.getElementById('dash-clip').currentSrc), /clip-small\.mp4$/);
+        assert.deepEqual(media(page).filter((u) => /clip\.mp4$/.test(u)), []);
       } finally { await close(page); }
     });
   });
