@@ -278,7 +278,9 @@ for (const offline of [false, true]) {
     }
 
     test('banner headline is in view at 300ms', async () => {
-      const page = await open({ offline });
+      // No banners, so the plane tows the headline whatever today's date is.
+      const noBanners = 'window.DashScenes = { scenes: [{ id: "miami-beach", timezone: "America/New_York" }], banners: [] };';
+      const page = await open({ offline, routes: [['**/dashboard-scenes.js*', (r) => r.fulfill({ contentType: 'text/javascript', body: noBanners })]] });
       try {
         await mounted(page);
         await page.waitForTimeout(300);

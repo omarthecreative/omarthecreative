@@ -2,6 +2,10 @@
    mount()        places the live grid in the dashboard's screen frame (adds html.dash-intro)
    pushIn(onDone) pushes the scene in until the screen's edges meet the window's,
                   then removes the intro layer and calls onDone once.
+   applyScene()   picks a scene and a banner line from window.DashScenes
+                  (dashboard-scenes.js) and writes them into the intro markup.
+                  Runs once at load, on a first visit, while the page is dark.
+   localDate, pickScene, liveBanner, pickLine: the pure parts of that pick.
    Geometry lives in dashboard-intro.css; this file only sets the two
    artwork scales and runs the state changes. */
 (function () {
@@ -87,5 +91,105 @@
         root.classList.add('dash-pushing');
     }
 
-    window.DashIntro = { mount: mount, pushIn: pushIn };
+    // — Scenes and banners —
+    var DEFAULT_LINE = 'HAVE TASTE. WILL TRAVEL.';
+
+    function readStore(key) {
+        try { return localStorage.getItem(key); } catch (e) { return null; }
+    }
+    function writeStore(key, value) {
+        try { localStorage.setItem(key, value); } catch (e) {}
+    }
+    function pickFrom(list, rnd) {
+        var i = Math.floor(rnd() * list.length);
+        return list[Math.min(Math.max(i, 0), list.length - 1)];
+    }
+
+    // 'YYYY-MM-DD' for this moment in that time zone. Throws on an unknown zone.
+    function localDate(now, timezone) {
+        return new Intl.DateTimeFormat('en-CA', {
+            timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit'
+        }).format(now);
+    }
+
+    // One scene at random, never the one shown last time when there is a choice.
+    function pickScene(scenes, lastId, rnd) {
+        var pool = (Array.isArray(scenes) ? scenes : []).filter(function (s) {
+            return s && typeof s.id === 'string' && s.id;
+        });
+        if (pool.length > 1 && lastId) {
+            var others = pool.filter(function (s) { return s.id !== lastId; });
+            if (others.length) pool = others;
+        }
+        return pool.length ? pickFrom(pool, rnd) : null;
+    }
+
+    function usableLines(lines) {
+        return Array.isArray(lines) ? lines.filter(function (l) { return typeof l === 'string' && l.trim(); }) : [];
+    }
+
+    // The banner flying over this scene today, in the scene's own time zone.
+    // On overlap, the one that started later wins.
+    function liveBanner(banners, scene, now) {
+        if (!Array.isArray(banners) || !scene) return null;
+        var today;
+        try { today = localDate(now, scene.timezone); } catch (e) { return null; }
+        var live = null;
+        banners.forEach(function (b) {
+            if (!b || b.scene !== scene.id || !usableLines(b.lines).length) return;
+            if (typeof b.start !== 'string' || typeof b.end !== 'string') return;
+            if (b.start <= today && today <= b.end && (!live || b.start >= live.start)) live = b;
+        });
+        return live;
+    }
+
+    // One line at random, never the one shown last time when there is a choice.
+    function pickLine(lines, last, rnd) {
+        var pool = usableLines(lines);
+        if (pool.length > 1 && last) {
+            var others = pool.filter(function (l) { return l !== last; });
+            if (others.length) pool = others;
+        }
+        return pool.length ? pickFrom(pool, rnd) : DEFAULT_LINE;
+    }
+
+    var scene = null; // the scene on screen, once applyScene has run
+
+    // Never throws. On any failure the markup stays as written: the drawn scene
+    // and the headline.
+    function applyScene(now) {
+        var fallback = { sceneId: null, line: DEFAULT_LINE };
+        try {
+            var data = window.DashScenes;
+            if (!data) return fallback;
+            var picked = pickScene(data.scenes, readStore('omar_last_scene'), Math.random);
+            if (!picked) return fallback;
+            var banner = liveBanner(data.banners, picked, now || new Date());
+            var line = banner ? pickLine(banner.lines, readStore('omar_last_line'), Math.random) : DEFAULT_LINE;
+
+            var headline = document.querySelector('.dash-headline');
+            var shield = document.getElementById('dash-shield');
+            if (headline) headline.textContent = line;
+            if (shield) shield.setAttribute('data-scene', picked.id);
+            writeStore('omar_last_scene', picked.id);
+            writeStore('omar_last_line', line);
+            scene = picked;
+            return { sceneId: picked.id, line: line };
+        } catch (e) {
+            return fallback;
+        }
+    }
+
+    if (root.classList.contains('dash-first')) applyScene();
+
+    window.DashIntro = {
+        mount: mount,
+        pushIn: pushIn,
+        applyScene: applyScene,
+        localDate: localDate,
+        pickScene: pickScene,
+        liveBanner: liveBanner,
+        pickLine: pickLine,
+        DEFAULT_LINE: DEFAULT_LINE
+    };
 })();
