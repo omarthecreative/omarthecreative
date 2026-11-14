@@ -5,7 +5,8 @@
    applyScene()   picks a scene from window.DashScenes (dashboard-scenes.js)
                   and writes it into the intro markup. Returns { sceneId }.
                   Runs once at load, on a first visit, while the page is dark.
-   startClip()    starts the scene's clip, if it has one and its still loaded.
+   startClip()    starts the scene's clip, if it has one and its still loaded:
+                  play() at once, shown once it is playing, played once.
                   Called when the hold starts, never when the intro is skipped.
    pickScene      the pure part of that pick.
    layout(w, h)   geometry of the rendered cockpit for a window (pure).
@@ -227,29 +228,27 @@
         img.src = src;
     }
 
-    // Plays once over the still. Until it can play, and if it never can, the
-    // still stays.
+    // Plays once over the still, the same way in both modes. It starts by
+    // playing: iOS Safari loads no data until something calls play(), and the
+    // clip is muted and playsinline, so no gesture is needed. It stays hidden
+    // until it is really playing; if play() is refused or the clip errors, it
+    // stays hidden and the still stays. No retry.
     function startClip() {
         try {
             if (!scene || !scene.clip || !stillLoaded) return;
             var clip = document.getElementById('dash-clip');
             if (!clip || clip.getAttribute('src')) return;
+            // After the intro, finish() let go of the file: nothing to show or hide.
+            var hide = function () { if (state !== 'done') clip.hidden = true; };
             clip.loop = false;
-            clip.addEventListener('canplay', function onCanPlay() {
-                clip.removeEventListener('canplay', onCanPlay);
-                var played = clip.play();
-                clip.hidden = false;
-                if (played && typeof played.catch === 'function') {
-                    played.catch(function () { if (state !== 'done') clip.hidden = true; });
-                }
-            });
-            // After the intro, finish() let go of the file: nothing to hide.
-            clip.addEventListener('error', function () { if (state !== 'done') clip.hidden = true; });
+            clip.addEventListener('playing', function () { if (state !== 'done') clip.hidden = false; });
+            clip.addEventListener('error', hide);
             // The markup says preload="none" so nothing loads before this. Firefox
-            // and WebKit keep to it after load(): without this canplay never comes.
+            // and Safari keep to it even after load().
             clip.preload = 'auto';
             clip.src = isPhone() && scene.clipSmall ? scene.clipSmall : scene.clip;
-            clip.load();
+            var played = clip.play();
+            if (played && typeof played.catch === 'function') played.catch(hide);
         } catch (e) {}
     }
 

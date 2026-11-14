@@ -764,6 +764,121 @@ async function clipState(page) {
 }
 
 describe('clip', { concurrency: 1 }, () => {
+  // Ruling K1: the clip starts by playing. iOS Safari loads no data until something calls play(),
+  // so play() comes straight after the src, before canplay. The clip stays hidden until it really
+  // plays (its playing event), then shows over the still. If play() is refused or the clip errors,
+  // it stays hidden and the still stays. No retry.
+  // RECORD logs, in order: play() calls on #dash-clip, its canplay, playing and ended events, and
+  // each change of its hidden property ('shown' or 'hidden').
+  const RECORD = () => {
+    window.__clip = [];
+    const log = (k) => window.__clip.push(k);
+    const play = HTMLMediaElement.prototype.play;
+    HTMLMediaElement.prototype.play = function () {
+      if (this.id === 'dash-clip') log('play');
+      return play.call(this);
+    };
+    const hidden = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'hidden');
+    Object.defineProperty(HTMLElement.prototype, 'hidden', {
+      ...hidden,
+      set(v) {
+        if (this.id === 'dash-clip' && !!v !== this.hidden) log(v ? 'hidden' : 'shown');
+        hidden.set.call(this, v);
+      },
+    });
+    for (const type of ['canplay', 'playing', 'ended']) {
+      document.addEventListener(type, (e) => { if (e.target.id === 'dash-clip') log(type); }, true);
+    }
+  };
+  const REFUSE = () => {
+    HTMLMediaElement.prototype.play = function () {
+      return Promise.reject(new DOMException('play() refused', 'NotAllowedError'));
+    };
+  };
+
+  for (const [label, extra, mode] of MODES) {
+    test(`clip start (${label}): play() before canplay, hidden until playing, shown after`, async () => {
+      const page = await open({ routes: [...extra, ...withScene(T5)], init: [RECORD] });
+      try {
+        await introStart(page);
+        await assertMode(page, mode);
+        await until(page, () => window.__clip.includes('playing') && window.__clip.includes('shown'), 4000);
+        const log = await page.evaluate(() => window.__clip);
+        const s = log.join(' ');
+        const at = (k) => log.indexOf(k);
+        assert.ok(at('play') !== -1 && at('canplay') !== -1 && at('play') < at('canplay'), `play() before canplay: ${s}`);
+        assert.ok(at('playing') < at('shown'), `shown only once playing: ${s}`);
+        assert.equal(log.filter((k) => k === 'play').length, 1, `play() called once: ${s}`);
+        assert.equal(log.includes('hidden'), false, s);
+        assert.deepEqual(page.errors, []);
+      } finally {
+        await done(page);
+      }
+    });
+
+    test(`clip (${label}): advances, plays once, stays shown on its last frame`, async () => {
+      const page = await open({ routes: [...extra, ...withScene(T5)] });
+      try {
+        await introStart(page);
+        await assertMode(page, mode);
+        await until(page, clipPlaying, 4000);
+        await until(page, () => document.getElementById('dash-clip').ended, 4000);
+        await page.waitForTimeout(400);
+        const v = await clipState(page);
+        const s = JSON.stringify(v);
+        assert.equal(v.loop, false, s);
+        assert.equal(v.ended, true, s);
+        assert.equal(v.hidden, false, s);
+        assert.equal(v.played, 1, s);
+        assert.ok(v.t >= v.d - 0.05, s);
+        assert.equal(v.stillShown, true, s);
+        assert.deepEqual(page.errors, []);
+      } finally {
+        await done(page);
+      }
+    });
+
+    test(`clip start (${label}): play() rejected, the clip stays hidden and the still stays`, async () => {
+      const page = await open({ routes: [...extra, ...withScene(T5)], init: [REFUSE, RECORD] });
+      try {
+        await introStart(page);
+        await assertMode(page, mode);
+        await until(page, () => window.__clip.includes('play'), 4000);
+        await page.waitForTimeout(1500);
+        const log = await page.evaluate(() => window.__clip);
+        const v = await clipState(page);
+        const s = `${log.join(' ')} ${JSON.stringify(v)}`;
+        assert.equal(log.includes('shown'), false, s);
+        assert.equal(log.filter((k) => k === 'play').length, 1, `no retry: ${s}`);
+        assert.equal(v.hidden, true, s);
+        assert.equal(v.stillShown, true, s);
+        assert.deepEqual(page.errors, []);
+      } finally {
+        await done(page);
+      }
+    });
+
+    test(`clip 404 (${label}): the still stays, no page errors`, async () => {
+      const page = await open({ routes: [...extra, ...withScene({ ...T5, clip: 'test-media/missing.webm' })], init: [RECORD] });
+      try {
+        await introStart(page);
+        await assertMode(page, mode);
+        await until(page, () => document.getElementById('dash-clip').getAttribute('src') !== null, 4000);
+        await page.waitForTimeout(1000);
+        assert.ok(media(page).some((u) => /missing\.webm$/.test(u)), 'clip was not requested');
+        const log = await page.evaluate(() => window.__clip);
+        const v = await clipState(page);
+        const s = `${log.join(' ')} ${JSON.stringify(v)}`;
+        assert.equal(log.includes('shown'), false, s);
+        assert.equal(v.hidden, true, s);
+        assert.equal(v.stillShown, true, s);
+        assert.deepEqual(page.errors, []);
+      } finally {
+        await done(page);
+      }
+    });
+  }
+
   for (const [label, opts] of [['?p=0', { path: '/?p=0' }], ['?filter=films', { path: '/?filter=films' }],
     ['reduced motion', { reduced: true }], ['second visit in the session', { seen: true }]]) {
     test(`skipped intro (${label}): no clip requested, #dash-clip has no src and preload none`, async () => {
