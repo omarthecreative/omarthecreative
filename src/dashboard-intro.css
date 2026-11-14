@@ -78,15 +78,13 @@ html.dash-intro .copyright-tag.fixed {
     width: 100%;
     height: 100%;
 }
-/* The view holds the scene box (still, clip) and the foreground box. No
-   z-index, transform or clipping here: the view adds no stacking level of its
-   own. The foreground box is for the rendered cockpit only. */
+/* The view holds the scene box (still, clip). No z-index, transform or
+   clipping here: the view adds no stacking level of its own. */
 #dash-view,
 #dash-scenebox {
     position: absolute;
     inset: 0;
 }
-#dash-fgbox { display: none; }
 /* A scene's still and clip, under the windshield's frame. Cropped like the
    drawn scene (xMidYMax slice). Shown only once loaded; [hidden] until then. */
 #dash-still,
@@ -594,12 +592,10 @@ html.dash-rendered[data-dash-mode="wide"] #dash-wire span {
 }
 html.dash-rendered[data-dash-mode="wide"] #dash-wire br { display: none; }
 
-/* Scene box and foreground: one box in the scene's 21:9 shape, so still, clip
-   and cut-out share coordinates. Back to front: still and clip, foreground box
-   (z 1). All under the cockpit (z 2). */
+/* Scene box: one box in the scene's 21:9 shape, so the still and the clip
+   share coordinates. Under the cockpit (z 2). */
 html.dash-rendered #dash-view { overflow: hidden; }
-html.dash-rendered #dash-scenebox,
-html.dash-rendered #dash-fgbox {
+html.dash-rendered #dash-scenebox {
     right: auto;
     bottom: auto;
     left: var(--sb-x);
@@ -607,24 +603,6 @@ html.dash-rendered #dash-fgbox {
     width: var(--sb-w);
     height: var(--sb-h);
 }
-html.dash-rendered #dash-fgbox {
-    display: block;
-    position: absolute;
-    z-index: 1;
-}
-/* The cut-outs cover the top 512 of the scene's 824 rows. Both fill that box
-   exactly, so the moving cut-out takes over from the poster with no jump. */
-html.dash-rendered #dash-fg,
-html.dash-rendered #dash-fgclip {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 62.136%;
-    object-fit: fill;
-}
-html.dash-rendered #dash-fg[hidden],
-html.dash-rendered #dash-fgclip[hidden] { display: none; }
 
 /* Rendered doll: two pictures split at the spring. The base stands still; the
    top sways about the spring's top, with the drawn doll's motion. Only with
