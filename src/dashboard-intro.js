@@ -175,6 +175,7 @@
 
     var scene = null;        // the scene on screen, once applyScene has run
     var stillLoaded = false; // the clip starts only over a still that loaded
+    var clipStarted = false; // startClip() starts the clip once at most
 
     // The still replaces the drawn scene only once it has loaded. The page
     // stays dark (html.dash-loading) until it does, for at most STILL_WAIT_MS.
@@ -234,12 +235,14 @@
     // the file whatever the markup's preload="none" says. The clip stays
     // hidden until it is really playing. If play() is refused or the clip
     // errors, it is hidden and let go, so nothing keeps downloading; the still
-    // stays. No retry.
+    // stays. No retry. Once the intro is over it does nothing.
     function startClip() {
         try {
+            if (state === 'done' || clipStarted) return;
             if (!scene || !scene.clip || !stillLoaded) return;
             var clip = document.getElementById('dash-clip');
-            if (!clip || clip.getAttribute('src')) return;
+            if (!clip) return;
+            clipStarted = true;
             // After the intro, finish() has already let go of the file.
             var release = function () {
                 if (state === 'done' || !clip.getAttribute('src')) return;

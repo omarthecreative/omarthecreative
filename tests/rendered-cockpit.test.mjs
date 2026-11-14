@@ -857,6 +857,9 @@ describe('clip', { concurrency: 1 }, () => {
         await assertMode(page, mode);
         await until(page, () => window.__clip.includes('play'), 4000);
         await page.waitForTimeout(1500);
+        // A second call during the hold does not try again.
+        await page.evaluate(() => window.DashIntro.startClip());
+        await page.waitForTimeout(200);
         const log = await page.evaluate(() => window.__clip);
         const v = await clipState(page);
         const s = `${log.join(' ')} ${JSON.stringify(v)}`;
@@ -1125,6 +1128,30 @@ describe('clip', { concurrency: 1 }, () => {
       await done(page);
     }
   });
+
+  for (const [label, extra, mode] of MODES) {
+    test(`startClip() after the intro (${label}): no request, the clip keeps no src`, async () => {
+      const page = await open({ routes: [...extra, ...withScene(T5)] });
+      try {
+        await introStart(page);
+        await assertMode(page, mode);
+        await until(page, clipPlaying, 4000);
+        await landed(page);
+        const before = clipRequests(page).length;
+        await page.evaluate(() => window.DashIntro.startClip());
+        await page.waitForTimeout(500);
+        const v = await clipState(page);
+        const s = JSON.stringify(v);
+        assert.equal(clipRequests(page).length, before, `clip requested again: ${s}`);
+        assert.equal(v.src, null, s);
+        assert.equal(v.networkState, 0, s);
+        assert.equal(v.paused, true, s);
+        assert.deepEqual(page.errors, []);
+      } finally {
+        await done(page);
+      }
+    });
+  }
 });
 
 // — Task 6: the rendered doll —
