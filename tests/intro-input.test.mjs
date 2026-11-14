@@ -88,6 +88,11 @@ describe('each listed input starts the push-in, once', { concurrency: 1 }, () =>
           }
           await assertLanded(page);
           assert.ok(!/\?p=|project/.test(page.url()), page.url());
+          // The landing is the screenful the visitor saw: the input did not also scroll the grid
+          // (a smooth scroll would still be running, so wait for one to show).
+          await page.waitForTimeout(300);
+          assert.equal(await page.evaluate(() => document.getElementById('grid-scroll-container').scrollTop), 0,
+            'the grid scrolled under the push-in');
           assert.deepEqual(page.errors, []);
         } finally {
           await done(page);
@@ -115,6 +120,19 @@ describe('each listed input starts the push-in, once', { concurrency: 1 }, () =>
       });
     }
   }
+
+  test('rendered wide: after landing, ArrowDown scrolls the grid again', async () => {
+    const page = await open();
+    try {
+      await mounted(page);
+      await enter(page, 'Escape');
+      await landed(page);
+      await enter(page, 'ArrowDown');
+      await until(page, () => document.getElementById('grid-scroll-container').scrollTop > 0, 2000);
+    } finally {
+      await done(page);
+    }
+  });
 
   for (const [label, opts] of MODES) {
     test(`${label}: two inputs in a row run pushIn once and land once`, async () => {

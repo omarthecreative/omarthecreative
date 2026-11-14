@@ -2940,8 +2940,10 @@
 
         window.addEventListener('keydown', handleEscape);
 
-        // Arrow key scrolling for the grid
+        // Arrow key scrolling for the grid. Not while the intro shows: there an
+        // arrow key starts the push-in, which lands on the grid as it was seen.
         window.addEventListener('keydown', (e) => {
+            if (e.defaultPrevented || document.documentElement.classList.contains('dash-intro')) return;
             if (!document.documentElement.classList.contains('grid-active')) return;
             const container = document.getElementById('grid-scroll-container');
             if (!container) return;
