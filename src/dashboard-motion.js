@@ -52,14 +52,22 @@
     // With a mouse, the doll leans toward the cursor on a spring. The first
     // mouse pointermove adds .dash-doll-follow to .dash-doll: the CSS dance
     // and hop stop and the top piece turns by --doll-lean (degrees, written
-    // here once a frame). Touch, and a visitor who never moves a mouse, keep
-    // the dance. One requestAnimationFrame loop, fixed 1/60 s steps from a
-    // time accumulator, at most 5 a frame. It stops, with its listener, when
-    // the push-in starts; dash-sway-hard takes over there, as before.
+    // here once a frame). A mouse passing near the doll kicks it; after 4 s
+    // with no mouse movement it sways about 0. Touch, and a visitor who never
+    // moves a mouse, keep the dance. One requestAnimationFrame loop, fixed
+    // 1/60 s steps from a time accumulator, at most 5 a frame. It stops, with
+    // its listener, when the push-in starts; dash-sway-hard takes over there,
+    // as before.
     var LEAN = 12;              // degrees, at full reach
     var REACH = 0.35;           // of innerWidth, from the doll's centre to full reach
     var STEP = 1000 / 60;       // ms
     var MAX_STEPS = 5;          // a frame
+    var NEAR = 90;              // px from the doll's rect: a pass this close kicks
+    var KICK = 4;               // added to v, against the cursor's travel
+    var KICK_GAP = 600;         // ms, at most one kick per
+    var IDLE_AFTER = 4000;      // ms with no mouse movement
+    var SWAY = 2;               // degrees, the idle sway
+    var SWAY_PERIOD = 3000;     // ms
 
     // v += (target - lean) * 0.08 - v * 0.14; lean += v. A small overshoot
     // and a wobble. Returns a new state.
@@ -74,6 +82,9 @@
         if (!doll) return;
         var spring = { lean: 0, v: 0 };
         var aim = 0;
+        var lastMove = 0;
+        var lastKick = -Infinity;
+        var lastX = null;
         var following = false;
         var raf = 0;
         var then = null;
@@ -82,8 +93,10 @@
         function frame(now) {
             if (then !== null) acc = Math.min(acc + Math.max(0, now - then), MAX_STEPS * STEP);
             then = now;
+            var idle = now - lastMove - IDLE_AFTER;
+            var target = idle < 0 ? aim : SWAY * Math.sin(2 * Math.PI * idle / SWAY_PERIOD);
             while (acc >= STEP) {
-                spring = springStep(spring, aim);
+                spring = springStep(spring, target);
                 acc -= STEP;
             }
             doll.style.setProperty('--doll-lean', Math.round(spring.lean * 1000) / 1000 + 'deg');
@@ -92,9 +105,23 @@
         // The doll's rect is read here, on the pointer's moves, never per frame.
         function onMove(e) {
             if (e.pointerType !== 'mouse') return;
+            var t = performance.now();
+            var x = e.clientX;
+            var y = e.clientY;
             var r = doll.getBoundingClientRect();
-            var reach = (e.clientX - (r.left + r.width / 2)) / (REACH * window.innerWidth);
+            var reach = (x - (r.left + r.width / 2)) / (REACH * window.innerWidth);
             aim = Math.max(-1, Math.min(1, reach)) * LEAN;
+            lastMove = t;
+            // A kick away from the cursor's travel when it passes within NEAR
+            // of the doll's rect (0 inside it); none for a purely vertical move.
+            var dx = lastX === null ? 0 : x - lastX;
+            lastX = x;
+            var gx = Math.max(r.left - x, 0, x - r.right);
+            var gy = Math.max(r.top - y, 0, y - r.bottom);
+            if (dx !== 0 && Math.sqrt(gx * gx + gy * gy) < NEAR && t - lastKick >= KICK_GAP) {
+                spring.v += -KICK * (dx > 0 ? 1 : -1);
+                lastKick = t;
+            }
             if (!following) {
                 following = true;
                 doll.classList.add('dash-doll-follow');

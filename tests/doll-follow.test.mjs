@@ -325,3 +325,139 @@ describe('the doll and the screen', { concurrency: 1 }, () => {
     });
   }
 });
+
+// Settle with the pointer at `from` (far from the doll), then move to each point of `path`
+// ([x, y, wait before it in ms]), sampling every frame. Returns the settled lean, the frames and
+// the page-clock time just after each move. Shorter than the 4 s idle wait throughout.
+async function pass(page, from, path, settle = 1800) {
+  await page.mouse.move(from[0], from[1]);
+  await page.waitForTimeout(settle);
+  const base = await page.evaluate(() => window.__lean());
+  const sampling = frames(page, 1100);
+  await page.waitForTimeout(100);
+  const at = [];
+  for (const [x, y, wait = 0] of path) {
+    if (wait) await page.waitForTimeout(wait);
+    await page.mouse.move(x, y);
+    at.push(await now(page));
+  }
+  return { base, at, frames: await sampling };
+}
+// The lean's extreme (fn: Math.min or Math.max), relative to the settled lean, in the frames
+// from move i on, for ms.
+const extreme = (p, fn, i = 0, ms = 400) => fn(...p.frames.filter((f) => f.t >= p.at[i] && f.t <= p.at[i] + ms)
+  .map((f) => f.lean)) - p.base;
+
+describe('kick', { concurrency: 1 }, () => {
+  for (const [dir, s] of [['right', 1], ['left', -1]]) {
+    test(`a mouse pass within 90 px of the doll travelling ${dir} kicks the lean ${s > 0 ? 'down' : 'up'}, past the spring alone`, async (t) => {
+      const page = await openDoll();
+      try {
+        const d = await dollAt(page);
+        const y = farY(page, d);
+        const cx = Math.round(d.cx);
+        const from = [cx - 40 * s, y];
+        // The same horizontal travel, near the doll and far from it (the spring alone).
+        const near = await pass(page, from, [[cx - 30 * s, Math.round(d.cy)]]);
+        const alone = await pass(page, from, [[cx - 30 * s, y]]);
+        const fn = s > 0 ? Math.min : Math.max;
+        const r = { near: extreme(near, fn), alone: extreme(alone, fn), nearSoon: extreme(near, fn, 0, 200) };
+        t.diagnostic(JSON.stringify(r));
+        assert.ok(-s * (r.near - r.alone) > 5, `no kick: ${JSON.stringify(r)}`);
+        assert.ok(-s * r.nearSoon > 5, `the kick is not within the next few frames: ${JSON.stringify(r)}`);
+        assert.ok(Math.abs(r.alone) < 1, `the spring alone moved: ${JSON.stringify(r)}`);
+        assert.deepEqual(page.errors, []);
+      } finally {
+        await done(page);
+      }
+    });
+  }
+
+  test('two passes 300 ms apart kick once; a pass 700 ms after a kick kicks again', async (t) => {
+    const page = await openDoll();
+    try {
+      const d = await dollAt(page);
+      const y = farY(page, d);
+      const cx = Math.round(d.cx);
+      const cy = Math.round(d.cy);
+      const from = [cx - 40, y];
+      const twice = await pass(page, from, [[cx - 30, cy], [cx - 20, cy, 300]]);
+      const once = await pass(page, from, [[cx - 30, cy], [cx - 20, y, 300]]);
+      const later = await pass(page, from, [[cx - 30, cy], [cx - 20, cy, 700]]);
+      const r = {
+        first: [twice, once, later].map((p) => extreme(p, Math.min, 0, 250)),
+        second: [twice, once, later].map((p) => extreme(p, Math.min, 1)),
+        gaps: [twice, once, later].map((p) => Math.round(p.at[1] - p.at[0])),
+      };
+      t.diagnostic(JSON.stringify(r));
+      assert.ok(r.gaps[0] < 600 && r.gaps[2] > 600, `move gaps ${r.gaps}`);
+      assert.ok(r.first.every((m) => m < -5), `the first pass did not kick: ${JSON.stringify(r)}`);
+      assert.ok(Math.abs(r.second[0] - r.second[1]) < 2, `a second kick within 600 ms: ${JSON.stringify(r)}`);
+      assert.ok(r.second[2] < -5, `no kick 700 ms later: ${JSON.stringify(r)}`);
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('a pure vertical pass through the doll gives no kick', async (t) => {
+    const page = await openDoll();
+    try {
+      const d = await dollAt(page);
+      const y = farY(page, d);
+      const cx = Math.round(d.cx);
+      const ys = [y - 100, d.bottom + 60, d.cy, d.top + 10, d.top - 40].map(Math.round);
+      const p = await pass(page, [cx, y], ys.map((yy) => [cx, yy, 40]));
+      const r = { min: extreme(p, Math.min, 0, 700), max: extreme(p, Math.max, 0, 700) };
+      t.diagnostic(JSON.stringify(r));
+      assert.ok(Math.abs(r.min) < 0.5 && Math.abs(r.max) < 0.5, `the lean moved: ${JSON.stringify(r)}`);
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+});
+
+describe('idle', { concurrency: 1 }, () => {
+  for (const [w, h, mode] of [[1440, 900, 'wide'], [390, 844, 'tall']]) {
+    test(`${w}x${h} (${mode} doll, mouse): 4 s after the last move the lean heads to 0 and sways within 2.6; a move follows again`, async (t) => {
+      const page = await openDoll({ viewport: { width: w, height: h }, mode });
+      try {
+        const d = await dollAt(page);
+        const y = farY(page, d);
+        const right = page.vw - 10;
+        const aim = aimFor(page, d, right);
+        const sampling = frames(page, 7600);
+        await page.waitForTimeout(100);
+        await page.mouse.move(right, y);
+        const at = await now(page);
+        const fr = (await sampling).filter((f) => f.t >= at).map((f) => ({ t: f.t - at, lean: f.lean }));
+        const within = (a, b) => fr.filter((f) => f.t >= a && f.t <= b).map((f) => f.lean);
+        const following = within(1500, 3800);
+        const back = within(4000, 4800);
+        const sway = within(5500, 7500);
+        const r = {
+          aim,
+          following: [Math.min(...following), Math.max(...following)],
+          back: Math.min(...back.map(Math.abs)),
+          sway: [Math.min(...sway), Math.max(...sway)],
+        };
+        t.diagnostic(JSON.stringify(r));
+        assert.ok(following.every((l) => Math.abs(l - aim) < 0.05), `not following before 4 s: ${JSON.stringify(r)}`);
+        assert.ok(r.back < 2.6, `not back toward 0 after 4 s: ${JSON.stringify(r)}`);
+        assert.ok(sway.length > 20 && sway.every((l) => Math.abs(l) <= 2.6), `outside 2.6 while idle: ${JSON.stringify(r)}`);
+        assert.ok(r.sway[1] - r.sway[0] > 1, `not swaying: ${JSON.stringify(r)}`);
+        // A move follows again.
+        const left = 10;
+        const sampling2 = frames(page, 2000);
+        await page.mouse.move(left, y);
+        const fr2 = await sampling2;
+        const end = fr2[fr2.length - 1].lean;
+        assert.ok(Math.abs(end - aimFor(page, d, left)) < 0.05, `not following again: ${end} vs ${aimFor(page, d, left)}`);
+        assert.deepEqual(page.errors, []);
+      } finally {
+        await done(page);
+      }
+    });
+  }
+});
