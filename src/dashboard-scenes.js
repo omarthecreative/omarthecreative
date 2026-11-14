@@ -2,7 +2,7 @@
    Adding a city means editing this file only.
 
    Scene:  { id, timezone, still?, stillSmall?, foreground?, foregroundSmall?, clip?, clipSmall?,
-             foregroundClip?, foregroundClipSmall?, minimap?, mirror? }
+             foregroundClip?, foregroundClipSmall?, minimap? }
            timezone     the scene's IANA time zone, e.g. 'America/New_York' (nothing reads it at present)
            still        image seen through the windshield (none: the drawn scene shows)
            stillSmall   the still for phones, when present
@@ -17,8 +17,7 @@
                         Rendered cockpit only. It must prove see-through before the clip is
                         requested; a scene with a foreground but no foregroundClip keeps its
                         still there. foregroundClipSmall is used on phones
-           minimap      the scene's minimap graphic
-           mirror       which mirror gag to show ('paladin' is the only one so far) */
+           minimap      the scene's minimap graphic */
 window.DashScenes = {
     scenes: [
         {
@@ -32,8 +31,7 @@ window.DashScenes = {
             foregroundSmall: 'assets/dash/scenes/miami-beach/fg-960.webp',
             foregroundClip: 'assets/dash/scenes/miami-beach/fgclip-1920',
             foregroundClipSmall: 'assets/dash/scenes/miami-beach/fgclip-960',
-            minimap: 'assets/dash/scenes/miami-beach/minimap.svg',
-            mirror: 'paladin'
+            minimap: 'assets/dash/scenes/miami-beach/minimap.svg'
         }
     ]
 };

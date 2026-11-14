@@ -303,7 +303,7 @@ for (const offline of [false, true]) {
         for (const sel of ['.dash-banner', '.dash-fly', '.dash-towline', '.dash-plane']) {
           assert.equal(await page.locator(sel).count(), 0, sel);
         }
-        assert.deepEqual(await keyframeNames(page, ['dash-fly']), []);
+        assert.deepEqual(await keyframeNames(page, ['dash-fly', 'dash-gallop']), []);
       } finally {
         await done(page);
       }
@@ -331,6 +331,26 @@ for (const offline of [false, true]) {
       }
     });
 
+    for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
+      test(`drawn mirror: stem and frame, plain #3A3A3A glass, no rider (${viewport.width}x${viewport.height})`, async () => {
+        const page = await open({ offline, viewport });
+        try {
+          await mounted(page);
+          assert.equal(await page.locator('.dash-rider').count(), 0);
+          assert.equal(await page.locator('[data-gag]').count(), 0);
+          assert.equal(await page.evaluate(() => document.querySelector('.dash-mirror-glass').childNodes.length), 0);
+          assert.notEqual(await css(page, '.dash-mirror', 'display'), 'none');
+          assert.equal(await css(page, '.dash-mirror-stem', 'backgroundColor'), 'rgb(11, 11, 12)');
+          assert.ok((await rect(page, '.dash-mirror-stem')).height > 0);
+          assert.ok(parseFloat(await css(page, '.dash-mirror-glass', 'borderTopWidth')) > 0);
+          assert.equal(await css(page, '.dash-mirror-glass', 'borderTopColor'), 'rgb(11, 11, 12)');
+          assert.equal(await css(page, '.dash-mirror-glass', 'backgroundColor'), 'rgb(58, 58, 58)');
+          assert.equal(await css(page, '.dash-mirror-glass', 'backgroundImage'), 'none');
+        } finally {
+          await done(page);
+        }
+      });
+    }
     for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
       test(`after hold and push-in the grid is in its normal state (${viewport.width}x${viewport.height})`, async () => {
         const page = await open({ offline, viewport });

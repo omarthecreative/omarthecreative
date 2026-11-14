@@ -417,8 +417,6 @@
                 if (fits && fgSrc) showForeground(fgSrc);
             }
             if (typeof picked.minimap === 'string' && picked.minimap) showMinimap(picked.minimap);
-            var mirror = document.querySelector('.dash-mirror');
-            if (mirror && typeof picked.mirror === 'string') mirror.setAttribute('data-gag', picked.mirror);
             return { sceneId: picked.id };
         } catch (e) {
             return fallback;

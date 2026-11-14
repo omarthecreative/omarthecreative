@@ -179,7 +179,7 @@ for (const offline of [false, true]) {
       } finally { await close(page); }
     });
 
-    test('no banner: not in the scenes file, not on DashIntro', async () => {
+    test('no banner and no mirror gag: not in the scenes file, not on DashIntro', async () => {
       const page = await open({ offline, seen: true });
       try {
         const r = await page.evaluate(() => {
@@ -191,10 +191,11 @@ for (const offline of [false, true]) {
           return {
             gone: ['liveBanner', 'pickLine', 'localDate', 'DEFAULT_LINE'].filter((k) => k in D),
             banners: 'banners' in S,
+            mirror: S.scenes.filter((s) => 'mirror' in s).map((s) => s.id),
             picked, none,
           };
         });
-        assert.deepEqual(r, { gone: [], banners: false, picked: { sceneId: 'miami-beach' }, none: { sceneId: null } });
+        assert.deepEqual(r, { gone: [], banners: false, mirror: [], picked: { sceneId: 'miami-beach' }, none: { sceneId: null } });
       } finally { await close(page); }
     });
 
@@ -308,7 +309,7 @@ for (const offline of [false, true]) {
       } finally { await close(page); }
     });
 
-    // — Task 4: Miami Beach minimap and mirror field —
+    // — Task 4: Miami Beach minimap —
     test('miami-beach: minimap image is the scene file and has loaded', async () => {
       const page = await open({ offline });
       try {
@@ -328,13 +329,6 @@ for (const offline of [false, true]) {
         assert.equal(await page.locator('.dash-minimap img').count(), 0);
         assert.equal(await css(page, '.dash-minimap svg', 'display'), 'block');
         assert.deepEqual(page.errors, []);
-      } finally { await close(page); }
-    });
-
-    test('mirror gag recorded', async () => {
-      const page = await open({ offline });
-      try {
-        assert.equal(await page.getAttribute('.dash-mirror', 'data-gag'), 'paladin');
       } finally { await close(page); }
     });
   });

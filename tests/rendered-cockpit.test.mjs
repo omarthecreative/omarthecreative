@@ -386,7 +386,7 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
   });
 
   for (const [w, h, mode] of [[1440, 900, 'wide'], [390, 844, 'tall']]) {
-    test(`paint order at ${w}x${h}: mirror glass under the cockpit; minimap, doll, screen and Wire Omar over it`, async () => {
+    test(`paint order at ${w}x${h}: minimap, doll, screen and Wire Omar over the cockpit`, async () => {
       const page = await open({ viewport: { width: w, height: h } });
       try {
         await mounted(page);
@@ -409,7 +409,6 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
           const doll = box(dollOn ? '.dash-doll-r-base' : '.dash-doll-base');
           const points = {
             opaque: [ib.left + 0.05 * ib.width, ib.top + 0.95 * Math.min(ib.height, innerHeight)],
-            mirror: centre('.dash-mirror-glass'),
             minimap: centre('.dash-minimap'),
             // The doll hops, and its base can reach into the live screen's hole in #dash-cockpit (the
             // cockpit image is clipped away there and cannot be hit). Probe left of the screen's edge.
@@ -433,12 +432,11 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
             out[name] = {
               alpha: alpha(x, y),
               top: top ? (top.id ? '#' + top.id : top.tagName) : null,
-              in: top ? ['.dash-minimap', '.dash-doll', '#dash-wire', '#dash-screen', '.dash-mirror-glass', '#dash-cockpit-img']
+              in: top ? ['.dash-minimap', '.dash-doll', '#dash-wire', '#dash-screen', '#dash-cockpit-img']
                 .filter((s) => top.closest(s)) : [],
               at: [Math.round(x * 10) / 10, Math.round(y * 10) / 10],
               screenLeft: box('#dash-screen').left,
               imgAt: stack.indexOf(img),
-              glassAt: stack.findIndex((el) => el.classList && el.classList.contains('dash-mirror-glass')),
             };
           }
           img.style.pointerEvents = '';
@@ -447,10 +445,6 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
         const p = JSON.stringify(probes);
         assert.equal(probes.opaque.top, '#dash-cockpit-img', p);
         assert.ok(probes.opaque.alpha > 200, `cockpit not opaque at the probe: ${p}`);
-        // Mirror glass: the cockpit image is on top, and see-through there, with the glass under it.
-        assert.equal(probes.mirror.top, '#dash-cockpit-img', p);
-        assert.ok(probes.mirror.alpha < 20, `mirror glass not see-through in the image: ${p}`);
-        assert.ok(probes.mirror.glassAt > probes.mirror.imgAt, `glass not under the cockpit: ${p}`);
         assert.ok(probes.minimap.in.includes('.dash-minimap'), p);
         assert.ok(probes.doll.in.includes('.dash-doll'), p);
         assert.ok(probes.doll.at[0] < probes.doll.screenLeft, `doll probe is inside the screen hole: ${p}`);
@@ -463,15 +457,8 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
           assert.ok(probes.doll.alpha > 200, `doll not standing on the dash: ${p}`);
           assert.ok(probes.wire.imgAt > 0, `cockpit image not under Wire Omar: ${p}`);
         }
-        // The mirror glass sits at the measured rect, in the shield's coordinates.
-        const ck = await rect(page, '#dash-cockpit-img');
-        const g = await rect(page, '.dash-mirror-glass');
-        const want = mode === 'wide' ? [0.405, 0.046, 0.189, 0.076] : [0.362, 0.057, 0.275, 0.037];
-        const got = [(g.left - ck.left) / ck.width, (g.top - ck.top) / ck.height, g.width / ck.width, g.height / ck.height];
-        got.forEach((v, i) => assert.ok(Math.abs(v - want[i]) * (i % 2 ? ck.height : ck.width) <= 1, `mirror ${got} vs ${want}`));
-        assert.equal(await css(page, '.dash-mirror-stem', 'display'), 'none');
-        assert.equal(await css(page, '.dash-mirror-glass', 'borderTopWidth'), '0px');
         // Minimap: 7% of the cockpit's width in from the visible right edge of the image.
+        const ck = await rect(page, '#dash-cockpit-img');
         const mm = await rect(page, '.dash-minimap');
         assert.ok(Math.abs(mm.right - (Math.min(w, ck.right) - 0.07 * ck.width)) <= 1, `minimap right ${mm.right}`);
         assert.notEqual(await css(page, '.dash-doll', 'display'), 'none');
@@ -480,12 +467,14 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
       }
     });
 
-    test(`rendered at ${w}x${h}: no banner`, async () => {
+    // The mirror glass is painted into the cockpit picture: no mirror element shows over or under it.
+    test(`rendered at ${w}x${h}: the mirror element is not displayed, no banner`, async () => {
       const page = await open({ viewport: { width: w, height: h } });
       try {
         await mounted(page);
         await assertRendered(page, mode);
-        assert.equal(await page.locator('.dash-banner, .dash-fly, .dash-towline, .dash-plane').count(), 0);
+        assert.equal(await css(page, '.dash-mirror', 'display'), 'none');
+        assert.equal(await page.locator('.dash-rider, .dash-banner, .dash-fly, .dash-towline, .dash-plane, [data-gag]').count(), 0);
         assert.deepEqual(page.errors, []);
       } finally {
         await done(page);
@@ -742,9 +731,9 @@ describe('scene box and foreground', { concurrency: 1 }, () => {
             const a = cx.getImageData(x, y, 1, 1).data[3];
             const px = r.left + (x / c.width) * r.width, py = r.top + (y / c.height) * r.height;
             if (px < v.left + 2 || px > v.right - 2 || py < v.top + 2 || py > v.bottom - 2) continue;
-            // Stay clear of the mirror and minimap, which sit over the scene.
+            // Stay clear of the minimap and doll, which sit over the scene.
             const hit = document.elementsFromPoint(px, py).map((e) => e.id || e.className);
-            if (hit.some((h) => /mirror|minimap|doll/.test(String(h)))) continue;
+            if (hit.some((h) => /minimap|doll/.test(String(h)))) continue;
             if (a === 255 && !opaque) opaque = { px, py };
             if (a === 0 && !clear) clear = { px, py };
           }
