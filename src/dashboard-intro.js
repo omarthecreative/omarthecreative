@@ -376,6 +376,10 @@
                     cut.currentTime = clip.currentTime;
                 }
             });
+            // The markup says preload="none" so nothing loads before this. Firefox
+            // and WebKit keep to it after load() and wait for play(): canplay
+            // would never come.
+            clip.preload = 'auto';
             clip.src = sized(scene, 'clip');
             clip.load();
         }
@@ -414,6 +418,7 @@
                 }
             });
             clip.addEventListener('error', function () { clip.hidden = true; });
+            clip.preload = 'auto'; // as in startPair: without it canplay never comes in Firefox and WebKit
             clip.src = isPhone() && scene.clipSmall ? scene.clipSmall : scene.clip;
             clip.load();
         } catch (e) {}

@@ -1114,6 +1114,29 @@ describe('moving cut-out', { concurrency: 1 }, () => {
         assert.deepEqual(media(page).filter((u) => /clip/.test(u)), []);
         assert.equal(await page.getAttribute('#dash-clip', 'src'), null);
         assert.equal(await page.getAttribute('#dash-fgclip', 'src'), null);
+        // Nothing is fetched before startClip(): the markup's preload="none" is untouched.
+        assert.equal(await page.evaluate(() => document.getElementById('dash-clip').preload), 'none');
+      } finally {
+        await done(page);
+      }
+    });
+  }
+
+  // Firefox and WebKit honour preload="none" after load() and wait for play(), so canplay never comes.
+  // Chromium cannot show that; it can show the property the clip is requested with.
+  for (const [label, routes, mode] of [
+    ['rendered, with its moving cut-out', withScene(T5), 'wide'],
+    ['rendered, clip alone', withScene({ still: T4_STILL, clip: 'test-media/clip.webm' }), 'wide'],
+    ['fallback mode', [...noCockpit, ...withScene(T5)], null],
+  ]) {
+    test(`clip requested with preload auto (${label})`, async () => {
+      const page = await open({ routes });
+      try {
+        await introStart(page);
+        if (mode) await assertRendered(page, mode); else await assertDrawn(page);
+        await until(page, () => document.getElementById('dash-clip').getAttribute('src') !== null, 4000);
+        assert.equal(await page.evaluate(() => document.getElementById('dash-clip').preload), 'auto');
+        assert.deepEqual(page.errors, []);
       } finally {
         await done(page);
       }
