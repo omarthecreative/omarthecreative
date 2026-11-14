@@ -24,6 +24,7 @@ after(async () => {
 
 async function open({ path: p = '/', seen = false, reduced = false, offline = false, viewport = { width: 1440, height: 900 }, routes = [] } = {}) {
   const context = await browser.newContext({ viewport, reducedMotion: reduced ? 'reduce' : 'no-preference' });
+  for (const m of ['**/assets/dash/cockpit-*', '**/assets/dash/doll-*']) await context.route(m, (r) => r.fulfill({ status: 404, body: 'not found' }));
   for (const [match, handler] of routes) await context.route(match, handler);
   if (seen) await context.addInitScript(() => sessionStorage.setItem('omar_intro_session', '1'));
   if (offline) {

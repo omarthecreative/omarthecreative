@@ -93,7 +93,7 @@
     <link rel="stylesheet" href="https://use.typekit.net/niv4qrq.css">
     <link rel="stylesheet" href="base.css">
     <link rel="stylesheet" href="video-overlay.css">
-    <link rel="stylesheet" href="dashboard-intro.css?v=6">
+    <link rel="stylesheet" href="dashboard-intro.css?v=7">
     <script src="https://player.vimeo.com/api/player.js"></script>
     <script src="carousel-config.js"></script>
     <script>
@@ -1515,6 +1515,12 @@
             </div>
 
             <div id="dash-body">
+                <!-- Rendered cockpit (html.dash-rendered, set by dashboard-intro.js once the
+                     image has loaded). Without it, the drawn dash below shows. -->
+                <div id="dash-cockpit" aria-hidden="true">
+                    <img id="dash-cockpit-img" alt="">
+                    <div class="dash-cockpit-floor"></div>
+                </div>
                 <div class="dash-surface" aria-hidden="true">
                     <div class="dash-cap"></div>
                     <div class="dash-vent"></div>
@@ -1601,7 +1607,7 @@
 
             <a id="dash-wire" href="about.html">
                 <svg viewBox="0 0 1052 1600" aria-hidden="true"><use xlink:href="#knight-mark" href="#knight-mark"></use></svg>
-                <span>Wire<br>Omar</span>
+                <span>Wire<br> Omar</span>
             </a>
         </div>
     </div>
@@ -1667,7 +1673,7 @@
     </div>
 
     <script src="dashboard-scenes.js?v=1"></script>
-    <script src="dashboard-intro.js?v=5"></script>
+    <script src="dashboard-intro.js?v=6"></script>
     <script src="apex-sound.js?v=4"></script>
     <script>
 

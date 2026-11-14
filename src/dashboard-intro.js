@@ -8,8 +8,13 @@
    startClip()    starts the scene's clip, if it has one and its still loaded.
                   Called when the hold starts, never when the intro is skipped.
    localDate, pickScene, liveBanner, pickLine: the pure parts of that pick.
-   Geometry lives in dashboard-intro.css; this file only sets the two
-   artwork scales and runs the state changes. */
+   layout(w, h)   geometry of the rendered cockpit for a window (pure).
+   rendered()     true while html.dash-rendered is set: the cockpit picture
+                  loaded while the page was dark and fits this window. Then
+                  layout() is written to :root as inline variables; otherwise
+                  the drawn dashboard shows on the stylesheet's own geometry.
+   Geometry lives in dashboard-intro.css; this file sets the two artwork
+   scales, the rendered layout variables, and runs the state changes. */
 (function () {
     'use strict';
 
@@ -22,10 +27,42 @@
         return window.matchMedia('(max-width: 760px)').matches;
     }
 
+    // — Rendered cockpit —
+    // Each cockpit picture counts only if it loaded while the page was still
+    // dark; a late one never swaps the dashboard in front of the visitor.
+    var cockpitLoaded = { wide: false, tall: false };
+    // Inline variable on :root -> the layout() field it carries (px, except k).
+    var LAYOUT_VARS = {
+        '--dash-k': 'k', '--dash-left': 'left', '--dash-top': 'top', '--dash-shield': 'shield',
+        '--ck-x': 'ckX', '--ck-w': 'ckW', '--ck-h': 'ckH', '--ck-crop-r': 'cropR',
+        '--sb-x': 'sbX', '--sb-y': 'sbY', '--sb-w': 'sbW', '--sb-h': 'sbH'
+    };
+
+    // Rendered when the cockpit fits this window and that kind's picture has
+    // loaded: write layout() into :root and set html.dash-rendered. Otherwise
+    // clear all of it, so the stylesheet's own (drawn) geometry applies.
+    function applyLayout() {
+        var o = layout(window.innerWidth, window.innerHeight);
+        var on = (o.mode === 'wide' || o.mode === 'tall') && cockpitLoaded[o.mode];
+        Object.keys(LAYOUT_VARS).forEach(function (name) {
+            var key = LAYOUT_VARS[name];
+            if (on) root.style.setProperty(name, key === 'k' ? String(o.k) : o[key] + 'px');
+            else root.style.removeProperty(name);
+        });
+        root.classList.toggle('dash-rendered', on);
+        if (on) root.setAttribute('data-dash-mode', o.mode);
+        else root.removeAttribute('data-dash-mode');
+    }
+
+    function rendered() {
+        return root.classList.contains('dash-rendered');
+    }
+
     function setScales() {
         var w = window.innerWidth;
         var h = window.innerHeight;
         root.style.setProperty('--dash-fit', String(Math.min(w / 1440, h / 900)));
+        applyLayout();
         var shield = document.getElementById('dash-shield');
         // offsetHeight is layout size, unaffected by the push-in transform.
         var shieldPx = shield ? shield.offsetHeight : 0;
@@ -35,6 +72,7 @@
     // Size the artwork now, before first paint. This script loads after the
     // splash markup, so #dash-shield exists. Waiting for mount() showed the
     // CSS default scale (1) first, and the doll and banner visibly shrank.
+    // layout() is a function declaration below, so it is already defined here.
     setScales();
     window.addEventListener('resize', setScales);
 
@@ -296,7 +334,34 @@
         return o;
     }
 
-    if (root.classList.contains('dash-first')) applyScene();
+    // First visit, at load: request the cockpit picture this window needs, if
+    // the cockpit fits at all. The page stays dark for it (holdDarkFor, at most
+    // STILL_WAIT_MS). It counts only if it loads while the page is still dark.
+    function loadCockpit() {
+        var img = document.getElementById('dash-cockpit-img');
+        if (!img) return;
+        var kind = layout(window.innerWidth, window.innerHeight).mode;
+        if (kind !== 'wide' && kind !== 'tall') return;
+        var src = kind === 'tall' ? 'assets/dash/cockpit-tall-1080.webp'
+            : window.innerWidth > 2560 ? 'assets/dash/cockpit-wide-3840.webp'
+            : 'assets/dash/cockpit-wide-2560.webp';
+        holdDarkFor(new Promise(function (done) {
+            img.addEventListener('load', function () {
+                if (root.classList.contains('dash-loading')) {
+                    cockpitLoaded[kind] = true;
+                    setScales(); // applyLayout(), then --dash-ss from the new shield
+                }
+                done();
+            });
+            img.addEventListener('error', function () { done(); });
+        }));
+        img.src = src;
+    }
+
+    if (root.classList.contains('dash-first')) {
+        applyScene();
+        loadCockpit();
+    }
 
     window.DashIntro = {
         mount: mount,
@@ -304,6 +369,7 @@
         applyScene: applyScene,
         startClip: startClip,
         layout: layout,
+        rendered: rendered,
         localDate: localDate,
         pickScene: pickScene,
         liveBanner: liveBanner,

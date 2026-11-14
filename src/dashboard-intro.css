@@ -524,6 +524,135 @@ html.dash-pushing #portal {
     #dash-wire svg { height: 11px; }
 }
 
+/* ---- Rendered cockpit (html.dash-rendered) ----------------------------- */
+
+/* One rendered cockpit picture in place of the drawn dash, with the screen cut
+   out of it. dashboard-intro.js sets html.dash-rendered, html[data-dash-mode]
+   and the layout variables (px; --dash-k a number) only once the picture has
+   loaded while the page was dark. Without the class nothing below applies and
+   the drawn dashboard shows as before.
+   Paint order: scene and mirror (#dash-shield, z 1 and lower), cockpit (z 2),
+   screen and minimap (z 3), doll (z 4), Wire Omar (z 5). #dash-shield and
+   #dash-body set no z-index, so all of these stack together. */
+#dash-cockpit { display: none; }
+html.dash-rendered #dash-cockpit {
+    display: block;
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    /* The screen's hole, as in .dash-surface but in window coordinates. */
+    --hl: var(--dash-left);
+    --ht: var(--dash-top);
+    --hr: calc(var(--dash-left) + var(--dash-w));
+    --hb: calc(var(--dash-top) + var(--dash-h));
+    clip-path: polygon(evenodd,
+        0 0, 100% 0, 100% 100%, 0 100%, 0 0,
+        var(--hl) var(--ht), var(--hr) var(--ht), var(--hr) var(--hb), var(--hl) var(--hb), var(--hl) var(--ht));
+}
+html.dash-rendered #dash-cockpit-img {
+    position: absolute;
+    top: 0;
+    left: var(--ck-x);
+    display: block;
+    width: var(--ck-w);
+    max-width: none;
+    height: var(--ck-h);
+}
+/* Wider than 16:9: black beside the picture, fading in over its outer 6%.
+   The width is 0 when the picture starts at x = 0 (no margin to fade into). */
+html.dash-rendered[data-dash-mode="wide"] #dash-cockpit::before,
+html.dash-rendered[data-dash-mode="wide"] #dash-cockpit::after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    bottom: 0;
+    width: min(calc(var(--ck-x) * 1000), calc(var(--ck-x) + 0.06 * var(--ck-w)));
+}
+html.dash-rendered[data-dash-mode="wide"] #dash-cockpit::before {
+    left: 0;
+    background: linear-gradient(90deg, #000000 var(--ck-x), rgba(0, 0, 0, 0));
+}
+html.dash-rendered[data-dash-mode="wide"] #dash-cockpit::after {
+    right: 0;
+    background: linear-gradient(270deg, #000000 var(--ck-x), rgba(0, 0, 0, 0));
+}
+/* Phone: the floor under the picture, down to the window's foot. */
+html.dash-rendered .dash-cockpit-floor { display: none; }
+html.dash-rendered[data-dash-mode="tall"] .dash-cockpit-floor {
+    display: block;
+    position: absolute;
+    top: var(--ck-h);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #010102;
+}
+
+/* The windshield spans the picture. Pillars, roof, hood and the dash itself
+   are in the picture now; the drawn scene (#dash-drawn) stays as the fallback
+   for a missing still. */
+html.dash-rendered #dash-shield {
+    left: var(--ck-x);
+    width: var(--ck-w);
+}
+html.dash-rendered .dash-surface,
+html.dash-rendered .dash-furniture,
+html.dash-rendered .dash-sky > :not(defs):not(#dash-drawn) {
+    display: none;
+}
+
+/* Mirror: the gag fills the picture's mirror glass, under the picture. */
+html.dash-rendered .dash-mirror {
+    left: calc(0.405 * var(--ck-w));
+    top: calc(0.046 * var(--ck-h));
+    width: calc(0.189 * var(--ck-w));
+    height: calc(0.076 * var(--ck-h));
+    transform: none;
+}
+html.dash-rendered[data-dash-mode="tall"] .dash-mirror {
+    left: calc(0.362 * var(--ck-w));
+    top: calc(0.057 * var(--ck-h));
+    width: calc(0.275 * var(--ck-w));
+    height: calc(0.037 * var(--ck-h));
+}
+html.dash-rendered .dash-mirror-stem { display: none; }
+html.dash-rendered .dash-mirror-glass {
+    position: relative;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: 28% / 60%;
+}
+
+/* Minimap over the picture, 7% of its width in from its visible right edge. */
+html.dash-rendered .dash-minimap {
+    z-index: 3;
+    right: calc(var(--ck-crop-r) + 0.07 * var(--ck-w));
+}
+
+/* Wire Omar on the picture's start button: the knight on the button face, the
+   words on one line under it. The phone keeps the drawn button. */
+html.dash-rendered[data-dash-mode="wide"] #dash-wire {
+    left: calc(var(--ck-x) + (0.416 - 0.017) * var(--ck-w));
+    top: calc(0.675 * var(--ck-h) - 0.017 * var(--ck-w));
+    width: calc(0.034 * var(--ck-w));
+    height: calc(0.034 * var(--ck-w));
+    border: 0;
+    background: none;
+    box-shadow: none;
+}
+html.dash-rendered[data-dash-mode="wide"] #dash-wire svg { height: 46%; }
+html.dash-rendered[data-dash-mode="wide"] #dash-wire span {
+    position: absolute;
+    top: calc(100% + 4px * var(--dash-fit));
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+html.dash-rendered[data-dash-mode="wide"] #dash-wire br { display: none; }
+
 @media (prefers-reduced-motion: reduce) {
     .dash-road, .dash-fly, .dash-rider, .dash-doll, .dash-doll-top, .dash-doll-wave,
     html.dash-pushing .dash-doll-top { animation: none; }

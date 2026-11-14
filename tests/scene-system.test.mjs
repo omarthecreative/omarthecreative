@@ -33,6 +33,7 @@ after(async () => {
 async function open({ path: p = '/', seen = false, offline = false, storageBlocked = false, viewport = { width: 1440, height: 900 },
   timezoneId, time, routes = [], init = [], goto = true } = {}) {
   const context = await browser.newContext({ viewport, timezoneId });
+  for (const m of ['**/assets/dash/cockpit-*', '**/assets/dash/doll-*']) await context.route(m, (r) => r.fulfill({ status: 404, body: 'not found' }));
   for (const [match, handler] of routes) await context.route(match, handler);
   if (offline) {
     await context.route(
