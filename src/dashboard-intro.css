@@ -710,6 +710,8 @@ html.dash-rendered[data-dash-mode="tall"] .dash-banner { top: calc(96px * var(--
    --ck-w wide, so the doll's centre is --ck-x + CX * --ck-w. Feet at 0.445 of
    the picture are below the shield's foot: the shield does not clip. */
 .dash-doll-r { display: none; }
+/* Known, accepted overlap (controller ruling P1): where the screen sits at its left limit the doll's base
+   reaches into the screen's top-left corner at the bottom of its hop and paints over it. Pinned in tests. */
 html.dash-rendered .dash-doll.dash-doll-rendered {
     width: auto;
     height: calc(0.25 * var(--ck-h));

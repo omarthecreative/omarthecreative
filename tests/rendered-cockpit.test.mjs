@@ -392,6 +392,11 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
             minimap: centre('.dash-minimap'),
             // The doll hops, and its base can reach into the live screen's hole in #dash-cockpit (the
             // cockpit image is clipped away there and cannot be hit). Probe left of the screen's edge.
+            // Known, accepted deviation from the spec's layer order (controller ruling P1): at widths where
+            // the screen sits at its left limit (1440x900, 1024x768, 2560x1080) the doll's base overlaps the
+            // screen's top-left corner by about 50 x 13 px at the bottom of its hop and paints over
+            // #dash-screen. It is left for the owner to settle on screen; the probe avoids the overlap on
+            // purpose, and the overlap itself is pinned by its own test ("known deviation (P1)").
             doll: [Math.min(doll.left + doll.width / 2, box('#dash-screen').left - 6), doll.top + doll.height * (dollOn ? 0.92 : 0.75)],
             wire: centre('#dash-wire'),
             screen: centre('#dash-screen'),
@@ -1797,5 +1802,40 @@ describe('local server byte ranges', () => {
     const res = await fetch(url(), { headers: { Range: `bytes=${size}-` } });
     assert.equal(res.status, 416);
     assert.equal(res.headers.get('content-range'), `bytes */${size}`);
+  });
+});
+
+describe('known deviation (P1)', () => {
+  // Samples the doll base and the screen over one and a bit hop periods (1.6 s) and returns the largest overlap.
+  async function overlap(w, h) {
+    const page = await open({ viewport: { width: w, height: h } });
+    try {
+      await mounted(page);
+      await assertRendered(page, 'wide');
+      return await page.evaluate(() => new Promise((resolve) => {
+        const base = document.querySelector('.dash-doll-r-base'), screen = document.getElementById('dash-screen');
+        let ow = 0, oh = 0, minBottom = Infinity, maxBottom = -Infinity, n = 0;
+        const t0 = performance.now();
+        const tick = setInterval(() => {
+          const b = base.getBoundingClientRect(), s = screen.getBoundingClientRect();
+          ow = Math.max(ow, Math.min(b.right, s.right) - Math.max(b.left, s.left));
+          oh = Math.max(oh, Math.min(b.bottom, s.bottom) - Math.max(b.top, s.top));
+          minBottom = Math.min(minBottom, b.bottom); maxBottom = Math.max(maxBottom, b.bottom); n++;
+          if (performance.now() - t0 > 1800) { clearInterval(tick); resolve({ ow, oh, hop: maxBottom - minBottom, n }); }
+        }, 40);
+      }));
+    } finally {
+      await done(page);
+    }
+  }
+  test('known deviation (P1): doll base overlaps the screen corner at 1440x900, not at 1920x1080', async () => {
+    const small = await overlap(1440, 900);
+    const s = JSON.stringify(small);
+    assert.ok(small.hop > 5, `the doll did not hop while sampled: ${s}`);
+    assert.ok(small.ow > 0 && small.oh > 0, `no overlap at 1440x900 (the accepted deviation changed): ${s}`);
+    assert.ok(small.ow <= 60 && small.oh <= 20, `overlap grew past 60 x 20 px: ${s}`);
+    const big = await overlap(1920, 1080);
+    assert.ok(big.hop > 5, `the doll did not hop while sampled: ${JSON.stringify(big)}`);
+    assert.ok(big.ow <= 0 || big.oh <= 0, `overlap at 1920x1080: ${JSON.stringify(big)}`);
   });
 });
