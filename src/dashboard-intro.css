@@ -78,10 +78,9 @@ html.dash-intro .copyright-tag.fixed {
     width: 100%;
     height: 100%;
 }
-/* The view holds the scene box (still, clip), the banner and the foreground
-   box. No z-index, transform or clipping here: the banner keeps stacking against
-   the mirror, doll and minimap as it did before the view existed. The foreground
-   box is for the rendered cockpit only. */
+/* The view holds the scene box (still, clip) and the foreground box. No
+   z-index, transform or clipping here: the view adds no stacking level of its
+   own. The foreground box is for the rendered cockpit only. */
 #dash-view,
 #dash-scenebox {
     position: absolute;
@@ -107,50 +106,17 @@ html.dash-intro .copyright-tag.fixed {
 .dash-road { transform-origin: 720px 262px; animation: dash-drive .7s linear infinite; }
 @keyframes dash-drive { from { transform: scale(1); } to { transform: scale(2); } }
 
-/* Banner plane */
-.dash-banner {
-    position: absolute;
-    z-index: 1;
-    top: calc(104px * var(--dash-ss));
-    left: 8.5%;
-    right: 8.5%;
-    height: calc(64px * var(--dash-ss));
-    overflow: hidden;
-}
-.dash-fly {
-    position: absolute;
-    top: 0;
-    display: flex;
-    align-items: center;
-    width: max-content;
-    animation: dash-fly 16s linear infinite;
-    animation-delay: -7s;
-}
-@keyframes dash-fly { from { left: 0; transform: translateX(-100%); } to { left: 100%; transform: translateX(0); } }
+/* The intro's heading: for assistive technology and search, never seen. */
 #standoff-splash h1.dash-headline {
-    margin: 0;
-    padding: calc(4px * var(--dash-ss)) calc(16px * var(--dash-ss));
-    background: #F2EFE9;
-    border: calc(3px * var(--dash-ss)) solid #1A1020;
-    color: var(--vibrant-red);
-    font-family: var(--display);
-    font-weight: 600;
-    font-size: calc(36px * var(--dash-ss));
-    line-height: 1.2;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
     white-space: nowrap;
-    text-shadow: none;
-}
-.dash-towline {
-    width: calc(48px * var(--dash-ss));
-    height: calc(3px * var(--dash-ss));
-    background: #1A1020;
-}
-.dash-plane {
-    display: block;
-    width: calc(84px * var(--dash-ss));
-    height: calc(44px * var(--dash-ss));
 }
 
 /* Rear-view mirror with the rider */
@@ -471,16 +437,6 @@ html.dash-pushing #portal {
 @media (max-width: 760px) {
     .dash-furniture { display: none; }
 
-    .dash-banner { top: calc(62px * var(--dash-ss)); left: 0; right: 0; height: calc(44px * var(--dash-ss)); }
-    .dash-fly { animation-duration: 12s; animation-delay: -5s; }
-    #standoff-splash h1.dash-headline {
-        padding: calc(3px * var(--dash-ss)) calc(10px * var(--dash-ss));
-        border-width: calc(2px * var(--dash-ss));
-        font-size: calc(20px * var(--dash-ss));
-    }
-    .dash-towline { width: calc(28px * var(--dash-ss)); height: calc(2px * var(--dash-ss)); }
-    .dash-plane { width: calc(54px * var(--dash-ss)); height: calc(28px * var(--dash-ss)); }
-
     .dash-mirror-stem { width: calc(10px * var(--dash-ss)); height: calc(22px * var(--dash-ss)); }
     .dash-mirror-glass {
         width: calc(120px * var(--dash-ss));
@@ -663,10 +619,9 @@ html.dash-rendered[data-dash-mode="wide"] #dash-wire span {
 }
 html.dash-rendered[data-dash-mode="wide"] #dash-wire br { display: none; }
 
-/* Scene box and foreground: one box in the scene's 21:9 shape, so still, clip,
-   banner and cut-out share coordinates. Back to front: still and clip, banner
-   (z 1), foreground box (z 1, later in the DOM). All under the mirror, which is
-   later still, and under the cockpit (z 2). */
+/* Scene box and foreground: one box in the scene's 21:9 shape, so still, clip
+   and cut-out share coordinates. Back to front: still and clip, foreground box
+   (z 1). All under the cockpit (z 2). */
 html.dash-rendered #dash-view { overflow: hidden; }
 html.dash-rendered #dash-scenebox,
 html.dash-rendered #dash-fgbox {
@@ -695,12 +650,6 @@ html.dash-rendered #dash-fgclip {
 }
 html.dash-rendered #dash-fg[hidden],
 html.dash-rendered #dash-fgclip[hidden] { display: none; }
-html.dash-rendered .dash-banner {
-    left: 0;
-    right: var(--ck-crop-r);
-    top: calc(150px * var(--dash-ss));
-}
-html.dash-rendered[data-dash-mode="tall"] .dash-banner { top: calc(96px * var(--dash-ss)); }
 
 /* Rendered doll: two pictures split at the spring. The base stands still; the
    top sways about the spring's top, with the drawn doll's motion. Only with
@@ -746,7 +695,7 @@ html.dash-rendered .dash-doll-rendered .dash-doll-r-top {
 html.dash-pushing.dash-rendered .dash-doll-rendered .dash-doll-r-top { animation: dash-sway-hard .5s ease-in-out infinite; }
 
 @media (prefers-reduced-motion: reduce) {
-    .dash-road, .dash-fly, .dash-rider, .dash-doll, .dash-doll-top, .dash-doll-wave,
+    .dash-road, .dash-rider, .dash-doll, .dash-doll-top, .dash-doll-wave,
     html.dash-pushing .dash-doll-top,
     html.dash-rendered .dash-doll-rendered .dash-doll-r-top,
     html.dash-pushing.dash-rendered .dash-doll-rendered .dash-doll-r-top { animation: none; }

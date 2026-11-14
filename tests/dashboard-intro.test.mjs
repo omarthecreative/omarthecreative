@@ -136,6 +136,24 @@ async function visibleRect(page, sel) {
 async function css(page, sel, prop) {
   return page.evaluate(([sel, prop]) => getComputedStyle(document.querySelector(sel))[prop], [sel, prop]);
 }
+// Which of these @keyframes names the page's own stylesheets define.
+async function keyframeNames(page, names) {
+  return page.evaluate((names) => {
+    const found = [];
+    for (const sheet of document.styleSheets) {
+      let rules;
+      try { rules = sheet.cssRules; } catch (e) { continue; } // cross-origin (Typekit)
+      const walk = (list) => {
+        for (const r of list) {
+          if (r instanceof CSSKeyframesRule && names.includes(r.name)) found.push(r.name);
+          else if (r.cssRules) walk(r.cssRules);
+        }
+      };
+      walk(rules);
+    }
+    return found;
+  }, names);
+}
 // The dashboard is up: grid placed in the screen (html.dash-intro), page visible
 // (no html.dash-loading) and the intro running (body.intro-active). On a first
 // visit the grid is built earlier, behind the dark page; visitors can only see
@@ -278,21 +296,41 @@ for (const offline of [false, true]) {
       });
     }
 
-    test('banner headline is in view at 300ms', async () => {
-      // No banners, so the plane tows the headline whatever today's date is.
-      const noBanners = 'window.DashScenes = { scenes: [{ id: "miami-beach", timezone: "America/New_York" }], banners: [] };';
-      const page = await open({ offline, routes: [['**/dashboard-scenes.js*', (r) => r.fulfill({ contentType: 'text/javascript', body: noBanners })]] });
+    test('no banner plane: no markup, no keyframes', async () => {
+      const page = await open({ offline });
       try {
         await mounted(page);
-        await page.waitForTimeout(300);
-        assert.equal((await page.textContent('#standoff-splash h1')).trim(), 'HAVE TASTE. WILL TRAVEL.');
-        assert.equal(await page.locator('#standoff-splash h1').count(), 1);
-        const h = await rect(page, '#standoff-splash h1');
-        assert.ok(h.left < page.vw && h.right > 0 && h.width > 0, JSON.stringify(h));
+        for (const sel of ['.dash-banner', '.dash-fly', '.dash-towline', '.dash-plane']) {
+          assert.equal(await page.locator(sel).count(), 0, sel);
+        }
+        assert.deepEqual(await keyframeNames(page, ['dash-fly']), []);
       } finally {
         await done(page);
       }
     });
+
+    test('intro heading: one h1, in the accessibility tree, visually hidden', async () => {
+      const page = await open({ offline });
+      try {
+        await mounted(page);
+        assert.equal(await page.locator('#standoff-splash h1').count(), 1);
+        assert.equal(await page.locator('.dash-headline').count(), 1);
+        const h1 = page.locator('#standoff-splash h1.dash-headline');
+        assert.equal((await h1.textContent()).trim(), 'HAVE TASTE. WILL TRAVEL.');
+        assert.equal(await h1.ariaSnapshot(), '- heading "HAVE TASTE. WILL TRAVEL." [level=1]');
+        const h = await rect(page, '#standoff-splash h1');
+        assert.ok(h.width <= 1 && h.height <= 1, JSON.stringify(h));
+        assert.equal(await css(page, '#standoff-splash h1', 'position'), 'absolute');
+        assert.equal(await css(page, '#standoff-splash h1', 'clipPath'), 'inset(50%)');
+        assert.equal(await css(page, '#standoff-splash h1', 'overflow'), 'hidden');
+        assert.equal(await css(page, '#standoff-splash h1', 'whiteSpace'), 'nowrap');
+        assert.notEqual(await css(page, '#standoff-splash h1', 'display'), 'none');
+        assert.equal(await css(page, '#standoff-splash h1', 'visibility'), 'visible');
+      } finally {
+        await done(page);
+      }
+    });
+
     for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
       test(`after hold and push-in the grid is in its normal state (${viewport.width}x${viewport.height})`, async () => {
         const page = await open({ offline, viewport });

@@ -2,14 +2,14 @@
    mount()        places the live grid in the dashboard's screen frame (adds html.dash-intro)
    pushIn(onDone) pushes the scene in until the screen's edges meet the window's,
                   then removes the intro layer and calls onDone once.
-   applyScene()   picks a scene and a banner line from window.DashScenes
-                  (dashboard-scenes.js) and writes them into the intro markup.
+   applyScene()   picks a scene from window.DashScenes (dashboard-scenes.js)
+                  and writes it into the intro markup. Returns { sceneId }.
                   Runs once at load, on a first visit, while the page is dark.
    startClip()    starts the scene's clip, if it has one and its still loaded.
                   Called when the hold starts, never when the intro is skipped.
                   In the rendered cockpit it first loads the moving cut-out
                   (foregroundClip) and checks that it is see-through.
-   localDate, pickScene, liveBanner, pickLine: the pure parts of that pick.
+   pickScene      the pure part of that pick.
    layout(w, h)   geometry of the rendered cockpit for a window (pure).
    rendered()     true while html.dash-rendered is set: the cockpit picture
                   loaded while the page was dark and fits this window. Then
@@ -78,7 +78,7 @@
 
     // Size the artwork now, before first paint. This script loads after the
     // splash markup, so #dash-shield exists. Waiting for mount() showed the
-    // CSS default scale (1) first, and the doll and banner visibly shrank.
+    // CSS default scale (1) first, and the doll visibly shrank.
     // layout() is a function declaration below, so it is already defined here.
     setScales();
     window.addEventListener('resize', setScales);
@@ -149,9 +149,7 @@
         root.classList.add('dash-pushing');
     }
 
-    // — Scenes and banners —
-    var DEFAULT_LINE = 'HAVE TASTE. WILL TRAVEL.';
-
+    // — Scenes —
     function readStore(key) {
         try { return localStorage.getItem(key); } catch (e) { return null; }
     }
@@ -161,13 +159,6 @@
     function pickFrom(list, rnd) {
         var i = Math.floor(rnd() * list.length);
         return list[Math.min(Math.max(i, 0), list.length - 1)];
-    }
-
-    // 'YYYY-MM-DD' for this moment in that time zone. Throws on an unknown zone.
-    function localDate(now, timezone) {
-        return new Intl.DateTimeFormat('en-CA', {
-            timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit'
-        }).format(now);
     }
 
     // One scene at random, never the one shown last time when there is a choice.
@@ -180,35 +171,6 @@
             if (others.length) pool = others;
         }
         return pool.length ? pickFrom(pool, rnd) : null;
-    }
-
-    function usableLines(lines) {
-        return Array.isArray(lines) ? lines.filter(function (l) { return typeof l === 'string' && l.trim(); }) : [];
-    }
-
-    // The banner flying over this scene today, in the scene's own time zone.
-    // On overlap, the one that started later wins.
-    function liveBanner(banners, scene, now) {
-        if (!Array.isArray(banners) || !scene) return null;
-        var today;
-        try { today = localDate(now, scene.timezone); } catch (e) { return null; }
-        var live = null;
-        banners.forEach(function (b) {
-            if (!b || b.scene !== scene.id || !usableLines(b.lines).length) return;
-            if (typeof b.start !== 'string' || typeof b.end !== 'string') return;
-            if (b.start <= today && today <= b.end && (!live || b.start >= live.start)) live = b;
-        });
-        return live;
-    }
-
-    // One line at random, never the one shown last time when there is a choice.
-    function pickLine(lines, last, rnd) {
-        var pool = usableLines(lines);
-        if (pool.length > 1 && last) {
-            var others = pool.filter(function (l) { return l !== last; });
-            if (others.length) pool = others;
-        }
-        return pool.length ? pickFrom(pool, rnd) : DEFAULT_LINE;
     }
 
     var STILL_WAIT_MS = 1500; // longest the page stays dark waiting for a still
@@ -253,11 +215,11 @@
         still.src = src;
     }
 
-    // The foreground cut-out (palms, hotels) over the banner. Only called when the
+    // The foreground cut-out (palms, hotels) over the still. Only called when the
     // scene has a still and the cockpit fits this window (the same test as
     // loadCockpit, so it is fetched alongside the cockpit, not after it). The
     // page stays dark for it too, at most STILL_WAIT_MS, so the palms do not pop
-    // in over a banner already passing. A missing file leaves the still as it is.
+    // in over a scene already showing. A missing file leaves the still as it is.
     // Until the still has loaded (and for good if it is missing) it stays
     // hidden: the drawn scene shows, without palms.
     // If the cockpit then fails to load, the drawn dashboard shows and this
@@ -329,7 +291,7 @@
         return g.getImageData(0, 0, 1, 1).data[3] < 16;
     }
 
-    // Rendered cockpit: the clip plays with its moving cut-out over the banner.
+    // Rendered cockpit: the clip plays with its moving cut-out over it.
     // The cut-out loads first and must show a see-through first frame within
     // CUT_WAIT_MS; only then is the clip requested. Both start in the same
     // task when the clip can play, and the cut-out follows the clip's time.
@@ -435,24 +397,18 @@
         } catch (e) {}
     }
 
-    // Never throws. On any failure the markup stays as written: the drawn scene
-    // and the headline.
-    function applyScene(now) {
-        var fallback = { sceneId: null, line: DEFAULT_LINE };
+    // Never throws. On any failure the markup stays as written: the drawn scene.
+    function applyScene() {
+        var fallback = { sceneId: null };
         try {
             var data = window.DashScenes;
             if (!data) return fallback;
             var picked = pickScene(data.scenes, readStore('omar_last_scene'), Math.random);
             if (!picked) return fallback;
-            var banner = liveBanner(data.banners, picked, now || new Date());
-            var line = banner ? pickLine(banner.lines, readStore('omar_last_line'), Math.random) : DEFAULT_LINE;
 
-            var headline = document.querySelector('.dash-headline');
             var shield = document.getElementById('dash-shield');
-            if (headline) headline.textContent = line;
             if (shield) shield.setAttribute('data-scene', picked.id);
             writeStore('omar_last_scene', picked.id);
-            writeStore('omar_last_line', line);
             scene = picked;
             if (typeof picked.still === 'string' && picked.still) showStill(picked.still);
             if (typeof picked.still === 'string' && picked.still) {
@@ -463,7 +419,7 @@
             if (typeof picked.minimap === 'string' && picked.minimap) showMinimap(picked.minimap);
             var mirror = document.querySelector('.dash-mirror');
             if (mirror && typeof picked.mirror === 'string') mirror.setAttribute('data-gag', picked.mirror);
-            return { sceneId: picked.id, line: line };
+            return { sceneId: picked.id };
         } catch (e) {
             return fallback;
         }
@@ -559,10 +515,6 @@
         startClip: startClip,
         layout: layout,
         rendered: rendered,
-        localDate: localDate,
-        pickScene: pickScene,
-        liveBanner: liveBanner,
-        pickLine: pickLine,
-        DEFAULT_LINE: DEFAULT_LINE
+        pickScene: pickScene
     };
 })();

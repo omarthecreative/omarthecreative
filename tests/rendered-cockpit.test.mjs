@@ -479,6 +479,18 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
         await done(page);
       }
     });
+
+    test(`rendered at ${w}x${h}: no banner`, async () => {
+      const page = await open({ viewport: { width: w, height: h } });
+      try {
+        await mounted(page);
+        await assertRendered(page, mode);
+        assert.equal(await page.locator('.dash-banner, .dash-fly, .dash-towline, .dash-plane').count(), 0);
+        assert.deepEqual(page.errors, []);
+      } finally {
+        await done(page);
+      }
+    });
   }
 
   test('1280x1024: drawn dashboard, cockpit never requested', async () => {
@@ -658,11 +670,11 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
   });
 });
 
-// — Task 4: scene box, foreground cut-out, banner between them —
+// — Task 4: scene box and foreground cut-out —
 // Copied from scene-system.test.mjs and extended: serves .webp and .webm too.
 const MEDIA_TYPES = { '.mp4': 'video/mp4', '.webm': 'video/webm', '.webp': 'image/webp', '.jpg': 'image/jpeg' };
 function withScene(scene) {
-  const body = `window.DashScenes = { scenes: [${JSON.stringify({ id: 'test-scene', timezone: 'America/New_York', ...scene })}], banners: [] };`;
+  const body = `window.DashScenes = { scenes: [${JSON.stringify({ id: 'test-scene', timezone: 'America/New_York', ...scene })}] };`;
   return [
     ['**/dashboard-scenes.js*', (r) => r.fulfill({ contentType: 'text/javascript', body })],
     ['**/test-media/**', async (r) => {
@@ -695,7 +707,7 @@ const fgReady = () => {
 };
 
 describe('scene box and foreground', { concurrency: 1 }, () => {
-  test('rendered: still, then banner, then foreground, in that paint order', async () => {
+  test('rendered: still, then foreground, in that paint order', async () => {
     const page = await open({ routes: withScene({ still: T4_STILL, foreground: T4_FG }) });
     try {
       await mounted(page);
@@ -710,12 +722,12 @@ describe('scene box and foreground', { concurrency: 1 }, () => {
       assert.ok(Math.abs(fg.height - 0.62136 * sb.height) <= 1, `fg height ${fg.height} vs ${0.62136 * sb.height}`);
       assert.ok(Math.abs(fg.left - sb.left) <= 0.5 && Math.abs(fg.width - sb.width) <= 0.5 && Math.abs(fg.top - sb.top) <= 0.5);
       const order = await page.evaluate(() => [...document.getElementById('dash-view').children].map((el) => el.id || el.className));
-      assert.deepEqual(order, ['dash-scenebox', 'dash-banner', 'dash-fgbox']);
+      assert.deepEqual(order, ['dash-scenebox', 'dash-fgbox']);
       const view = await rect(page, '#dash-view');
       assert.ok(sb.left <= view.left + 0.5 && sb.top <= view.top + 0.5 && sb.right >= view.right - 0.5 && sb.bottom >= view.bottom - 0.5,
         `scene box ${JSON.stringify(sb)} covers view ${JSON.stringify(view)}`);
-      // Paint order by hit-testing: park the plane in the middle of the view, on a
-      // point where the foreground is opaque, and read the stack top-down.
+      // Paint order by hit-testing: find a point in the view where the foreground is
+      // opaque and one where it is clear, and read the stack top-down.
       const stacks = await page.evaluate(async () => {
         const fgEl = document.getElementById('dash-fg');
         const c = document.createElement('canvas');
@@ -737,68 +749,25 @@ describe('scene box and foreground', { concurrency: 1 }, () => {
             if (a === 0 && !clear) clear = { px, py };
           }
         }
-        // Freeze the banner so that it covers both points.
-        const fly = document.querySelector('.dash-fly');
-        const banner = document.querySelector('.dash-banner');
-        const bb = banner.getBoundingClientRect();
-        fly.style.animation = 'none';
-        fly.style.left = '0';
-        fly.style.transform = 'none';
         const names = (p) => p && document.elementsFromPoint(p.px, p.py).map((e) => e.id || (typeof e.className === 'string' ? e.className : ''));
-        // Point inside the banner box, over the headline.
-        const hl = document.querySelector('.dash-headline').getBoundingClientRect();
-        const over = { px: hl.left + hl.width / 2, py: hl.top + hl.height / 2 };
-        return { opaque: names(opaque), clear: names(clear), banner: names(over), bb: { l: bb.left, t: bb.top }, hasOpaque: !!opaque, hasClear: !!clear, over };
+        return { opaque: names(opaque), clear: names(clear), hasOpaque: !!opaque, hasClear: !!clear };
       });
       assert.ok(stacks.hasOpaque && stacks.hasClear, 'fixture has opaque and transparent pixels in view');
       const idx = (list, re) => list.findIndex((n) => re.test(n));
       // Where the foreground is opaque it is above the still; the still is the element under it.
       assert.ok(idx(stacks.opaque, /^dash-fg$/) !== -1 && idx(stacks.opaque, /^dash-still$/) !== -1, JSON.stringify(stacks.opaque));
       assert.ok(idx(stacks.opaque, /^dash-fg$/) < idx(stacks.opaque, /^dash-still$/), 'foreground above still');
-      // Computed stacking guarantees banner between: banner above the scene box, fg box above banner.
+      // The foreground box stacks over the scene box.
       const z = await page.evaluate(() => {
         const get = (s) => {
-          const el = document.querySelector(s);
-          const cs = getComputedStyle(el);
+          const cs = getComputedStyle(document.querySelector(s));
           return { z: cs.zIndex, pos: cs.position };
         };
-        const all = [...document.querySelectorAll('#dash-scenebox, .dash-banner, #dash-fgbox')];
-        return { scene: get('#dash-scenebox'), banner: get('.dash-banner'), fg: get('#dash-fgbox'), order: all.map((e) => e.id || e.className) };
+        return { scene: get('#dash-scenebox'), fg: get('#dash-fgbox') };
       });
-      assert.equal(z.banner.z, '1');
       assert.equal(z.fg.z, '1');
       assert.equal(z.fg.pos, 'absolute');
       assert.equal(z.scene.z, 'auto');
-      // Banner headline sits above the still in the hit stack, and below the foreground box (same z, later in DOM).
-      assert.ok(idx(stacks.banner, /dash-headline|dash-fly|dash-banner/) !== -1);
-      assert.ok(idx(stacks.banner, /dash-headline|dash-fly|dash-banner/) < idx(stacks.banner, /^dash-still$/), 'banner above still');
-      // Where the foreground is opaque and a banner passes, the foreground wins: put the plane under an opaque point.
-      const wins = await page.evaluate(() => {
-        const fgEl = document.getElementById('dash-fg');
-        const c = document.createElement('canvas');
-        c.width = fgEl.naturalWidth; c.height = fgEl.naturalHeight;
-        const cx = c.getContext('2d');
-        cx.drawImage(fgEl, 0, 0);
-        const r = fgEl.getBoundingClientRect();
-        const banner = document.querySelector('.dash-banner').getBoundingClientRect();
-        const hl = document.querySelector('.dash-headline').getBoundingClientRect();
-        // Scan the headline's box for a point where the foreground is opaque.
-        for (let py = hl.top + 2; py < hl.bottom - 2; py += 3) {
-          for (let px = Math.max(hl.left, banner.left) + 2; px < Math.min(hl.right, banner.right) - 2; px += 3) {
-            const x = Math.floor(((px - r.left) / r.width) * c.width), y = Math.floor(((py - r.top) / r.height) * c.height);
-            if (y < 0 || y >= c.height || x < 0 || x >= c.width) continue;
-            if (cx.getImageData(x, y, 1, 1).data[3] === 255) {
-              const names = document.elementsFromPoint(px, py).map((e) => e.id || (typeof e.className === 'string' ? e.className : ''));
-              return { found: true, names };
-            }
-          }
-        }
-        return { found: false };
-      });
-      assert.ok(wins.found, 'no opaque foreground pixel under the parked headline: the claim below was not tested');
-      const iFg = wins.names.findIndex((n) => /^dash-fg$|dash-fgbox/.test(n));
-      const iBn = wins.names.findIndex((n) => /dash-headline|dash-fly|dash-banner/.test(n));
-      assert.ok(iFg !== -1 && iBn !== -1 && iFg < iBn, `foreground over banner: ${JSON.stringify(wins.names)}`);
       assert.deepEqual(page.errors, []);
     } finally {
       await done(page);
@@ -850,9 +819,6 @@ describe('scene box and foreground', { concurrency: 1 }, () => {
         assert.equal(v.op, '1');
         assert.ok(Math.abs(v.w - sh.width) <= 0.5 && Math.abs(v.h - sh.height) <= 0.5, JSON.stringify(v));
       }
-      // The banner still paints against the mirror, doll and minimap as on main: same z as before, one stacking level.
-      assert.equal(await css(page, '.dash-banner', 'zIndex'), '1');
-      assert.equal(await page.evaluate(() => document.querySelector('.dash-banner').parentElement.id), 'dash-view');
       assert.deepEqual(page.errors, []);
     } finally {
       await done(page);
@@ -902,35 +868,6 @@ describe('scene box and foreground', { concurrency: 1 }, () => {
       await done(page);
     }
   });
-
-  for (const [w, h, mode] of [[1440, 900, 'wide'], [390, 844, 'tall']]) {
-    test(`banner headline is in view at some point in the hold, rendered, ${w}x${h}`, async () => {
-      const page = await open({ viewport: { width: w, height: h }, routes: withScene({ still: T4_STILL, foreground: T4_FG }) });
-      try {
-        await mounted(page);
-        await assertRendered(page, mode);
-        const seen = await page.evaluate(() => new Promise((resolve) => {
-          const t0 = performance.now();
-          const hl = document.querySelector('.dash-headline');
-          const banner = document.querySelector('.dash-banner');
-          (function tick() {
-            const a = hl.getBoundingClientRect(), b = banner.getBoundingClientRect();
-            const vis = Math.min(a.right, b.right) - Math.max(a.left, b.left);
-            const visH = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
-            if (vis > 0.5 * a.width && visH > 0.5 * a.height && b.width > 0) return resolve({ ok: true, t: performance.now() - t0 });
-            if (performance.now() - t0 > 4000) return resolve({ ok: false, a: [a.left, a.right, a.top, a.bottom], b: [b.left, b.right, b.top, b.bottom] });
-            requestAnimationFrame(tick);
-          })();
-        }));
-        assert.ok(seen.ok, JSON.stringify(seen));
-        const b = await rect(page, '.dash-banner');
-        const shield = await rect(page, '#dash-shield');
-        assert.ok(b.top >= shield.top && b.bottom <= shield.bottom, `banner ${b.top}-${b.bottom} inside shield ${shield.top}-${shield.bottom}`);
-      } finally {
-        await done(page);
-      }
-    });
-  }
 });
 
 // Task 5: the moving cut-out gates the clip.
