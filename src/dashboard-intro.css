@@ -574,8 +574,8 @@ html.dash-rendered .dash-minimap {
 /* Wire Omar on the picture's start button: the knight on the button face, the
    words on one line under it. The phone keeps the drawn button. */
 html.dash-rendered[data-dash-mode="wide"] #dash-wire {
-    left: calc(var(--ck-x) + (0.416 - 0.017) * var(--ck-w));
-    top: calc(0.675 * var(--ck-h) - 0.017 * var(--ck-w));
+    left: calc(var(--ck-x) + (0.428 - 0.017) * var(--ck-w));
+    top: calc(0.674 * var(--ck-h) - 0.017 * var(--ck-w));
     width: calc(0.034 * var(--ck-w));
     height: calc(0.034 * var(--ck-w));
     border: 0;

@@ -288,7 +288,7 @@
             ckH = h; ckW = h * 16 / 9; ckX = Math.max(0, (w - ckW) / 2);
             cropR = Math.max(0, ckX + ckW - w);
             shield = 0.412 * h; top = 0.43 * h;
-            var leftMin = ckX + 0.445 * ckW;
+            var leftMin = ckX + 0.458 * ckW;
             var rightMax = Math.min(w, ckX + ckW) - 16;
             k = Math.min(0.48, (rightMax - leftMin) / w);
             left = Math.max(leftMin, Math.min(0.49 * w, rightMax - k * w));
