@@ -79,8 +79,8 @@ async function open({ path: p = '/', seen = false, reduced = false, offline = fa
   await page.goto(server.url + p);
   return page;
 }
-// The 5000ms hold starts when the page's fonts gate opens, not at navigation.
-// Every timed wait counts from here.
+// The intro starts when the page's fonts gate opens, not at navigation. From here it
+// waits for the visitor: a test that needs the push-in performs an input.
 async function introStart(page) {
   await page.waitForFunction(() => document.body.classList.contains('intro-active'), null, { timeout: 8000, polling: 50 });
 }
@@ -223,6 +223,7 @@ for (const offline of [false, true]) {
       const page = await open({ offline });
       try {
         await introStart(page);
+        await page.keyboard.press('Escape');
         // Headless software rendering stretches timings, so poll to a deadline.
         await until(page, () => getComputedStyle(document.getElementById('standoff-splash')).display === 'none', 10000);
         assert.equal(await page.evaluate(() => document.body.classList.contains('grid-active')), true);
@@ -352,15 +353,14 @@ for (const offline of [false, true]) {
       });
     }
     for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
-      test(`after hold and push-in the grid is in its normal state (${viewport.width}x${viewport.height})`, async () => {
+      test(`after the push-in the grid is in its normal state (${viewport.width}x${viewport.height})`, async () => {
         const page = await open({ offline, viewport });
         try {
-          await introStart(page);
-          await page.waitForTimeout(6400);
+          await mounted(page);
+          await page.keyboard.press('Escape');
           await endState(page, 3000); // slack for headless software rendering; timings asserted below
           const m = await page.evaluate(() => window.__marks);
-          const hold = m.pushStart - m.introStart, push = m.pushEnd - m.pushStart;
-          assert.ok(hold >= 4950 && hold <= 5600, `hold ${hold.toFixed(0)}ms`);
+          const push = m.pushEnd - m.pushStart;
           assert.ok(push <= 1400, `push-in ${push.toFixed(0)}ms`);
           await assertEndState(page);
         } finally {
@@ -373,7 +373,8 @@ for (const offline of [false, true]) {
       const page = await open({ offline });
       try {
         await mounted(page);
-        await until(page, () => document.documentElement.classList.contains('dash-pushing'), 7000);
+        await page.keyboard.press('Escape');
+        await until(page, () => document.documentElement.classList.contains('dash-pushing'), 2000);
         const samples = await page.evaluate(() => new Promise((resolve) => {
           const out = [];
           const t0 = performance.now();
@@ -436,18 +437,17 @@ for (const offline of [false, true]) {
       }
     });
 
-    test('click then timer: pushIn runs once', async () => {
+    test('click, then a click mid push-in: pushIn runs once', async () => {
       const page = await open({ offline });
       try {
         await introStart(page);
         await countExits(page);
         assert.ok(!('pushStart' in await page.evaluate(() => window.__marks)), 'counters attached too late');
-        // Clicks scheduled on the page clock, so runner lag cannot reorder them against the 5s timer.
+        // Clicks scheduled on the page clock, so runner lag cannot spread them apart.
         await page.evaluate(() => {
-          const at = (ms, fn) => setTimeout(fn, Math.max(0, window.__marks.introStart + ms - performance.now()));
           const click = () => document.getElementById('dash-shield').dispatchEvent(new MouseEvent('click', { bubbles: true }));
-          at(4850, click); // just before the timer
-          at(5150, click); // again, mid push-in
+          click();
+          setTimeout(click, 300); // again, mid push-in
         });
         await endState(page, 8000);
         await page.waitForTimeout(300);
@@ -515,6 +515,7 @@ for (const offline of [false, true]) {
       const page = await open({ offline });
       try {
         await introStart(page);
+        await page.keyboard.press('Escape');
         await until(page, () => (window.__afterLanding || []).length > 20, 9000);
         const ops = await page.evaluate(() => window.__afterLanding);
         assert.ok(ops.every((o) => o === 1), `tile opacity after landing: ${ops.join(',')}`);
@@ -557,7 +558,9 @@ for (const offline of [false, true]) {
       const page = await open({ offline });
       try {
         await mounted(page);
-        await until(page, () => 'pushStart' in window.__marks, 8000);
+        await page.waitForTimeout(1500); // the dashboard waits; nothing large loads meanwhile
+        await page.keyboard.press('Escape');
+        await until(page, () => 'pushStart' in window.__marks, 2000);
         const early = await page.evaluate(() => {
           const full = new Set([...projects, ...caseStudies].map((p) => new URL(p.img, location.href).href));
           const pushStart = window.__marks.pushStart;

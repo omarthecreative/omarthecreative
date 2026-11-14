@@ -19,8 +19,8 @@ before(async () => {
   server = await startServer(SRC);
   browser = await chromium.launch();
   // The first AudioContext in a browser run starts the audio service (400-700ms
-  // here, drawn or rendered). Start it now, or it lands on the first test whose
-  // hold ends (ApexSound.init runs at the push-in) and stretches its timing.
+  // here, drawn or rendered). Start it now, or it lands on the first test that
+  // starts the push-in (ApexSound.init runs there) and stretches its timing.
   const warm = await browser.newPage();
   await warm.evaluate(() => new AudioContext().close());
   await warm.close();
@@ -565,13 +565,13 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
     test(`push-in lands on the grid in rendered mode (${w}x${h})`, async () => {
       const page = await open({ viewport: { width: w, height: h } });
       try {
-        await introStart(page);
+        await mounted(page);
         await assertRendered(page, mode);
+        await page.keyboard.press('Escape');
         await landed(page);
         await page.waitForTimeout(200);
         const m = await page.evaluate(() => window.__marks);
-        const hold = m.pushStart - m.introStart, push = m.pushEnd - m.pushStart;
-        assert.ok(hold >= 4950 && hold <= 5600, `hold ${hold.toFixed(0)}ms`);
+        const push = m.pushEnd - m.pushStart;
         assert.ok(push <= 1400, `push-in ${push.toFixed(0)}ms`);
         await assertEndState(page);
         assert.deepEqual(page.errors, []);
@@ -586,7 +586,8 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
     try {
       await mounted(page);
       await assertRendered(page, 'wide');
-      await until(page, () => document.documentElement.classList.contains('dash-pushing'), 7000);
+      await page.keyboard.press('Escape');
+      await until(page, () => document.documentElement.classList.contains('dash-pushing'), 2000);
       const samples = await page.evaluate(() => new Promise((resolve) => {
         const out = [];
         const t0 = performance.now();
@@ -1066,6 +1067,7 @@ describe('clip', { concurrency: 1 }, () => {
         assert.equal(v.hidden, false, s);
         assert.equal(v.paused, false, s);
         assert.ok(v.t > 0, s);
+        await page.keyboard.press('Escape');
         await landed(page);
         await assertEndState(page);
         const end = await clipState(page);
@@ -1103,6 +1105,7 @@ describe('clip', { concurrency: 1 }, () => {
         assert.equal(v.hidden, true, s);
         assert.equal(v.paused, true, s);
         assert.equal(v.stillShown, true, s);
+        await page.keyboard.press('Escape');
         await landed(page);
         await assertEndState(page);
         assert.deepEqual(page.errors, []);
@@ -1137,6 +1140,7 @@ describe('clip', { concurrency: 1 }, () => {
         await introStart(page);
         await assertMode(page, mode);
         await until(page, clipPlaying, 4000);
+        await page.keyboard.press('Escape');
         await landed(page);
         const before = clipRequests(page).length;
         await page.evaluate(() => window.DashIntro.startClip());

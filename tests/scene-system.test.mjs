@@ -146,6 +146,7 @@ for (const offline of [false, true]) {
       try {
         assert.equal(await hasClass(page, 'html', 'dash-first'), true);
         await introStart(page);
+        await page.keyboard.press('Escape');
         await landed(page);
         assert.deepEqual(page.errors, []);
         assert.equal(await css(page, '#portal', 'transform'), 'none');
@@ -275,14 +276,16 @@ for (const offline of [false, true]) {
       } finally { await close(page); }
     });
 
-    test('clip 404: still stays, intro lands on time', async () => {
+    test('clip 404: still stays, intro lands', async () => {
       const page = await open({ offline, routes: withScene({ still: STILL, clip: 'test-media/missing.mp4' }) });
       try {
         await introStart(page);
+        await page.waitForFunction(() => document.getElementById('dash-clip').getAttribute('src') === null
+          && performance.now() - window.__marks.introStart > 1000, null, { timeout: 4000, polling: 50 });
+        await page.keyboard.press('Escape');
         await landed(page);
         const m = await page.evaluate(() => window.__marks);
-        const took = m.pushEnd - m.introStart;
-        assert.ok(took >= 5000 && took <= 6600, `introStart to pushEnd: ${took}ms`);
+        assert.ok(m.pushEnd - m.pushStart <= 1400, `push-in ${(m.pushEnd - m.pushStart).toFixed(0)}ms`);
         assert.equal(await page.evaluate(() => document.getElementById('dash-clip').hidden), true);
         assert.equal(await hasClass(page, '#dash-shield', 'dash-has-still'), true);
         assert.deepEqual(page.errors, []);

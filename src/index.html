@@ -1632,7 +1632,6 @@
         <!-- HUD Elements -->
         <div class="hud-tag hud-tl" id="hud-tc">[ TC 00:00:00:00 ]</div>
         <div class="hud-tag hud-tr" id="lut-toggle">[ LUT: REC.709 ]</div>
-        <div class="hud-tag hud-tr" id="intro-timer" style="display: none; color: var(--vibrant-red-hud);">[ DISPATCH IN: 05.00 ]</div>
         <div class="hud-tag hud-bl" id="hud-fps">[ 24 FPS ]</div>
         <div class="hud-tag hud-br" id="bat-status">[ BAT: 00% ]</div>
     </div>
@@ -2553,11 +2552,9 @@
             if (typeof projectDisplay !== 'undefined' && projectDisplay) projectDisplay.style.width = '';
         }
 
-        // — TIMED INTRO SPLIT SCREEN & FOOTER TYPEWRITER SYSTEM —
-        const INTRO_HOLD_MS = 5000; // time to look at the dashboard before the push-in
-        let introTimer = null;
-        let countdownInterval = null;
-        let introTimeLeft = INTRO_HOLD_MS / 1000;
+        // — INTRO: THE DASHBOARD WAITS FOR THE VISITOR —
+        // Keys that start the push-in (with Ctrl, Meta or Alt held they stay the browser's).
+        const INTRO_START_KEYS = ['Escape', 'Enter', ' ', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'PageDown'];
 
         function initIntro() {
             const params = new URLSearchParams(window.location.search);
@@ -2580,7 +2577,7 @@
             }
 
             document.body.classList.add('intro-active');
-            // The hold starts now: a scene's clip, if it has one, starts with it.
+            // The intro starts now: a scene's clip, if it has one, starts with it.
             if (window.DashIntro && DashIntro.startClip) DashIntro.startClip();
             // The grid is in its normal state and the dashboard shows it scaled
             // down inside its screen for the hold. Normally already done by
@@ -2590,29 +2587,35 @@
                 initVisualGrid();
                 if (window.DashIntro) DashIntro.mount();
             }
-            const timerEl = document.getElementById('intro-timer');
             const lutToggle = document.getElementById('lut-toggle');
-            if (timerEl) {
-                timerEl.style.display = 'block';
-                timerEl.textContent = `[ DISPATCH IN: 05.00 ]`;
-            }
             if (lutToggle) lutToggle.style.display = 'none';
 
-            // One exit, whichever comes first: click, key, or the 3s timer.
+            // The dashboard stays until the visitor acts: a click or tap anywhere,
+            // a scroll, a swipe, or a start key. The first one starts the push-in,
+            // once; every listener goes with it. Wire Omar keeps its click and
+            // Enter to itself (DashIntro.mount), so it navigates instead.
             // Grid state was entered at mount; the push-in lands on it.
+            const PASSIVE = { passive: true };
             let introExiting = false;
-            function skipIntro() {
-                if (introTimer) {
-                    clearTimeout(introTimer);
-                    introTimer = null;
-                }
-                if (countdownInterval) {
-                    clearInterval(countdownInterval);
-                    countdownInterval = null;
-                }
+            const onStartKey = (e) => {
+                if (e.ctrlKey || e.metaKey || e.altKey) return;
+                if (INTRO_START_KEYS.indexOf(e.key) === -1) return;
+                e.preventDefault();
+                startPushIn();
+            };
+            const onStartInput = () => startPushIn();
+            document.addEventListener('click', onStartInput);
+            document.addEventListener('keydown', onStartKey);
+            document.addEventListener('wheel', onStartInput, PASSIVE);
+            document.addEventListener('touchmove', onStartInput, PASSIVE);
 
+            function startPushIn() {
                 if (introExiting) return;
                 introExiting = true;
+                document.removeEventListener('click', onStartInput);
+                document.removeEventListener('keydown', onStartKey);
+                document.removeEventListener('wheel', onStartInput, PASSIVE);
+                document.removeEventListener('touchmove', onStartInput, PASSIVE);
                 if (typeof ApexSound !== 'undefined') {
                     ApexSound.init();
                     ApexSound.play('shutter');
@@ -2621,7 +2624,6 @@
                     document.body.classList.remove('intro-active');
                     document.documentElement.classList.remove('dash-first');
                     preloadHeroBackgrounds();
-                    if (timerEl) timerEl.style.display = 'none';
                     if (lutToggle) lutToggle.style.display = 'block';
                     const gridContainer = document.getElementById('grid-scroll-container');
                     if (gridContainer && !document.activeElement?.closest?.('a, button, input')) {
@@ -2629,44 +2631,6 @@
                     }
                 });
             }
-
-            // Keyboard/Click listeners to skip
-            const handleKeyToSkip = (e) => {
-                if (document.body.classList.contains('intro-active')) {
-                    if (e.key === ' ' || e.key === 'Enter' || e.key === 'Escape') {
-                        e.preventDefault();
-                        document.removeEventListener('keydown', handleKeyToSkip);
-                        skipIntro();
-                    }
-                }
-            };
-            document.addEventListener('keydown', handleKeyToSkip);
-
-            const handleClickToSkip = () => {
-                if (document.body.classList.contains('intro-active')) {
-                    document.removeEventListener('click', handleClickToSkip);
-                    skipIntro();
-                }
-            };
-            document.addEventListener('click', handleClickToSkip);
-
-            // Countdown ticker
-            countdownInterval = setInterval(() => {
-                introTimeLeft -= 0.1;
-                if (introTimeLeft <= 0) {
-                    introTimeLeft = 0;
-                    clearInterval(countdownInterval);
-                }
-                if (timerEl) {
-                    timerEl.textContent = `[ DISPATCH IN: ${introTimeLeft.toFixed(2).padStart(5, '0')} ]`;
-                }
-            }, 100);
-
-            // Auto skip after the hold
-            introTimer = setTimeout(() => {
-                introTimer = null;
-                skipIntro();
-            }, INTRO_HOLD_MS);
         }
 
         function initVisualGrid() {
