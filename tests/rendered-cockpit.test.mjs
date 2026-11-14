@@ -394,8 +394,9 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
             // cockpit image is clipped away there and cannot be hit). Probe left of the screen's edge.
             // Known, accepted deviation from the spec's layer order (controller ruling P1): at widths where
             // the screen sits at its left limit (1440x900, 1024x768, 2560x1080) the doll's base overlaps the
-            // screen's top-left corner by about 50 x 13 px at the bottom of its hop and paints over
-            // #dash-screen. It is left for the owner to settle on screen; the probe avoids the overlap on
+            // screen's top-left corner by about 50 x 13 px and paints over #dash-screen. That is the doll's
+            // resting state (dash-hop keeps it down for 80% of each cycle), and the base is opaque there,
+            // not a moment of the hop. It is left for the owner to settle on screen; the probe avoids the overlap on
             // purpose, and the overlap itself is pinned by its own test ("known deviation (P1)").
             doll: [Math.min(doll.left + doll.width / 2, box('#dash-screen').left - 6), doll.top + doll.height * (dollOn ? 0.92 : 0.75)],
             wire: centre('#dash-wire'),
