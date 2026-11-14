@@ -33,6 +33,8 @@
     // Each cockpit picture counts only if it loaded while the page was still
     // dark; a late one never swaps the dashboard in front of the visitor.
     var cockpitLoaded = { wide: false, tall: false };
+    // The rendered doll counts only if both of its pieces loaded while dark too.
+    var dollLoaded = { top: false, base: false };
     // Inline variable on :root -> the layout() field it carries (px, except k).
     var LAYOUT_VARS = {
         '--dash-k': 'k', '--dash-left': 'left', '--dash-top': 'top', '--dash-shield': 'shield',
@@ -52,6 +54,9 @@
             else root.style.removeProperty(name);
         });
         root.classList.toggle('dash-rendered', on);
+        // The rendered doll stands on the rendered cockpit only: never without it.
+        var doll = document.querySelector('.dash-doll');
+        if (doll) doll.classList.toggle('dash-doll-rendered', on && dollLoaded.top && dollLoaded.base);
         if (on) root.setAttribute('data-dash-mode', o.mode);
         else root.removeAttribute('data-dash-mode');
     }
@@ -502,6 +507,28 @@
             img.addEventListener('error', function () { done(); });
         }));
         img.src = src;
+        loadDoll();
+    }
+
+    // The doll's two pieces, requested with the cockpit. Each counts only if it
+    // loaded while the page was dark; applyLayout() decides whether the rendered
+    // doll shows. A missing piece leaves the drawn doll.
+    function loadDoll() {
+        [['top', 'assets/dash/doll-top.webp'], ['base', 'assets/dash/doll-base.webp']].forEach(function (p) {
+            var img = document.querySelector('.dash-doll-r-' + p[0]);
+            if (!img) return;
+            holdDarkFor(new Promise(function (done) {
+                img.addEventListener('load', function () {
+                    if (root.classList.contains('dash-loading')) {
+                        dollLoaded[p[0]] = true;
+                        setScales();
+                    }
+                    done();
+                });
+                img.addEventListener('error', function () { done(); });
+            }));
+            img.src = p[1];
+        });
     }
 
     if (root.classList.contains('dash-first')) {

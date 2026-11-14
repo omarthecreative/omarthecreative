@@ -702,7 +702,49 @@ html.dash-rendered .dash-banner {
 }
 html.dash-rendered[data-dash-mode="tall"] .dash-banner { top: calc(96px * var(--dash-ss)); }
 
+/* Rendered doll: two pictures split at the spring. The base stands still; the
+   top sways about the spring's top, with the drawn doll's motion. Only with
+   .dash-doll-rendered (dashboard-intro.js adds it under html.dash-rendered once
+   both pieces have loaded); otherwise the drawn doll shows, as before.
+   Left and top resolve against #dash-shield, which starts at --ck-x and is
+   --ck-w wide, so the doll's centre is --ck-x + CX * --ck-w. Feet at 0.445 of
+   the picture are below the shield's foot: the shield does not clip. */
+.dash-doll-r { display: none; }
+html.dash-rendered .dash-doll.dash-doll-rendered {
+    width: auto;
+    height: calc(0.25 * var(--ck-h));
+    aspect-ratio: 1161 / 3092;
+    left: calc(0.45 * var(--ck-w));
+    top: calc(0.445 * var(--ck-h));
+    transform: translate(-50%, -100%);
+}
+html.dash-rendered[data-dash-mode="tall"] .dash-doll.dash-doll-rendered {
+    height: calc(0.14 * var(--ck-h));
+    left: calc(0.20 * var(--ck-w));
+    top: calc(0.31 * var(--ck-h));
+}
+html.dash-rendered .dash-doll-rendered .dash-doll-top,
+html.dash-rendered .dash-doll-rendered .dash-doll-base { display: none; }
+html.dash-rendered .dash-doll-rendered .dash-doll-r {
+    display: block;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    max-width: none;
+    object-fit: fill;
+}
+html.dash-rendered .dash-doll-rendered .dash-doll-r-base { top: 43.47%; height: 56.53%; }
+html.dash-rendered .dash-doll-rendered .dash-doll-r-top {
+    top: 0;
+    height: 57.21%;
+    transform-origin: 49.53% 77.33%;
+    animation: dash-dance 1.6s ease-in-out infinite;
+}
+html.dash-pushing.dash-rendered .dash-doll-rendered .dash-doll-r-top { animation: dash-sway-hard .5s ease-in-out infinite; }
+
 @media (prefers-reduced-motion: reduce) {
     .dash-road, .dash-fly, .dash-rider, .dash-doll, .dash-doll-top, .dash-doll-wave,
-    html.dash-pushing .dash-doll-top { animation: none; }
+    html.dash-pushing .dash-doll-top,
+    html.dash-rendered .dash-doll-rendered .dash-doll-r-top,
+    html.dash-pushing.dash-rendered .dash-doll-rendered .dash-doll-r-top { animation: none; }
 }

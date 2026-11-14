@@ -384,12 +384,13 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
           };
           const box = (sel) => document.querySelector(sel).getBoundingClientRect();
           const centre = (sel) => { const b = box(sel); return [b.left + b.width / 2, b.top + b.height / 2]; };
-          const doll = box('.dash-doll-base');
+          const dollOn = document.querySelector('.dash-doll').classList.contains('dash-doll-rendered');
+          const doll = box(dollOn ? '.dash-doll-r-base' : '.dash-doll-base');
           const points = {
             opaque: [ib.left + 0.05 * ib.width, ib.top + 0.95 * Math.min(ib.height, innerHeight)],
             mirror: centre('.dash-mirror-glass'),
             minimap: centre('.dash-minimap'),
-            doll: [doll.left + doll.width / 2, doll.top + doll.height * 0.75],
+            doll: [doll.left + doll.width / 2, doll.top + doll.height * (dollOn ? 0.92 : 0.75)],
             wire: centre('#dash-wire'),
             screen: centre('#dash-screen'),
           };
@@ -1296,6 +1297,328 @@ describe('moving cut-out', { concurrency: 1 }, () => {
       // As on main, no still means no clip; and so no cut-out either.
       assert.deepEqual(media(page).filter((u) => /clip/.test(u)), []);
       assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+});
+
+// — Task 6: the rendered doll —
+// Doll geometry from the plan: height, centre x and feet y as fractions of the cockpit picture.
+const DOLL = { wide: { h: 0.25, cx: 0.45, feet: 0.445 }, tall: { h: 0.14, cx: 0.20, feet: 0.31 } };
+const noDoll = [['**/assets/dash/doll-*', (r) => r.fulfill({ status: 404, body: 'not found' })]];
+// The doll's box with its hop paused (the hop moves the whole box), plus the
+// state that tells which doll is up.
+async function dollBox(page) {
+  return page.evaluate(() => {
+    const d = document.querySelector('.dash-doll');
+    const before = d.style.animation;
+    d.style.animation = 'none';
+    const r = d.getBoundingClientRect();
+    d.style.animation = before;
+    const ck = document.getElementById('dash-cockpit-img').getBoundingClientRect();
+    return {
+      left: r.left, top: r.top, right: r.right, bottom: r.bottom, width: r.width, height: r.height,
+      cx: r.left + r.width / 2, rendered: d.classList.contains('dash-doll-rendered'),
+      ckLeft: ck.left, ckWidth: ck.width, ckHeight: ck.height,
+      svgTop: getComputedStyle(d.querySelector('.dash-doll-top')).display,
+      svgBase: getComputedStyle(d.querySelector('.dash-doll-base')).display,
+      imgs: [...d.querySelectorAll('.dash-doll-r')].map((i) => ({
+        cls: i.className, display: getComputedStyle(i).display, ok: i.complete && i.naturalWidth > 0,
+      })),
+    };
+  });
+}
+function assertDollGeometry(d, mode, label = '') {
+  const k = DOLL[mode];
+  const H = k.h * d.ckHeight;
+  assert.equal(d.rendered, true, `${label}dash-doll-rendered`);
+  assert.ok(Math.abs(d.bottom - k.feet * d.ckHeight) <= 2, `${label}feet ${d.bottom} vs ${k.feet * d.ckHeight}`);
+  assert.ok(Math.abs(d.height - H) <= 2, `${label}height ${d.height} vs ${H}`);
+  assert.ok(Math.abs(d.width - H * 1161 / 3092) <= 2, `${label}width ${d.width} vs ${H * 1161 / 3092}`);
+  assert.ok(Math.abs(d.cx - (d.ckLeft + k.cx * d.ckWidth)) <= 2, `${label}centre x ${d.cx} vs ${d.ckLeft + k.cx * d.ckWidth}`);
+}
+
+describe('rendered doll', { concurrency: 1 }, () => {
+  test('1440x900: both pieces loaded, drawn doll hidden, feet on the dash', async () => {
+    const page = await open();
+    try {
+      await mounted(page);
+      await page.waitForTimeout(300);
+      await assertRendered(page, 'wide');
+      const d = await dollBox(page);
+      assertDollGeometry(d, 'wide');
+      assert.ok(Math.abs(d.bottom - 0.445 * 900) <= 2 && Math.abs(d.height - 0.25 * 900) <= 2);
+      assert.ok(Math.abs(d.cx - 0.45 * 1600) <= 2, `centre x ${d.cx}`);
+      assert.deepEqual(d.imgs.map((i) => [i.cls, i.display, i.ok]), [
+        ['dash-doll-r dash-doll-r-base', 'block', true], ['dash-doll-r dash-doll-r-top', 'block', true]]);
+      assert.equal(d.svgTop, 'none');
+      assert.equal(d.svgBase, 'none');
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('2560x1080: the doll is centred on the cockpit, which starts at x = 320, not on the window', async () => {
+    const page = await open({ viewport: { width: 2560, height: 1080 } });
+    try {
+      await mounted(page);
+      await page.waitForTimeout(300);
+      await assertRendered(page, 'wide');
+      const d = await dollBox(page);
+      assert.ok(Math.abs(d.ckLeft - 320) <= 1 && Math.abs(d.ckWidth - 1920) <= 1, `cockpit ${d.ckLeft} ${d.ckWidth}`);
+      assert.ok(Math.abs(d.cx - (320 + 0.45 * 1920)) <= 2, `centre x ${d.cx} vs ${320 + 0.45 * 1920}`);
+      assertDollGeometry(d, 'wide');
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('390x844: doll height == 0.14 * (390*16/9), feet at 0.31 of the picture', async () => {
+    const page = await open({ viewport: { width: 390, height: 844 } });
+    try {
+      await mounted(page);
+      await page.waitForTimeout(300);
+      await assertRendered(page, 'tall');
+      const d = await dollBox(page);
+      assertDollGeometry(d, 'tall');
+      assert.ok(Math.abs(d.height - 0.14 * (390 * 16 / 9)) <= 2, `height ${d.height}`);
+      assert.ok(Math.abs(d.cx - 0.2 * 390) <= 2, `centre x ${d.cx}`);
+      assert.equal(d.svgTop, 'none');
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('rendered doll keeps one size from first shown to the hold', async () => {
+    const page = await open({
+      init: [() => {
+        window.__dollSizes = [];
+        const tick = () => {
+          const d = document.querySelector('.dash-doll');
+          const h = document.documentElement.classList;
+          if (d && d.classList.contains('dash-doll-rendered') && !h.contains('dash-loading') && h.contains('dash-intro')) {
+            window.__dollSizes.push([d.offsetWidth, d.offsetHeight]);
+          }
+          requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }],
+    });
+    try {
+      await mounted(page);
+      await page.waitForTimeout(2000);
+      const sizes = await page.evaluate(() => window.__dollSizes);
+      assert.ok(sizes.length > 20, `sampled ${sizes.length} frames`);
+      for (const [w, h] of sizes) {
+        assert.ok(Math.abs(w - sizes[0][0]) <= 1 && Math.abs(h - sizes[0][1]) <= 1, `size moved: ${sizes[0]} -> ${[w, h]}`);
+      }
+      assert.ok(Math.abs(sizes[0][1] - 0.25 * 900) <= 2, `first shown at ${sizes[0][1]}`);
+    } finally {
+      await done(page);
+    }
+  });
+
+  for (const [name, routes] of [
+    ['both doll images 404', noDoll],
+    ['only the top 404', [['**/assets/dash/doll-top.webp', (r) => r.fulfill({ status: 404, body: 'not found' })]]],
+    ['only the base 404', [['**/assets/dash/doll-base.webp', (r) => r.fulfill({ status: 404, body: 'not found' })]]],
+  ]) {
+    test(`${name}: drawn doll shows inside the rendered cockpit, no page errors`, async () => {
+      const page = await open({ routes });
+      try {
+        await mounted(page);
+        await page.waitForTimeout(300);
+        await assertRendered(page, 'wide');
+        const d = await dollBox(page);
+        assert.equal(d.rendered, false);
+        assert.deepEqual(d.imgs.map((i) => i.display), ['none', 'none']);
+        assert.equal(d.svgTop, 'block');
+        assert.equal(d.svgBase, 'block');
+        // The drawn doll keeps its own rules (ruling D1): its own shape, not the rendered doll's 1161:3092.
+        assert.ok(d.width / d.height > 0.5, `drawn doll box ${d.width} x ${d.height} (rendered doll is 1161:3092)`);
+        assert.deepEqual(page.errors, []);
+      } finally {
+        await done(page);
+      }
+    });
+  }
+
+  test('paint order: the doll is over the cockpit picture at its feet', async () => {
+    const page = await open();
+    try {
+      await mounted(page);
+      await page.waitForTimeout(300);
+      await assertRendered(page, 'wide');
+      const p = await page.evaluate(() => {
+        document.querySelector('.dash-doll').style.animation = 'none';
+        const base = document.querySelector('.dash-doll-r-base');
+        const img = document.getElementById('dash-cockpit-img');
+        const px = (el, x, y) => {
+          const c = document.createElement('canvas');
+          c.width = el.naturalWidth; c.height = el.naturalHeight;
+          const g = c.getContext('2d');
+          g.drawImage(el, 0, 0);
+          return g.getImageData(x, y, 1, 1).data[3];
+        };
+        // An opaque pixel of the base piece, low down: the feet.
+        const r = base.getBoundingClientRect();
+        let pt = null;
+        for (let fy = 0.97; fy > 0.6 && !pt; fy -= 0.02) {
+          for (let fx = 0.2; fx < 0.8 && !pt; fx += 0.02) {
+            if (px(base, Math.floor(fx * base.naturalWidth), Math.floor(fy * base.naturalHeight)) > 250) {
+              pt = [r.left + fx * r.width, r.top + fy * r.height];
+            }
+          }
+        }
+        if (!pt) return { pt };
+        // The layers are pointer-events: none; let them take hits so the stack shows paint order.
+        base.style.pointerEvents = 'auto';
+        img.style.pointerEvents = 'auto';
+        const ib = img.getBoundingClientRect();
+        const stack = document.elementsFromPoint(pt[0], pt[1]);
+        return {
+          pt,
+          cockpitAlpha: px(img, Math.floor((pt[0] - ib.left) / ib.width * img.naturalWidth),
+            Math.floor((pt[1] - ib.top) / ib.height * img.naturalHeight)),
+          base: stack.indexOf(base), img: stack.indexOf(img),
+        };
+      });
+      const j = JSON.stringify(p);
+      assert.ok(p.pt, `no opaque base pixel found: ${j}`);
+      assert.ok(p.pt[1] > 0.412 * 900, `probe is below the windshield edge (0.412): ${j}`);
+      assert.ok(p.cockpitAlpha > 200, `cockpit picture not opaque under the doll's feet: ${j}`);
+      assert.ok(p.base >= 0 && p.img >= 0, j);
+      assert.ok(p.base < p.img, `doll base under the cockpit picture: ${j}`);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('resize across the 760px breakpoint: the doll follows the mode, wide and tall constants never mix', async () => {
+    const page = await open();
+    try {
+      await mounted(page);
+      await assertRendered(page, 'wide');
+      assertDollGeometry(await dollBox(page), 'wide', '1440x900: ');
+      // Larger window, same mode: the doll scales with the picture.
+      await page.setViewportSize({ width: 1920, height: 1080 });
+      await page.waitForTimeout(250);
+      assertDollGeometry(await dollBox(page), 'wide', '1920x1080: ');
+      // Phone width: the tall picture was never loaded, so drawn dashboard and drawn doll.
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.waitForTimeout(250);
+      await assertDrawn(page, '390x844: ');
+      const drawn = await dollBox(page);
+      assert.equal(drawn.rendered, false, 'rendered doll without the rendered cockpit');
+      assert.equal(drawn.svgTop, 'block');
+      // Back: wide constants again.
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.waitForTimeout(250);
+      await assertRendered(page, 'wide', 'back: ');
+      assertDollGeometry(await dollBox(page), 'wide', 'back at 1440x900: ');
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('resize from the phone: tall doll, then drawn doll on a wide window, then tall again', async () => {
+    const page = await open({ viewport: { width: 390, height: 844 } });
+    try {
+      await mounted(page);
+      await assertRendered(page, 'tall');
+      assertDollGeometry(await dollBox(page), 'tall', '390x844: ');
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.waitForTimeout(250);
+      await assertDrawn(page, '1440x900: ');
+      assert.equal((await dollBox(page)).rendered, false);
+      await page.setViewportSize({ width: 360, height: 740 });
+      await page.waitForTimeout(250);
+      await assertRendered(page, 'tall', '360x740: ');
+      assertDollGeometry(await dollBox(page), 'tall', '360x740: ');
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('doll image slower than the dark wait: drawn doll for the whole intro, never swapped late', async () => {
+    const slow = (r) => setTimeout(() => r.continue().catch(() => {}), 2500);
+    const page = await open({ routes: [['**/assets/dash/doll-top.webp', slow]] });
+    try {
+      await introStart(page);
+      await assertRendered(page, 'wide', 'at intro start: ');
+      assert.equal((await dollBox(page)).rendered, false, 'doll shown before its pieces loaded');
+      await until(page, () => {
+        const i = document.querySelector('.dash-doll-r-top');
+        return i.complete && i.naturalWidth > 0;
+      }, 6000);
+      const late = await page.evaluate(() => {
+        const e = performance.getEntriesByType('resource').find((x) => /doll-top/.test(x.name));
+        return { loaded: e ? e.responseEnd : null, introStart: window.__marks.introStart };
+      });
+      assert.ok(late.loaded > late.introStart, `doll arrived before the page showed: ${JSON.stringify(late)}`);
+      assert.equal((await dollBox(page)).rendered, false, 'doll swapped after the late load');
+      await page.setViewportSize({ width: 1400, height: 880 });
+      await page.waitForTimeout(150);
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.waitForTimeout(150);
+      const d = await dollBox(page);
+      assert.equal(d.rendered, false, 'doll swapped after a resize');
+      assert.equal(d.svgTop, 'block');
+      await assertFrameFitsGrid(page);
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('cockpit 404 with both doll images fine: drawn dashboard, drawn doll, never the rendered doll', async () => {
+    const page = await open({ routes: noCockpit });
+    try {
+      await mounted(page);
+      await page.waitForTimeout(300);
+      await assertDrawn(page);
+      const d = await dollBox(page);
+      assert.equal(d.rendered, false);
+      assert.deepEqual(d.imgs.map((i) => i.display), ['none', 'none']);
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('1280x1024: drawn dashboard, the doll pieces are never requested', async () => {
+    const page = await open({ viewport: { width: 1280, height: 1024 } });
+    try {
+      await mounted(page);
+      await page.waitForTimeout(300);
+      assert.deepEqual(page.requested.filter((u) => /doll-/.test(u)), []);
+      assert.equal((await dollBox(page).catch(() => ({ rendered: false }))).rendered, false);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('swaying: the top piece turns about the spring, the base stays put', async () => {
+    const page = await open();
+    try {
+      await mounted(page);
+      await page.waitForTimeout(300);
+      const s = await page.evaluate(() => {
+        const top = document.querySelector('.dash-doll-r-top');
+        const base = document.querySelector('.dash-doll-r-base');
+        return {
+          name: getComputedStyle(top).animationName, baseName: getComputedStyle(base).animationName,
+          origin: getComputedStyle(top).transformOrigin, w: top.offsetWidth, h: top.offsetHeight,
+        };
+      });
+      assert.equal(s.name, 'dash-dance');
+      assert.equal(s.baseName, 'none');
+      const [ox, oy] = s.origin.split(' ').map(parseFloat);
+      assert.ok(Math.abs(ox / s.w - 0.4953) < 0.005 && Math.abs(oy / s.h - 0.7733) < 0.005, s.origin);
     } finally {
       await done(page);
     }
