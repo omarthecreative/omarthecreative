@@ -246,6 +246,37 @@ describe('Wire Omar', { concurrency: 1 }, () => {
   }
 });
 
+describe('a hint for assistive technology', { concurrency: 1 }, () => {
+  const HINT = 'Press Enter, or click, to open the site.';
+  for (const [label, opts] of [...MODES, PHONE]) {
+    test(`${label}: a visually hidden line says how to enter, right after the heading; gone after landing`, async () => {
+      const page = await open(opts);
+      try {
+        await mounted(page);
+        const s = await page.evaluate(() => {
+          const p = document.querySelector('#standoff-splash > h1.dash-headline + p.dash-hint');
+          if (!p) return null;
+          const r = p.getBoundingClientRect();
+          const c = getComputedStyle(p);
+          return { text: p.textContent, w: r.width, h: r.height, display: c.display, clip: c.clipPath, overflow: c.overflow };
+        });
+        assert.ok(s, 'no p.dash-hint right after the heading');
+        assert.equal(s.text, HINT);
+        assert.ok(s.w <= 1 && s.h <= 1, `not clipped to 1px: ${JSON.stringify(s)}`);
+        assert.equal(s.clip, 'inset(50%)');
+        assert.notEqual(s.display, 'none');
+        assert.ok((await page.locator('#standoff-splash').ariaSnapshot()).includes(HINT), 'not in the accessibility tree');
+        await enter(page, 'Escape');
+        await landed(page);
+        assert.ok(!(await page.locator('body').ariaSnapshot()).includes(HINT), 'still in the accessibility tree after landing');
+        assert.deepEqual(page.errors, []);
+      } finally {
+        await done(page);
+      }
+    });
+  }
+});
+
 describe('screen hover', { concurrency: 1 }, () => {
   const GREY = 'rgb(94, 99, 107)';   // #5E636B
   const LIGHT = 'rgb(201, 205, 211)'; // #C9CDD3
