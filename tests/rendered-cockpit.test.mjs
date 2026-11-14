@@ -44,11 +44,11 @@ describe('assets', () => {
 
 describe('layout', () => {
   const cases = [
-    [1440, 900,  { mode: 'wide', k: 0.48,   left: 712,    top: 387,    shield: 370.8, ckX: 0,   ckW: 1600,    cropR: 160 }],
+    [1440, 900,  { mode: 'wide', k: 0.48,   left: 732.8,  top: 387,    shield: 370.8, ckX: 0,   ckW: 1600,    cropR: 160 }],
     [1920, 1080, { mode: 'wide', k: 0.48,   left: 940.8,  top: 464.4,  shield: 445,   ckX: 0,   ckW: 1920,    cropR: 0 }],
-    [1024, 768,  { mode: 'wide', k: 0.391,  left: 607.6,  top: 330.2,  shield: 316.4, ckX: 0,   ckW: 1365.3,  cropR: 341.3 }],
-    [2560, 1080, { mode: 'wide', k: 0.41,   left: 1174.4, top: 464.4,  shield: 445,   ckX: 320, ckW: 1920,    cropR: 0 }],
-    [1280, 500,  { mode: 'wide', k: 0.373,  left: 591.1,  top: 215,    shield: 206,   ckX: 195.6, ckW: 888.9, cropR: 0 }],
+    [1024, 768,  { mode: 'wide', k: 0.374,  left: 625.3,  top: 330.2,  shield: 316.4, ckX: 0,   ckW: 1365.3,  cropR: 341.3 }],
+    [2560, 1080, { mode: 'wide', k: 0.40,   left: 1199.4, top: 464.4,  shield: 445,   ckX: 320, ckW: 1920,    cropR: 0 }],
+    [1280, 500,  { mode: 'wide', k: 0.364,  left: 602.7,  top: 215,    shield: 206,   ckX: 195.6, ckW: 888.9, cropR: 0 }],
     [1280, 1024, { mode: 'none' }],
     [768, 1024,  { mode: 'none' }],
     [390, 844,   { mode: 'tall', k: 0.62,   left: 74.1,   top: 270.1,  shield: 190.7, ckX: 0,   ckW: 390,     cropR: 0 }],
@@ -270,11 +270,11 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
         const shield = await rect(page, '#dash-shield');
         assert.ok(screen.top >= shield.bottom, `screen top ${screen.top} above windshield edge ${shield.bottom}`);
         assert.ok(screen.right <= w && screen.bottom <= h, JSON.stringify(screen));
-        assert.ok(screen.left >= ck.left + 0.433 * ck.width, `screen left ${screen.left} overlaps the start button`);
+        assert.ok(screen.left >= ck.left + 0.445 * ck.width, `screen left ${screen.left} overlaps the start button`);
         const wire = await rect(page, '#dash-wire');
         const cx = wire.left + wire.width / 2, cy = wire.top + wire.height / 2;
-        assert.ok(Math.abs(cx - (ck.left + 0.416 * ck.width)) <= 2, `wire centre x ${cx}`);
-        assert.ok(Math.abs(cy - 0.675 * h) <= 2, `wire centre y ${cy}`);
+        assert.ok(Math.abs(cx - (ck.left + 0.428 * ck.width)) <= 2, `wire centre x ${cx}`);
+        assert.ok(Math.abs(cy - 0.674 * h) <= 2, `wire centre y ${cy}`);
         assert.ok(Math.abs(wire.width - 0.034 * ck.width) <= 1, `wire width ${wire.width}`);
         assert.ok(wire.right <= screen.left, `wire right ${wire.right} vs screen left ${screen.left}`);
         // "Wire Omar" sits under the button on one line, clear of the screen.
@@ -383,20 +383,16 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
           };
           const box = (sel) => document.querySelector(sel).getBoundingClientRect();
           const centre = (sel) => { const b = box(sel); return [b.left + b.width / 2, b.top + b.height / 2]; };
-          const dollOn = document.querySelector('.dash-doll').classList.contains('dash-doll-rendered');
+          const dollEl = document.querySelector('.dash-doll');
+          const dollOn = dollEl.classList.contains('dash-doll-rendered');
+          // Hold the hop still so the probe point is the doll's resting feet, where it stands on the dash.
+          const hopBefore = dollEl.style.animation;
+          dollEl.style.animation = 'none';
           const doll = box(dollOn ? '.dash-doll-r-base' : '.dash-doll-base');
           const points = {
             opaque: [ib.left + 0.05 * ib.width, ib.top + 0.95 * Math.min(ib.height, innerHeight)],
             minimap: centre('.dash-minimap'),
-            // The doll hops, and its base can reach into the live screen's hole in #dash-cockpit (the
-            // cockpit image is clipped away there and cannot be hit). Probe left of the screen's edge.
-            // Known, accepted deviation from the spec's layer order (controller ruling P1): at widths where
-            // the screen sits at its left limit (1440x900, 1024x768, 2560x1080) the doll's base overlaps the
-            // screen's top-left corner by about 50 x 13 px and paints over #dash-screen. That is the doll's
-            // resting state (dash-hop keeps it down for 80% of each cycle), and the base is opaque there,
-            // not a moment of the hop. It is left for the owner to settle on screen; the probe avoids the overlap on
-            // purpose, and the overlap itself is pinned by its own test ("known deviation (P1)").
-            doll: [Math.min(doll.left + doll.width / 2, box('#dash-screen').left - 6), doll.top + doll.height * (dollOn ? 0.92 : 0.75)],
+            doll: [doll.left + doll.width / 2, dollOn ? doll.bottom - 3 : doll.top + doll.height * 0.75],
             wire: centre('#dash-wire'),
             screen: centre('#dash-screen'),
           };
@@ -413,11 +409,11 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
               in: top ? ['.dash-minimap', '.dash-doll', '#dash-wire', '#dash-screen', '#dash-cockpit-img']
                 .filter((s) => top.closest(s)) : [],
               at: [Math.round(x * 10) / 10, Math.round(y * 10) / 10],
-              screenLeft: box('#dash-screen').left,
               imgAt: stack.indexOf(img),
             };
           }
           img.style.pointerEvents = '';
+          dollEl.style.animation = hopBefore;
           return out;
         });
         const p = JSON.stringify(probes);
@@ -425,7 +421,6 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
         assert.ok(probes.opaque.alpha > 200, `cockpit not opaque at the probe: ${p}`);
         assert.ok(probes.minimap.in.includes('.dash-minimap'), p);
         assert.ok(probes.doll.in.includes('.dash-doll'), p);
-        assert.ok(probes.doll.at[0] < probes.doll.screenLeft, `doll probe is inside the screen hole: ${p}`);
         assert.ok(probes.doll.imgAt > 0, `cockpit image not under the doll: ${p}`);
         assert.ok(probes.wire.in.includes('#dash-wire'), p);
         assert.equal(probes.screen.top, '#dash-screen', p);
@@ -702,6 +697,23 @@ describe('scene box', { concurrency: 1 }, () => {
       await done(page);
     }
   });
+
+  for (const [w, h] of [[1440, 900], [2560, 1080], [390, 844]]) {
+    test(`rendered ${w}x${h}: the scene box covers the whole windshield view`, async () => {
+      const page = await open({ viewport: { width: w, height: h } });
+      try {
+        await mounted(page);
+        await page.waitForTimeout(300);
+        await assertRendered(page, w < 760 ? 'tall' : 'wide');
+        const view = await rect(page, '#dash-view');
+        const box = await rect(page, '#dash-scenebox');
+        assert.ok(box.left <= view.left + 0.5 && box.top <= view.top + 0.5, `${JSON.stringify({ box, view })}`);
+        assert.ok(box.right >= view.right - 0.5 && box.bottom >= view.bottom - 0.5, `${JSON.stringify({ box, view })}`);
+      } finally {
+        await done(page);
+      }
+    });
+  }
 
   test('phone uses stillSmall', async () => {
     const page = await open({
@@ -991,7 +1003,7 @@ describe('clip', { concurrency: 1 }, () => {
 
 // — Task 6: the rendered doll —
 // Doll geometry from the plan: height, centre x and feet y as fractions of the cockpit picture.
-const DOLL = { wide: { h: 0.25, cx: 0.45, feet: 0.445 }, tall: { h: 0.14, cx: 0.20, feet: 0.31 } };
+const DOLL = { wide: { h: 0.18, cx: 0.43, feet: 0.42 }, tall: { h: 0.14, cx: 0.20, feet: 0.31 } };
 const noDoll = [['**/assets/dash/doll-*', (r) => r.fulfill({ status: 404, body: 'not found' })]];
 // The doll's box with its hop paused (the hop moves the whole box), plus the
 // state that tells which doll is up.
@@ -1034,8 +1046,8 @@ describe('rendered doll', { concurrency: 1 }, () => {
       await assertRendered(page, 'wide');
       const d = await dollBox(page);
       assertDollGeometry(d, 'wide');
-      assert.ok(Math.abs(d.bottom - 0.445 * 900) <= 2 && Math.abs(d.height - 0.25 * 900) <= 2);
-      assert.ok(Math.abs(d.cx - 0.45 * 1600) <= 2, `centre x ${d.cx}`);
+      assert.ok(Math.abs(d.bottom - 0.42 * 900) <= 2 && Math.abs(d.height - 0.18 * 900) <= 2);
+      assert.ok(Math.abs(d.cx - 0.43 * 1600) <= 2, `centre x ${d.cx}`);
       assert.deepEqual(d.imgs.map((i) => [i.cls, i.display, i.ok]), [
         ['dash-doll-r dash-doll-r-base', 'block', true], ['dash-doll-r dash-doll-r-top', 'block', true]]);
       assert.equal(d.svgTop, 'none');
@@ -1054,7 +1066,7 @@ describe('rendered doll', { concurrency: 1 }, () => {
       await assertRendered(page, 'wide');
       const d = await dollBox(page);
       assert.ok(Math.abs(d.ckLeft - 320) <= 1 && Math.abs(d.ckWidth - 1920) <= 1, `cockpit ${d.ckLeft} ${d.ckWidth}`);
-      assert.ok(Math.abs(d.cx - (320 + 0.45 * 1920)) <= 2, `centre x ${d.cx} vs ${320 + 0.45 * 1920}`);
+      assert.ok(Math.abs(d.cx - (320 + 0.43 * 1920)) <= 2, `centre x ${d.cx} vs ${320 + 0.43 * 1920}`);
       assertDollGeometry(d, 'wide');
     } finally {
       await done(page);
@@ -1100,7 +1112,7 @@ describe('rendered doll', { concurrency: 1 }, () => {
       for (const [w, h] of sizes) {
         assert.ok(Math.abs(w - sizes[0][0]) <= 1 && Math.abs(h - sizes[0][1]) <= 1, `size moved: ${sizes[0]} -> ${[w, h]}`);
       }
-      assert.ok(Math.abs(sizes[0][1] - 0.25 * 900) <= 2, `first shown at ${sizes[0][1]}`);
+      assert.ok(Math.abs(sizes[0][1] - 0.18 * 900) <= 2, `first shown at ${sizes[0][1]}`);
     } finally {
       await done(page);
     }
@@ -1339,9 +1351,9 @@ const sizeOf = async (f) => (await fs.stat(path.join(SRC, f))).size;
 describe('miami beach, real files', { concurrency: 1 }, () => {
   test('query strings in index.html are the bumped ones', async () => {
     const html = await fs.readFile(path.join(SRC, 'index.html'), 'utf8');
-    assert.match(html, /href="dashboard-intro\.css\?v=7"/);
-    assert.match(html, /src="dashboard-scenes\.js\?v=2"/);
-    assert.match(html, /src="dashboard-intro\.js\?v=6"/);
+    assert.match(html, /href="dashboard-intro\.css\?v=8"/);
+    assert.match(html, /src="dashboard-scenes\.js\?v=3"/);
+    assert.match(html, /src="dashboard-intro\.js\?v=7"/);
   });
 
   test('1440x900: rendered, still shown at the first frame, then clip-1920 requested', async () => {
@@ -1398,15 +1410,14 @@ describe('miami beach, real files', { concurrency: 1 }, () => {
     });
   }
 
-  // The brief's limits "760 KB" and "420 KB" are counted in KiB (1024 bytes).
-  // Cockpit, still and the doll's two pieces.
-  test('first-load weight: laptop <= 760 KiB, phone <= 420 KiB', async () => {
+  // Limits in decimal bytes. Cockpit, still and the doll's two pieces.
+  test('first-load weight: laptop <= 700,000 bytes, phone <= 400,000 bytes', async () => {
     const dash = 'assets/dash/';
     const doll = (await sizeOf(dash + 'doll-top.webp')) + (await sizeOf(dash + 'doll-base.webp'));
     const laptop = (await sizeOf(dash + 'cockpit-wide-2560.webp')) + (await sizeOf(MB + 'still-1920.jpg')) + doll;
     const phone = (await sizeOf(dash + 'cockpit-tall-1080.webp')) + (await sizeOf(MB + 'still-960.jpg')) + doll;
-    assert.ok(laptop <= 760 * 1024, `laptop ${laptop} bytes`);
-    assert.ok(phone <= 420 * 1024, `phone ${phone} bytes`);
+    assert.ok(laptop <= 700_000, `laptop ${laptop} bytes`);
+    assert.ok(phone <= 400_000, `phone ${phone} bytes`);
   });
 });
 
@@ -1519,37 +1530,49 @@ describe('local server byte ranges', () => {
   });
 });
 
-describe('known deviation (P1)', () => {
-  // Samples the doll base and the screen over one and a bit hop periods (1.6 s) and returns the largest overlap.
-  async function overlap(w, h) {
+describe('doll clear of the screen', { concurrency: 1 }, () => {
+  // Samples the doll (its box and both pieces) over more than one hop period (1.6 s) and returns the smallest
+  // gap to #dash-screen grown by what is painted around it: the black ring and its 1px rim, 11px * --dash-fit,
+  // and never less than 10px. A negative gap on both axes means the rects intersect.
+  async function gap(w, h) {
     const page = await open({ viewport: { width: w, height: h } });
     try {
       await mounted(page);
+      await page.waitForTimeout(300);
       await assertRendered(page, 'wide');
       return await page.evaluate(() => new Promise((resolve) => {
-        const base = document.querySelector('.dash-doll-r-base'), screen = document.getElementById('dash-screen');
-        let ow = 0, oh = 0, minBottom = Infinity, maxBottom = -Infinity, n = 0;
+        const doll = document.querySelector('.dash-doll');
+        const parts = [doll, ...doll.querySelectorAll('.dash-doll-r')];
+        const screen = document.getElementById('dash-screen');
+        const fit = parseFloat(getComputedStyle(screen).getPropertyValue('--dash-fit')) || 1;
+        const bezel = Math.max(10, 11 * fit);
+        let best = Infinity, minBottom = Infinity, maxBottom = -Infinity, n = 0;
         const t0 = performance.now();
         const tick = setInterval(() => {
-          const b = base.getBoundingClientRect(), s = screen.getBoundingClientRect();
-          ow = Math.max(ow, Math.min(b.right, s.right) - Math.max(b.left, s.left));
-          oh = Math.max(oh, Math.min(b.bottom, s.bottom) - Math.max(b.top, s.top));
-          minBottom = Math.min(minBottom, b.bottom); maxBottom = Math.max(maxBottom, b.bottom); n++;
-          if (performance.now() - t0 > 1800) { clearInterval(tick); resolve({ ow, oh, hop: maxBottom - minBottom, n }); }
-        }, 40);
+          const s = screen.getBoundingClientRect();
+          for (const el of parts) {
+            const b = el.getBoundingClientRect();
+            const gx = Math.max(s.left - bezel - b.right, b.left - (s.right + bezel));
+            const gy = Math.max(s.top - bezel - b.bottom, b.top - (s.bottom + bezel));
+            best = Math.min(best, Math.max(gx, gy));
+          }
+          const bb = doll.getBoundingClientRect().bottom;
+          minBottom = Math.min(minBottom, bb); maxBottom = Math.max(maxBottom, bb); n++;
+          if (performance.now() - t0 > 1800) { clearInterval(tick); resolve({ gap: best, bezel, hop: maxBottom - minBottom, n }); }
+        }, 16);
       }));
     } finally {
       await done(page);
     }
   }
-  test('known deviation (P1): doll base overlaps the screen corner at 1440x900, not at 1920x1080', async () => {
-    const small = await overlap(1440, 900);
-    const s = JSON.stringify(small);
-    assert.ok(small.hop > 5, `the doll did not hop while sampled: ${s}`);
-    assert.ok(small.ow > 0 && small.oh > 0, `no overlap at 1440x900 (the accepted deviation changed): ${s}`);
-    assert.ok(small.ow <= 60 && small.oh <= 20, `overlap grew past 60 x 20 px: ${s}`);
-    const big = await overlap(1920, 1080);
-    assert.ok(big.hop > 5, `the doll did not hop while sampled: ${JSON.stringify(big)}`);
-    assert.ok(big.ow <= 0 || big.oh <= 0, `overlap at 1920x1080: ${JSON.stringify(big)}`);
-  });
+  for (const [w, h] of [[1440, 900], [1920, 1080], [1024, 768]]) {
+    test(`${w}x${h}: the doll does not touch the screen or its bezel`, async (t) => {
+      const r = await gap(w, h);
+      const s = JSON.stringify(r);
+      t.diagnostic(s);
+      assert.ok(r.hop > 5, `the doll did not hop while sampled: ${s}`);
+      assert.ok(r.n > 20, `too few samples: ${s}`);
+      assert.ok(r.gap > 0, `the doll reaches the screen's bezel: ${s}`);
+    });
+  }
 });
