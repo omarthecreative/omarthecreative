@@ -203,6 +203,7 @@
     // The still replaces the drawn scene only once it has loaded. The page
     // stays dark (html.dash-loading) until it does, for at most STILL_WAIT_MS.
     function showStill(src) {
+        if (isPhone() && scene && scene.stillSmall) src = scene.stillSmall;
         var still = document.getElementById('dash-still');
         var shield = document.getElementById('dash-shield');
         if (!still || !shield) return;
@@ -222,6 +223,24 @@
         });
         holdDarkFor(ready);
         still.src = src;
+    }
+
+    // The foreground cut-out (palms, hotels) over the banner. Only called when the
+    // scene has a still and the cockpit fits this window (the same test as
+    // loadCockpit, so it is fetched alongside the cockpit, not after it). The
+    // page stays dark for it too, at most STILL_WAIT_MS, so the palms do not pop
+    // in over a banner already passing. A missing file leaves the still as it is.
+    // If the cockpit then fails to load, the drawn dashboard shows and this
+    // box stays display: none.
+    function showForeground(src) {
+        var fg = document.getElementById('dash-fg');
+        if (!fg) return;
+        var ready = new Promise(function (done) {
+            fg.addEventListener('load', function () { fg.hidden = false; done(); });
+            fg.addEventListener('error', function () { fg.hidden = true; done(); });
+        });
+        holdDarkFor(ready);
+        fg.src = src;
     }
 
     // The page stays dark for this picture too, at most STILL_WAIT_MS.
@@ -293,6 +312,11 @@
             writeStore('omar_last_line', line);
             scene = picked;
             if (typeof picked.still === 'string' && picked.still) showStill(picked.still);
+            if (typeof picked.still === 'string' && picked.still) {
+                var fgSrc = isPhone() && picked.foregroundSmall ? picked.foregroundSmall : picked.foreground;
+                var fits = layout(window.innerWidth, window.innerHeight).mode !== 'none';
+                if (fits && typeof fgSrc === 'string' && fgSrc) showForeground(fgSrc);
+            }
             if (typeof picked.minimap === 'string' && picked.minimap) showMinimap(picked.minimap);
             var mirror = document.querySelector('.dash-mirror');
             if (mirror && typeof picked.mirror === 'string') mirror.setAttribute('data-gag', picked.mirror);

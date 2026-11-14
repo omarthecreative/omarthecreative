@@ -1,8 +1,13 @@
 /* Dashboard intro scenes and banners: window.DashScenes. Data only.
    Adding a city or a banner means editing this file only.
 
-   Scene:  { id, timezone, still?, clip?, clipSmall?, minimap?, mirror? }
+   Scene:  { id, timezone, still?, stillSmall?, foreground?, foregroundSmall?, clip?, clipSmall?, minimap?, mirror? }
            still        image seen through the windshield (none: the drawn scene shows)
+           stillSmall   the still for phones, when present
+           foreground   transparent cut-out of the scene's palms and hotels, same size as the
+                        still's top 512 rows; the banner flies behind it. Rendered cockpit only,
+                        and used only when the scene has a still
+           foregroundSmall  the foreground for phones, when present
            clip         six-second video, plays once; clipSmall is used on phones
            minimap      the scene's minimap graphic
            mirror       which mirror gag to show ('paladin' is the only one so far)

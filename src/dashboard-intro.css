@@ -78,6 +78,16 @@ html.dash-intro .copyright-tag.fixed {
     width: 100%;
     height: 100%;
 }
+/* The view holds the scene box (still, clip), the banner and the foreground
+   box. No z-index, transform or clipping here: the banner keeps stacking against
+   the mirror, doll and minimap as it did before the view existed. The foreground
+   box is for the rendered cockpit only. */
+#dash-view,
+#dash-scenebox {
+    position: absolute;
+    inset: 0;
+}
+#dash-fgbox { display: none; }
 /* A scene's still and clip, under the windshield's frame. Cropped like the
    drawn scene (xMidYMax slice). Shown only once loaded; [hidden] until then. */
 #dash-still,
@@ -652,6 +662,43 @@ html.dash-rendered[data-dash-mode="wide"] #dash-wire span {
     white-space: nowrap;
 }
 html.dash-rendered[data-dash-mode="wide"] #dash-wire br { display: none; }
+
+/* Scene box and foreground: one box in the scene's 21:9 shape, so still, clip,
+   banner and cut-out share coordinates. Back to front: still and clip, banner
+   (z 1), foreground box (z 1, later in the DOM). All under the mirror, which is
+   later still, and under the cockpit (z 2). */
+html.dash-rendered #dash-view { overflow: hidden; }
+html.dash-rendered #dash-scenebox,
+html.dash-rendered #dash-fgbox {
+    right: auto;
+    bottom: auto;
+    left: var(--sb-x);
+    top: var(--sb-y);
+    width: var(--sb-w);
+    height: var(--sb-h);
+}
+html.dash-rendered #dash-fgbox {
+    display: block;
+    position: absolute;
+    z-index: 1;
+}
+/* The cut-outs cover the top 512 of the scene's 824 rows. */
+html.dash-rendered #dash-fg,
+html.dash-rendered #dash-fgclip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 62.136%;
+}
+html.dash-rendered #dash-fg[hidden],
+html.dash-rendered #dash-fgclip[hidden] { display: none; }
+html.dash-rendered .dash-banner {
+    left: 0;
+    right: var(--ck-crop-r);
+    top: calc(150px * var(--dash-ss));
+}
+html.dash-rendered[data-dash-mode="tall"] .dash-banner { top: calc(96px * var(--dash-ss)); }
 
 @media (prefers-reduced-motion: reduce) {
     .dash-road, .dash-fly, .dash-rider, .dash-doll, .dash-doll-top, .dash-doll-wave,
