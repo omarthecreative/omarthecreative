@@ -1,6 +1,8 @@
-/* Dashboard motion (dashboard-motion.js): the gauges and the moving minimap.
+/* Dashboard motion (dashboard-motion.js): the gauges, the moving minimap and
+   the doll's follow mode.
    The car moves only while the scene's clip plays: html.dash-moving, set by
-   dashboard-intro.js. Everything here reads that class and nothing else.
+   dashboard-intro.js. The gauges and the minimap read that class and
+   nothing else.
    iOS Safari: animation-* properties are spelled out, never the shorthand. */
 
 /* ---- Gauges ------------------------------------------------------------ */
@@ -150,6 +152,20 @@ html.dash-moving .dash-minimap .dash-minimap-strip { animation-play-state: runni
 @keyframes dash-minimap-roll {
     0%   { transform: translateY(-66.6667%); }
     100% { transform: translateY(0); }
+}
+
+/* ---- Doll -------------------------------------------------------------- */
+
+/* Follow mode: dashboard-motion.js adds .dash-doll-follow on the first mouse
+   move. The hop and the dance stop and the top piece (drawn and rendered)
+   turns by --doll-lean, written on .dash-doll, about the origin the dance
+   uses. The drawn doll's arm keeps waving. While pushing these rules let go:
+   dash-sway-hard runs as before. */
+html:not(.dash-pushing) .dash-doll.dash-doll-follow { animation-name: none; }
+html:not(.dash-pushing) .dash-doll-follow .dash-doll-top,
+html.dash-rendered:not(.dash-pushing) .dash-doll-follow.dash-doll-rendered .dash-doll-r-top {
+    animation-name: none;
+    transform: rotate(var(--doll-lean, 0deg));
 }
 
 /* ---- Reduced motion ---------------------------------------------------- */
