@@ -85,7 +85,7 @@ const close = (page) => page.context().close();
 // Media under test-media/ come from tests/fixtures/ (clip-small.mp4 is clip.mp4);
 // any other name there is a 404.
 function withScene(scene, { delayMs = 0 } = {}) {
-  const body = `window.DashScenes = { scenes: [${JSON.stringify({ id: 'test-scene', timezone: 'America/New_York', ...scene })}] };`;
+  const body = `window.DashScenes = { scenes: [${JSON.stringify({ id: 'test-scene', ...scene })}] };`;
   return [
     ['**/dashboard-scenes.js*', (r) => r.fulfill({ contentType: 'text/javascript', body })],
     ['**/test-media/**', async (r) => {
@@ -167,8 +167,8 @@ for (const offline of [false, true]) {
       try {
         const r = await page.evaluate(() => {
           const D = window.DashIntro;
-          const a = { id: 'a', timezone: 'America/New_York' };
-          const b = { id: 'b', timezone: 'Asia/Tokyo' };
+          const a = { id: 'a' };
+          const b = { id: 'b' };
           return {
             otherScene: D.pickScene([a, b], 'a', () => 0).id,
             onlyScene: D.pickScene([a], 'a', () => 0).id,

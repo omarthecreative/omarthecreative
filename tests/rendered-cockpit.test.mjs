@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import fs from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
 import { startServer } from './serve.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -636,7 +637,7 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
 // Copied from scene-system.test.mjs and extended: serves .webm too.
 const MEDIA_TYPES = { '.mp4': 'video/mp4', '.webm': 'video/webm', '.jpg': 'image/jpeg' };
 function withScene(scene) {
-  const body = `window.DashScenes = { scenes: [${JSON.stringify({ id: 'test-scene', timezone: 'America/New_York', ...scene })}] };`;
+  const body = `window.DashScenes = { scenes: [${JSON.stringify({ id: 'test-scene', ...scene })}] };`;
   return [
     ['**/dashboard-scenes.js*', (r) => r.fulfill({ contentType: 'text/javascript', body })],
     ['**/test-media/**', async (r) => {
@@ -1576,7 +1577,8 @@ describe('miami beach, real files', { concurrency: 1 }, () => {
 
 // — Removed: the foreground layer (cut-out picture and moving cut-out over the scene). —
 // These keep it from coming back.
-const FG_FIELDS = ['foreground', 'foregroundSmall', 'foregroundClip', 'foregroundClipSmall'];
+// The four foreground fields, and timezone: the banner's only input, read by nothing since the banner went.
+const REMOVED_FIELDS = ['foreground', 'foregroundSmall', 'foregroundClip', 'foregroundClipSmall', 'timezone'];
 const FG_FILES = [
   ...['fg-1920.webp', 'fg-960.webp', 'fgclip-1920.webm', 'fgclip-960.webm', 'fgclip-1920.mov', 'fgclip-960.mov']
     .map((f) => path.join(SRC, MB, f)),
@@ -1595,14 +1597,25 @@ describe('no foreground layer', { concurrency: 1 }, () => {
     }
   });
 
-  test('the scene has none of the four foreground fields', async () => {
+  test('the scene has none of the removed fields (four foreground, timezone)', async () => {
     const page = await open({ seen: true });
     try {
-      const found = await page.evaluate((keys) => window.DashScenes.scenes.flatMap((s) => keys.filter((k) => k in s)), FG_FIELDS);
+      const found = await page.evaluate((keys) => window.DashScenes.scenes.flatMap((s) => keys.filter((k) => k in s)), REMOVED_FIELDS);
       assert.deepEqual(found, []);
     } finally {
       await done(page);
     }
+  });
+
+  // .webm and .mov came in for the foreground files only: no tracked file under src/ uses them, and the server
+  // lists neither. (Tracked: *.mov is git-ignored, so a local, unpublished .mov can sit in a working copy.)
+  test('no tracked .webm or .mov under src/, and tests/serve.mjs has no media type for them', async () => {
+    const files = execFileSync('git', ['ls-files', '-z', 'src'], { cwd: path.join(HERE, '..'), encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })
+      .split('\0').filter(Boolean);
+    assert.ok(files.length > 100, `git ls-files src listed ${files.length} files`);
+    assert.deepEqual(files.filter((f) => /\.(webm|mov)$/i.test(f)), []);
+    const serve = await fs.readFile(path.join(HERE, 'serve.mjs'), 'utf8');
+    assert.deepEqual(serve.match(/'\.(webm|mov)'/g) || [], []);
   });
 
   test('DashIntro exposes nothing named after the foreground', async () => {
