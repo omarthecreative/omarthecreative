@@ -390,7 +390,9 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
             opaque: [ib.left + 0.05 * ib.width, ib.top + 0.95 * Math.min(ib.height, innerHeight)],
             mirror: centre('.dash-mirror-glass'),
             minimap: centre('.dash-minimap'),
-            doll: [doll.left + doll.width / 2, doll.top + doll.height * (dollOn ? 0.92 : 0.75)],
+            // The doll hops, and its base can reach into the live screen's hole in #dash-cockpit (the
+            // cockpit image is clipped away there and cannot be hit). Probe left of the screen's edge.
+            doll: [Math.min(doll.left + doll.width / 2, box('#dash-screen').left - 6), doll.top + doll.height * (dollOn ? 0.92 : 0.75)],
             wire: centre('#dash-wire'),
             screen: centre('#dash-screen'),
           };
@@ -406,6 +408,8 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
               top: top ? (top.id ? '#' + top.id : top.tagName) : null,
               in: top ? ['.dash-minimap', '.dash-doll', '#dash-wire', '#dash-screen', '.dash-mirror-glass', '#dash-cockpit-img']
                 .filter((s) => top.closest(s)) : [],
+              at: [Math.round(x * 10) / 10, Math.round(y * 10) / 10],
+              screenLeft: box('#dash-screen').left,
               imgAt: stack.indexOf(img),
               glassAt: stack.findIndex((el) => el.classList && el.classList.contains('dash-mirror-glass')),
             };
@@ -422,6 +426,7 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
         assert.ok(probes.mirror.glassAt > probes.mirror.imgAt, `glass not under the cockpit: ${p}`);
         assert.ok(probes.minimap.in.includes('.dash-minimap'), p);
         assert.ok(probes.doll.in.includes('.dash-doll'), p);
+        assert.ok(probes.doll.at[0] < probes.doll.screenLeft, `doll probe is inside the screen hole: ${p}`);
         assert.ok(probes.doll.imgAt > 0, `cockpit image not under the doll: ${p}`);
         assert.ok(probes.wire.in.includes('#dash-wire'), p);
         assert.equal(probes.screen.top, '#dash-screen', p);
