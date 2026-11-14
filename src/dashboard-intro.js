@@ -117,9 +117,16 @@
             window.removeEventListener('resize', setScales);
             root.classList.remove('dash-intro', 'dash-pushing');
             if (splash) splash.style.display = 'none';
+            // Pause both videos, then let go of their files: a clip still
+            // loading would otherwise keep downloading under the grid. Their
+            // failure paths check state, so the AbortError this gives a
+            // pending play() changes nothing on screen.
             ['dash-clip', 'dash-fgclip'].forEach(function (id) {
                 var v = document.getElementById(id);
-                if (v && !v.paused) v.pause();
+                if (!v) return;
+                if (!v.paused) v.pause();
+                v.removeAttribute('src');
+                v.load();
             });
             if (typeof onDone === 'function') onDone();
         }
@@ -338,6 +345,8 @@
             var was = phase;
             phase = 'off';
             clearTimeout(timer);
+            // The intro is over: finish() has paused both and let go of their files.
+            if (state === 'done') return;
             [clip, cut].forEach(function (v) {
                 v.hidden = true;
                 if (!v.paused) v.pause();
@@ -415,10 +424,11 @@
                 var played = clip.play();
                 clip.hidden = false;
                 if (played && typeof played.catch === 'function') {
-                    played.catch(function () { clip.hidden = true; });
+                    played.catch(function () { if (state !== 'done') clip.hidden = true; });
                 }
             });
-            clip.addEventListener('error', function () { clip.hidden = true; });
+            // After the intro, finish() let go of the file: nothing to hide.
+            clip.addEventListener('error', function () { if (state !== 'done') clip.hidden = true; });
             clip.preload = 'auto'; // as in startPair: without it canplay never comes in Firefox and WebKit
             clip.src = isPhone() && scene.clipSmall ? scene.clipSmall : scene.clip;
             clip.load();

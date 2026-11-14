@@ -1143,15 +1143,72 @@ describe('moving cut-out', { concurrency: 1 }, () => {
     });
   }
 
+  // The intro ends while the clip's response is still held back: both videos let go of their files.
+  for (const [label, scene, skip] of [
+    ['rendered, Enter during the hold', withScene(T5), (page) => page.keyboard.press('Enter')],
+    ['fallback mode, click during the hold', [...noCockpit, ...withScene(T5)], (page) => page.mouse.click(page.vw * 0.75, page.vh * 0.6)],
+  ]) {
+    test(`intro ends while the clip is loading (${label}): neither video keeps a src, no page errors`, async () => {
+      let release;
+      const held = new Promise((r) => { release = r; });
+      const hold = ['**/test-media/clip.webm', async (r) => {
+        await held;
+        const body = await fs.readFile(path.join(FIXTURES, 'clip.webm'));
+        await r.fulfill({ body, contentType: 'video/webm' }).catch(() => {});
+      }];
+      const page = await open({ routes: [...scene, hold] });
+      try {
+        await introStart(page);
+        await until(page, () => document.getElementById('dash-clip').getAttribute('src') !== null, 4000);
+        assert.ok(clipRequests(page).length >= 1, 'clip was not requested');
+        await skip(page);
+        await landed(page);
+        await page.waitForTimeout(300);
+        const v = await page.evaluate(() => ['dash-clip', 'dash-fgclip'].map((id) => {
+          const el = document.getElementById(id);
+          return { id, src: el.getAttribute('src'), networkState: el.networkState, paused: el.paused };
+        }));
+        const s = JSON.stringify(v);
+        for (const x of v) {
+          assert.equal(x.src, null, s);
+          assert.equal(x.networkState, 0, `${x.id} still has a resource (NETWORK_EMPTY is 0): ${s}`);
+          assert.equal(x.paused, true, s);
+        }
+        await assertEndState(page);
+        assert.deepEqual(page.errors, []);
+      } finally {
+        release();
+        await done(page);
+      }
+    });
+  }
+
   test('push-in pauses both videos', async () => {
-    const page = await open({ routes: withScene(T5), init: [SLOW] });
+    // finish() pauses each video, then lets go of its file (load() without a src resets it):
+    // record each one's state at that load() call, while it still holds its time.
+    const AT_RELEASE = () => {
+      const load = HTMLMediaElement.prototype.load;
+      window.__released = {};
+      HTMLMediaElement.prototype.load = function () {
+        if (this.id && this.getAttribute('src') === null) {
+          window.__released[this.id] = { paused: this.paused, ended: this.ended, t: this.currentTime, d: this.duration };
+        }
+        return load.call(this);
+      };
+    };
+    const page = await open({ routes: withScene(T5), init: [SLOW, AT_RELEASE] });
     try {
       await introStart(page);
       await until(page, pairPlaying, 4000);
       await page.keyboard.press('Enter');
       await landed(page);
+      const at = await page.evaluate(() => window.__released);
+      for (const id of ['dash-clip', 'dash-fgclip']) {
+        const x = at[id];
+        assert.ok(x && x.paused && !x.ended && x.t > 0 && x.t < x.d - 0.05, `${id} at release: ${JSON.stringify(at)}`);
+      }
       const v = await videos(page);
-      for (const x of [v.clip, v.cut]) assert.ok(x.paused && !x.ended && x.t < x.d - 0.05, JSON.stringify(v));
+      for (const x of [v.clip, v.cut]) assert.ok(x.paused && x.src === null, JSON.stringify(v));
       await page.waitForTimeout(300);
       const later = await videos(page);
       assert.equal(later.clip.t, v.clip.t, 'clip moved after the push-in');
