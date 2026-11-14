@@ -98,6 +98,14 @@ function farY(page, d) {
   assert.ok(y - d.bottom > 90, `no room below the doll: ${y} ${d.bottom}`);
   return y;
 }
+// Enter follow mode with the pointer above the doll's centre (lean 0), far below it, and let the
+// spring settle there. Follow mode takes over from the dance up to about half a second after the
+// first move, starting from the dance's turn (doll-switch.test.mjs).
+async function follow(page, d) {
+  await page.mouse.move(Math.round(d.cx), farY(page, d));
+  await until(page, () => document.querySelector('.dash-doll').classList.contains('dash-doll-follow'), 2000);
+  await page.waitForTimeout(1800);
+}
 const frames = (page, ms, gap = false) => page.evaluate(([ms, gap]) => window.__frames(ms, gap), [ms, gap]);
 const now = (page) => page.evaluate(() => performance.now());
 const anims = (page, sel) => page.evaluate((sel) => {
@@ -137,6 +145,7 @@ describe('follow mode', { concurrency: 1 }, () => {
       try {
         const d = await dollAt(page);
         const y = farY(page, d);
+        await follow(page, d);
         for (const [x, sign] of [[page.vw - 10, 1], [10, -1]]) {
           assert.equal(aimFor(page, d, x), 12 * sign, 'the pointer is past full reach');
           const sampling = frames(page, 2500);
@@ -204,6 +213,7 @@ describe('follow mode', { concurrency: 1 }, () => {
         const d = await dollAt(page);
         const y = farY(page, d);
         await page.mouse.move(page.vw - 10, y);
+        await until(page, () => document.querySelector('.dash-doll').classList.contains('dash-doll-follow'), 2000);
         await page.waitForTimeout(300);
         // At the moment dash-pushing is set, then every frame while it stays.
         const watching = page.evaluate((sel) => new Promise((resolve) => {
@@ -291,6 +301,7 @@ describe('the doll and the screen', { concurrency: 1 }, () => {
         const y = farY(page, d);
         const right = page.vw - 10;
         const left = 10;
+        await follow(page, d);
         // Settled far right.
         let sampling = frames(page, 2000, true);
         await page.mouse.move(right, y);
@@ -328,18 +339,28 @@ describe('the doll and the screen', { concurrency: 1 }, () => {
 
 // Settle with the pointer at `from` (far from the doll), then move to each point of `path`
 // ([x, y, wait before it in ms]), sampling every frame. Returns the settled lean, the frames and
-// the page-clock time just after each move. Shorter than the 4 s idle wait throughout.
+// the page-clock time of each move's pointermove. Shorter than the 4 s idle wait throughout.
+// Headless frames come 33 to 130 ms apart, so the sampling runs long enough to hold every
+// window `extreme` reads.
 async function pass(page, from, path, settle = 1800) {
+  // On <html>, not document or window: 'after landing' counts the listeners on those two.
+  await page.evaluate(() => {
+    if (window.__moves) return;
+    window.__moves = [];
+    document.documentElement.addEventListener('pointermove', () => window.__moves.push(performance.now()), true);
+  });
   await page.mouse.move(from[0], from[1]);
   await page.waitForTimeout(settle);
   const base = await page.evaluate(() => window.__lean());
-  const sampling = frames(page, 1100);
+  const sampling = frames(page, 1600);
   await page.waitForTimeout(100);
   const at = [];
   for (const [x, y, wait = 0] of path) {
     if (wait) await page.waitForTimeout(wait);
+    const n = await page.evaluate(() => window.__moves.length);
     await page.mouse.move(x, y);
-    at.push(await now(page));
+    await until(page, (n) => window.__moves.length > n, 2000, n);
+    at.push(await page.evaluate(() => window.__moves.at(-1)));
   }
   return { base, at, frames: await sampling };
 }
@@ -355,6 +376,7 @@ describe('kick', { concurrency: 1 }, () => {
       try {
         const d = await dollAt(page);
         const y = farY(page, d);
+        await follow(page, d);
         const cx = Math.round(d.cx);
         const from = [cx - 40 * s, y];
         // The same horizontal travel, near the doll and far from it (the spring alone).
@@ -378,6 +400,7 @@ describe('kick', { concurrency: 1 }, () => {
     try {
       const d = await dollAt(page);
       const y = farY(page, d);
+      await follow(page, d);
       const cx = Math.round(d.cx);
       const cy = Math.round(d.cy);
       const from = [cx - 40, y];
@@ -405,6 +428,7 @@ describe('kick', { concurrency: 1 }, () => {
     try {
       const d = await dollAt(page);
       const y = farY(page, d);
+      await follow(page, d);
       const cx = Math.round(d.cx);
       const ys = [y - 100, d.bottom + 60, d.cy, d.top + 10, d.top - 40].map(Math.round);
       const p = await pass(page, [cx, y], ys.map((yy) => [cx, yy, 40]));
@@ -427,6 +451,7 @@ describe('idle', { concurrency: 1 }, () => {
         const y = farY(page, d);
         const right = page.vw - 10;
         const aim = aimFor(page, d, right);
+        await follow(page, d);
         const sampling = frames(page, 7600);
         await page.waitForTimeout(100);
         await page.mouse.move(right, y);
