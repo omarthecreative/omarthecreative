@@ -207,16 +207,16 @@
     var STILL_WAIT_MS = 1500; // longest the page stays dark waiting for a still
 
     var scene = null;        // the scene on screen, once applyScene has run
-    var stillLoaded = false;
-    var stillFailed = false; // the drawn scene shows: no cut-out over it, ever
+    var stillLoaded = false; // until then the drawn scene shows: no cut-out over it
     var fgLoaded = false;    // the poster cut-out (#dash-fg) has loaded
     var pairOn = false;      // the clip and the moving cut-out are on screen
 
-    // The poster cut-out shows when it has loaded, the still has not failed,
-    // and the moving cut-out is not standing in for it.
+    // The poster cut-out shows when it and the still have loaded, and the
+    // moving cut-out is not standing in for it. A still that is slow or missing
+    // leaves the drawn scene, without rendered palms over it.
     function updateForeground() {
         var fg = document.getElementById('dash-fg');
-        if (fg) fg.hidden = !(fgLoaded && !stillFailed && !pairOn);
+        if (fg) fg.hidden = !(fgLoaded && stillLoaded && !pairOn);
     }
 
     // The still replaces the drawn scene only once it has loaded. The page
@@ -231,11 +231,11 @@
                 stillLoaded = true;
                 still.hidden = false;
                 shield.classList.add('dash-has-still');
+                updateForeground();
                 done();
             });
             still.addEventListener('error', function () {
                 stillLoaded = false;
-                stillFailed = true;
                 still.hidden = true;
                 shield.classList.remove('dash-has-still');
                 updateForeground();
@@ -251,7 +251,8 @@
     // loadCockpit, so it is fetched alongside the cockpit, not after it). The
     // page stays dark for it too, at most STILL_WAIT_MS, so the palms do not pop
     // in over a banner already passing. A missing file leaves the still as it is.
-    // A missing still leaves it hidden: the drawn scene shows, without palms.
+    // Until the still has loaded (and for good if it is missing) it stays
+    // hidden: the drawn scene shows, without palms.
     // If the cockpit then fails to load, the drawn dashboard shows and this
     // box stays display: none.
     function showForeground(src) {

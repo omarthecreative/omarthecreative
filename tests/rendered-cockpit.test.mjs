@@ -1334,6 +1334,51 @@ describe('moving cut-out', { concurrency: 1 }, () => {
       await done(page);
     }
   });
+
+  test('rendered, still 2500ms late, foreground at once: no palms over the drawn scene, then the poster cut-out shows', async () => {
+    // page.goto waits for the window load event, which waits for the still: sample from the start instead.
+    const SAMPLE = () => {
+      window.__fgSamples = [];
+      let stillAt = null;
+      const tick = setInterval(() => {
+        const still = document.getElementById('dash-still'), fg = document.getElementById('dash-fg'), drawn = document.getElementById('dash-drawn');
+        if (!still || !fg || !drawn) return;
+        const stillReady = still.complete && still.naturalWidth > 0 && !still.hidden;
+        window.__fgSamples.push({
+          t: performance.now(), stillReady, fgLoaded: fg.complete && fg.naturalWidth > 0, fgHidden: fg.hidden,
+          fgDisplay: getComputedStyle(fg).display, drawn: getComputedStyle(drawn).display,
+          dark: document.documentElement.classList.contains('dash-loading'),
+        });
+        if (stillReady && stillAt === null) stillAt = performance.now();
+        if (stillAt !== null && performance.now() - stillAt > 500) { clearInterval(tick); window.__fgSamplesDone = true; }
+      }, 30);
+    };
+    const slow = ['**/test-media/slow-still.jpg', async (r) => {
+      await new Promise((res) => setTimeout(res, 2500));
+      const body = await fs.readFile(path.join(FIXTURES, 'still.jpg'));
+      await r.fulfill({ body, contentType: 'image/jpeg' }).catch(() => {});
+    }];
+    const page = await open({ routes: [...withScene({ still: 'test-media/slow-still.jpg', foreground: T4_FG }), slow], init: [SAMPLE] });
+    try {
+      await until(page, () => window.__fgSamplesDone === true, 8000);
+      await assertRendered(page, 'wide');
+      const samples = await page.evaluate(() => window.__fgSamples);
+      const before = samples.filter((x) => !x.stillReady);
+      const race = before.filter((x) => x.fgLoaded && !x.dark);
+      assert.ok(race.length >= 3, `never on screen with the foreground loaded and the still not: ${JSON.stringify(samples.slice(0, 5))}`);
+      for (const x of race) {
+        assert.equal(x.fgHidden, true, `palms over the drawn scene: ${JSON.stringify(x)}`);
+        assert.equal(x.fgDisplay, 'none', JSON.stringify(x));
+        assert.notEqual(x.drawn, 'none', `drawn scene not showing while the still is late: ${JSON.stringify(x)}`);
+      }
+      const last = samples[samples.length - 1];
+      assert.ok(last.stillReady && last.fgHidden === false && last.fgDisplay !== 'none', `poster cut-out not shown after the still: ${JSON.stringify(last)}`);
+      assert.equal(last.drawn, 'none', JSON.stringify(last));
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
 });
 
 // — Task 6: the rendered doll —
