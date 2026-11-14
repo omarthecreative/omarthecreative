@@ -41,6 +41,27 @@ describe('assets', () => {
       assert.match(res.headers.get('content-type'), /^(image|video)\//, f);
     }
   });
+
+  // Safari reads the index (moov) before it knows anything about the video: it must come before the data (mdat).
+  // todo (F-7): the files are not fast-start yet. `ffmpeg -c copy -movflags +faststart` (8.1.2) rewrites the hvcC
+  // and drops the alpha layer's SPS and PPS, so the files were left as they are. Remove `todo` once they are replaced.
+  test('both .mov cut-outs are fast-start: moov before mdat', { todo: 'F-7: .mov files not replaced, see final-fix-report.md' }, async () => {
+    for (const f of ['fgclip-1920.mov', 'fgclip-960.mov']) {
+      const buf = await fs.readFile(path.join(SRC, 'assets/dash/scenes/miami-beach', f));
+      const atoms = [];
+      for (let at = 0; at + 8 <= buf.length;) {
+        let size = buf.readUInt32BE(at);
+        const type = buf.toString('latin1', at + 4, at + 8);
+        if (size === 1) size = Number(buf.readBigUInt64BE(at + 8));
+        else if (size === 0) size = buf.length - at;
+        assert.ok(size >= 8, `${f}: bad atom size ${size} at ${at}`);
+        atoms.push(type);
+        at += size;
+      }
+      const iMoov = atoms.indexOf('moov'), iMdat = atoms.indexOf('mdat');
+      assert.ok(iMoov !== -1 && iMdat !== -1 && iMoov < iMdat, `${f}: top-level atoms ${atoms.join(', ')}`);
+    }
+  });
 });
 
 describe('layout', () => {
