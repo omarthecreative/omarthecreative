@@ -1,0 +1,135 @@
+/* Dashboard motion (dashboard-motion.js): the gauges.
+   The car moves only while the scene's clip plays: html.dash-moving, set by
+   dashboard-intro.js. Everything here reads that class and nothing else.
+   iOS Safari: animation-* properties are spelled out, never the shorthand. */
+
+/* ---- Gauges ------------------------------------------------------------ */
+
+/* The needles, drawn over the rendered cockpit (its own are painted out).
+   Wide mode only; same box as #dash-cockpit-img, 1600 x 900 units.
+   A needle at value v (0 to 0.6) is rotate(138deg + 260deg * v) about its
+   hub, clockwise from pointing right. Past 0.6 it would cross the wheel. */
+#dash-gauges {
+    display: none;
+    --dash-speed: 0;
+    --dash-revs: 0;
+}
+html.dash-rendered[data-dash-mode="wide"] #dash-gauges {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: var(--ck-x);
+    width: var(--ck-w);
+    height: var(--ck-h);
+    overflow: visible;
+    pointer-events: none;
+}
+#dash-gauges line {
+    stroke: #ECEEF2;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+}
+#dash-gauges circle {
+    fill: #0A0E18;
+    stroke: #ECEEF2;
+    stroke-width: 1.5;
+}
+
+/* Each needle's group sits at its hub (translate in the markup) and turns
+   about it. The inner group adds the wander. */
+.dash-gauge-speed,
+.dash-gauge-revs,
+.dash-gauge-wander { transform-origin: 0 0; }
+.dash-gauge-speed { transform: rotate(calc(138deg + 260deg * var(--dash-speed))); }
+.dash-gauge-revs { transform: rotate(calc(138deg + 260deg * var(--dash-revs))); }
+
+/* The sweep, staged by DashMotion.start(): both up to 0.6, then down to rest,
+   700 ms each, ease in and out. Then rest: speed 0.05 while the car moves,
+   0 when it does not; revs 0.14. Rest changes ease over 1500 ms both ways.
+   A change mid-way starts again from where the needle is: it never jumps. */
+#dash-gauges.dash-gauges-on { --dash-speed: 0.6; --dash-revs: 0.6; }
+#dash-gauges.dash-gauges-swept { --dash-speed: 0; --dash-revs: 0.14; }
+html.dash-moving #dash-gauges.dash-gauges-swept { --dash-speed: 0.05; }
+.dash-gauge-speed,
+.dash-gauge-revs {
+    --dash-wamt: 0;
+    transition-property: transform, --dash-wamt;
+    transition-duration: 700ms, 1500ms;
+    transition-timing-function: ease-in-out;
+}
+.dash-gauges-settled .dash-gauge-speed,
+.dash-gauges-settled .dash-gauge-revs { transition-duration: 1500ms; }
+
+/* The wander: a slow, uneven drift about rest, at most 1.5deg (v 0.0058),
+   half swings of 1.1 to 1.8 s (periods 2.2 to 3.6 s). The keyframes move
+   --dash-wd; the drift shown is --dash-wd times --dash-wamt, which eases
+   between 0 and 1 over 1500 ms, so the drift fades in and out and never
+   jumps. Revs drifts from the end of the sweep on; speed only while the car
+   moves (at 0 it does not wander). Both properties are registered so they
+   animate smoothly; dashboard-motion.js adds .dash-gauges-wander only where
+   registering is supported (elsewhere the needles rest without a drift).
+   Only while the intro shows: nothing runs after landing. */
+@property --dash-wd {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+}
+@property --dash-wamt {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0;
+}
+.dash-gauges-settled .dash-gauge-revs,
+html.dash-moving .dash-gauges-settled .dash-gauge-speed { --dash-wamt: 1; }
+.dash-gauge-wander { transform: rotate(calc(var(--dash-wd) * var(--dash-wamt))); }
+html.dash-intro .dash-gauges-wander.dash-gauges-settled .dash-gauge-wander {
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+}
+html.dash-intro .dash-gauges-wander.dash-gauges-settled .dash-gauge-revs .dash-gauge-wander {
+    animation-name: dash-wander-revs;
+    animation-duration: 19s;
+}
+html.dash-intro .dash-gauges-wander.dash-gauges-settled .dash-gauge-speed .dash-gauge-wander {
+    animation-name: dash-wander-speed;
+    animation-duration: 17s;
+}
+@keyframes dash-wander-revs {
+    0%      { --dash-wd: 0deg; }
+    7.368%  { --dash-wd: 1.2deg; }
+    13.684% { --dash-wd: -0.9deg; }
+    23.158% { --dash-wd: 1.5deg; }
+    28.947% { --dash-wd: -0.4deg; }
+    38.421% { --dash-wd: 0.8deg; }
+    44.737% { --dash-wd: -1.5deg; }
+    53.158% { --dash-wd: 0.5deg; }
+    58.947% { --dash-wd: -0.7deg; }
+    68.421% { --dash-wd: 1.3deg; }
+    75.263% { --dash-wd: -1.1deg; }
+    83.684% { --dash-wd: 0.9deg; }
+    91.579% { --dash-wd: -0.6deg; }
+    100%    { --dash-wd: 0deg; }
+}
+@keyframes dash-wander-speed {
+    0%      { --dash-wd: 0deg; }
+    7.059%  { --dash-wd: -1deg; }
+    17.059% { --dash-wd: 1.4deg; }
+    23.529% { --dash-wd: -0.5deg; }
+    32.941% { --dash-wd: 1.1deg; }
+    40.588% { --dash-wd: -1.4deg; }
+    47.059% { --dash-wd: 0.6deg; }
+    57.647% { --dash-wd: -0.8deg; }
+    64.706% { --dash-wd: 1.5deg; }
+    73.529% { --dash-wd: -0.3deg; }
+    80%     { --dash-wd: 0.9deg; }
+    90.588% { --dash-wd: -1.2deg; }
+    100%    { --dash-wd: 0deg; }
+}
+
+/* ---- Reduced motion ---------------------------------------------------- */
+
+/* The intro is normally skipped then; this is a cheap guard. */
+@media (prefers-reduced-motion: reduce) {
+    html.dash-intro .dash-gauges-wander.dash-gauges-settled .dash-gauge-revs .dash-gauge-wander,
+    html.dash-intro .dash-gauges-wander.dash-gauges-settled .dash-gauge-speed .dash-gauge-wander { animation-name: none; }
+}

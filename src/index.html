@@ -94,6 +94,7 @@
     <link rel="stylesheet" href="base.css">
     <link rel="stylesheet" href="video-overlay.css">
     <link rel="stylesheet" href="dashboard-intro.css?v=8">
+    <link rel="stylesheet" href="dashboard-motion.css?v=1">
     <script src="https://player.vimeo.com/api/player.js"></script>
     <script src="carousel-config.js"></script>
     <script>
@@ -1484,6 +1485,19 @@
                      image has loaded). Without it, the drawn dash below shows. -->
                 <div id="dash-cockpit" aria-hidden="true">
                     <img id="dash-cockpit-img" alt="">
+                    <!-- Gauge needles over the picture (its own are painted out), wide mode
+                         only. Same box as the picture: 1600 x 900 units. Hubs at (0.1786,
+                         0.5394) speed and (0.3115, 0.5384) revs. dashboard-motion.css/.js. -->
+                    <svg id="dash-gauges" viewBox="0 0 1600 900" aria-hidden="true">
+                        <g transform="translate(285.76 485.46)">
+                            <g class="dash-gauge-speed"><g class="dash-gauge-wander"><line x1="-9.92" y1="0" x2="49.12" y2="0"></line></g></g>
+                            <circle r="5.44"></circle>
+                        </g>
+                        <g transform="translate(498.4 484.56)">
+                            <g class="dash-gauge-revs"><g class="dash-gauge-wander"><line x1="-9.92" y1="0" x2="49.12" y2="0"></line></g></g>
+                            <circle r="5.44"></circle>
+                        </g>
+                    </svg>
                     <div class="dash-cockpit-floor"></div>
                 </div>
                 <div class="dash-surface" aria-hidden="true">
@@ -1638,6 +1652,7 @@
 
     <script src="dashboard-scenes.js?v=3"></script>
     <script src="dashboard-intro.js?v=7"></script>
+    <script src="dashboard-motion.js?v=1"></script>
     <script src="apex-sound.js?v=4"></script>
     <script>
 
@@ -2577,8 +2592,10 @@
             }
 
             document.body.classList.add('intro-active');
-            // The intro starts now: a scene's clip, if it has one, starts with it.
+            // The intro starts now: a scene's clip, if it has one, starts with it,
+            // and the gauge needles sweep.
             if (window.DashIntro && DashIntro.startClip) DashIntro.startClip();
+            if (window.DashMotion) DashMotion.start();
             // The grid is in its normal state and the dashboard shows it scaled
             // down inside its screen for the hold. Normally already done by
             // mountDashboardEarly(); this covers any path that skipped it.
