@@ -272,19 +272,18 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
         assert.ok(screen.top >= shield.bottom, `screen top ${screen.top} above windshield edge ${shield.bottom}`);
         assert.ok(screen.right <= w && screen.bottom <= h, JSON.stringify(screen));
         assert.ok(screen.left >= ck.left + 0.445 * ck.width, `screen left ${screen.left} overlaps the start button`);
+        // The redrawn start button: ring 128px across at 3840 wide, centred on (0.428, 0.674).
         const wire = await rect(page, '#dash-wire');
         const cx = wire.left + wire.width / 2, cy = wire.top + wire.height / 2;
-        assert.ok(Math.abs(cx - (ck.left + 0.428 * ck.width)) <= 2, `wire centre x ${cx}`);
-        assert.ok(Math.abs(cy - 0.674 * h) <= 2, `wire centre y ${cy}`);
-        assert.ok(Math.abs(wire.width - 0.034 * ck.width) <= 1, `wire width ${wire.width}`);
+        assert.ok(Math.abs(cx - (ck.left + 0.428 * ck.width)) <= 1, `wire centre x ${cx}`);
+        assert.ok(Math.abs(cy - 0.674 * h) <= 1, `wire centre y ${cy}`);
+        assert.ok(Math.abs(wire.width - 0.0333 * ck.width) <= 1, `wire width ${wire.width}`);
+        assert.ok(Math.abs(wire.height - 0.0333 * ck.width) <= 1, `wire height ${wire.height}`);
         assert.ok(wire.right <= screen.left, `wire right ${wire.right} vs screen left ${screen.left}`);
-        // "Wire Omar" sits under the button on one line, clear of the screen.
-        const words = await rect(page, '#dash-wire span');
-        assert.ok(words.top >= wire.bottom - 1, `words top ${words.top} vs button bottom ${wire.bottom}`);
-        assert.ok(Math.abs(words.left + words.width / 2 - cx) <= 1, 'words centred under the button');
-        assert.ok(words.right <= screen.left, `words right ${words.right} vs screen left ${screen.left}`);
-        assert.equal((await page.textContent('#dash-wire span')).replace(/\s+/g, ' ').trim(), 'Wire Omar');
-        assert.ok(words.height < 2 * parseFloat(await css(page, '#dash-wire span', 'fontSize')), 'words on one line');
+        // No visible words: the span has no box. The link keeps its name and title.
+        assert.equal(await page.evaluate(() => document.querySelector('#dash-wire span').getClientRects().length), 0, 'words rendered');
+        assert.match(await page.locator('#dash-wire').ariaSnapshot(), /^- link "Wire Omar"/);
+        assert.equal(await page.getAttribute('#dash-wire', 'title'), 'Wire Omar');
         assert.equal(await css(page, '#dash-wire', 'borderTopWidth'), '0px');
         assert.equal(await css(page, '#dash-wire', 'boxShadow'), 'none');
         assert.equal(await css(page, '#dash-wire', 'backgroundColor'), 'rgba(0, 0, 0, 0)');
@@ -297,6 +296,48 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
       }
     });
   }
+
+  test('rendered 1440x900: the knight is white, #FF0015 on hover and on keyboard focus', async () => {
+    const page = await open();
+    try {
+      await mounted(page);
+      await assertRendered(page, 'wide');
+      const RED = 'rgb(255, 0, 21)';
+      await page.mouse.move(2, 2);
+      assert.equal(await css(page, '#dash-wire svg', 'fill'), 'rgb(255, 255, 255)');
+      const wire = await rect(page, '#dash-wire');
+      await page.mouse.move(wire.left + wire.width / 2, wire.top + wire.height / 2);
+      assert.equal(await css(page, '#dash-wire svg', 'fill'), RED, 'on hover');
+      await page.mouse.move(2, 2);
+      assert.equal(await css(page, '#dash-wire svg', 'fill'), 'rgb(255, 255, 255)', 'after hover');
+      // Keyboard focus: Tab to the link (Tab does not start the push-in).
+      for (let i = 0; i < 40 && await page.evaluate(() => document.activeElement?.id) !== 'dash-wire'; i++) {
+        await page.keyboard.press('Tab');
+      }
+      assert.equal(await page.evaluate(() => document.querySelector('#dash-wire').matches(':focus-visible')), true, 'no keyboard focus');
+      assert.equal(await css(page, '#dash-wire svg', 'fill'), RED, 'on keyboard focus');
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('drawn (cockpit 404) 1440x900: Wire Omar shows its words in the button, named "Wire Omar"', async () => {
+    const page = await open({ routes: [['**/assets/dash/cockpit-*', (r) => r.fulfill({ status: 404, body: 'not found' })]] });
+    try {
+      await mounted(page);
+      await assertDrawn(page);
+      const words = await rect(page, '#dash-wire span');
+      const wire = await rect(page, '#dash-wire');
+      assert.ok(words.width > 0 && words.height > 0, JSON.stringify(words));
+      assert.ok(words.top >= wire.top && words.bottom <= wire.bottom, `words outside the button: ${JSON.stringify({ words, wire })}`);
+      assert.equal((await page.textContent('#dash-wire span')).replace(/\s+/g, ' ').trim(), 'Wire Omar');
+      assert.match(await page.locator('#dash-wire').ariaSnapshot(), /^- link "Wire Omar"/);
+      assert.equal(await page.getAttribute('#dash-wire', 'title'), 'Wire Omar');
+    } finally {
+      await done(page);
+    }
+  });
 
   test('wider than 2560: the 3840 cockpit file', async () => {
     const page = await open({ viewport: { width: 2600, height: 1100 } });
@@ -355,6 +396,11 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
       assert.ok(parseFloat(await css(page, '#dash-wire', 'borderTopWidth')) > 0, 'wire border');
       assert.equal(await css(page, '#dash-wire', 'borderTopStyle'), 'solid');
       assert.notEqual(await css(page, '#dash-wire', 'borderTopColor'), 'rgba(0, 0, 0, 0)');
+      // The phone keeps the words in the button.
+      const words = await rect(page, '#dash-wire span');
+      assert.ok(words.width > 0 && words.height > 0, `words not shown: ${JSON.stringify(words)}`);
+      assert.equal((await page.textContent('#dash-wire span')).replace(/\s+/g, ' ').trim(), 'Wire Omar');
+      assert.equal(await page.getAttribute('#dash-wire', 'title'), 'Wire Omar');
       const screen = await rect(page, '#dash-screen');
       assert.ok(screen.top >= (await rect(page, '#dash-shield')).bottom, 'screen below the windshield');
       await assertFrameFitsGrid(page);

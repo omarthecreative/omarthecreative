@@ -578,26 +578,21 @@ html.dash-rendered .dash-minimap {
     right: calc(var(--ck-crop-r) + 0.07 * var(--ck-w));
 }
 
-/* Wire Omar on the picture's start button: the knight on the button face, the
-   words on one line under it. The phone keeps the drawn button. */
+/* Wire Omar on the picture's start button: a ring 128px across at 3840 wide,
+   centred on (0.428, 0.674). The knight alone on its face, no words (the link
+   keeps its name in aria-label and title). The phone keeps the drawn button. */
 html.dash-rendered[data-dash-mode="wide"] #dash-wire {
-    left: calc(var(--ck-x) + (0.428 - 0.017) * var(--ck-w));
-    top: calc(0.674 * var(--ck-h) - 0.017 * var(--ck-w));
-    width: calc(0.034 * var(--ck-w));
-    height: calc(0.034 * var(--ck-w));
+    left: calc(var(--ck-x) + (0.428 - 0.01665) * var(--ck-w));
+    top: calc(0.674 * var(--ck-h) - 0.01665 * var(--ck-w));
+    width: calc(0.0333 * var(--ck-w));
+    height: calc(0.0333 * var(--ck-w));
     border: 0;
     background: none;
     box-shadow: none;
 }
+html.dash-rendered[data-dash-mode="wide"] #dash-wire:focus-visible { color: var(--vibrant-red-hud); }
 html.dash-rendered[data-dash-mode="wide"] #dash-wire svg { height: 46%; }
-html.dash-rendered[data-dash-mode="wide"] #dash-wire span {
-    position: absolute;
-    top: calc(100% + 4px * var(--dash-fit));
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-}
-html.dash-rendered[data-dash-mode="wide"] #dash-wire br { display: none; }
+html.dash-rendered[data-dash-mode="wide"] #dash-wire span { display: none; }
 
 /* Scene box: one box in the scene's 21:9 shape, so the still and the clip
    share coordinates. Under the cockpit (z 2). */
