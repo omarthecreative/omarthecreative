@@ -277,7 +277,8 @@ for (const offline of [false, true]) {
 
     // — Task 3: still and clip under the windshield —
     test('no still: #dash-drawn is rendered, no still or clip requested', async () => {
-      const page = await open({ offline });
+      // Pinned to a still-less scene: the default scene has its real still since Task 7.
+      const page = await open({ offline, routes: withScene({}) });
       try {
         await introStart(page);
         assert.notEqual(await css(page, '#dash-drawn', 'display'), 'none');

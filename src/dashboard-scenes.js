@@ -28,6 +28,14 @@ window.DashScenes = {
         {
             id: 'miami-beach',
             timezone: 'America/New_York',
+            still: 'assets/dash/scenes/miami-beach/still-1920.jpg',
+            stillSmall: 'assets/dash/scenes/miami-beach/still-960.jpg',
+            clip: 'assets/dash/scenes/miami-beach/clip-1920.mp4',
+            clipSmall: 'assets/dash/scenes/miami-beach/clip-960.mp4',
+            foreground: 'assets/dash/scenes/miami-beach/fg-1920.webp',
+            foregroundSmall: 'assets/dash/scenes/miami-beach/fg-960.webp',
+            foregroundClip: 'assets/dash/scenes/miami-beach/fgclip-1920',
+            foregroundClipSmall: 'assets/dash/scenes/miami-beach/fgclip-960',
             minimap: 'assets/dash/scenes/miami-beach/minimap.svg',
             mirror: 'paladin'
         }

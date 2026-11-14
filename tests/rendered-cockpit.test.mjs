@@ -1624,3 +1624,173 @@ describe('rendered doll', { concurrency: 1 }, () => {
     }
   });
 });
+
+// — Task 7: the real Miami Beach scene, its files and its weight —
+// These tests use the scene entry in src/dashboard-scenes.js and the real files. Playwright's Chromium
+// may not decode H.264, so they assert on requests and on the still, not on playback.
+const MB = 'assets/dash/scenes/miami-beach/';
+const REAL = (page) => page.requested.filter((u) => /\/(still|fg|fgclip|clip)-\d+\./.test(u) || /\/cockpit-/.test(u) || /\/doll-/.test(u));
+const realName = (u) => new URL(u).pathname.split('/').pop();
+const isRealClip = (u) => /\/miami-beach\/clip-\d+\.mp4$/.test(u);
+const isRealCut = (u) => /\/miami-beach\/fgclip-\d+\.(webm|mov)$/.test(u);
+// State of the windshield at the moment the page stops being dark.
+const firstShownStill = () => {
+  let sawLoading = false;
+  new MutationObserver((_, obs) => {
+    const h = document.documentElement;
+    if (h.classList.contains('dash-loading')) { sawLoading = true; return; }
+    if (!sawLoading) return;
+    const still = document.getElementById('dash-still');
+    window.__firstStill = {
+      ready: still.complete && still.naturalWidth > 0 && !still.hidden,
+      src: still.getAttribute('src'),
+      rendered: h.classList.contains('dash-rendered'),
+    };
+    obs.disconnect();
+  }).observe(document, { attributes: true, subtree: true, attributeFilter: ['class'] });
+};
+const sizeOf = async (f) => (await fs.stat(path.join(SRC, f))).size;
+
+describe('miami beach, real files', { concurrency: 1 }, () => {
+  test('query strings in index.html are the bumped ones', async () => {
+    const html = await fs.readFile(path.join(SRC, 'index.html'), 'utf8');
+    assert.match(html, /href="dashboard-intro\.css\?v=7"/);
+    assert.match(html, /src="dashboard-scenes\.js\?v=2"/);
+    assert.match(html, /src="dashboard-intro\.js\?v=6"/);
+  });
+
+  test('1440x900: rendered, still shown at the first frame, cut-out then clip requested', async () => {
+    const page = await open({ init: [firstShownStill] });
+    try {
+      await introStart(page);
+      await assertRendered(page, 'wide');
+      const first = await page.evaluate(() => window.__firstStill);
+      assert.deepEqual(first, { ready: true, src: MB + 'still-1920.jpg', rendered: true });
+      const fg = await page.evaluate(() => {
+        const i = document.getElementById('dash-fg');
+        return { src: i.getAttribute('src'), ok: i.complete && i.naturalWidth > 0 };
+      });
+      assert.equal(fg.src, MB + 'fg-1920.webp');
+      assert.equal(fg.ok, true, 'poster cut-out loaded');
+      // Wait for the clip request (the cut-out is checked first).
+      const t0 = Date.now();
+      while (!page.requested.some(isRealClip) && Date.now() - t0 < 5000) await page.waitForTimeout(50);
+      const reqs = page.requested;
+      const iStill = reqs.findIndex((u) => /still-1920\.jpg$/.test(u));
+      const iCut = reqs.findIndex(isRealCut), iClip = reqs.findIndex(isRealClip);
+      assert.ok(iStill !== -1, 'still-1920 not requested');
+      assert.ok(iCut !== -1 && iClip !== -1, `cut-out ${iCut}, clip ${iClip}: ${REAL(page).map(realName).join(' ')}`);
+      assert.ok(iCut < iClip, `cut-out before clip: ${REAL(page).map(realName).join(' ')}`);
+      assert.match(reqs[iCut], /\/fgclip-1920\.webm$/, 'Chromium gets the .webm cut-out');
+      assert.match(reqs[iClip], /\/clip-1920\.mp4$/);
+      assert.equal(await page.evaluate(() => document.getElementById('dash-still').hidden === false), true, 'still stays under the clip');
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('390x844: requests still-960, fg-960, fgclip-960, clip-960 and no 1920 file', async () => {
+    const page = await open({ viewport: { width: 390, height: 844 }, init: [firstShownStill] });
+    try {
+      await introStart(page);
+      await assertRendered(page, 'tall');
+      const t0 = Date.now();
+      while (!page.requested.some(isRealClip) && Date.now() - t0 < 5000) await page.waitForTimeout(50);
+      const names = REAL(page).map(realName);
+      for (const want of ['still-960.jpg', 'fg-960.webp', 'cockpit-tall-1080.webp', 'doll-top.webp', 'doll-base.webp']) {
+        assert.ok(names.includes(want), `${want} not requested: ${names.join(' ')}`);
+      }
+      assert.ok(names.some((n) => /^fgclip-960\.(webm|mov)$/.test(n)), `fgclip-960 not requested: ${names.join(' ')}`);
+      assert.ok(names.includes('clip-960.mp4'), `clip-960 not requested: ${names.join(' ')}`);
+      assert.deepEqual(names.filter((n) => /1920|2560|3840/.test(n)), [], 'a large file was requested on a phone');
+      assert.equal((await page.evaluate(() => window.__firstStill)).src, MB + 'still-960.jpg');
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  for (const [label, opts] of [['?p=0', { path: '/?p=0' }], ['reduced motion', { reduced: true }]]) {
+    test(`real scene, skipped intro (${label}): no clip-* and no fgclip-* requested`, async () => {
+      const page = await open(opts);
+      try {
+        await until(page, () => document.body.classList.contains('grid-active') || document.body.classList.contains('project-view'), 8000);
+        await page.waitForTimeout(1500);
+        assert.equal(await page.evaluate(() => 'introStart' in window.__marks), false, 'intro played');
+        assert.deepEqual(page.requested.filter((u) => /\/(fg)?clip-\d+\./.test(u)), []);
+        assert.equal(await page.getAttribute('#dash-clip', 'src'), null);
+        assert.equal(await page.getAttribute('#dash-fgclip', 'src'), null);
+      } finally {
+        await done(page);
+      }
+    });
+  }
+
+  test('real scene, fgclip-* blocked: clip-* is never requested, still and poster cut-out stay', async () => {
+    const page = await open({ routes: [['**/fgclip-*', (r) => r.fulfill({ status: 404, body: 'not found' })]] });
+    try {
+      await introStart(page);
+      await page.waitForTimeout(2500);
+      assert.ok(page.requested.some(isRealCut), 'the cut-out was never tried');
+      assert.deepEqual(page.requested.filter((u) => /\/clip-\d+\./.test(u)), []);
+      await assertStillStays(page);
+    } finally {
+      await done(page);
+    }
+  });
+
+  // The brief's limits "760 KB" and "420 KB" are counted in KiB (1024 bytes).
+  // Delivered: 762,788 bytes on a laptop and 414,372 on a phone.
+  test('first-load weight: laptop <= 760 KiB, phone <= 420 KiB', async () => {
+    const dash = 'assets/dash/';
+    const doll = (await sizeOf(dash + 'doll-top.webp')) + (await sizeOf(dash + 'doll-base.webp'));
+    const laptop = (await sizeOf(dash + 'cockpit-wide-2560.webp')) + (await sizeOf(MB + 'still-1920.jpg')) + (await sizeOf(MB + 'fg-1920.webp')) + doll;
+    const phone = (await sizeOf(dash + 'cockpit-tall-1080.webp')) + (await sizeOf(MB + 'still-960.jpg')) + (await sizeOf(MB + 'fg-960.webp')) + doll;
+    assert.ok(laptop <= 760 * 1024, `laptop ${laptop} bytes`);
+    assert.ok(phone <= 420 * 1024, `phone ${phone} bytes`);
+  });
+});
+
+describe('local server byte ranges', () => {
+  const url = () => server.url + '/assets/dash/scenes/miami-beach/clip-960.mp4';
+  test('plain request: 200, full length, Accept-Ranges', async () => {
+    const size = await sizeOf(MB + 'clip-960.mp4');
+    const res = await fetch(url());
+    assert.equal(res.status, 200);
+    assert.equal(res.headers.get('accept-ranges'), 'bytes');
+    assert.equal(res.headers.get('content-length'), String(size));
+    assert.equal((await res.arrayBuffer()).byteLength, size);
+  });
+  test('bytes=0-1: 206, two bytes, Content-Range', async () => {
+    const size = await sizeOf(MB + 'clip-960.mp4');
+    const whole = await fs.readFile(path.join(SRC, MB + 'clip-960.mp4'));
+    const res = await fetch(url(), { headers: { Range: 'bytes=0-1' } });
+    assert.equal(res.status, 206);
+    assert.equal(res.headers.get('content-range'), `bytes 0-1/${size}`);
+    assert.equal(res.headers.get('content-length'), '2');
+    assert.deepEqual(Buffer.from(await res.arrayBuffer()), whole.subarray(0, 2));
+  });
+  test('bytes=a-: open-ended, to the last byte', async () => {
+    const size = await sizeOf(MB + 'clip-960.mp4');
+    const a = size - 1000;
+    const res = await fetch(url(), { headers: { Range: `bytes=${a}-` } });
+    assert.equal(res.status, 206);
+    assert.equal(res.headers.get('content-range'), `bytes ${a}-${size - 1}/${size}`);
+    assert.equal((await res.arrayBuffer()).byteLength, 1000);
+  });
+  test('bytes=-n: the last n bytes', async () => {
+    const size = await sizeOf(MB + 'clip-960.mp4');
+    const whole = await fs.readFile(path.join(SRC, MB + 'clip-960.mp4'));
+    const res = await fetch(url(), { headers: { Range: 'bytes=-500' } });
+    assert.equal(res.status, 206);
+    assert.equal(res.headers.get('content-range'), `bytes ${size - 500}-${size - 1}/${size}`);
+    assert.deepEqual(Buffer.from(await res.arrayBuffer()), whole.subarray(size - 500));
+  });
+  test('range past the end: 416 with Content-Range bytes */size', async () => {
+    const size = await sizeOf(MB + 'clip-960.mp4');
+    const res = await fetch(url(), { headers: { Range: `bytes=${size}-` } });
+    assert.equal(res.status, 416);
+    assert.equal(res.headers.get('content-range'), `bytes */${size}`);
+  });
+});
