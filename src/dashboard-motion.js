@@ -3,9 +3,9 @@
              starts (never when it is skipped). Sweeps the gauge needles
              0 -> 0.6 -> rest over 1400 ms.
    The car moves only while the scene's clip plays: html.dash-moving, set by
-   dashboard-intro.js. The needles' rest values, their 1500 ms ease and the
-   wander are CSS (dashboard-motion.css) reading that class. Script only
-   steps the sweep's stages: nothing runs per frame. */
+   dashboard-intro.js. The needles' rest values, their 1500 ms ease, the
+   wander and the minimap's roll are CSS (dashboard-motion.css) reading that
+   class. Script only steps the sweep's stages: nothing runs per frame. */
 (function () {
     'use strict';
 

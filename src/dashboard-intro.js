@@ -214,22 +214,33 @@
         ]);
     }
 
-    // The scene's minimap replaces the inline one once it loads. On an error
-    // the inline minimap stays.
+    var MINIMAP_ARROW = 'assets/dash/minimap-arrow.svg';
+
+    // The scene's minimap strip, with the arrow over it, replaces the inline
+    // minimap once both have loaded; dashboard-motion.css rolls the strip
+    // while the car moves. If either fails, the inline minimap stays.
     function showMinimap(src) {
         var box = document.querySelector('.dash-minimap');
         if (!box) return;
-        var img = new Image();
-        img.alt = '';
-        holdDarkFor(new Promise(function (done) {
-            img.onload = function () {
-                while (box.firstChild) box.removeChild(box.firstChild);
-                box.appendChild(img);
-                done();
-            };
-            img.onerror = done;
+        var load = function (className, url) {
+            return new Promise(function (done) {
+                var img = new Image();
+                img.alt = '';
+                img.className = className;
+                img.onload = function () { done(img); };
+                img.onerror = function () { done(null); };
+                img.src = url;
+            });
+        };
+        holdDarkFor(Promise.all([
+            load('dash-minimap-strip', src),
+            load('dash-minimap-arrow', MINIMAP_ARROW)
+        ]).then(function (imgs) {
+            if (!imgs[0] || !imgs[1]) return;
+            while (box.firstChild) box.removeChild(box.firstChild);
+            box.appendChild(imgs[0]);
+            box.appendChild(imgs[1]);
         }));
-        img.src = src;
     }
 
     // Plays once over the still, the same way in both modes. It starts by

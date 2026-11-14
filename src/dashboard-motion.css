@@ -1,4 +1,4 @@
-/* Dashboard motion (dashboard-motion.js): the gauges.
+/* Dashboard motion (dashboard-motion.js): the gauges and the moving minimap.
    The car moves only while the scene's clip plays: html.dash-moving, set by
    dashboard-intro.js. Everything here reads that class and nothing else.
    iOS Safari: animation-* properties are spelled out, never the shorthand. */
@@ -126,10 +126,37 @@ html.dash-intro .dash-gauges-wander.dash-gauges-settled .dash-gauge-speed .dash-
     100%    { --dash-wd: 0deg; }
 }
 
+/* ---- Minimap ----------------------------------------------------------- */
+
+/* The scene's strip (dashboard-intro.js swaps it in with the arrow) is three
+   windows tall and repeats every two, so rolling it from -66.6667% to 0 ends
+   on the frame it started from: one seamless loop every 24 s. It rolls only
+   while the car moves; otherwise it holds where it is. The arrow over it
+   fills the circle and never moves. */
+.dash-minimap .dash-minimap-strip {
+    height: 300%;
+    animation-name: dash-minimap-roll;
+    animation-duration: 24s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-play-state: paused;
+}
+html.dash-moving .dash-minimap .dash-minimap-strip { animation-play-state: running; }
+.dash-minimap .dash-minimap-arrow {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+@keyframes dash-minimap-roll {
+    0%   { transform: translateY(-66.6667%); }
+    100% { transform: translateY(0); }
+}
+
 /* ---- Reduced motion ---------------------------------------------------- */
 
 /* The intro is normally skipped then; this is a cheap guard. */
 @media (prefers-reduced-motion: reduce) {
     html.dash-intro .dash-gauges-wander.dash-gauges-settled .dash-gauge-revs .dash-gauge-wander,
-    html.dash-intro .dash-gauges-wander.dash-gauges-settled .dash-gauge-speed .dash-gauge-wander { animation-name: none; }
+    html.dash-intro .dash-gauges-wander.dash-gauges-settled .dash-gauge-speed .dash-gauge-wander,
+    .dash-minimap .dash-minimap-strip { animation-name: none; }
 }

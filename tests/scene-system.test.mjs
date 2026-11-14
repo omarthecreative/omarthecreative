@@ -313,19 +313,20 @@ for (const offline of [false, true]) {
     });
 
     // — Task 4: Miami Beach minimap —
-    test('miami-beach: minimap image is the scene file and has loaded', async () => {
+    test('miami-beach: minimap strip is the scene file and has loaded, with the arrow', async () => {
       const page = await open({ offline });
       try {
         await introStart(page);
-        assert.match(await page.getAttribute('.dash-minimap img', 'src'), /miami-beach\/minimap\.svg$/);
-        assert.ok(await page.evaluate(() => document.querySelector('.dash-minimap img').naturalWidth > 0));
-        assert.notEqual(await css(page, '.dash-minimap img', 'display'), 'none');
+        assert.match(await page.getAttribute('.dash-minimap img.dash-minimap-strip', 'src'), /miami-beach\/minimap-strip\.svg$/);
+        assert.ok(await page.evaluate(() => [...document.querySelectorAll('.dash-minimap img')].every((i) => i.naturalWidth > 0)));
+        assert.equal(await page.locator('.dash-minimap img').count(), 2);
+        assert.notEqual(await css(page, '.dash-minimap img.dash-minimap-strip', 'display'), 'none');
         assert.equal(await page.locator('.dash-minimap svg').count(), 0);
       } finally { await close(page); }
     });
 
-    test('minimap 404: inline minimap still shown', async () => {
-      const page = await open({ offline, routes: [['**/scenes/miami-beach/minimap.svg', (r) => r.fulfill({ status: 404, body: 'not found' })]] });
+    test('minimap strip 404: inline minimap still shown', async () => {
+      const page = await open({ offline, routes: [['**/scenes/miami-beach/minimap-strip.svg', (r) => r.fulfill({ status: 404, body: 'not found' })]] });
       try {
         await introStart(page);
         await page.waitForTimeout(300);
