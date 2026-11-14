@@ -43,9 +43,9 @@ describe('assets', () => {
   });
 
   // Safari reads the index (moov) before it knows anything about the video: it must come before the data (mdat).
-  // todo (F-7): the files are not fast-start yet. `ffmpeg -c copy -movflags +faststart` (8.1.2) rewrites the hvcC
-  // and drops the alpha layer's SPS and PPS, so the files were left as they are. Remove `todo` once they are replaced.
-  test('both .mov cut-outs are fast-start: moov before mdat', { todo: 'F-7: .mov files not replaced, see final-fix-report.md' }, async () => {
+  // Made with qt-faststart, which moves moov and patches chunk offsets only. Not `ffmpeg -movflags +faststart`:
+  // it rewrites the hvcC and drops the alpha layer's SPS and PPS.
+  test('both .mov cut-outs are fast-start: moov before mdat', async () => {
     for (const f of ['fgclip-1920.mov', 'fgclip-960.mov']) {
       const buf = await fs.readFile(path.join(SRC, 'assets/dash/scenes/miami-beach', f));
       const atoms = [];
