@@ -7,6 +7,9 @@
                   Runs once at load, on a first visit, while the page is dark.
    startClip()    starts the scene's clip, if it has one and its still loaded:
                   play() at once, shown once it is playing, played once.
+                  html.dash-moving is set exactly while it plays: on at its
+                  playing event, off when it waits, pauses, ends, errors or
+                  is let go, and when the intro ends. The car moves only then.
                   Called when the hold starts, never when the intro is skipped.
    pickScene      the pure part of that pick.
    layout(w, h)   geometry of the rendered cockpit for a window (pure).
@@ -114,7 +117,7 @@
             if (portal) portal.removeEventListener('transitionend', onEnd);
             document.removeEventListener('visibilitychange', onHidden);
             window.removeEventListener('resize', setScales);
-            root.classList.remove('dash-intro', 'dash-pushing');
+            root.classList.remove('dash-intro', 'dash-pushing', 'dash-moving');
             if (splash) splash.style.display = 'none';
             // Pause the clip, then let go of its file: a clip still loading
             // would otherwise keep downloading under the grid. Its failure
@@ -245,6 +248,7 @@
             clipStarted = true;
             // After the intro, finish() has already let go of the file.
             var release = function () {
+                root.classList.remove('dash-moving');
                 if (state === 'done' || !clip.getAttribute('src')) return;
                 clip.hidden = true;
                 if (!clip.paused) clip.pause();
@@ -252,7 +256,14 @@
                 clip.load();
             };
             clip.loop = false;
-            clip.addEventListener('playing', function () { if (state !== 'done') clip.hidden = false; });
+            clip.addEventListener('playing', function () {
+                if (state === 'done') return;
+                clip.hidden = false;
+                root.classList.add('dash-moving');
+            });
+            ['waiting', 'pause', 'ended', 'emptied'].forEach(function (type) {
+                clip.addEventListener(type, function () { root.classList.remove('dash-moving'); });
+            });
             clip.addEventListener('error', release);
             clip.src = isPhone() && scene.clipSmall ? scene.clipSmall : scene.clip;
             var played = clip.play();
