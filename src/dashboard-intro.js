@@ -7,6 +7,8 @@
                   Runs once at load, on a first visit, while the page is dark.
    startClip()    starts the scene's clip, if it has one and its still loaded.
                   Called when the hold starts, never when the intro is skipped.
+                  In the rendered cockpit it first loads the moving cut-out
+                  (foregroundClip) and checks that it is see-through.
    localDate, pickScene, liveBanner, pickLine: the pure parts of that pick.
    layout(w, h)   geometry of the rendered cockpit for a window (pure).
    rendered()     true while html.dash-rendered is set: the cockpit picture
@@ -110,8 +112,10 @@
             window.removeEventListener('resize', setScales);
             root.classList.remove('dash-intro', 'dash-pushing');
             if (splash) splash.style.display = 'none';
-            var clip = document.getElementById('dash-clip');
-            if (clip && !clip.paused) clip.pause();
+            ['dash-clip', 'dash-fgclip'].forEach(function (id) {
+                var v = document.getElementById(id);
+                if (v && !v.paused) v.pause();
+            });
             if (typeof onDone === 'function') onDone();
         }
         function onEnd(e) {
@@ -199,6 +203,16 @@
 
     var scene = null;        // the scene on screen, once applyScene has run
     var stillLoaded = false;
+    var stillFailed = false; // the drawn scene shows: no cut-out over it, ever
+    var fgLoaded = false;    // the poster cut-out (#dash-fg) has loaded
+    var pairOn = false;      // the clip and the moving cut-out are on screen
+
+    // The poster cut-out shows when it has loaded, the still has not failed,
+    // and the moving cut-out is not standing in for it.
+    function updateForeground() {
+        var fg = document.getElementById('dash-fg');
+        if (fg) fg.hidden = !(fgLoaded && !stillFailed && !pairOn);
+    }
 
     // The still replaces the drawn scene only once it has loaded. The page
     // stays dark (html.dash-loading) until it does, for at most STILL_WAIT_MS.
@@ -216,8 +230,10 @@
             });
             still.addEventListener('error', function () {
                 stillLoaded = false;
+                stillFailed = true;
                 still.hidden = true;
                 shield.classList.remove('dash-has-still');
+                updateForeground();
                 done();
             });
         });
@@ -230,14 +246,15 @@
     // loadCockpit, so it is fetched alongside the cockpit, not after it). The
     // page stays dark for it too, at most STILL_WAIT_MS, so the palms do not pop
     // in over a banner already passing. A missing file leaves the still as it is.
+    // A missing still leaves it hidden: the drawn scene shows, without palms.
     // If the cockpit then fails to load, the drawn dashboard shows and this
     // box stays display: none.
     function showForeground(src) {
         var fg = document.getElementById('dash-fg');
         if (!fg) return;
         var ready = new Promise(function (done) {
-            fg.addEventListener('load', function () { fg.hidden = false; done(); });
-            fg.addEventListener('error', function () { fg.hidden = true; done(); });
+            fg.addEventListener('load', function () { fgLoaded = true; updateForeground(); done(); });
+            fg.addEventListener('error', function () { fgLoaded = false; updateForeground(); done(); });
         });
         holdDarkFor(ready);
         fg.src = src;
@@ -270,13 +287,117 @@
         img.src = src;
     }
 
+    // A scene file field for this window: on phones the Small one when present.
+    // '' when the scene has neither.
+    function sized(s, key) {
+        var v = isPhone() && typeof s[key + 'Small'] === 'string' && s[key + 'Small'] ? s[key + 'Small'] : s[key];
+        return typeof v === 'string' ? v : '';
+    }
+
+    var CUT_WAIT_MS = 4000; // longest the moving cut-out may take to show its first frame
+    var DRIFT_S = 0.08;     // the cut-out is pulled back to the clip's time past this
+
+    // WebKit keeps a video's alpha only in HEVC (.mov); the others get VP9 (.webm).
+    function isWebKit() {
+        var ua = navigator.userAgent;
+        return /AppleWebKit/.test(ua) && !/Chrome|Chromium|Edg|OPR/.test(ua);
+    }
+
+    // The cut-out has only sky at 50% across, 6% down. A browser that drops the
+    // alpha paints that pixel opaque; then the cut-out would hide the scene.
+    function frameIsClear(video) {
+        if (!video.videoWidth || !video.videoHeight) return false;
+        var c = document.createElement('canvas');
+        c.width = 1;
+        c.height = 1;
+        var g = c.getContext('2d');
+        g.drawImage(video, Math.floor(video.videoWidth * 0.5), Math.floor(video.videoHeight * 0.06), 1, 1, 0, 0, 1, 1);
+        return g.getImageData(0, 0, 1, 1).data[3] < 16;
+    }
+
+    // Rendered cockpit: the clip plays with its moving cut-out over the banner.
+    // The cut-out loads first and must show a see-through first frame within
+    // CUT_WAIT_MS; only then is the clip requested. Both start in the same
+    // task when the clip can play, and the cut-out follows the clip's time.
+    // On any failure both are hidden and the still and poster cut-out stay.
+    function startPair(clip, cutBase) {
+        var cut = document.getElementById('dash-fgclip');
+        if (!cut || cut.getAttribute('src')) return;
+        var phase = 'checking'; // checking -> loading -> playing, or off for good
+        var timer = null;
+
+        function off() {
+            if (phase === 'off') return;
+            var was = phase;
+            phase = 'off';
+            clearTimeout(timer);
+            [clip, cut].forEach(function (v) {
+                v.hidden = true;
+                if (!v.paused) v.pause();
+            });
+            if (was === 'checking') {
+                cut.removeAttribute('src'); // stop its download
+                cut.load();
+            }
+            pairOn = false;
+            updateForeground();
+        }
+        function onCutData() {
+            if (phase !== 'checking') return;
+            clearTimeout(timer);
+            var clear = false;
+            try { clear = frameIsClear(cut); } catch (e) {}
+            if (!clear || state === 'done') { off(); return; }
+            phase = 'loading';
+            clip.addEventListener('canplay', function onCanPlay() {
+                clip.removeEventListener('canplay', onCanPlay);
+                if (phase !== 'loading') return;
+                if (state === 'done') { off(); return; }
+                phase = 'playing';
+                clip.currentTime = 0;
+                cut.currentTime = 0;
+                var played = [clip.play(), cut.play()];
+                clip.hidden = false;
+                cut.hidden = false;
+                pairOn = true;
+                updateForeground();
+                played.forEach(function (p) {
+                    if (p && typeof p.catch === 'function') p.catch(off);
+                });
+            });
+            clip.addEventListener('timeupdate', function () {
+                if (phase === 'playing' && Math.abs(clip.currentTime - cut.currentTime) > DRIFT_S) {
+                    cut.currentTime = clip.currentTime;
+                }
+            });
+            clip.src = sized(scene, 'clip');
+            clip.load();
+        }
+
+        clip.loop = false;
+        cut.loop = false;
+        clip.addEventListener('error', off);
+        cut.addEventListener('error', off);
+        cut.addEventListener('loadeddata', onCutData);
+        timer = setTimeout(off, CUT_WAIT_MS);
+        cut.preload = 'auto';
+        cut.src = cutBase + (isWebKit() ? '.mov' : '.webm');
+        cut.load();
+    }
+
     // Plays once over the still. Until it can play, and if it never can, the
-    // still stays.
+    // still stays. In the rendered cockpit a scene with a poster cut-out needs
+    // its moving cut-out too: without one the clip does not start.
     function startClip() {
         try {
             if (!scene || !scene.clip || !stillLoaded) return;
             var clip = document.getElementById('dash-clip');
             if (!clip || clip.getAttribute('src')) return;
+            if (rendered()) {
+                var cutBase = sized(scene, 'foregroundClip');
+                if (cutBase) { startPair(clip, cutBase); return; }
+                if (sized(scene, 'foreground')) return;
+            }
             clip.loop = false;
             clip.addEventListener('canplay', function onCanPlay() {
                 clip.removeEventListener('canplay', onCanPlay);
@@ -313,9 +434,9 @@
             scene = picked;
             if (typeof picked.still === 'string' && picked.still) showStill(picked.still);
             if (typeof picked.still === 'string' && picked.still) {
-                var fgSrc = isPhone() && picked.foregroundSmall ? picked.foregroundSmall : picked.foreground;
+                var fgSrc = sized(picked, 'foreground');
                 var fits = layout(window.innerWidth, window.innerHeight).mode !== 'none';
-                if (fits && typeof fgSrc === 'string' && fgSrc) showForeground(fgSrc);
+                if (fits && fgSrc) showForeground(fgSrc);
             }
             if (typeof picked.minimap === 'string' && picked.minimap) showMinimap(picked.minimap);
             var mirror = document.querySelector('.dash-mirror');

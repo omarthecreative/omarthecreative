@@ -682,7 +682,8 @@ html.dash-rendered #dash-fgbox {
     position: absolute;
     z-index: 1;
 }
-/* The cut-outs cover the top 512 of the scene's 824 rows. */
+/* The cut-outs cover the top 512 of the scene's 824 rows. Both fill that box
+   exactly, so the moving cut-out takes over from the poster with no jump. */
 html.dash-rendered #dash-fg,
 html.dash-rendered #dash-fgclip {
     position: absolute;
@@ -690,6 +691,7 @@ html.dash-rendered #dash-fgclip {
     left: 0;
     width: 100%;
     height: 62.136%;
+    object-fit: fill;
 }
 html.dash-rendered #dash-fg[hidden],
 html.dash-rendered #dash-fgclip[hidden] { display: none; }

@@ -90,9 +90,13 @@ describe('layout', () => {
 // These tests run offline (Typekit, Vimeo and analytics blocked) so the font gate opens quickly.
 const BLOCKED = ['use.typekit.net', 'p.typekit.net', 'player.vimeo.com', 'googletagmanager.com', 'google-analytics.com'];
 
-async function open({ viewport = { width: 1440, height: 900 }, routes = [] } = {}) {
-  const context = await browser.newContext({ viewport });
+// Options (Task 5): path, seen (session already played the intro), reduced (prefers-reduced-motion),
+// userAgent, init (extra init scripts, functions).
+async function open({ viewport = { width: 1440, height: 900 }, routes = [], path: p = '/', seen = false, reduced = false, userAgent, init = [] } = {}) {
+  const context = await browser.newContext({ viewport, userAgent, reducedMotion: reduced ? 'reduce' : 'no-preference' });
   for (const [match, handler] of routes) await context.route(match, handler);
+  if (seen) await context.addInitScript(() => sessionStorage.setItem('omar_intro_session', '1'));
+  for (const fn of init) await context.addInitScript(fn);
   await context.route(
     (url) => BLOCKED.some((h) => url.hostname === h || url.hostname.endsWith('.' + h)),
     (route) => route.abort()
@@ -116,7 +120,7 @@ async function open({ viewport = { width: 1440, height: 900 }, routes = [] } = {
   page.on('pageerror', (e) => page.errors.push(e.message));
   page.requested = [];
   page.on('request', (r) => page.requested.push(r.url()));
-  await page.goto(server.url + '/');
+  await page.goto(server.url + p);
   return page;
 }
 const done = (page) => page.context().close();
@@ -632,7 +636,16 @@ function withScene(scene) {
       const name = path.basename(new URL(r.request().url()).pathname).replace('-small', '');
       try {
         const buf = await fs.readFile(path.join(FIXTURES, name));
-        await r.fulfill({ body: buf, contentType: MEDIA_TYPES[path.extname(name)] || 'application/octet-stream' });
+        const contentType = MEDIA_TYPES[path.extname(name)] || 'application/octet-stream';
+        // Answer byte ranges as a real host does: without them Chrome cannot seek a video (Task 5 drift test).
+        const m = /^bytes=(\d+)-(\d*)$/.exec(r.request().headers()['range'] || '');
+        if (m) {
+          const a = +m[1], b = m[2] ? Math.min(+m[2], buf.length - 1) : buf.length - 1;
+          await r.fulfill({ status: 206, body: buf.subarray(a, b + 1),
+            headers: { 'content-type': contentType, 'accept-ranges': 'bytes', 'content-range': `bytes ${a}-${b}/${buf.length}` } });
+        } else {
+          await r.fulfill({ body: buf, contentType, headers: { 'accept-ranges': 'bytes' } });
+        }
       } catch {
         await r.fulfill({ status: 404, body: 'not found' });
       }
@@ -886,4 +899,406 @@ describe('scene box and foreground', { concurrency: 1 }, () => {
       }
     });
   }
+});
+
+// Task 5: the moving cut-out gates the clip.
+// Fixtures: clip.webm is the clip; fgclip.webm has alpha, fgclip-opaque.webm has none. foregroundClip is a path
+// without extension: the page asks for .webm here (Chromium) and .mov on WebKit.
+const T5 = { still: T4_STILL, foreground: T4_FG, clip: 'test-media/clip.webm', foregroundClip: 'test-media/fgclip' };
+const isClip = (u) => /\/test-media\/clip\.webm$/.test(u);
+const isCut = (u) => /\/test-media\/[^/]*fgclip/.test(u);
+const clipRequests = (page) => page.requested.filter(isClip);
+const cutRequests = (page) => page.requested.filter(isCut);
+// The fixtures are 1s long. Stretch them (test only) so there is time to act while they play.
+const SLOW = () => {
+  const play = HTMLMediaElement.prototype.play;
+  HTMLMediaElement.prototype.play = function () { this.playbackRate = 0.2; return play.call(this); };
+};
+const pairPlaying = () => {
+  const c = document.getElementById('dash-clip'), f = document.getElementById('dash-fgclip');
+  return !c.hidden && !f.hidden && c.currentTime > 0 && f.currentTime > 0;
+};
+async function videos(page) {
+  return page.evaluate(() => {
+    const v = (id) => {
+      const el = document.getElementById(id);
+      return { hidden: el.hidden, src: el.getAttribute('src'), t: el.currentTime, d: el.duration, paused: el.paused, ended: el.ended, loop: el.loop };
+    };
+    const still = document.getElementById('dash-still');
+    const fg = document.getElementById('dash-fg');
+    return {
+      clip: v('dash-clip'), cut: v('dash-fgclip'),
+      fgShown: fg.complete && fg.naturalWidth > 0 && !fg.hidden,
+      stillShown: still.complete && still.naturalWidth > 0 && !still.hidden,
+    };
+  });
+}
+// Still and poster cut-out on screen, both videos hidden, the clip never requested.
+async function assertStillStays(page) {
+  const v = await videos(page);
+  const s = JSON.stringify(v);
+  assert.equal(v.stillShown, true, s);
+  assert.equal(v.fgShown, true, s);
+  assert.equal(v.clip.hidden, true, s);
+  assert.equal(v.cut.hidden, true, s);
+  assert.equal(v.clip.src, null, s);
+  assert.deepEqual(clipRequests(page), []);
+  assert.deepEqual(page.errors, []);
+}
+// Since intro start, in the page's clock.
+const sinceIntro = (page) => page.evaluate(() => performance.now() - window.__marks.introStart);
+
+describe('moving cut-out', { concurrency: 1 }, () => {
+  test('rendered: cut-out and clip start together and play once', async () => {
+    const page = await open({ routes: withScene(T5) });
+    try {
+      await introStart(page);
+      await assertRendered(page, 'wide');
+      const run = await page.evaluate(() => new Promise((resolve) => {
+        const c = document.getElementById('dash-clip'), f = document.getElementById('dash-fgclip');
+        const fg = document.getElementById('dash-fg');
+        const t0 = performance.now();
+        (function wait() {
+          const on = !c.hidden && !f.hidden && c.currentTime > 0 && f.currentTime > 0;
+          if (!on) {
+            if (performance.now() - t0 > 4000) return resolve({ started: null });
+            return requestAnimationFrame(wait);
+          }
+          const started = performance.now() - window.__marks.introStart;
+          const samples = [];
+          (function sample() {
+            samples.push({ diff: Math.abs(c.currentTime - f.currentTime), clipShown: !c.hidden, cutShown: !f.hidden, fgHidden: fg.hidden, t: c.currentTime });
+            if (samples.length < 5) setTimeout(sample, 60); else resolve({ started, samples, loop: [c.loop, f.loop] });
+          })();
+        })();
+      }));
+      const r = JSON.stringify(run);
+      assert.ok(run.started !== null && run.started <= 3000, `pair not playing within 3s of intro start: ${r}`);
+      assert.deepEqual(run.loop, [false, false], r);
+      for (const s of run.samples) {
+        assert.ok(s.diff < 0.1, `clip and cut-out apart: ${r}`);
+        assert.ok(s.clipShown && s.cutShown && s.fgHidden, `layers while playing: ${r}`);
+      }
+      // The moving cut-out fills the poster's box: top 62.136% of the scene box, stretched to it.
+      const fb = await rect(page, '#dash-fgbox');
+      const fc = await rect(page, '#dash-fgclip');
+      for (const k of ['left', 'top', 'width']) assert.ok(Math.abs(fc[k] - fb[k]) <= 0.5, `fgclip ${k}: ${fc[k]} vs ${fb[k]}`);
+      assert.ok(Math.abs(fc.height - 0.62136 * fb.height) <= 1, `fgclip height ${fc.height}`);
+      assert.equal(await css(page, '#dash-fgclip', 'objectFit'), 'fill');
+      // Request order: the cut-out first, the clip only after it passed.
+      const reqs = page.requested;
+      const iCut = reqs.findIndex(isCut), iClip = reqs.findIndex(isClip);
+      assert.ok(iCut !== -1 && iClip !== -1 && iCut < iClip, `request order: ${media(page).join(' ')}`);
+      assert.match(reqs[iCut], /\/test-media\/fgclip\.webm$/);
+      // Plays once: both end, and stay at the end.
+      await until(page, () => document.getElementById('dash-clip').ended && document.getElementById('dash-fgclip').ended, 4000);
+      await page.waitForTimeout(400);
+      const v = await videos(page);
+      for (const x of [v.clip, v.cut]) assert.ok(x.ended && !x.loop && x.t >= x.d - 0.05, JSON.stringify(v));
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('opaque cut-out: clip never requested, still and #dash-fg stay', async () => {
+    const page = await open({ routes: withScene({ ...T5, foregroundClip: 'test-media/fgclip-opaque' }) });
+    try {
+      await introStart(page);
+      await assertRendered(page, 'wide');
+      await until(page, () => performance.now() - window.__marks.introStart > 2500, 5000);
+      assert.ok(cutRequests(page).some((u) => /fgclip-opaque\.webm$/.test(u)), 'cut-out was not requested');
+      await assertStillStays(page);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('cut-out 404: clip never requested', async () => {
+    const page = await open({ routes: withScene({ ...T5, foregroundClip: 'test-media/missing-fgclip' }) });
+    try {
+      await introStart(page);
+      await assertRendered(page, 'wide');
+      await until(page, () => performance.now() - window.__marks.introStart > 2500, 5000);
+      assert.ok(cutRequests(page).some((u) => /missing-fgclip\.webm$/.test(u)), 'cut-out was not requested');
+      await assertStillStays(page);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('cut-out without loadeddata for 4000ms: given up, clip never requested', async () => {
+    // The cut-out answers after 4500ms: it would pass the check if the page still waited for it.
+    const late = ['**/test-media/late-fgclip*', async (r) => {
+      await new Promise((res) => setTimeout(res, 4500));
+      const body = await fs.readFile(path.join(FIXTURES, 'fgclip.webm'));
+      await r.fulfill({ body, contentType: 'video/webm' }).catch(() => {});
+    }];
+    const page = await open({ routes: [...withScene({ ...T5, foregroundClip: 'test-media/late-fgclip' }), late] });
+    try {
+      await introStart(page);
+      await assertRendered(page, 'wide');
+      await until(page, () => performance.now() - window.__marks.introStart > 4700, 8000);
+      assert.ok(cutRequests(page).length >= 1, 'cut-out was not requested');
+      assert.equal(await page.getAttribute('#dash-fgclip', 'src'), null, 'cut-out still loading after the 4000ms cap');
+      await page.waitForTimeout(600);
+      await assertStillStays(page);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('scene with clip and foreground but no foregroundClip: clip never requested in rendered mode', async () => {
+    const page = await open({ routes: withScene({ still: T4_STILL, foreground: T4_FG, clip: 'test-media/clip.webm' }) });
+    try {
+      await introStart(page);
+      await assertRendered(page, 'wide');
+      await until(page, () => performance.now() - window.__marks.introStart > 2500, 5000);
+      await assertStillStays(page);
+      assert.deepEqual(cutRequests(page), []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('rendered, scene with a clip and neither foreground field: clip plays as on main', async () => {
+    const page = await open({ routes: withScene({ still: T4_STILL, clip: 'test-media/clip.webm' }) });
+    try {
+      await introStart(page);
+      await assertRendered(page, 'wide');
+      await until(page, () => { const c = document.getElementById('dash-clip'); return !c.hidden && c.currentTime > 0; }, 4000);
+      assert.deepEqual(cutRequests(page), []);
+      assert.equal(await page.getAttribute('#dash-fgclip', 'src'), null);
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('fallback mode: clip plays as on main, cut-out never requested', async () => {
+    const page = await open({ routes: [...noCockpit, ...withScene(T5)] });
+    try {
+      await introStart(page);
+      await assertDrawn(page);
+      await until(page, () => { const c = document.getElementById('dash-clip'); return !c.hidden && c.currentTime > 0; }, 4000);
+      await until(page, () => document.getElementById('dash-clip').ended, 4000);
+      const v = await videos(page);
+      assert.equal(v.clip.loop, false);
+      assert.equal(v.cut.hidden, true);
+      assert.equal(v.cut.src, null);
+      assert.deepEqual(cutRequests(page), []);
+      assert.equal(await css(page, '#dash-fgbox', 'display'), 'none');
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  for (const [label, opts] of [['?p=0', { path: '/?p=0' }], ['?filter=films', { path: '/?filter=films' }],
+    ['reduced motion', { reduced: true }], ['second visit in the session', { seen: true }]]) {
+    test(`skipped intro (${label}) requests neither clip nor cut-out`, async () => {
+      const page = await open({ ...opts, routes: withScene(T5) });
+      try {
+        await until(page, () => document.body.classList.contains('grid-active') || document.body.classList.contains('project-view'), 8000);
+        await page.waitForTimeout(1500);
+        assert.equal(await page.evaluate(() => 'introStart' in window.__marks), false, 'intro played');
+        assert.deepEqual(media(page).filter((u) => /clip/.test(u)), []);
+        assert.equal(await page.getAttribute('#dash-clip', 'src'), null);
+        assert.equal(await page.getAttribute('#dash-fgclip', 'src'), null);
+      } finally {
+        await done(page);
+      }
+    });
+  }
+
+  test('push-in pauses both videos', async () => {
+    const page = await open({ routes: withScene(T5), init: [SLOW] });
+    try {
+      await introStart(page);
+      await until(page, pairPlaying, 4000);
+      await page.keyboard.press('Enter');
+      await landed(page);
+      const v = await videos(page);
+      for (const x of [v.clip, v.cut]) assert.ok(x.paused && !x.ended && x.t < x.d - 0.05, JSON.stringify(v));
+      await page.waitForTimeout(300);
+      const later = await videos(page);
+      assert.equal(later.clip.t, v.clip.t, 'clip moved after the push-in');
+      assert.equal(later.cut.t, v.cut.t, 'cut-out moved after the push-in');
+      await assertEndState(page);
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('drift: after forcing fgclip.currentTime back by 0.5s, the two are within 0.1s again inside 600ms', async () => {
+    const page = await open({ routes: withScene(T5), init: [SLOW] });
+    try {
+      await introStart(page);
+      await until(page, pairPlaying, 4000);
+      await until(page, () => document.getElementById('dash-clip').currentTime >= 0.55, 6000);
+      const r = await page.evaluate(() => new Promise((resolve) => {
+        const c = document.getElementById('dash-clip'), f = document.getElementById('dash-fgclip');
+        f.currentTime = c.currentTime - 0.5;
+        const forced = c.currentTime - f.currentTime;
+        const t0 = performance.now();
+        (function poll() {
+          const diff = Math.abs(c.currentTime - f.currentTime);
+          const el = performance.now() - t0;
+          if (diff < 0.1) return resolve({ forced, ms: el, diff, clipT: c.currentTime, ended: c.ended });
+          if (el > 600) return resolve({ forced, ms: null, diff });
+          setTimeout(poll, 20);
+        })();
+      }));
+      const s = JSON.stringify(r);
+      assert.ok(r.forced >= 0.45, `drift not forced: ${s}`);
+      assert.ok(r.ms !== null, `still apart after 600ms: ${s}`);
+      assert.equal(r.ended, false, `realigned only because the clip ended: ${s}`);
+      assert.equal(await page.evaluate(() => document.getElementById('dash-fg').hidden), true);
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  // Hidden while the pair would start: hide the tab the moment the hold starts (before the cut-out has loaded),
+  // show it 1500ms later. The page sees document.hidden and visibilitychange as a real tab switch delivers them.
+  const HIDE_AT_HOLD = () => {
+    let hidden = false;
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => hidden });
+    Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => (hidden ? 'hidden' : 'visible') });
+    window.__setHidden = (h) => { hidden = h; document.dispatchEvent(new Event('visibilitychange')); };
+    let armed = true;
+    new MutationObserver(() => {
+      if (armed && document.body && document.body.classList.contains('intro-active')) {
+        armed = false;
+        window.__hiddenAt = performance.now();
+        // Both videos still hidden (not yet started) at this moment.
+        window.__atHide = { clip: document.getElementById('dash-clip').hidden, cut: document.getElementById('dash-fgclip').hidden };
+        window.__setHidden(true);
+      }
+    }).observe(document, { attributes: true, subtree: true, attributeFilter: ['class'] });
+  };
+
+  test('tab hidden when the pair would start, then shown: the two play together, no page errors', async () => {
+    const page = await open({ routes: withScene(T5), init: [SLOW, HIDE_AT_HOLD] });
+    try {
+      await introStart(page);
+      await until(page, () => window.__hiddenAt !== undefined, 2000);
+      assert.deepEqual(await page.evaluate(() => window.__atHide), { clip: true, cut: true }, 'pair already showing when the tab hid');
+      await until(page, () => performance.now() - window.__hiddenAt > 1500, 4000);
+      await page.evaluate(() => window.__setHidden(false));
+      await page.waitForTimeout(400);
+      const v = await videos(page);
+      const s = JSON.stringify(v);
+      // One consistent picture: the pair playing over the still, the poster cut-out out of the way.
+      assert.equal(v.clip.hidden, false, s);
+      assert.equal(v.cut.hidden, false, s);
+      assert.equal(v.fgShown, false, s);
+      assert.ok(!v.clip.paused && !v.cut.paused, s);
+      assert.ok(Math.abs(v.clip.t - v.cut.t) < 0.1, s);
+      await landed(page);
+      await assertEndState(page);
+      const end = await videos(page);
+      assert.ok(end.clip.paused && end.cut.paused, JSON.stringify(end));
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('tab hidden when the pair would start, play() refused while hidden: still and poster cut-out, nothing stuck', async () => {
+    const REFUSE_HIDDEN = () => {
+      const play = HTMLMediaElement.prototype.play;
+      HTMLMediaElement.prototype.play = function () {
+        if (document.hidden) return Promise.reject(new DOMException('play() refused in a hidden tab', 'NotAllowedError'));
+        return play.call(this);
+      };
+    };
+    const page = await open({ routes: withScene(T5), init: [HIDE_AT_HOLD, REFUSE_HIDDEN] });
+    try {
+      await introStart(page);
+      await until(page, () => window.__hiddenAt !== undefined, 2000);
+      // The pair tried to start while hidden (the clip was requested), and was refused.
+      await until(page, () => performance.now() - window.__hiddenAt > 1500, 4000);
+      assert.ok(clipRequests(page).length >= 1, 'pair never tried to start while hidden');
+      await page.evaluate(() => window.__setHidden(false));
+      await page.waitForTimeout(400);
+      const v = await videos(page);
+      const s = JSON.stringify(v);
+      assert.equal(v.clip.hidden, true, s);
+      assert.equal(v.cut.hidden, true, s);
+      assert.ok(v.clip.paused && v.cut.paused, s);
+      assert.equal(v.stillShown, true, s);
+      assert.equal(v.fgShown, true, s);
+      await landed(page);
+      await assertEndState(page);
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  // Engine pick. Only Chromium runs here, so the .mov is answered with 404 (no such fixture): the pick is what is tested.
+  const SAFARI = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15';
+  const IOS = (tail) => `Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) ${tail}`;
+  for (const [label, ua, ext] of [
+    ['Safari', SAFARI, 'mov'],
+    ['Chrome on iOS (CriOS)', IOS('CriOS/120.0.6099.119 Mobile/15E148 Safari/604.1'), 'mov'],
+    ['Firefox on iOS (FxiOS)', IOS('FxiOS/120.0 Mobile/15E148 Safari/605.1.15'), 'mov'],
+    ['Edge on iOS (EdgiOS: matches Edg, so not WebKit by the brief\'s test)', IOS('EdgiOS/120.0.2210.126 Version/17.0 Mobile/15E148 Safari/604.1'), 'webm'],
+  ]) {
+    test(`engine pick, ${label}: cut-out requested as .${ext}`, async () => {
+      const page = await open({ userAgent: ua, routes: withScene(T5) });
+      try {
+        await introStart(page);
+        await assertRendered(page, 'wide');
+        await until(page, () => performance.now() - window.__marks.introStart > 2000, 5000);
+        const cuts = cutRequests(page).map((u) => u.split('/').pop());
+        assert.ok(cuts.length >= 1, 'cut-out not requested');
+        assert.ok(cuts.every((u) => u === `fgclip.${ext}`), cuts.join(' '));
+        if (ext === 'mov') await assertStillStays(page);
+      } finally {
+        await done(page);
+      }
+    });
+  }
+
+  test('phone uses foregroundClipSmall', async () => {
+    const page = await open({ viewport: { width: 390, height: 844 },
+      routes: withScene({ ...T5, foregroundClip: 'test-media/missing-big', foregroundClipSmall: 'test-media/fgclip' }) });
+    try {
+      await introStart(page);
+      await assertRendered(page, 'tall');
+      await until(page, pairPlaying, 4000);
+      assert.deepEqual(cutRequests(page).map((u) => u.split('/').pop()), ['fgclip.webm']);
+      assert.deepEqual(media(page).filter((u) => /big/.test(u)), []);
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('rendered, still 404, foreground 200: #dash-fg hidden for good, drawn scene shows', async () => {
+    const page = await open({ routes: withScene({ ...T5, still: 'test-media/missing.jpg' }) });
+    try {
+      await introStart(page);
+      await assertRendered(page, 'wide');
+      for (const wait of [0, 1500]) {
+        await page.waitForTimeout(wait);
+        const s = await page.evaluate(() => {
+          const fg = document.getElementById('dash-fg');
+          return { fgLoaded: fg.complete && fg.naturalWidth > 0, fgHidden: fg.hidden, stillHidden: document.getElementById('dash-still').hidden };
+        });
+        assert.deepEqual(s, { fgLoaded: true, fgHidden: true, stillHidden: true }, `after ${wait}ms`);
+        assert.equal(await css(page, '#dash-fg', 'display'), 'none');
+        assert.notEqual(await css(page, '#dash-drawn', 'display'), 'none');
+      }
+      // As on main, no still means no clip; and so no cut-out either.
+      assert.deepEqual(media(page).filter((u) => /clip/.test(u)), []);
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
 });
