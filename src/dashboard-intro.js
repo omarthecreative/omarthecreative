@@ -300,7 +300,8 @@
     // WebKit keeps a video's alpha only in HEVC (.mov); the others get VP9 (.webm).
     function isWebKit() {
         var ua = navigator.userAgent;
-        return /AppleWebKit/.test(ua) && !/Chrome|Chromium|Edg|OPR/.test(ua);
+        // Edg\/ and not Edg: Edge on iOS says EdgiOS and is WebKit, so it must get the .mov.
+        return /AppleWebKit/.test(ua) && !/Chrome|Chromium|Edg\/|OPR/.test(ua);
     }
 
     // The cut-out has only sky at 50% across, 6% down. A browser that drops the

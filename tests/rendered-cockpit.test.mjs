@@ -945,8 +945,6 @@ async function assertStillStays(page) {
   assert.deepEqual(clipRequests(page), []);
   assert.deepEqual(page.errors, []);
 }
-// Since intro start, in the page's clock.
-const sinceIntro = (page) => page.evaluate(() => performance.now() - window.__marks.introStart);
 
 describe('moving cut-out', { concurrency: 1 }, () => {
   test('rendered: cut-out and clip start together and play once', async () => {
@@ -1246,7 +1244,8 @@ describe('moving cut-out', { concurrency: 1 }, () => {
     ['Safari', SAFARI, 'mov'],
     ['Chrome on iOS (CriOS)', IOS('CriOS/120.0.6099.119 Mobile/15E148 Safari/604.1'), 'mov'],
     ['Firefox on iOS (FxiOS)', IOS('FxiOS/120.0 Mobile/15E148 Safari/605.1.15'), 'mov'],
-    ['Edge on iOS (EdgiOS: matches Edg, so not WebKit by the brief\'s test)', IOS('EdgiOS/120.0.2210.126 Version/17.0 Mobile/15E148 Safari/604.1'), 'webm'],
+    ['Edge on iOS (EdgiOS)', IOS('EdgiOS/120.0.2210.126 Version/17.0 Mobile/15E148 Safari/604.1'), 'mov'],
+    ['Edge on desktop (Chrome/ and Edg/)', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.2210.91', 'webm'],
   ]) {
     test(`engine pick, ${label}: cut-out requested as .${ext}`, async () => {
       const page = await open({ userAgent: ua, routes: withScene(T5) });
