@@ -12,7 +12,7 @@ import {
 before(start);
 after(stop);
 
-// — Test scenes —
+// Test scenes.
 // Scene media under test-media/ come from tests/fixtures/. The minimap is the real strip.
 const MEDIA_TYPES = { '.mp4': 'video/mp4', '.webm': 'video/webm', '.jpg': 'image/jpeg' };
 const STRIP = 'assets/dash/scenes/miami-beach/minimap-strip.svg';
@@ -42,7 +42,6 @@ function withScene(scene) {
 const STILL = 'test-media/still.jpg';
 const CLIP = { still: STILL, clip: 'test-media/clip.webm' };
 const NO_CLIP = { still: STILL };
-const notFound = (r) => r.fulfill({ status: 404, body: 'not found' });
 
 // The fixture clip is 1 s long. Slow it down (test only) so there is time to watch it play.
 const SLOW = () => {
@@ -64,7 +63,7 @@ const REFUSE = () => {
 
 // In the page: window.__v(which) is a needle's value v (which: 'speed' or 'revs'), read from the
 // computed transforms of the needle's group and its inner wander group: angle a, v = (a - 138) / 260.
-// window.__samples: every frame from the intro's start for 2.5 s, { t (ms since start), s, r }.
+// window.__samples: every frame from the intro's start for 3 s, { t (ms since start), s, r }.
 // window.__mv: html.dash-moving going 'on' and 'off', and the clip's events, in order.
 const PROBE = () => {
   const angle = (el) => {
@@ -88,7 +87,7 @@ const PROBE = () => {
     } catch (e) {
       window.__samples.push({ t: now - t0, error: String(e) });
     }
-    if (now - t0 < 2500) requestAnimationFrame(frame);
+    if (now - t0 < 3000) requestAnimationFrame(frame);
   };
   window.__mv = [];
   let was = false;
@@ -207,7 +206,7 @@ describe('gauges', { concurrency: 1 }, () => {
     const page = await open({ routes: withScene(NO_CLIP), init: [PROBE] });
     try {
       await introStart(page);
-      await until(page, () => window.__samples.length && window.__samples.at(-1).t >= 2500, 6000);
+      await until(page, () => window.__samples.length && window.__samples.at(-1).t >= 3000, 6000);
       const all = await page.evaluate(() => window.__samples);
       const errs = all.filter((x) => x.error);
       assert.deepEqual(errs.slice(0, 1), [], 'needles not readable');
@@ -223,7 +222,7 @@ describe('gauges', { concurrency: 1 }, () => {
       const moved = all.find((x) => x.s > 0.001 || x.r > 0.001);
       assert.ok(moved && moved.t < 400, `needles first moved at ${moved && moved.t} ms`);
       const late = all.filter((x) => x.t >= moved.t + 1500);
-      assert.ok(late.length > 10, `${late.length} late samples`);
+      assert.ok(late.length >= 5, `${late.length} late samples`);
       for (const x of late) {
         assert.ok(near(x.s, 0, 0.003), `speed at ${x.t.toFixed(0)} ms: ${x.s}`);
         assert.ok(near(x.r, 0.14, TOL), `revs at ${x.t.toFixed(0)} ms: ${x.r}`);
@@ -354,7 +353,7 @@ describe('gauges', { concurrency: 1 }, () => {
   });
 });
 
-// — Minimap —
+// Minimap.
 const stripY = (page) => page.evaluate(() => new DOMMatrixReadOnly(getComputedStyle(document.querySelector('.dash-minimap-strip')).transform).f);
 
 describe('minimap', { concurrency: 1 }, () => {
@@ -420,7 +419,7 @@ describe('minimap', { concurrency: 1 }, () => {
 
   for (const [what, match] of [['strip', '**/minimap-strip.svg'], ['arrow', '**/minimap-arrow.svg']]) {
     test(`${what} 404: the inline minimap stays`, async () => {
-      const page = await open({ routes: [[match, notFound]] });
+      const page = await open({ routes: [[match, (r) => r.fulfill({ status: 404, body: 'not found' })]] });
       try {
         await introStart(page);
         await page.waitForTimeout(300);

@@ -9,7 +9,7 @@
 (function () {
     'use strict';
 
-    // — Gauges —
+    // Gauges
     // Three classes on #dash-gauges, each added when the last stage's
     // transition ends: on (both needles up to 0.6), swept (down to rest),
     // settled (rest changes ease over 1500 ms, the wander starts). The revs
