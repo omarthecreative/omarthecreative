@@ -264,6 +264,38 @@
         }
     }
 
+    // Geometry of the rendered cockpit for a w x h window. Pure: no DOM, no
+    // globals, so it can run on every resize. All values are px except k.
+    // mode 'none' means the rendered cockpit does not fit; nothing else is set.
+    function layout(w, h) {
+        var o = { mode: 'none' };
+        var ckW, ckH, ckX, cropR, shield, k, left, top;
+        if (w <= 760) {
+            ckW = w; ckH = w * 16 / 9; ckX = 0; cropR = 0;
+            shield = 0.275 * ckH; k = 0.62; left = 0.19 * w;
+            top = Math.max(0.32 * h, shield + 10);
+            o.mode = (top + k * h <= h - 8) ? 'tall' : 'none';
+        } else {
+            ckH = h; ckW = h * 16 / 9; ckX = Math.max(0, (w - ckW) / 2);
+            cropR = Math.max(0, ckX + ckW - w);
+            shield = 0.412 * h; top = 0.43 * h;
+            var leftMin = ckX + 0.445 * ckW;
+            var rightMax = Math.min(w, ckX + ckW) - 16;
+            k = Math.min(0.48, (rightMax - leftMin) / w);
+            left = Math.max(leftMin, Math.min(0.49 * w, rightMax - k * w));
+            o.mode = (k >= 0.36) ? 'wide' : 'none';
+        }
+        if (o.mode === 'none') return o;
+        var viewW = ckW, viewH = shield;
+        var sbW = Math.max(viewW, viewH * 1920 / 824);
+        var sbH = sbW * 824 / 1920;
+        o.k = k; o.left = left; o.top = top; o.shield = shield;
+        o.ckX = ckX; o.ckW = ckW; o.ckH = ckH; o.cropR = cropR;
+        o.sbX = (viewW - sbW) * 0.62; o.sbY = (viewH - sbH) * 0.35;
+        o.sbW = sbW; o.sbH = sbH;
+        return o;
+    }
+
     if (root.classList.contains('dash-first')) applyScene();
 
     window.DashIntro = {
@@ -271,6 +303,7 @@
         pushIn: pushIn,
         applyScene: applyScene,
         startClip: startClip,
+        layout: layout,
         localDate: localDate,
         pickScene: pickScene,
         liveBanner: liveBanner,
