@@ -773,11 +773,10 @@ describe('scene box and foreground', { concurrency: 1 }, () => {
         }
         return { found: false };
       });
-      if (wins.found) {
-        const iFg = wins.names.findIndex((n) => /^dash-fg$|dash-fgbox/.test(n));
-        const iBn = wins.names.findIndex((n) => /dash-headline|dash-fly|dash-banner/.test(n));
-        assert.ok(iFg !== -1 && iFg < iBn, `foreground over banner: ${JSON.stringify(wins.names)}`);
-      }
+      assert.ok(wins.found, 'no opaque foreground pixel under the parked headline: the claim below was not tested');
+      const iFg = wins.names.findIndex((n) => /^dash-fg$|dash-fgbox/.test(n));
+      const iBn = wins.names.findIndex((n) => /dash-headline|dash-fly|dash-banner/.test(n));
+      assert.ok(iFg !== -1 && iBn !== -1 && iFg < iBn, `foreground over banner: ${JSON.stringify(wins.names)}`);
       assert.deepEqual(page.errors, []);
     } finally {
       await done(page);
@@ -1731,7 +1730,7 @@ describe('rendered doll', { concurrency: 1 }, () => {
       await mounted(page);
       await page.waitForTimeout(300);
       assert.deepEqual(page.requested.filter((u) => /doll-/.test(u)), []);
-      assert.equal((await dollBox(page).catch(() => ({ rendered: false }))).rendered, false);
+      assert.equal((await dollBox(page)).rendered, false);
     } finally {
       await done(page);
     }
