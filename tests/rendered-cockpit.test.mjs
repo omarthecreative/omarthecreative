@@ -999,6 +999,108 @@ describe('clip', { concurrency: 1 }, () => {
       }
     });
   }
+
+  // Hidden while the clip would start: hide the tab when the dashboard mounts, just before the hold starts
+  // (startClip() runs in the same task that starts the hold, so hiding on intro-active would come too late),
+  // show it 1500ms later. The page sees document.hidden and visibilitychange as a real tab switch delivers them.
+  const HIDE_AT_HOLD = () => {
+    let hidden = false;
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => hidden });
+    Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => (hidden ? 'hidden' : 'visible') });
+    window.__setHidden = (h) => { hidden = h; document.dispatchEvent(new Event('visibilitychange')); };
+    let armed = true;
+    new MutationObserver(() => {
+      if (armed && document.documentElement.classList.contains('dash-intro') && document.getElementById('dash-clip')) {
+        armed = false;
+        window.__hiddenAt = performance.now();
+        // The clip is still hidden (not yet started) at this moment.
+        const clip = document.getElementById('dash-clip');
+        window.__atHide = { hidden: clip.hidden, src: clip.getAttribute('src') };
+        window.__setHidden(true);
+      }
+    }).observe(document, { attributes: true, subtree: true, attributeFilter: ['class'] });
+  };
+
+  for (const [label, extra, mode] of MODES) {
+    test(`hidden at hold start, then shown (${label}): the clip plays and shows`, async () => {
+      const page = await open({ routes: [...extra, ...withScene(T5)], init: [SLOW, HIDE_AT_HOLD] });
+      try {
+        await introStart(page);
+        await assertMode(page, mode);
+        await until(page, () => window.__hiddenAt !== undefined, 2000);
+        // No src yet: the tab hid before startClip() ran.
+        assert.deepEqual(await page.evaluate(() => window.__atHide), { hidden: true, src: null }, 'clip already started when the tab hid');
+        await until(page, () => performance.now() - window.__hiddenAt > 1500, 4000);
+        await page.evaluate(() => window.__setHidden(false));
+        await page.waitForTimeout(400);
+        const v = await clipState(page);
+        const s = JSON.stringify(v);
+        assert.equal(v.hidden, false, s);
+        assert.equal(v.paused, false, s);
+        assert.ok(v.t > 0, s);
+        await landed(page);
+        await assertEndState(page);
+        const end = await clipState(page);
+        assert.ok(end.paused && end.src === null, JSON.stringify(end));
+        assert.deepEqual(page.errors, []);
+      } finally {
+        await done(page);
+      }
+    });
+
+    test(`play() refused while hidden (${label}): clip hidden, still stays, lands`, async () => {
+      const REFUSE_HIDDEN = () => {
+        const play = HTMLMediaElement.prototype.play;
+        HTMLMediaElement.prototype.play = function () {
+          if (document.hidden) return Promise.reject(new DOMException('play() refused in a hidden tab', 'NotAllowedError'));
+          return play.call(this);
+        };
+      };
+      const page = await open({ routes: [...extra, ...withScene(T5)], init: [HIDE_AT_HOLD, REFUSE_HIDDEN, RECORD] });
+      try {
+        await introStart(page);
+        await assertMode(page, mode);
+        await until(page, () => window.__hiddenAt !== undefined, 2000);
+        assert.deepEqual(await page.evaluate(() => window.__atHide), { hidden: true, src: null }, 'clip already started when the tab hid');
+        // The clip tried to start while hidden, and was refused.
+        await until(page, () => window.__clip.includes('play'), 2000);
+        await until(page, () => performance.now() - window.__hiddenAt > 1500, 4000);
+        await page.evaluate(() => window.__setHidden(false));
+        await page.waitForTimeout(400);
+        const log = await page.evaluate(() => window.__clip);
+        const v = await clipState(page);
+        const s = `${log.join(' ')} ${JSON.stringify(v)}`;
+        assert.equal(log.includes('shown'), false, s);
+        assert.equal(log.filter((k) => k === 'play').length, 1, `no retry: ${s}`);
+        assert.equal(v.hidden, true, s);
+        assert.equal(v.paused, true, s);
+        assert.equal(v.stillShown, true, s);
+        await landed(page);
+        await assertEndState(page);
+        assert.deepEqual(page.errors, []);
+      } finally {
+        await done(page);
+      }
+    });
+  }
+
+  // As in scene-system.test.mjs ("still 404"), now inside the rendered cockpit: no still means no clip.
+  test('still 404, rendered: drawn scene inside the rendered cockpit, no clip requested, no page errors', async () => {
+    const page = await open({ routes: withScene({ ...T5, still: 'test-media/missing.jpg' }) });
+    try {
+      await introStart(page);
+      await assertRendered(page, 'wide');
+      await page.waitForTimeout(500);
+      assert.notEqual(await css(page, '#dash-drawn', 'display'), 'none');
+      assert.equal(await page.evaluate(() => document.getElementById('dash-shield').classList.contains('dash-has-still')), false);
+      assert.equal(await page.evaluate(() => document.getElementById('dash-still').hidden), true);
+      assert.deepEqual(media(page).filter((u) => /clip/.test(u)), []);
+      assert.equal(await page.getAttribute('#dash-clip', 'src'), null);
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
 });
 
 // — Task 6: the rendered doll —
