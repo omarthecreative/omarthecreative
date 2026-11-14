@@ -1699,19 +1699,19 @@ describe('local server byte ranges', () => {
 describe('doll clear of the screen', { concurrency: 1 }, () => {
   // Samples the doll (its box and both pieces) over more than one hop period (1.6 s) and returns the smallest
   // gap to #dash-screen grown by what is painted around it: the black ring and its 1px rim, 11px * --dash-fit,
-  // and never less than 10px. A negative gap on both axes means the rects intersect.
-  async function gap(w, h) {
+  // and never less than `floor` px (the plan's rule: 10). A negative gap on both axes means the rects intersect.
+  async function gap(w, h, floor = 10) {
     const page = await open({ viewport: { width: w, height: h } });
     try {
       await mounted(page);
       await page.waitForTimeout(300);
       await assertRendered(page, 'wide');
-      return await page.evaluate(() => new Promise((resolve) => {
+      return await page.evaluate((floor) => new Promise((resolve) => {
         const doll = document.querySelector('.dash-doll');
         const parts = [doll, ...doll.querySelectorAll('.dash-doll-r')];
         const screen = document.getElementById('dash-screen');
         const fit = parseFloat(getComputedStyle(screen).getPropertyValue('--dash-fit')) || 1;
-        const bezel = Math.max(10, 11 * fit);
+        const bezel = Math.max(floor, 11 * fit);
         let best = Infinity, minBottom = Infinity, maxBottom = -Infinity, n = 0;
         const t0 = performance.now();
         const tick = setInterval(() => {
@@ -1724,9 +1724,9 @@ describe('doll clear of the screen', { concurrency: 1 }, () => {
           }
           const bb = doll.getBoundingClientRect().bottom;
           minBottom = Math.min(minBottom, bb); maxBottom = Math.max(maxBottom, bb); n++;
-          if (performance.now() - t0 > 1800) { clearInterval(tick); resolve({ gap: best, bezel, hop: maxBottom - minBottom, n }); }
+          if (performance.now() - t0 > 1800) { clearInterval(tick); resolve({ gap: best, bezel, fit, hop: maxBottom - minBottom, n }); }
         }, 16);
-      }));
+      }), floor);
     } finally {
       await done(page);
     }
@@ -1741,4 +1741,16 @@ describe('doll clear of the screen', { concurrency: 1 }, () => {
       assert.ok(r.gap > 0, `the doll reaches the screen's bezel: ${s}`);
     });
   }
+
+  // A short wide window (in the layout table): --dash-fit is 500/900, so the painted bezel is 11 * fit (about
+  // 6.1px), under the plan's 10px floor. Checked against the bezel as painted, with no floor.
+  test('1280x500: the doll does not touch the screen or its bezel as painted (11 * fit, no floor)', async (t) => {
+    const r = await gap(1280, 500, 0);
+    const s = JSON.stringify(r);
+    t.diagnostic(s);
+    assert.ok(Math.abs(r.bezel - 11 * 500 / 900) < 0.01, `bezel ${r.bezel}`);
+    assert.ok(r.hop > 5, `the doll did not hop while sampled: ${s}`);
+    assert.ok(r.n > 20, `too few samples: ${s}`);
+    assert.ok(r.gap > 0, `the doll reaches the screen's bezel: ${s}`);
+  });
 });
