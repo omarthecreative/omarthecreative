@@ -228,6 +228,46 @@ describe('Wire Omar', { concurrency: 1 }, () => {
   }
 });
 
+describe('screen hover', { concurrency: 1 }, () => {
+  const GREY = 'rgb(94, 99, 107)';   // #5E636B
+  const LIGHT = 'rgb(201, 205, 211)'; // #C9CDD3
+  for (const [label, opts] of [...MODES, ['phone 390x844', { viewport: { width: 390, height: 844 } }]]) {
+    test(`${label}: pointer cursor, the grey line brightens to #C9CDD3 over 150ms, nothing else changes`, async () => {
+      const page = await open(opts);
+      try {
+        await mounted(page);
+        await page.mouse.move(2, 2);
+        await page.waitForTimeout(300);
+        assert.equal(await css(page, '#dash-screen', 'cursor'), 'pointer');
+        assert.equal(await css(page, '#dash-screen', 'transitionProperty'), 'box-shadow');
+        assert.equal(await css(page, '#dash-screen', 'transitionDuration'), '0.15s');
+        const before = await css(page, '#dash-screen', 'boxShadow');
+        assert.ok(before.includes(GREY), before);
+        const r = await rect(page, '#dash-screen');
+        await page.mouse.move(r.left + r.width / 2, r.top + r.height / 2);
+        await page.waitForTimeout(300);
+        const after = await css(page, '#dash-screen', 'boxShadow');
+        // Only the grey line changes: the black ring and the drop shadow stay as they were.
+        assert.equal(after, before.replace(GREY, LIGHT), `before ${before} / after ${after}`);
+        // No hover effect once the push-in starts.
+        await enter(page, 'Escape');
+        await until(page, () => document.documentElement.classList.contains('dash-pushing'), 2000);
+        await until(page, () => performance.now() - window.__marks.pushStart > 300, 2000);
+        const pushing = await page.evaluate(() => {
+          const s = getComputedStyle(document.getElementById('dash-screen'));
+          return { on: document.documentElement.classList.contains('dash-pushing'), shadow: s.boxShadow, cursor: s.cursor };
+        });
+        assert.equal(pushing.on, true, 'push-in already over: nothing to check');
+        assert.equal(pushing.shadow, before, `while pushing: ${pushing.shadow}`);
+        assert.notEqual(pushing.cursor, 'pointer');
+        assert.deepEqual(page.errors, []);
+      } finally {
+        await done(page);
+      }
+    });
+  }
+});
+
 describe('the skips still skip, with no input', { concurrency: 1 }, () => {
   for (const [label, opts] of [['reduced motion', { reduced: true }], ['?p=0', { path: '/?p=0' }], ['?filter=films', { path: '/?filter=films' }]]) {
     test(`${label}: no intro`, async () => {

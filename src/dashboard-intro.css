@@ -368,12 +368,19 @@ html.dash-pushing .dash-doll-top { animation: dash-sway-hard .5s ease-in-out inf
     width: var(--dash-w);
     height: var(--dash-h);
     background: var(--bg, #050505);
+    --dash-bezel-line: #5E636B; /* the bezel's grey line; brightens on hover */
     box-shadow:
         0 0 0 calc(10px * var(--dash-fit)) #000000,
-        0 0 0 calc(11px * var(--dash-fit)) #5E636B,
+        0 0 0 calc(11px * var(--dash-fit)) var(--dash-bezel-line),
         0 calc(24px * var(--dash-fit)) calc(48px * var(--dash-fit)) calc(11px * var(--dash-fit)) rgba(0, 0, 0, 0.6);
+    transition: box-shadow 150ms;
 }
 html.dash-intro #dash-screen { background: transparent; }
+/* While the intro waits, the screen is the way in: a pointer, and on hover its
+   grey line brightens. The black ring and the drop shadow stay. Not once the
+   push-in has started. */
+html.dash-intro:not(.dash-pushing) #dash-screen { cursor: pointer; }
+html.dash-intro:not(.dash-pushing) #dash-screen:hover { --dash-bezel-line: #C9CDD3; }
 
 /* ---- Start button: Wire Omar ------------------------------------------- */
 
@@ -465,7 +472,7 @@ html.dash-pushing #portal {
     #dash-screen {
         box-shadow:
             0 0 0 6px #000000,
-            0 0 0 7px #5E636B,
+            0 0 0 7px var(--dash-bezel-line),
             0 16px 32px 7px rgba(0, 0, 0, 0.6);
     }
 
