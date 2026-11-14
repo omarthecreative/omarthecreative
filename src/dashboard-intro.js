@@ -230,25 +230,30 @@
 
     // Plays once over the still, the same way in both modes. It starts by
     // playing: iOS Safari loads no data until something calls play(), and the
-    // clip is muted and playsinline, so no gesture is needed. It stays hidden
-    // until it is really playing; if play() is refused or the clip errors, it
-    // stays hidden and the still stays. No retry.
+    // clip is muted and playsinline, so no gesture is needed. play() fetches
+    // the file whatever the markup's preload="none" says. The clip stays
+    // hidden until it is really playing. If play() is refused or the clip
+    // errors, it is hidden and let go, so nothing keeps downloading; the still
+    // stays. No retry.
     function startClip() {
         try {
             if (!scene || !scene.clip || !stillLoaded) return;
             var clip = document.getElementById('dash-clip');
             if (!clip || clip.getAttribute('src')) return;
-            // After the intro, finish() let go of the file: nothing to show or hide.
-            var hide = function () { if (state !== 'done') clip.hidden = true; };
+            // After the intro, finish() has already let go of the file.
+            var release = function () {
+                if (state === 'done' || !clip.getAttribute('src')) return;
+                clip.hidden = true;
+                if (!clip.paused) clip.pause();
+                clip.removeAttribute('src');
+                clip.load();
+            };
             clip.loop = false;
             clip.addEventListener('playing', function () { if (state !== 'done') clip.hidden = false; });
-            clip.addEventListener('error', hide);
-            // The markup says preload="none" so nothing loads before this. Firefox
-            // and Safari keep to it even after load().
-            clip.preload = 'auto';
+            clip.addEventListener('error', release);
             clip.src = isPhone() && scene.clipSmall ? scene.clipSmall : scene.clip;
             var played = clip.play();
-            if (played && typeof played.catch === 'function') played.catch(hide);
+            if (played && typeof played.catch === 'function') played.catch(release);
         } catch (e) {}
     }
 

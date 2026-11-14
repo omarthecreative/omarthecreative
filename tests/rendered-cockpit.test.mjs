@@ -769,7 +769,7 @@ async function clipState(page) {
     const still = document.getElementById('dash-still');
     return {
       hidden: el.hidden, src: el.getAttribute('src'), t: el.currentTime, d: el.duration, paused: el.paused,
-      ended: el.ended, loop: el.loop, played: el.played.length,
+      ended: el.ended, loop: el.loop, played: el.played.length, networkState: el.networkState,
       stillShown: still.complete && still.naturalWidth > 0 && !still.hidden,
     };
   });
@@ -850,7 +850,7 @@ describe('clip', { concurrency: 1 }, () => {
       }
     });
 
-    test(`clip start (${label}): play() rejected, the clip stays hidden and the still stays`, async () => {
+    test(`clip start (${label}): play() rejected, the clip stays hidden and is let go, the still stays`, async () => {
       const page = await open({ routes: [...extra, ...withScene(T5)], init: [REFUSE, RECORD] });
       try {
         await introStart(page);
@@ -864,18 +864,21 @@ describe('clip', { concurrency: 1 }, () => {
         assert.equal(log.filter((k) => k === 'play').length, 1, `no retry: ${s}`);
         assert.equal(v.hidden, true, s);
         assert.equal(v.stillShown, true, s);
+        // Let go: nothing keeps downloading under the still (NETWORK_EMPTY is 0).
+        assert.equal(v.src, null, s);
+        assert.equal(v.networkState, 0, s);
         assert.deepEqual(page.errors, []);
       } finally {
         await done(page);
       }
     });
 
-    test(`clip 404 (${label}): the still stays, no page errors`, async () => {
+    test(`clip 404 (${label}): the still stays, the clip is let go, no page errors`, async () => {
       const page = await open({ routes: [...extra, ...withScene({ ...T5, clip: 'test-media/missing.webm' })], init: [RECORD] });
       try {
         await introStart(page);
         await assertMode(page, mode);
-        await until(page, () => document.getElementById('dash-clip').getAttribute('src') !== null, 4000);
+        await until(page, () => window.__clip.includes('play'), 4000);
         await page.waitForTimeout(1000);
         assert.ok(media(page).some((u) => /missing\.webm$/.test(u)), 'clip was not requested');
         const log = await page.evaluate(() => window.__clip);
@@ -884,6 +887,28 @@ describe('clip', { concurrency: 1 }, () => {
         assert.equal(log.includes('shown'), false, s);
         assert.equal(v.hidden, true, s);
         assert.equal(v.stillShown, true, s);
+        assert.equal(v.src, null, s);
+        assert.equal(v.networkState, 0, s);
+        assert.deepEqual(page.errors, []);
+      } finally {
+        await done(page);
+      }
+    });
+
+    test(`error after shown (${label}): the clip hides and is let go, the still stays`, async () => {
+      const page = await open({ routes: [...extra, ...withScene(T5)], init: [SLOW] });
+      try {
+        await introStart(page);
+        await assertMode(page, mode);
+        await until(page, clipPlaying, 4000);
+        await page.evaluate(() => document.getElementById('dash-clip').dispatchEvent(new Event('error')));
+        await page.waitForTimeout(300);
+        const v = await clipState(page);
+        const s = JSON.stringify(v);
+        assert.equal(v.hidden, true, s);
+        assert.equal(v.stillShown, true, s);
+        assert.equal(v.src, null, s);
+        assert.equal(v.networkState, 0, s);
         assert.deepEqual(page.errors, []);
       } finally {
         await done(page);
@@ -909,16 +934,15 @@ describe('clip', { concurrency: 1 }, () => {
     });
   }
 
-  // Firefox and WebKit honour preload="none" after load(), so nothing would load.
-  // Chromium cannot show that; it can show the property the clip is requested with.
+  // play() fetches the clip whatever preload says, so the markup's preload="none" stays as written.
   for (const [label, extra, mode] of MODES) {
-    test(`clip requested with preload auto (${label})`, async () => {
+    test(`clip plays with the markup's preload none (${label})`, async () => {
       const page = await open({ routes: [...extra, ...withScene(T5)] });
       try {
         await introStart(page);
         await assertMode(page, mode);
-        await until(page, () => document.getElementById('dash-clip').getAttribute('src') !== null, 4000);
-        assert.equal(await page.evaluate(() => document.getElementById('dash-clip').preload), 'auto');
+        await until(page, clipPlaying, 4000);
+        assert.equal(await page.evaluate(() => document.getElementById('dash-clip').preload), 'none');
         assert.deepEqual(page.errors, []);
       } finally {
         await done(page);
