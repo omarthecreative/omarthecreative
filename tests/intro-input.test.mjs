@@ -280,6 +280,14 @@ describe('a hint for assistive technology', { concurrency: 1 }, () => {
 describe('screen hover', { concurrency: 1 }, () => {
   const GREY = 'rgb(94, 99, 107)';   // #5E636B
   const LIGHT = 'rgb(201, 205, 211)'; // #C9CDD3
+  // The line's fade is over, by the page's own clock (two frames first, so a fade that has only
+  // just been started exists). On a busy machine its first frame comes late, and a fixed wait
+  // alone then reads the line part way through.
+  const fadeDone = (page) => page.evaluate(async () => {
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const fades = document.getElementById('dash-screen').getAnimations().filter((a) => a.transitionProperty === 'box-shadow');
+    await Promise.all(fades.map((a) => a.finished.catch(() => {})));
+  });
   for (const [label, opts] of [...MODES, ['phone 390x844', { viewport: { width: 390, height: 844 } }]]) {
     test(`${label}: pointer cursor, the grey line brightens to #C9CDD3 over 150ms, nothing else changes`, async () => {
       const page = await open(opts);
@@ -295,6 +303,7 @@ describe('screen hover', { concurrency: 1 }, () => {
         const r = await rect(page, '#dash-screen');
         await page.mouse.move(r.left + r.width / 2, r.top + r.height / 2);
         await page.waitForTimeout(300);
+        await fadeDone(page);
         const after = await css(page, '#dash-screen', 'boxShadow');
         // Only the grey line changes: the black ring and the drop shadow stay as they were.
         assert.equal(after, before.replace(GREY, LIGHT), `before ${before} / after ${after}`);
@@ -302,6 +311,7 @@ describe('screen hover', { concurrency: 1 }, () => {
         await enter(page, 'Escape');
         await until(page, () => document.documentElement.classList.contains('dash-pushing'), 2000);
         await until(page, () => performance.now() - window.__marks.pushStart > 300, 2000);
+        await fadeDone(page);
         const pushing = await page.evaluate(() => {
           const s = getComputedStyle(document.getElementById('dash-screen'));
           return { on: document.documentElement.classList.contains('dash-pushing'), shadow: s.boxShadow, cursor: s.cursor };
