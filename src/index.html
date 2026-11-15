@@ -1786,44 +1786,82 @@
             }
         });
 
+        let checkNavName = function () {}; // set by the Nav Name Reveal block below
         function markAsViewed(id) {
             const viewed = JSON.parse(localStorage.getItem('omar_viewed') || '[]');
             if (!viewed.includes(id)) {
                 viewed.push(id);
                 localStorage.setItem('omar_viewed', JSON.stringify(viewed));
                 updateHUD();
+                checkNavName();
             }
         }
 
         updateHUD();
 
-        // Nav Name Reveal — tease or permanent swap based on exploration state
+        // Nav Name Reveal: OMAR SILWANY becomes OMAR, THE CREATIVE once the visitor has
+        // viewed anything. Before that, a short ghost of the new words hints at it. Both
+        // wait until the name can be seen: not under the dashboard intro, not under a video.
         (function() {
             const space  = document.getElementById('name-space');
             const last   = document.getElementById('name-last');
             const suffix = document.getElementById('name-suffix');
-            const viewed = JSON.parse(localStorage.getItem('omar_viewed') || '[]');
-            if (viewed.length > 0) {
-                // Unlocked — instant final state, no flash of SILWANY
-                last.style.transition   = 'none';
-                suffix.style.transition = 'none';
+            const isViewed = () => {
+                try { return JSON.parse(localStorage.getItem('omar_viewed') || '[]').length > 0; } catch (e) { return false; }
+            };
+            const finalState = () => {
                 last.style.display  = 'none';
                 space.style.display = 'none';
                 suffix.style.opacity   = '1';
                 suffix.style.transform = 'translateX(0)';
-            } else {
-                // Tease — ghost in then back out, no layout shift
-                setTimeout(() => {
-                    last.style.opacity   = '0.15';
-                    suffix.style.opacity = '0.15';
-                    suffix.style.transform = 'translateX(0)';
-                    setTimeout(() => {
-                        last.style.opacity   = '1';
-                        suffix.style.opacity = '0';
-                        suffix.style.transform = 'translateX(-12px)';
-                    }, 1800);
-                }, 800);
+            };
+            if (isViewed()) {
+                // Unlocked before this page loaded: final state at once, no flash of SILWANY.
+                last.style.transition   = 'none';
+                suffix.style.transition = 'none';
+                finalState();
+                return;
             }
+            const DELAY = 800; // the name has been in view this long before anything moves
+            const root = document.documentElement.classList;
+            const inView = () => !root.contains('dash-loading') && !root.contains('dash-intro')
+                && !document.body.classList.contains('intro-active')
+                && !document.body.classList.contains('video-active');
+            let unlocked = false, teased = false, timer = null;
+            const watcher = new MutationObserver(check);
+            // Unlocked on this page: SILWANY fades out, the space closes, THE CREATIVE slides in.
+            function unlock() {
+                unlocked = true;
+                watcher.disconnect();
+                last.style.opacity = '0';
+                setTimeout(finalState, 600);
+            }
+            // Ghost in, then back out; no layout shift.
+            function tease() {
+                teased = true;
+                last.style.opacity   = '0.15';
+                suffix.style.opacity = '0.15';
+                suffix.style.transform = 'translateX(0)';
+                setTimeout(() => {
+                    if (unlocked) return;
+                    last.style.opacity   = '1';
+                    suffix.style.opacity = '0';
+                    suffix.style.transform = 'translateX(-12px)';
+                }, 1800);
+            }
+            function check() {
+                if (unlocked || timer !== null || !inView() || (teased && !isViewed())) return;
+                timer = setTimeout(() => {
+                    timer = null;
+                    if (unlocked || !inView()) return;
+                    if (isViewed()) unlock();
+                    else if (!teased) tease();
+                }, DELAY);
+            }
+            watcher.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+            watcher.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+            checkNavName = check; // markAsViewed() asks again: not every view changes a class
+            check();
         })();
 
         projects.forEach((p, i) => {
