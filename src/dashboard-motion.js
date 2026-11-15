@@ -7,7 +7,8 @@
    wander and the minimap's roll are CSS (dashboard-motion.css) reading that
    class. Script only steps the sweep's stages: nothing runs per frame.
    The doll (see Doll) is the one per-frame loop, and only with a mouse.
-   springStep(state, target)  one 1/60 s step of the doll's spring (pure). */
+   springStep(state, target)  one 1/60 s step of the doll's spring (pure).
+   hopY(translate, height)    the hop's height in px from a computed translate (pure). */
 (function () {
     'use strict';
 
@@ -82,6 +83,20 @@
         return { lean: state.lean + v, v: v };
     }
 
+    // The hop's height in px from a computed `translate` ("none", "0px -5.9%",
+    // "0px calc(-5.9% + 0px)": browsers differ), for a doll `height` px tall.
+    // Pure.
+    function hopY(translate, height) {
+        var rest = String(translate || '').replace(/^\S+\s*/, '');
+        var term = /(?:([+-])\s+)?(-?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?)(px|%)/gi;
+        var y = 0;
+        var m;
+        while ((m = term.exec(rest))) {
+            y += (m[1] === '-' ? -1 : 1) * m[2] * (m[3] === '%' ? height / 100 : 1);
+        }
+        return y;
+    }
+
     function followDoll() {
         var root = document.documentElement;
         var doll = document.querySelector('.dash-doll');
@@ -100,11 +115,7 @@
         // and its top piece is neither stretched nor squashed; else null.
         // Read only until follow mode is on.
         function danceRest() {
-            var hop = (getComputedStyle(doll).translate || '').split(' ')[1] || '0';
-            var y = parseFloat(hop);
-            if (/%$/.test(hop)) y = y * doll.offsetHeight / 100;
-            // An unreadable hop (NaN) does not hold follow mode back.
-            if (Math.abs(y) > GROUND) return null;
+            if (Math.abs(hopY(getComputedStyle(doll).translate, doll.offsetHeight)) > GROUND) return null;
             var top = doll.querySelector(root.classList.contains('dash-rendered')
                 && doll.classList.contains('dash-doll-rendered') ? '.dash-doll-r-top' : '.dash-doll-top');
             if (!top) return 0;
@@ -180,5 +191,5 @@
         if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) followDoll();
     }
 
-    window.DashMotion = { start: start, springStep: springStep };
+    window.DashMotion = { start: start, springStep: springStep, hopY: hopY };
 })();

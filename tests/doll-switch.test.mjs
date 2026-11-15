@@ -149,6 +149,54 @@ describe('the switch to follow mode', { concurrency: 1 }, () => {
     }
   }
 
+  test('DashMotion.hopY reads the hop height (px) from every form a browser reports', async () => {
+    const page = await open({ reduced: true });
+    try {
+      await until(page, () => !!window.DashMotion, 8000);
+      const got = await page.evaluate(() => [
+        'none', '', '0px', '0px 0px', '0px 0%', '0px -9%', '0px -5.9485%', '0px 0.01px',
+        '0px calc(-5.9485% + 0px)', '0px calc(-5% - 3px)', '0px calc(2px + -5%)', '0px calc(-1e-3px + -9%)',
+      ].map((s) => window.DashMotion.hopY(s, 200)));
+      const want = [0, 0, 0, 0, 0, -18, -11.897, 0.01, -11.897, -13, -8, -18.001];
+      got.forEach((g, i) => assert.ok(Math.abs(g - want[i]) < 1e-6, `form ${i}: ${g}, expected ${want[i]}`));
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  // Some engines report a hop between a length and a percentage as calc(). Chromium does so when
+  // the rest keyframe is a length that is not 0, so this test swaps in such a hop (same shape,
+  // rest at 0.01 px) and checks that the hop is really reported as calc() before the move.
+  test('rendered: a hop height reported as calc() still holds follow mode until the doll is on the ground', async (t) => {
+    const page = await openDoll(false);
+    try {
+      await page.evaluate(() => {
+        const s = document.createElement('style');
+        s.textContent = '@keyframes dash-hop {'
+          + ' 0%, 40% { translate: 0 0.01px; animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1); }'
+          + ' 50% { translate: 0 -9%; animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.3); }'
+          + ' 60%, 100% { translate: 0 0.01px; } }';
+        document.head.appendChild(s);
+      });
+      await until(page, () => /calc/.test(getComputedStyle(document.querySelector('.dash-doll')).translate), 4000);
+      const d = await rect(page, '.dash-doll');
+      const x = d.left + d.width / 2 + (-5 / 12) * 0.35 * page.vw;
+      const y = Math.min(page.vh - 10, d.bottom + 300);
+      const r = await page.evaluate(([x, y]) => window.__switchAt('dash-hop', 0.5, x, y, '.dash-doll-r-top'), [x, y]);
+      const first = r.out.findIndex((s) => s.follow);
+      assert.ok(first > 0, `follow mode never came on: ${JSON.stringify(r.out.slice(-3))}`);
+      const sw = r.out[first];
+      const edge = Math.abs(sw.top - sw.gtop);
+      t.diagnostic(JSON.stringify({ on: Math.round(r.on), edge: +edge.toFixed(2) }));
+      assert.ok(r.on <= 700, `follow mode ${r.on} ms after the move`);
+      assert.ok(edge <= 3, `at the switch the top edge moved ${edge} px off the dance (taken over in mid-air)`);
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
   test('rendered: once follow mode is on, no computed style is read per frame', async () => {
     const page = await open({ init: [() => {
       const gcs = window.getComputedStyle;

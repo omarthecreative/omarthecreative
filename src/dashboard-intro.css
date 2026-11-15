@@ -165,7 +165,7 @@ html.dash-intro .copyright-tag.fixed {
    are ready, then the dashboard appears complete and the intro starts. */
 html.dash-loading body > * { visibility: hidden !important; }
 
-/* The grid sits in the screen before the hold starts (body.intro-active), so
+/* The grid sits in the screen before the intro starts (body.intro-active), so
    hide the header, menu and corners for the whole time the dashboard is up. */
 html.dash-intro .header-name,
 html.dash-intro .apex-nav,
