@@ -29,13 +29,9 @@
     var state = 'idle'; // idle -> pushing -> done
 
     // The stylesheet's phone rules: a narrow window standing upright.
-    function isPhone() {
-        return window.matchMedia('(max-width: 760px) and (orientation: portrait)').matches;
-    }
+    function isPhone() { return window.matchMedia('(max-width: 760px) and (orientation: portrait)').matches; }
     // The smaller still and clip go to any narrow window, upright or not.
-    function smallMedia() {
-        return window.matchMedia('(max-width: 760px)').matches;
-    }
+    function smallMedia() { return window.matchMedia('(max-width: 760px)').matches; }
 
     // — Rendered cockpit —
     // At first load a cockpit picture counts only if it loaded while the page
@@ -46,8 +42,7 @@
     // The <img> that holds each kind's picture, once loaded. The one for the
     // mode on show sits in #dash-cockpit as #dash-cockpit-img.
     var cockpitEl = { wide: null, tall: null };
-    var firstEl = null;     // the markup's <img>, and the kind it was given at load
-    var firstKind = null;
+    var firstEl = null, firstKind = null; // the markup's <img>, and the kind it was given at load
     // The rendered doll counts only if both of its pieces loaded, by the same rule.
     var dollLoaded = { top: false, base: false };
     var DOLL_FILES = [['top', 'assets/dash/doll-top.webp'], ['base', 'assets/dash/doll-base.webp']];
@@ -83,9 +78,12 @@
             if (on) root.style.setProperty(name, key === 'k' ? String(o.k) : o[key] + 'px');
             else root.style.removeProperty(name);
         });
-        // The short screen: inline only in rendered tall mode (default: --dash-h).
-        if (on && o.mode === 'tall') root.style.setProperty('--dash-frame-h', o.frameH + 'px');
-        else root.style.removeProperty('--dash-frame-h');
+        // The short screen, and the page's slide up inside it: inline only in rendered tall mode.
+        var tall = on && o.mode === 'tall';
+        [['--dash-frame-h', o.frameH], ['--dash-slide', tall ? slide() : 0]].forEach(function (v) {
+            if (tall) root.style.setProperty(v[0], v[1] + 'px');
+            else root.style.removeProperty(v[0]);
+        });
         root.classList.toggle('dash-rendered', on);
         // The rendered doll stands on the rendered cockpit only: never without it.
         var doll = document.querySelector('.dash-doll');
@@ -94,14 +92,18 @@
         else root.removeAttribute('data-dash-mode');
     }
 
-    function rendered() {
-        return root.classList.contains('dash-rendered');
+    // The slide that puts the grid's filter row 20px (page size) under the short screen's top edge
+    // (the band above it is empty during the intro). offsetTop is layout position: no transform moves it.
+    function slide() {
+        var y = 0;
+        for (var e = document.querySelector('.grid-filter-bar'); e; e = e.offsetParent) y += e.offsetTop;
+        return Math.max(0, y - 20);
     }
 
+    function rendered() { return root.classList.contains('dash-rendered'); }
+
     function setScales() {
-        var w = window.innerWidth;
-        var h = window.innerHeight;
-        root.style.setProperty('--dash-fit', String(Math.min(w / 1440, h / 900)));
+        root.style.setProperty('--dash-fit', String(Math.min(window.innerWidth / 1440, window.innerHeight / 900)));
         applyLayout();
         var shield = document.getElementById('dash-shield');
         // offsetHeight is layout size, unaffected by the push-in transform.

@@ -1552,9 +1552,9 @@ const sizeOf = async (f) => (await fs.stat(path.join(SRC, f))).size;
 describe('miami beach, real files', { concurrency: 1 }, () => {
   test('query strings in index.html are the bumped ones', async () => {
     const html = await fs.readFile(path.join(SRC, 'index.html'), 'utf8');
-    assert.match(html, /href="dashboard-intro\.css\?v=11"/);
+    assert.match(html, /href="dashboard-intro\.css\?v=12"/);
     assert.match(html, /src="dashboard-scenes\.js\?v=4"/);
-    assert.match(html, /src="dashboard-intro\.js\?v=11"/);
+    assert.match(html, /src="dashboard-intro\.js\?v=12"/);
   });
 
   test('1440x900: rendered, still shown at the first frame, then clip-1920 requested', async () => {

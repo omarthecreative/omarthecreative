@@ -436,9 +436,11 @@ html.dash-pushing #portal {
     clip-path: inset(0 0 calc(100% - 100vh) 0);
     transition: transform var(--dash-push) var(--dash-ease), clip-path var(--dash-push) var(--dash-ease);
 }
-/* A short screen grows to --dash-h on the same clock as the grid's cut (elsewhere nothing moves). */
+/* A short screen grows to --dash-h on the grid cut's clock (elsewhere nothing moves). Phone upright: the page sits --dash-slide higher in it, and slides back. */
 html.dash-pushing #dash-screen { height: var(--dash-h); transition: box-shadow 150ms, height var(--dash-push) var(--dash-ease); }
 html.dash-pushing.dash-rendered #dash-cockpit { --hb: calc(var(--dash-top) + var(--dash-h)); transition: clip-path var(--dash-push) var(--dash-ease); }
+html.dash-intro.dash-rendered[data-dash-mode="tall"] #grid-scroll-container { transform: translateY(calc(-1 * var(--dash-slide, 0px))); }
+html.dash-pushing.dash-rendered[data-dash-mode="tall"] #grid-scroll-container { transform: none; transition: transform var(--dash-push) var(--dash-ease); }
 
 /* ---- Phone, upright (on its side it takes the wide rules) --------------- */
 

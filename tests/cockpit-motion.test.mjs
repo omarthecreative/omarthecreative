@@ -335,9 +335,9 @@ describe('files', () => {
   test('index.html: motion files right after the intro files, start() next to startClip()', async () => {
     const html = await fs.readFile(path.join(SRC, 'index.html'), 'utf8');
     // assert.ok, not assert.match: a failing match would print the whole page.
-    assert.ok(/href="dashboard-intro\.css\?v=11">\s*<link rel="stylesheet" href="dashboard-motion\.css\?v=2">/.test(html),
+    assert.ok(/href="dashboard-intro\.css\?v=12">\s*<link rel="stylesheet" href="dashboard-motion\.css\?v=2">/.test(html),
       'dashboard-motion.css?v=2 right after dashboard-intro.css');
-    assert.ok(/src="dashboard-intro\.js\?v=11"><\/script>\s*<script src="dashboard-motion\.js\?v=2"><\/script>/.test(html),
+    assert.ok(/src="dashboard-intro\.js\?v=12"><\/script>\s*<script src="dashboard-motion\.js\?v=2"><\/script>/.test(html),
       'dashboard-motion.js?v=2 right after dashboard-intro.js');
     assert.ok(/DashIntro\.startClip\(\);\s*\n\s*if \(window\.DashMotion\) DashMotion\.start\(\);/.test(html),
       'DashMotion.start() right after DashIntro.startClip()');
