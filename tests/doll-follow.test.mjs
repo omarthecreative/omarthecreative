@@ -369,9 +369,21 @@ async function pass(page, from, path, settle = 1800) {
 const extreme = (p, fn, i = 0, ms = 400) => fn(...p.frames.filter((f) => f.t >= p.at[i] && f.t <= p.at[i] + ms)
   .map((f) => f.lean)) - p.base;
 
+// A kick moves the lean by 3.4 degrees in the first spring step and about 9 at its peak, 4 or 5
+// steps on; then the spring swings back, about 4 the other way. Headless frames come 33 to 130 ms
+// apart and the lean is seen once a frame, so the peak may be missed but the first frame after the
+// kick is still on the kick's side. firstSwing: the first lean in the frames from move i on, for
+// ms, that is over 2 degrees from the settled lean, relative to it (0 if none). Without a kick the
+// lean moves under 1.
+const KICKED = 3;
+const firstSwing = (p, i = 0, ms = 400) => {
+  const f = p.frames.find((f) => f.t >= p.at[i] && f.t <= p.at[i] + ms && Math.abs(f.lean - p.base) > 2);
+  return f ? f.lean - p.base : 0;
+};
+
 describe('kick', { concurrency: 1 }, () => {
   for (const [dir, s] of [['right', 1], ['left', -1]]) {
-    test(`a mouse pass within 90 px of the doll travelling ${dir} kicks the lean ${s > 0 ? 'down' : 'up'}, past the spring alone`, async (t) => {
+    test(`a mouse pass within 90 px of the doll travelling ${dir} kicks the lean ${s > 0 ? 'up' : 'down'}, along its travel, past the spring alone`, async (t) => {
       const page = await openDoll();
       try {
         const d = await dollAt(page);
@@ -382,12 +394,14 @@ describe('kick', { concurrency: 1 }, () => {
         // The same horizontal travel, near the doll and far from it (the spring alone).
         const near = await pass(page, from, [[cx - 30 * s, Math.round(d.cy)]]);
         const alone = await pass(page, from, [[cx - 30 * s, y]]);
-        const fn = s > 0 ? Math.min : Math.max;
-        const r = { near: extreme(near, fn), alone: extreme(alone, fn), nearSoon: extreme(near, fn, 0, 200) };
+        const r = {
+          near: firstSwing(near), nearSoon: firstSwing(near, 0, 200),
+          alone: [extreme(alone, Math.min), extreme(alone, Math.max)],
+        };
         t.diagnostic(JSON.stringify(r));
-        assert.ok(-s * (r.near - r.alone) > 5, `no kick: ${JSON.stringify(r)}`);
-        assert.ok(-s * r.nearSoon > 5, `the kick is not within the next few frames: ${JSON.stringify(r)}`);
-        assert.ok(Math.abs(r.alone) < 1, `the spring alone moved: ${JSON.stringify(r)}`);
+        assert.ok(s * r.near > KICKED, `no kick along the travel: ${JSON.stringify(r)}`);
+        assert.ok(s * r.nearSoon > KICKED, `the kick is not within the next few frames: ${JSON.stringify(r)}`);
+        assert.ok(r.alone.every((m) => Math.abs(m) < 1), `the spring alone moved: ${JSON.stringify(r)}`);
         assert.deepEqual(page.errors, []);
       } finally {
         await done(page);
@@ -408,15 +422,17 @@ describe('kick', { concurrency: 1 }, () => {
       const once = await pass(page, from, [[cx - 30, cy], [cx - 20, y, 300]]);
       const later = await pass(page, from, [[cx - 30, cy], [cx - 20, cy, 700]]);
       const r = {
-        first: [twice, once, later].map((p) => extreme(p, Math.min, 0, 250)),
-        second: [twice, once, later].map((p) => extreme(p, Math.min, 1)),
+        first: [twice, once, later].map((p) => firstSwing(p, 0, 250)),
+        // twice against once: the same first kick, so any difference is a second kick.
+        second: [twice, once].map((p) => extreme(p, Math.max, 1)),
+        later: firstSwing(later, 1),
         gaps: [twice, once, later].map((p) => Math.round(p.at[1] - p.at[0])),
       };
       t.diagnostic(JSON.stringify(r));
       assert.ok(r.gaps[0] < 600 && r.gaps[2] > 600, `move gaps ${r.gaps}`);
-      assert.ok(r.first.every((m) => m < -5), `the first pass did not kick: ${JSON.stringify(r)}`);
+      assert.ok(r.first.every((m) => m > KICKED), `the first pass did not kick: ${JSON.stringify(r)}`);
       assert.ok(Math.abs(r.second[0] - r.second[1]) < 2, `a second kick within 600 ms: ${JSON.stringify(r)}`);
-      assert.ok(r.second[2] < -5, `no kick 700 ms later: ${JSON.stringify(r)}`);
+      assert.ok(r.later > KICKED, `no kick 700 ms later: ${JSON.stringify(r)}`);
       assert.deepEqual(page.errors, []);
     } finally {
       await done(page);

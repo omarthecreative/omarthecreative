@@ -67,7 +67,7 @@
     var STEP = 1000 / 60;       // ms
     var MAX_STEPS = 5;          // a frame
     var NEAR = 90;              // px from the doll's rect: a pass this close kicks
-    var KICK = 4;               // added to v, against the cursor's travel
+    var KICK = 4;               // added to v, along the cursor's travel
     var KICK_GAP = 600;         // ms, at most one kick per
     var IDLE_AFTER = 4000;      // ms with no mouse movement
     var SWAY = 2;               // degrees, the idle sway
@@ -148,7 +148,7 @@
             var reach = (x - (r.left + r.width / 2)) / (REACH * window.innerWidth);
             aim = Math.max(-1, Math.min(1, reach)) * LEAN;
             lastMove = t;
-            // A kick away from the cursor's travel when it passes within NEAR
+            // A kick along the cursor's travel when it passes within NEAR
             // of the doll's rect (0 inside it); none for a purely vertical move,
             // and none before follow mode takes over (the dance still runs).
             var dx = lastX === null ? 0 : x - lastX;
@@ -156,7 +156,7 @@
             var gx = Math.max(r.left - x, 0, x - r.right);
             var gy = Math.max(r.top - y, 0, y - r.bottom);
             if (following && dx !== 0 && Math.sqrt(gx * gx + gy * gy) < NEAR && t - lastKick >= KICK_GAP) {
-                spring.v += -KICK * (dx > 0 ? 1 : -1);
+                spring.v += KICK * (dx > 0 ? 1 : -1);
                 lastKick = t;
             }
             if (!raf) raf = requestAnimationFrame(frame);
@@ -176,7 +176,8 @@
 
     function start() {
         sweepGauges();
-        followDoll();
+        // The doll keeps its CSS dance (itself off under reduced motion).
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) followDoll();
     }
 
     window.DashMotion = { start: start, springStep: springStep };
