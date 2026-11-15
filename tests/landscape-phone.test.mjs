@@ -33,8 +33,8 @@ async function untilMode(page, mode, timeout = 4000) {
     return Math.abs(parseFloat(h.style.getPropertyValue('--ck-w')) - o.ckW) < 0.01;
   }, timeout, mode);
 }
-const FILE = { wide: 'cockpit-wide-2560.webp', tall: 'cockpit-tall-1080.webp' };
-const DOLL = { wide: { h: 0.18, cx: 0.43, feet: 0.42 }, tall: { h: 0.14, cx: 0.20, feet: 0.31 } };
+const FILE = { wide: 'cockpit-wide-2560.webp', tall: 'cockpit-phone-1620.webp' };
+const DOLL = { wide: { h: 0.18, cx: 0.43, feet: 0.42 }, tall: { h: 0.15, cx: 0.43, feet: 0.42 } };
 
 // Rendered in `mode`: the right picture is in the cockpit, in the box layout() gives; the screen
 // is where layout() puts it; frame and grid coincide; the rendered doll stands on the picture.
@@ -49,7 +49,9 @@ async function assertCockpit(page, mode, label) {
   });
   assert.equal(img.file, FILE[mode], `${label}: cockpit picture`);
   assert.ok(img.ok, `${label}: cockpit picture not decoded`);
-  for (const [k, want] of [['left', o.ckX], ['top', 0], ['width', o.ckW], ['height', o.ckH]]) {
+  // In portrait the picture is the cockpit's slice from x = 0.25 to 0.64.
+  const [x, w] = mode === 'tall' ? [o.ckX + 0.25 * o.ckW, 0.39 * o.ckW] : [o.ckX, o.ckW];
+  for (const [k, want] of [['left', x], ['top', 0], ['width', w], ['height', o.ckH]]) {
     assert.ok(Math.abs(img[k] - want) <= 1, `${label}: picture ${k} ${img[k]} vs ${want}`);
   }
   const s = await rect(page, '#dash-screen');
@@ -189,7 +191,7 @@ describe('rotation', { concurrency: 1 }, () => {
   });
 
   test('a cockpit picture that is late at first load is still ignored; a turn loads the other one, and a turn back loads it again', async () => {
-    const slow = ['**/assets/dash/cockpit-tall-*', (r) => setTimeout(() => r.continue().catch(() => {}), 2500)];
+    const slow = ['**/assets/dash/cockpit-phone-*', (r) => setTimeout(() => r.continue().catch(() => {}), 2500)];
     const page = await open({ viewport: { width: 390, height: 844 }, routes: [slow] });
     try {
       await mounted(page);

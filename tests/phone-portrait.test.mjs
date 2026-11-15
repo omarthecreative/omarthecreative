@@ -167,3 +167,16 @@ describe('layout() in portrait', () => {
     }
   });
 });
+
+describe('files', () => {
+  test('phone first-load weight: phone picture + still-960 + the doll <= 400,000 bytes; the tall picture is gone', async (t) => {
+    const size = async (f) => (await fs.stat(path.join(SRC, f))).size;
+    const parts = ['assets/dash/cockpit-phone-1620.webp', 'assets/dash/scenes/miami-beach/still-960.jpg',
+      'assets/dash/doll-top.webp', 'assets/dash/doll-base.webp'];
+    let total = 0;
+    for (const f of parts) total += await size(f);
+    t.diagnostic(`phone first load ${total} bytes`);
+    assert.ok(total <= 400_000, `phone ${total} bytes`);
+    await assert.rejects(fs.access(path.join(SRC, 'assets/dash/cockpit-tall-1080.webp')));
+  });
+});

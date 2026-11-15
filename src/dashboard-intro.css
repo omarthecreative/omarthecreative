@@ -527,6 +527,11 @@ html.dash-rendered #dash-cockpit-img {
     max-width: none;
     height: var(--ck-h);
 }
+/* Phone upright: the picture is the cockpit's slice from x = 0.25 to 0.64. */
+html.dash-rendered[data-dash-mode="tall"] #dash-cockpit-img {
+    left: calc(var(--ck-x) + 0.25 * var(--ck-w));
+    width: calc(0.39 * var(--ck-w));
+}
 /* Wider than 16:9: black beside the picture, fading in over its outer 6%.
    The width is 0 when the picture starts at x = 0 (no margin to fade into). */
 html.dash-rendered[data-dash-mode="wide"] #dash-cockpit::before,
@@ -545,17 +550,6 @@ html.dash-rendered[data-dash-mode="wide"] #dash-cockpit::before {
 html.dash-rendered[data-dash-mode="wide"] #dash-cockpit::after {
     right: 0;
     background: linear-gradient(270deg, #000000 var(--ck-x), rgba(0, 0, 0, 0));
-}
-/* Phone: the floor under the picture, down to the window's foot. */
-html.dash-rendered .dash-cockpit-floor { display: none; }
-html.dash-rendered[data-dash-mode="tall"] .dash-cockpit-floor {
-    display: block;
-    position: absolute;
-    top: var(--ck-h);
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: #010102;
 }
 
 /* The windshield spans the picture. Pillars, roof, hood and the dash itself
@@ -624,11 +618,7 @@ html.dash-rendered .dash-doll.dash-doll-rendered {
     top: calc(0.42 * var(--ck-h));
     transform: translate(-50%, -100%);
 }
-html.dash-rendered[data-dash-mode="tall"] .dash-doll.dash-doll-rendered {
-    height: calc(0.14 * var(--ck-h));
-    left: calc(0.20 * var(--ck-w));
-    top: calc(0.31 * var(--ck-h));
-}
+html.dash-rendered[data-dash-mode="tall"] .dash-doll.dash-doll-rendered { height: calc(0.15 * var(--ck-h)); }
 html.dash-rendered .dash-doll-rendered .dash-doll-top,
 html.dash-rendered .dash-doll-rendered .dash-doll-base { display: none; }
 html.dash-rendered .dash-doll-rendered .dash-doll-r {

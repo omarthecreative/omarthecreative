@@ -429,7 +429,7 @@
     }
 
     function cockpitFile(kind) {
-        return kind === 'tall' ? 'assets/dash/cockpit-tall-1080.webp'
+        return kind === 'tall' ? 'assets/dash/cockpit-phone-1620.webp'
             : window.innerWidth > 2560 ? 'assets/dash/cockpit-wide-3840.webp'
             : 'assets/dash/cockpit-wide-2560.webp';
     }

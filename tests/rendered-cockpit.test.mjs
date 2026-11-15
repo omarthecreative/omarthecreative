@@ -32,7 +32,7 @@ after(async () => {
 
 describe('assets', () => {
   test('every Spec 3 asset is served with a media type', async () => {
-    const files = ['assets/dash/cockpit-wide-2560.webp', 'assets/dash/cockpit-wide-3840.webp', 'assets/dash/cockpit-tall-1080.webp',
+    const files = ['assets/dash/cockpit-wide-2560.webp', 'assets/dash/cockpit-wide-3840.webp', 'assets/dash/cockpit-phone-1620.webp',
       'assets/dash/doll-top.webp', 'assets/dash/doll-base.webp',
       ...['still-1920.jpg', 'still-960.jpg', 'clip-1920.mp4', 'clip-960.mp4'].map((f) => 'assets/dash/scenes/miami-beach/' + f)];
     for (const f of files) {
@@ -380,25 +380,17 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
     }
   });
 
-  test('rendered at 390x844: tall cockpit, link drawn as on main', async () => {
+  test('rendered at 390x844: the phone slice of the wide cockpit, no floor', async () => {
     const page = await open({ viewport: { width: 390, height: 844 } });
     try {
       await mounted(page);
       await page.waitForTimeout(300);
       await assertRendered(page, 'tall');
-      assert.match(await page.evaluate(() => document.getElementById('dash-cockpit-img').currentSrc), /\/assets\/dash\/cockpit-tall-1080\.webp$/);
+      assert.match(await page.evaluate(() => document.getElementById('dash-cockpit-img').currentSrc), /\/assets\/dash\/cockpit-phone-1620\.webp$/);
+      const o = await page.evaluate(() => window.DashIntro.layout(390, 844));
       const ck = await rect(page, '#dash-cockpit-img');
-      assert.ok(ck.left === 0 && Math.abs(ck.width - 390) <= 1 && Math.abs(ck.height - 390 * 16 / 9) <= 1, JSON.stringify(ck));
-      const floor = await rect(page, '.dash-cockpit-floor');
-      assert.ok(Math.abs(floor.top - ck.height) <= 1 && Math.abs(floor.bottom - 844) <= 1 && floor.left === 0 && floor.right === 390, JSON.stringify(floor));
-      assert.equal(await css(page, '.dash-cockpit-floor', 'backgroundColor'), 'rgb(1, 1, 2)');
-      assert.ok(parseFloat(await css(page, '#dash-wire', 'borderTopWidth')) > 0, 'wire border');
-      assert.equal(await css(page, '#dash-wire', 'borderTopStyle'), 'solid');
-      assert.notEqual(await css(page, '#dash-wire', 'borderTopColor'), 'rgba(0, 0, 0, 0)');
-      // The phone keeps the words in the button.
-      const words = await rect(page, '#dash-wire span');
-      assert.ok(words.width > 0 && words.height > 0, `words not shown: ${JSON.stringify(words)}`);
-      assert.equal((await page.textContent('#dash-wire span')).replace(/\s+/g, ' ').trim(), 'Wire Omar');
+      assert.ok(Math.abs(ck.left - (o.ckX + 0.25 * o.ckW)) <= 1 && Math.abs(ck.width - 0.39 * o.ckW) <= 1 && Math.abs(ck.height - 844) <= 1, JSON.stringify(ck));
+      assert.equal(await page.locator('.dash-cockpit-floor').count(), 0);
       assert.equal(await page.getAttribute('#dash-wire', 'title'), 'Wire Omar');
       const screen = await rect(page, '#dash-screen');
       assert.ok(screen.top >= (await rect(page, '#dash-shield')).bottom, 'screen below the windshield');
@@ -582,7 +574,7 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
       await page.waitForFunction(() => document.documentElement.getAttribute('data-dash-mode') === 'tall', null, { timeout: 4000 });
       await assertRendered(page, 'tall', '390x844: ');
       await assertFrameFitsGrid(page, '390x844: ');
-      assert.deepEqual(cockpitRequests(page).map((u) => u.split('/').pop()), ['cockpit-wide-2560.webp', 'cockpit-tall-1080.webp']);
+      assert.deepEqual(cockpitRequests(page).map((u) => u.split('/').pop()), ['cockpit-wide-2560.webp', 'cockpit-phone-1620.webp']);
     } finally {
       await done(page);
     }
@@ -746,14 +738,14 @@ describe('scene box', { concurrency: 1 }, () => {
   });
 
   for (const [w, h] of [[1440, 900], [2560, 1080], [390, 844]]) {
-    test(`rendered ${w}x${h}: the scene box covers the whole windshield view`, async () => {
+    test(`rendered ${w}x${h}: the scene box covers the windshield view${w < 760 ? ' across the window' : ''}`, async () => {
       const page = await open({ viewport: { width: w, height: h } });
       try {
         await mounted(page);
         await page.waitForTimeout(300);
         await assertRendered(page, w < 760 ? 'tall' : 'wide');
-        const view = await rect(page, '#dash-view');
-        const box = await rect(page, '#dash-scenebox');
+        const v = await rect(page, '#dash-view'); // portrait: only the window's part of it (ruling Z9)
+        const view = w < 760 ? { ...v, left: 0, right: w } : v, box = await rect(page, '#dash-scenebox');
         assert.ok(box.left <= view.left + 0.5 && box.top <= view.top + 0.5, `${JSON.stringify({ box, view })}`);
         assert.ok(box.right >= view.right - 0.5 && box.bottom >= view.bottom - 0.5, `${JSON.stringify({ box, view })}`);
       } finally {
@@ -1206,7 +1198,7 @@ describe('clip', { concurrency: 1 }, () => {
 
 // — Task 6: the rendered doll —
 // Doll geometry from the plan: height, centre x and feet y as fractions of the cockpit picture.
-const DOLL = { wide: { h: 0.18, cx: 0.43, feet: 0.42 }, tall: { h: 0.14, cx: 0.20, feet: 0.31 } };
+const DOLL = { wide: { h: 0.18, cx: 0.43, feet: 0.42 }, tall: { h: 0.15, cx: 0.43, feet: 0.42 } };
 const noDoll = [['**/assets/dash/doll-*', (r) => r.fulfill({ status: 404, body: 'not found' })]];
 // The doll's box with its hop paused (the hop moves the whole box), plus the
 // state that tells which doll is up.
@@ -1217,11 +1209,11 @@ async function dollBox(page) {
     d.style.animation = 'none';
     const r = d.getBoundingClientRect();
     d.style.animation = before;
-    const ck = document.getElementById('dash-cockpit-img').getBoundingClientRect();
+    const v = (n) => parseFloat(document.documentElement.style.getPropertyValue(n)); // the cockpit box, not the picture's slice
     return {
       left: r.left, top: r.top, right: r.right, bottom: r.bottom, width: r.width, height: r.height,
       cx: r.left + r.width / 2, rendered: d.classList.contains('dash-doll-rendered'),
-      ckLeft: ck.left, ckWidth: ck.width, ckHeight: ck.height,
+      ckLeft: v('--ck-x'), ckWidth: v('--ck-w'), ckHeight: v('--ck-h'),
       svgTop: getComputedStyle(d.querySelector('.dash-doll-top')).display,
       svgBase: getComputedStyle(d.querySelector('.dash-doll-base')).display,
       imgs: [...d.querySelectorAll('.dash-doll-r')].map((i) => ({
@@ -1276,7 +1268,7 @@ describe('rendered doll', { concurrency: 1 }, () => {
     }
   });
 
-  test('390x844: doll height == 0.14 * (390*16/9), feet at 0.31 of the picture', async () => {
+  test('390x844: doll height == 0.15 * 844, centre 0.43 and feet 0.42 of the cockpit', async () => {
     const page = await open({ viewport: { width: 390, height: 844 } });
     try {
       await mounted(page);
@@ -1284,8 +1276,8 @@ describe('rendered doll', { concurrency: 1 }, () => {
       await assertRendered(page, 'tall');
       const d = await dollBox(page);
       assertDollGeometry(d, 'tall');
-      assert.ok(Math.abs(d.height - 0.14 * (390 * 16 / 9)) <= 2, `height ${d.height}`);
-      assert.ok(Math.abs(d.cx - 0.2 * 390) <= 2, `centre x ${d.cx}`);
+      assert.ok(Math.abs(d.height - 0.15 * 844) <= 2, `height ${d.height}`);
+      assert.ok(Math.abs(d.cx - (d.ckLeft + 0.43 * 844 * 16 / 9)) <= 2, `centre x ${d.cx}`);
       assert.equal(d.svgTop, 'none');
     } finally {
       await done(page);
@@ -1585,7 +1577,7 @@ describe('miami beach, real files', { concurrency: 1 }, () => {
       const t0 = Date.now();
       while (!page.requested.some(isRealClip) && Date.now() - t0 < 5000) await page.waitForTimeout(50);
       const names = REAL(page).map(realName);
-      for (const want of ['still-960.jpg', 'clip-960.mp4', 'cockpit-tall-1080.webp', 'doll-top.webp', 'doll-base.webp']) {
+      for (const want of ['still-960.jpg', 'clip-960.mp4', 'cockpit-phone-1620.webp', 'doll-top.webp', 'doll-base.webp']) {
         assert.ok(names.includes(want), `${want} not requested: ${names.join(' ')}`);
       }
       assert.deepEqual(names.filter((n) => /1920|2560|3840/.test(n)), [], 'a large file was requested on a phone');
@@ -1616,7 +1608,7 @@ describe('miami beach, real files', { concurrency: 1 }, () => {
     const dash = 'assets/dash/';
     const doll = (await sizeOf(dash + 'doll-top.webp')) + (await sizeOf(dash + 'doll-base.webp'));
     const laptop = (await sizeOf(dash + 'cockpit-wide-2560.webp')) + (await sizeOf(MB + 'still-1920.jpg')) + doll;
-    const phone = (await sizeOf(dash + 'cockpit-tall-1080.webp')) + (await sizeOf(MB + 'still-960.jpg')) + doll;
+    const phone = (await sizeOf(dash + 'cockpit-phone-1620.webp')) + (await sizeOf(MB + 'still-960.jpg')) + doll;
     assert.ok(laptop <= 700_000, `laptop ${laptop} bytes`);
     assert.ok(phone <= 400_000, `phone ${phone} bytes`);
   });
