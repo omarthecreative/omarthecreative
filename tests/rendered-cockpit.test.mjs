@@ -54,7 +54,7 @@ describe('layout', () => {
     [768, 1024,  { mode: 'none' }],
     [390, 844,   { mode: 'tall', k: 0.62,   left: 74.1,   top: 270.1,  shield: 190.7, ckX: 0,   ckW: 390,     cropR: 0 }],
     [412, 732,   { mode: 'tall', k: 0.62,   left: 78.3,   top: 234.2,  shield: 201.4, ckX: 0,   ckW: 412,     cropR: 0 }],
-    [740, 360,   { mode: 'none' }],
+    [740, 360,   { mode: 'wide', k: 0.447,  left: 343.1,  top: 154.8,  shield: 148.3, ckX: 50,  ckW: 640,     cropR: 0 }],
   ];
 
   test('layout(w, h) matches the table and holds its invariants', async () => {
@@ -225,7 +225,7 @@ async function assertDrawn(page, label = '') {
   const s = await dashState(page);
   assert.deepEqual(s, { cls: false, mode: null, api: false, inline: [] }, `${label}drawn dashboard expected`);
   assert.equal(await css(page, '.dash-surface', 'display'), 'block', `${label}.dash-surface`);
-  const phone = await page.evaluate(() => matchMedia('(max-width: 760px)').matches);
+  const phone = await page.evaluate(() => matchMedia('(max-width: 760px) and (orientation: portrait)').matches);
   assert.equal(await css(page, '.dash-furniture', 'display'), phone ? 'none' : 'block', `${label}.dash-furniture`);
   assert.equal(await css(page, '#dash-cockpit', 'display'), 'none', `${label}#dash-cockpit`);
 }
@@ -578,18 +578,18 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
       await page.waitForTimeout(200);
       await assertRendered(page, 'wide', 'back to 1440x900: ');
       await assertFrameFitsGrid(page, 'back to 1440x900: ');
-      // Across the 760px breakpoint: the tall image was never loaded, so drawn.
+      // To an upright phone: the tall image loads then, and takes over when it arrives.
       await page.setViewportSize({ width: 390, height: 844 });
-      await page.waitForTimeout(200);
-      await assertDrawn(page, '390x844: ');
+      await page.waitForFunction(() => document.documentElement.getAttribute('data-dash-mode') === 'tall', null, { timeout: 4000 });
+      await assertRendered(page, 'tall', '390x844: ');
       await assertFrameFitsGrid(page, '390x844: ');
-      assert.deepEqual(cockpitRequests(page).map((u) => u.split('/').pop()), ['cockpit-wide-2560.webp']);
+      assert.deepEqual(cockpitRequests(page).map((u) => u.split('/').pop()), ['cockpit-wide-2560.webp', 'cockpit-tall-1080.webp']);
     } finally {
       await done(page);
     }
   });
 
-  test('resize from the phone during the hold: tall stays rendered, across the breakpoint falls back', async () => {
+  test('resize from the phone during the hold: tall stays rendered; a wide window loads the wide cockpit then', async () => {
     const page = await open({ viewport: { width: 390, height: 844 } });
     try {
       await mounted(page);
@@ -599,8 +599,8 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
       await assertRendered(page, 'tall', '412x732: ');
       await assertFrameFitsGrid(page, '412x732: ');
       await page.setViewportSize({ width: 1440, height: 900 });
-      await page.waitForTimeout(200);
-      await assertDrawn(page, '1440x900: ');
+      await page.waitForFunction(() => document.documentElement.getAttribute('data-dash-mode') === 'wide', null, { timeout: 4000 });
+      await assertRendered(page, 'wide', '1440x900: ');
       await assertFrameFitsGrid(page, '1440x900: ');
     } finally {
       await done(page);
@@ -1398,7 +1398,7 @@ describe('rendered doll', { concurrency: 1 }, () => {
     }
   });
 
-  test('resize across the 760px breakpoint: the doll follows the mode, wide and tall constants never mix', async () => {
+  test('resize to an upright phone and back: the doll follows the mode, wide and tall constants never mix', async () => {
     const page = await open();
     try {
       await mounted(page);
@@ -1408,13 +1408,11 @@ describe('rendered doll', { concurrency: 1 }, () => {
       await page.setViewportSize({ width: 1920, height: 1080 });
       await page.waitForTimeout(250);
       assertDollGeometry(await dollBox(page), 'wide', '1920x1080: ');
-      // Phone width: the tall picture was never loaded, so drawn dashboard and drawn doll.
+      // Upright phone: the tall picture loads then; the doll takes the tall constants.
       await page.setViewportSize({ width: 390, height: 844 });
-      await page.waitForTimeout(250);
-      await assertDrawn(page, '390x844: ');
-      const drawn = await dollBox(page);
-      assert.equal(drawn.rendered, false, 'rendered doll without the rendered cockpit');
-      assert.equal(drawn.svgTop, 'block');
+      await page.waitForFunction(() => document.documentElement.getAttribute('data-dash-mode') === 'tall', null, { timeout: 4000 });
+      await assertRendered(page, 'tall', '390x844: ');
+      assertDollGeometry(await dollBox(page), 'tall', '390x844: ');
       // Back: wide constants again.
       await page.setViewportSize({ width: 1440, height: 900 });
       await page.waitForTimeout(250);
@@ -1426,16 +1424,16 @@ describe('rendered doll', { concurrency: 1 }, () => {
     }
   });
 
-  test('resize from the phone: tall doll, then drawn doll on a wide window, then tall again', async () => {
+  test('resize from the phone: tall doll, then the wide doll on a wide window, then tall again', async () => {
     const page = await open({ viewport: { width: 390, height: 844 } });
     try {
       await mounted(page);
       await assertRendered(page, 'tall');
       assertDollGeometry(await dollBox(page), 'tall', '390x844: ');
       await page.setViewportSize({ width: 1440, height: 900 });
-      await page.waitForTimeout(250);
-      await assertDrawn(page, '1440x900: ');
-      assert.equal((await dollBox(page)).rendered, false);
+      await page.waitForFunction(() => document.documentElement.getAttribute('data-dash-mode') === 'wide', null, { timeout: 4000 });
+      await assertRendered(page, 'wide', '1440x900: ');
+      assertDollGeometry(await dollBox(page), 'wide', '1440x900: ');
       await page.setViewportSize({ width: 360, height: 740 });
       await page.waitForTimeout(250);
       await assertRendered(page, 'tall', '360x740: ');
@@ -1555,9 +1553,9 @@ const sizeOf = async (f) => (await fs.stat(path.join(SRC, f))).size;
 describe('miami beach, real files', { concurrency: 1 }, () => {
   test('query strings in index.html are the bumped ones', async () => {
     const html = await fs.readFile(path.join(SRC, 'index.html'), 'utf8');
-    assert.match(html, /href="dashboard-intro\.css\?v=9"/);
+    assert.match(html, /href="dashboard-intro\.css\?v=10"/);
     assert.match(html, /src="dashboard-scenes\.js\?v=4"/);
-    assert.match(html, /src="dashboard-intro\.js\?v=8"/);
+    assert.match(html, /src="dashboard-intro\.js\?v=9"/);
   });
 
   test('1440x900: rendered, still shown at the first frame, then clip-1920 requested', async () => {

@@ -24,7 +24,7 @@
     --dash-fit: 1;   /* furniture: min(innerWidth / 1440, innerHeight / 900) */
     --dash-ss: 1;    /* windshield overlays: windshield height / artwork windshield height */
 }
-@media (max-width: 760px) {
+@media (max-width: 760px) and (orientation: portrait) {
     :root {
         --dash-k: 0.62;
         --dash-left: 19vw;
@@ -435,9 +435,9 @@ html.dash-pushing #portal {
     transition: transform var(--dash-push) var(--dash-ease);
 }
 
-/* ---- Phone ------------------------------------------------------------- */
+/* ---- Phone, upright (on its side it takes the wide rules) --------------- */
 
-@media (max-width: 760px) {
+@media (max-width: 760px) and (orientation: portrait) {
     .dash-furniture { display: none; }
 
     .dash-mirror-stem { width: calc(10px * var(--dash-ss)); height: calc(22px * var(--dash-ss)); }

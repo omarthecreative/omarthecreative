@@ -28,16 +28,32 @@
     var mounted = false;
     var state = 'idle'; // idle -> pushing -> done
 
+    // The stylesheet's phone rules: a narrow window standing upright.
     function isPhone() {
+        return window.matchMedia('(max-width: 760px) and (orientation: portrait)').matches;
+    }
+    // The smaller still and clip go to any narrow window, upright or not.
+    function smallMedia() {
         return window.matchMedia('(max-width: 760px)').matches;
     }
 
     // — Rendered cockpit —
-    // Each cockpit picture counts only if it loaded while the page was still
-    // dark; a late one never swaps the dashboard in front of the visitor.
+    // At first load a cockpit picture counts only if it loaded while the page
+    // was still dark; a late one never swaps the dashboard in front of the
+    // visitor. A picture asked for by a turn of the window (loadForTurn)
+    // counts when it arrives.
     var cockpitLoaded = { wide: false, tall: false };
-    // The rendered doll counts only if both of its pieces loaded while dark too.
+    // The <img> that holds each kind's picture, once loaded. The one for the
+    // mode on show sits in #dash-cockpit as #dash-cockpit-img.
+    var cockpitEl = { wide: null, tall: null };
+    var firstEl = null;     // the markup's <img>, and the kind it was given at load
+    var firstKind = null;
+    // The rendered doll counts only if both of its pieces loaded, by the same rule.
     var dollLoaded = { top: false, base: false };
+    var DOLL_FILES = [['top', 'assets/dash/doll-top.webp'], ['base', 'assets/dash/doll-base.webp']];
+    var firstVisit = false; // the intro plays on this visit: pictures may load
+    var lastMode = null;    // layout().mode at the last applyLayout()
+    var turnAsked = {};     // what loadForTurn() has already asked for
     // Inline variable on :root -> the layout() field it carries (px, except k).
     var LAYOUT_VARS = {
         '--dash-k': 'k', '--dash-left': 'left', '--dash-top': 'top', '--dash-shield': 'shield',
@@ -50,7 +66,18 @@
     // clear all of it, so the stylesheet's own (drawn) geometry applies.
     function applyLayout() {
         var o = layout(window.innerWidth, window.innerHeight);
-        var on = (o.mode === 'wide' || o.mode === 'tall') && cockpitLoaded[o.mode];
+        var fits = o.mode === 'wide' || o.mode === 'tall';
+        // The window turned to another mode while the intro waits: get what
+        // that mode still lacks.
+        if (fits && lastMode !== null && o.mode !== lastMode) loadForTurn(o.mode);
+        lastMode = o.mode;
+        var on = fits && cockpitLoaded[o.mode];
+        // Put this mode's picture in the cockpit, already loaded: no moment
+        // with the other mode's picture in this mode's box.
+        var pic = document.getElementById('dash-cockpit-img');
+        if (on && pic && cockpitEl[o.mode] && pic !== cockpitEl[o.mode]) {
+            pic.parentNode.replaceChild(cockpitEl[o.mode], pic);
+        }
         Object.keys(LAYOUT_VARS).forEach(function (name) {
             var key = LAYOUT_VARS[name];
             if (on) root.style.setProperty(name, key === 'k' ? String(o.k) : o[key] + 'px');
@@ -184,7 +211,7 @@
     // The still replaces the drawn scene only once it has loaded. The page
     // stays dark (html.dash-loading) until it does, for at most STILL_WAIT_MS.
     function showStill(src) {
-        if (isPhone() && scene && scene.stillSmall) src = scene.stillSmall;
+        if (smallMedia() && scene && scene.stillSmall) src = scene.stillSmall;
         var still = document.getElementById('dash-still');
         var shield = document.getElementById('dash-shield');
         if (!still || !shield) return;
@@ -278,7 +305,7 @@
                 clip.addEventListener(type, function () { root.classList.remove('dash-moving'); });
             });
             clip.addEventListener('error', release);
-            clip.src = isPhone() && scene.clipSmall ? scene.clipSmall : scene.clip;
+            clip.src = smallMedia() && scene.clipSmall ? scene.clipSmall : scene.clip;
             var played = clip.play();
             if (played && typeof played.catch === 'function') played.catch(release);
         } catch (e) {}
@@ -311,7 +338,9 @@
     function layout(w, h) {
         var o = { mode: 'none' };
         var ckW, ckH, ckX, cropR, shield, k, left, top;
-        if (w <= 760) {
+        // The tall cockpit is for a narrow window standing upright. Every other
+        // window, a phone on its side included, takes the wide one.
+        if (w <= 760 && h > w) {
             ckW = w; ckH = w * 16 / 9; ckX = 0; cropR = 0;
             shield = 0.275 * ckH; k = 0.62; left = 0.19 * w;
             top = Math.max(0.32 * h, shield + 10);
@@ -345,13 +374,14 @@
         if (!img) return;
         var kind = layout(window.innerWidth, window.innerHeight).mode;
         if (kind !== 'wide' && kind !== 'tall') return;
-        var src = kind === 'tall' ? 'assets/dash/cockpit-tall-1080.webp'
-            : window.innerWidth > 2560 ? 'assets/dash/cockpit-wide-3840.webp'
-            : 'assets/dash/cockpit-wide-2560.webp';
+        var src = cockpitFile(kind);
+        firstEl = img;
+        firstKind = kind;
         holdDarkFor(new Promise(function (done) {
             img.addEventListener('load', function () {
                 if (root.classList.contains('dash-loading')) {
                     cockpitLoaded[kind] = true;
+                    cockpitEl[kind] = img;
                     setScales(); // applyLayout(), then --dash-ss from the new shield
                 }
                 done();
@@ -366,7 +396,7 @@
     // loaded while the page was dark; applyLayout() decides whether the rendered
     // doll shows. A missing piece leaves the drawn doll.
     function loadDoll() {
-        [['top', 'assets/dash/doll-top.webp'], ['base', 'assets/dash/doll-base.webp']].forEach(function (p) {
+        DOLL_FILES.forEach(function (p) {
             var img = document.querySelector('.dash-doll-r-' + p[0]);
             if (!img) return;
             holdDarkFor(new Promise(function (done) {
@@ -383,7 +413,58 @@
         });
     }
 
+    function cockpitFile(kind) {
+        return kind === 'tall' ? 'assets/dash/cockpit-tall-1080.webp'
+            : window.innerWidth > 2560 ? 'assets/dash/cockpit-wide-3840.webp'
+            : 'assets/dash/cockpit-wide-2560.webp';
+    }
+
+    // A resize has changed the mode (a phone turned on its side, say) while
+    // the intro waits. Ask now for the cockpit picture and the doll's pieces
+    // that this mode lacks; the dashboard switches when they arrive. Called
+    // from applyLayout(), so it only marks what is ready at once and leaves
+    // the rest to setScales() on arrival. Each file is asked for once.
+    function loadForTurn(kind) {
+        if (!firstVisit || state !== 'idle') return;
+        if (!cockpitLoaded[kind] && !turnAsked[kind]) {
+            turnAsked[kind] = true;
+            var shown = document.getElementById('dash-cockpit-img');
+            if (kind === firstKind && firstEl.complete && firstEl.naturalWidth > 0) {
+                // The markup's own picture, too late for the first load: here now.
+                cockpitLoaded[kind] = true;
+                cockpitEl[kind] = firstEl;
+            } else if (shown) {
+                // A second <img> like the first, loaded out of the page. Not a
+                // clone: a clone would fetch the first one's file again.
+                var pic = document.createElement('img');
+                Array.prototype.forEach.call(shown.attributes, function (a) {
+                    if (a.name !== 'src') pic.setAttribute(a.name, a.value);
+                });
+                pic.addEventListener('load', function () {
+                    if (state !== 'idle') return;
+                    cockpitLoaded[kind] = true;
+                    cockpitEl[kind] = pic;
+                    setScales();
+                });
+                pic.src = cockpitFile(kind);
+            }
+        }
+        DOLL_FILES.forEach(function (p) {
+            var img = document.querySelector('.dash-doll-r-' + p[0]);
+            if (!img || dollLoaded[p[0]] || turnAsked['doll-' + p[0]]) return;
+            turnAsked['doll-' + p[0]] = true;
+            if (img.complete && img.naturalWidth > 0) { dollLoaded[p[0]] = true; return; }
+            img.addEventListener('load', function () {
+                if (state !== 'idle') return;
+                dollLoaded[p[0]] = true;
+                setScales();
+            });
+            img.src = p[1];
+        });
+    }
+
     if (root.classList.contains('dash-first')) {
+        firstVisit = true;
         applyScene();
         loadCockpit();
     }

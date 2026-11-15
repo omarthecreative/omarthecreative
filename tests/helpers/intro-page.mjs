@@ -7,6 +7,7 @@
 //   before(start); after(stop);
 //   const page = await open({ viewport: { width: 1440, height: 900 } });
 //   await mounted(page); await enter(page, 'Escape'); await landed(page);
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -234,3 +235,56 @@ export const REFUSE = () => {
     return Promise.reject(new DOMException('play() refused', 'NotAllowedError'));
   };
 };
+
+// The part of an element left visible by its own clip-path: inset(...), in window px.
+export async function visibleRect(page, sel) {
+  return page.evaluate((sel) => {
+    const el = document.querySelector(sel);
+    const r = el.getBoundingClientRect();
+    const w = el.offsetWidth, h = el.offsetHeight;
+    const sx = r.width / w, sy = r.height / h;
+    const resolve = (expr, refPx) => {
+      const box = document.createElement('div');
+      box.style.cssText = `position:fixed;left:0;top:0;width:${refPx}px;height:${refPx}px;visibility:hidden`;
+      const probe = document.createElement('div');
+      probe.style.cssText = `position:absolute;height:${expr}`;
+      box.appendChild(probe);
+      document.body.appendChild(box);
+      const v = probe.getBoundingClientRect().height;
+      box.remove();
+      return v;
+    };
+    let [t, rt, b, l] = [0, 0, 0, 0];
+    const m = /^inset\((.*)\)$/.exec(getComputedStyle(el).clipPath.trim());
+    if (m) {
+      const parts = [];
+      let depth = 0, cur = '';
+      for (const ch of m[1].replace(/\s+round\s.*$/, '')) {
+        if (ch === '(') depth++;
+        if (ch === ')') depth--;
+        if (/\s/.test(ch) && depth === 0) { if (cur) parts.push(cur); cur = ''; } else cur += ch;
+      }
+      if (cur) parts.push(cur);
+      const v = parts.length === 1 ? [parts[0], parts[0], parts[0], parts[0]]
+        : parts.length === 2 ? [parts[0], parts[1], parts[0], parts[1]]
+        : parts.length === 3 ? [parts[0], parts[1], parts[2], parts[1]] : parts;
+      t = resolve(v[0], h); rt = resolve(v[1], w); b = resolve(v[2], h); l = resolve(v[3], w);
+    }
+    const left = r.left + l * sx, top = r.top + t * sy;
+    const right = r.right - rt * sx, bottom = r.bottom - b * sy;
+    return { left, top, right, bottom, width: right - left, height: bottom - top };
+  }, sel);
+}
+// The screen frame and the grid placed in it coincide, within 1 px.
+export async function frameFitsGrid(page, label = '') {
+  const s = await rect(page, '#dash-screen');
+  const g = await visibleRect(page, '#portal');
+  for (const k of ['left', 'top', 'width', 'height']) {
+    assert.ok(Math.abs(s[k] - g[k]) <= 1, `${label}${k}: frame ${s[k].toFixed(2)} vs grid ${g[k].toFixed(2)}`);
+  }
+}
+// Which dashboard is up: 'wide' or 'tall' (rendered), or 'drawn'.
+export const dashMode = (page) => page.evaluate(() => {
+  const h = document.documentElement;
+  return h.classList.contains('dash-rendered') ? h.getAttribute('data-dash-mode') : 'drawn';
+});
