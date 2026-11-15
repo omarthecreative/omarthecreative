@@ -1,65 +1,18 @@
-// Gauges and the moving minimap (plan 2026-11-14-rendered-cockpit-review-2, part B, sections 3
-// and 4). The car moves only while the scene's clip is playing: html.dash-moving (ruling R1).
+// Gauges (plan 2026-11-14-rendered-cockpit-review-2, part B, section 3; the minimap, section 4, is
+// in minimap-motion.test.mjs). The car moves only while the scene's clip is playing:
+// html.dash-moving (ruling R1).
 // Run from tests/: `node --test cockpit-motion.test.mjs`.
 import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import {
-  start, stop, open, done, until, introStart, mounted, landed, css, rect, enter, SRC, FIXTURES,
+  start, stop, open, done, until, introStart, mounted, landed, css, rect, enter, SRC,
+  STRIP, withScene, CLIP, NO_CLIP, SLOW, REFUSE,
 } from './helpers/intro-page.mjs';
 
 before(start);
 after(stop);
-
-// Test scenes.
-// Scene media under test-media/ come from tests/fixtures/. The minimap is the real strip.
-const MEDIA_TYPES = { '.mp4': 'video/mp4', '.webm': 'video/webm', '.jpg': 'image/jpeg' };
-const STRIP = 'assets/dash/scenes/miami-beach/minimap-strip.svg';
-function withScene(scene) {
-  const body = `window.DashScenes = { scenes: [${JSON.stringify({ id: 'test-scene', minimap: STRIP, ...scene })}] };`;
-  return [
-    ['**/dashboard-scenes.js*', (r) => r.fulfill({ contentType: 'text/javascript', body })],
-    ['**/test-media/**', async (r) => {
-      const name = path.basename(new URL(r.request().url()).pathname);
-      try {
-        const buf = await fs.readFile(path.join(FIXTURES, name));
-        const contentType = MEDIA_TYPES[path.extname(name)] || 'application/octet-stream';
-        const m = /^bytes=(\d+)-(\d*)$/.exec(r.request().headers()['range'] || '');
-        if (m) {
-          const a = +m[1], b = m[2] ? Math.min(+m[2], buf.length - 1) : buf.length - 1;
-          await r.fulfill({ status: 206, body: buf.subarray(a, b + 1),
-            headers: { 'content-type': contentType, 'accept-ranges': 'bytes', 'content-range': `bytes ${a}-${b}/${buf.length}` } });
-        } else {
-          await r.fulfill({ body: buf, contentType, headers: { 'accept-ranges': 'bytes' } });
-        }
-      } catch {
-        await r.fulfill({ status: 404, body: 'not found' });
-      }
-    }],
-  ];
-}
-const STILL = 'test-media/still.jpg';
-const CLIP = { still: STILL, clip: 'test-media/clip.webm' };
-const NO_CLIP = { still: STILL };
-
-// The fixture clip is 1 s long. Slow it down (test only) so there is time to watch it play.
-const SLOW = () => {
-  const play = HTMLMediaElement.prototype.play;
-  HTMLMediaElement.prototype.play = function () { this.playbackRate = 0.1; return play.call(this); };
-};
-// play() starts 1.5 s late, then plays at a fifth of the speed.
-const LATE = () => {
-  const play = HTMLMediaElement.prototype.play;
-  HTMLMediaElement.prototype.play = function () {
-    return new Promise((r) => setTimeout(r, 1500)).then(() => { this.playbackRate = 0.2; return play.call(this); });
-  };
-};
-const REFUSE = () => {
-  HTMLMediaElement.prototype.play = function () {
-    return Promise.reject(new DOMException('play() refused', 'NotAllowedError'));
-  };
-};
 
 // In the page: window.__v(which) is a needle's value v (which: 'speed' or 'revs'), read from the
 // computed transforms of the needle's group and its inner wander group: angle a, v = (a - 138) / 260.
@@ -347,131 +300,6 @@ describe('gauges', { concurrency: 1 }, () => {
       assert.equal(await css(page, '#dash-gauges', 'display'), 'none');
       const r = await rect(page, '#dash-gauges');
       assert.equal(r.width + r.height, 0);
-    } finally {
-      await done(page);
-    }
-  });
-});
-
-// Minimap.
-const stripY = (page) => page.evaluate(() => new DOMMatrixReadOnly(getComputedStyle(document.querySelector('.dash-minimap-strip')).transform).f);
-
-describe('minimap', { concurrency: 1 }, () => {
-  test('the box holds the strip, 300% of its height, and the arrow, filling it', async () => {
-    const page = await open({ routes: withScene(CLIP) });
-    try {
-      await mounted(page);
-      const kids = await page.evaluate(() => [...document.querySelector('.dash-minimap').children]
-        .map((el) => `${el.tagName}.${el.className} ${el.getAttribute('src')}`));
-      assert.deepEqual(kids, [
-        `IMG.dash-minimap-strip ${STRIP}`,
-        'IMG.dash-minimap-arrow assets/dash/minimap-arrow.svg',
-      ]);
-      const m = await page.evaluate(() => {
-        const box = document.querySelector('.dash-minimap');
-        const b = box.getBoundingClientRect();
-        const r = (sel) => { const x = box.querySelector(sel).getBoundingClientRect(); return { left: x.left, top: x.top, width: x.width, height: x.height }; };
-        return {
-          inner: { left: b.left + box.clientLeft, top: b.top + box.clientTop, width: box.clientWidth, height: box.clientHeight },
-          strip: r('.dash-minimap-strip'), arrow: r('.dash-minimap-arrow'),
-          loaded: [...box.querySelectorAll('img')].every((i) => i.complete && i.naturalWidth > 0),
-        };
-      });
-      const s = JSON.stringify(m);
-      assert.equal(m.loaded, true, s);
-      assert.ok(Math.abs(m.strip.width - m.inner.width) <= 0.5, s);
-      assert.ok(Math.abs(m.strip.height - 3 * m.inner.height) <= 1, s);
-      for (const k of ['left', 'top', 'width', 'height']) assert.ok(Math.abs(m.arrow[k] - m.inner[k]) <= 0.5, `arrow ${k}: ${s}`);
-      assert.deepEqual(page.errors, []);
-    } finally {
-      await done(page);
-    }
-  });
-
-  test('the strip is frozen before the clip plays, moves while it plays, frozen after it ends; the arrow stays', async () => {
-    const page = await open({ routes: withScene(CLIP), init: [LATE] });
-    try {
-      await introStart(page);
-      const arrow0 = await rect(page, '.dash-minimap-arrow');
-      const a = await stripY(page);
-      await page.waitForTimeout(500);
-      const b = await stripY(page);
-      assert.equal(await moving(page), false, 'moving before the clip plays');
-      assert.equal(a, b, 'strip moved before the clip played');
-      await until(page, () => document.documentElement.classList.contains('dash-moving'), 4000);
-      const c = await stripY(page);
-      await page.waitForTimeout(500);
-      const d = await stripY(page);
-      assert.ok(d > c, `strip did not move down while playing: ${c} then ${d}`);
-      assert.deepEqual(await rect(page, '.dash-minimap-arrow'), arrow0, 'arrow moved');
-      await page.evaluate(() => { const c = document.getElementById('dash-clip'); c.currentTime = c.duration - 0.01; });
-      await until(page, () => document.getElementById('dash-clip').ended, 4000);
-      await page.waitForTimeout(100);
-      const e = await stripY(page);
-      await page.waitForTimeout(500);
-      assert.equal(await stripY(page), e, 'strip moved after the clip ended');
-      assert.deepEqual(await rect(page, '.dash-minimap-arrow'), arrow0, 'arrow moved');
-      assert.deepEqual(page.errors, []);
-    } finally {
-      await done(page);
-    }
-  });
-
-  for (const [what, match] of [['strip', '**/minimap-strip.svg'], ['arrow', '**/minimap-arrow.svg']]) {
-    test(`${what} 404: the inline minimap stays`, async () => {
-      const page = await open({ routes: [[match, (r) => r.fulfill({ status: 404, body: 'not found' })]] });
-      try {
-        await introStart(page);
-        await page.waitForTimeout(300);
-        assert.equal(await page.locator('.dash-minimap img').count(), 0);
-        assert.equal(await css(page, '.dash-minimap svg', 'display'), 'block');
-        assert.deepEqual(page.errors, []);
-      } finally {
-        await done(page);
-      }
-    });
-  }
-
-  test('one loop is seamless: -66.6667% to 0, 24 s, linear, infinite, paused until the clip plays', async () => {
-    const page = await open({ routes: withScene(NO_CLIP) });
-    try {
-      await mounted(page);
-      const a = await page.evaluate(() => {
-        const s = getComputedStyle(document.querySelector('.dash-minimap-strip'));
-        const name = s.animationName;
-        let frames = null;
-        for (const sheet of document.styleSheets) {
-          let rules;
-          try { rules = sheet.cssRules; } catch (e) { continue; }
-          for (const r of rules) {
-            if (r.type === CSSRule.KEYFRAMES_RULE && r.name === name) {
-              frames = [...r.cssRules].map((k) => `${k.keyText} ${k.style.transform}`);
-            }
-          }
-        }
-        return { name, frames, duration: s.animationDuration, timing: s.animationTimingFunction,
-          count: s.animationIterationCount, state: s.animationPlayState };
-      });
-      const s = JSON.stringify(a);
-      assert.deepEqual(a.frames, ['0% translateY(-66.6667%)', '100% translateY(0px)'], s);
-      assert.equal(a.duration, '24s', s);
-      assert.equal(a.timing, 'linear', s);
-      assert.equal(a.count, 'infinite', s);
-      assert.equal(a.state, 'paused', s);
-    } finally {
-      await done(page);
-    }
-  });
-
-  test('reduced motion: the strip and the needles stand still', async () => {
-    const page = await open({ routes: withScene(CLIP), init: [SLOW] });
-    try {
-      await introStart(page);
-      await until(page, () => document.documentElement.classList.contains('dash-moving'), 4000);
-      await page.emulateMedia({ reducedMotion: 'reduce' });
-      for (const sel of ['.dash-minimap-strip', '#dash-gauges .dash-gauge-speed .dash-gauge-wander', '#dash-gauges .dash-gauge-revs .dash-gauge-wander']) {
-        assert.equal(await css(page, sel, 'animationName'), 'none', sel);
-      }
     } finally {
       await done(page);
     }

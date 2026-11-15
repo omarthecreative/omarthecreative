@@ -217,8 +217,9 @@
     var MINIMAP_ARROW = 'assets/dash/minimap-arrow.svg';
 
     // The scene's minimap strip, with the arrow over it, replaces the inline
-    // minimap once both have loaded; dashboard-motion.css rolls the strip
-    // while the car moves. If either fails, the inline minimap stays.
+    // minimap once both have loaded, if the page is still dark then (a late
+    // pair never swaps in front of the visitor); dashboard-motion.css rolls
+    // the strip while the car moves. If either fails, the inline minimap stays.
     function showMinimap(src) {
         var box = document.querySelector('.dash-minimap');
         if (!box) return;
@@ -236,7 +237,7 @@
             load('dash-minimap-strip', src),
             load('dash-minimap-arrow', MINIMAP_ARROW)
         ]).then(function (imgs) {
-            if (!imgs[0] || !imgs[1]) return;
+            if (!imgs[0] || !imgs[1] || !root.classList.contains('dash-loading')) return;
             while (box.firstChild) box.removeChild(box.firstChild);
             box.appendChild(imgs[0]);
             box.appendChild(imgs[1]);

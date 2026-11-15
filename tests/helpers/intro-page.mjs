@@ -8,6 +8,7 @@
 //   const page = await open({ viewport: { width: 1440, height: 900 } });
 //   await mounted(page); await enter(page, 'Escape'); await landed(page);
 import path from 'node:path';
+import fs from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import { startServer } from '../serve.mjs';
@@ -181,3 +182,55 @@ export async function enter(page, how) {
     await page.keyboard.press(how);
   }
 }
+
+// Test scenes (cockpit-motion, minimap-motion).
+// routes: withScene(scene) is a scenes file holding just this scene (minimap: the real strip unless
+// the scene says otherwise); its media under test-media/ come from tests/fixtures/, with ranges.
+const MEDIA_TYPES = { '.mp4': 'video/mp4', '.webm': 'video/webm', '.jpg': 'image/jpeg' };
+export const STRIP = 'assets/dash/scenes/miami-beach/minimap-strip.svg';
+export function withScene(scene) {
+  const body = `window.DashScenes = { scenes: [${JSON.stringify({ id: 'test-scene', minimap: STRIP, ...scene })}] };`;
+  return [
+    ['**/dashboard-scenes.js*', (r) => r.fulfill({ contentType: 'text/javascript', body })],
+    ['**/test-media/**', async (r) => {
+      const name = path.basename(new URL(r.request().url()).pathname);
+      try {
+        const buf = await fs.readFile(path.join(FIXTURES, name));
+        const contentType = MEDIA_TYPES[path.extname(name)] || 'application/octet-stream';
+        const m = /^bytes=(\d+)-(\d*)$/.exec(r.request().headers()['range'] || '');
+        if (m) {
+          const a = +m[1], b = m[2] ? Math.min(+m[2], buf.length - 1) : buf.length - 1;
+          await r.fulfill({ status: 206, body: buf.subarray(a, b + 1),
+            headers: { 'content-type': contentType, 'accept-ranges': 'bytes', 'content-range': `bytes ${a}-${b}/${buf.length}` } });
+        } else {
+          await r.fulfill({ body: buf, contentType, headers: { 'accept-ranges': 'bytes' } });
+        }
+      } catch {
+        await r.fulfill({ status: 404, body: 'not found' });
+      }
+    }],
+  ];
+}
+export const STILL = 'test-media/still.jpg';
+export const CLIP = { still: STILL, clip: 'test-media/clip.webm' };
+export const NO_CLIP = { still: STILL };
+
+// Init scripts for the clip. The fixture clip is 1 s long.
+// SLOW: plays at a tenth of the speed, so there is time to watch it play.
+export const SLOW = () => {
+  const play = HTMLMediaElement.prototype.play;
+  HTMLMediaElement.prototype.play = function () { this.playbackRate = 0.1; return play.call(this); };
+};
+// LATE: play() starts 1.5 s late, then plays at a fifth of the speed.
+export const LATE = () => {
+  const play = HTMLMediaElement.prototype.play;
+  HTMLMediaElement.prototype.play = function () {
+    return new Promise((r) => setTimeout(r, 1500)).then(() => { this.playbackRate = 0.2; return play.call(this); });
+  };
+};
+// REFUSE: play() is refused.
+export const REFUSE = () => {
+  HTMLMediaElement.prototype.play = function () {
+    return Promise.reject(new DOMException('play() refused', 'NotAllowedError'));
+  };
+};

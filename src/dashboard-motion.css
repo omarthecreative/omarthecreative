@@ -133,8 +133,9 @@ html.dash-intro .dash-gauges-wander.dash-gauges-settled .dash-gauge-speed .dash-
 /* The scene's strip (dashboard-intro.js swaps it in with the arrow) is three
    windows tall and repeats every two, so rolling it from -66.6667% to 0 ends
    on the frame it started from: one seamless loop every 24 s. It rolls only
-   while the car moves; otherwise it holds where it is. The arrow over it
-   fills the circle and never moves. */
+   in the rendered cockpit (wide and tall) and only while the car moves;
+   otherwise it holds where it is (the drawn fallback shows it still). The
+   arrow over it fills the circle and never moves. */
 .dash-minimap .dash-minimap-strip {
     height: 300%;
     animation-name: dash-minimap-roll;
@@ -143,7 +144,7 @@ html.dash-intro .dash-gauges-wander.dash-gauges-settled .dash-gauge-speed .dash-
     animation-iteration-count: infinite;
     animation-play-state: paused;
 }
-html.dash-moving .dash-minimap .dash-minimap-strip { animation-play-state: running; }
+html.dash-rendered.dash-moving .dash-minimap .dash-minimap-strip { animation-play-state: running; }
 .dash-minimap .dash-minimap-arrow {
     position: absolute;
     top: 0;
