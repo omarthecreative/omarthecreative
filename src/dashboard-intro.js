@@ -10,7 +10,8 @@
                   html.dash-moving is set exactly while it plays: on at its
                   playing event, off when it waits, pauses, ends, errors or
                   is let go, and when the intro ends. The car moves only then.
-                  Called when the hold starts, never when the intro is skipped.
+                  Called when the intro starts waiting for the visitor, never
+                  when the intro is skipped.
    pickScene      the pure part of that pick.
    layout(w, h)   geometry of the rendered cockpit for a window (pure).
    rendered()     true while html.dash-rendered is set: the cockpit picture

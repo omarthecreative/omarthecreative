@@ -554,11 +554,11 @@ for (const offline of [false, true]) {
       }
     });
 
-    test('no full-size project or hero pictures download during the hold', async () => {
+    test('no full-size project or hero pictures download while the intro waits, 6 s with no input', async () => {
       const page = await open({ offline });
       try {
         await mounted(page);
-        await page.waitForTimeout(1500); // the dashboard waits; nothing large loads meanwhile
+        await page.waitForTimeout(6000); // the dashboard waits for input; nothing large loads meanwhile
         await page.keyboard.press('Escape');
         await until(page, () => 'pushStart' in window.__marks, 2000);
         const early = await page.evaluate(() => {
@@ -569,7 +569,7 @@ for (const offline of [false, true]) {
             .map((e) => e.name.split('?')[0])
             .filter((u) => full.has(u) || /-bg(-comp)?\.jpe?g$|crowd-surf/.test(u) && !u.includes('/thumbs/'));
         });
-        assert.deepEqual(early, [], 'full-size pictures requested during the hold');
+        assert.deepEqual(early, [], 'full-size pictures requested while the intro waited');
       } finally {
         await done(page);
       }

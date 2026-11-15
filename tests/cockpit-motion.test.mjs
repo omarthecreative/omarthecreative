@@ -203,15 +203,26 @@ describe('gauges', { concurrency: 1 }, () => {
       assert.ok(span(revs) > 0.0005, `revs constant over 5 s: ${span(revs)}`);
       assert.ok(reversals(revs) <= 6, `revs reversed ${reversals(revs)} times in 5 s`);
       assert.ok(reversals(playing.map((x) => x.s)) <= 6, 'speed wanders too fast');
-      // Play to the end.
-      await page.evaluate(() => { const c = document.getElementById('dash-clip'); c.currentTime = c.duration - 0.01; });
-      await until(page, () => document.getElementById('dash-clip').ended, 4000);
-      const tEnded = Date.now();
+      // Play to the end. Timed on the page clock: from the ended event to the first frame with
+      // the speed needle at 0 (Infinity if not within 4 s).
+      const toZero = await page.evaluate(() => new Promise((resolve) => {
+        const c = document.getElementById('dash-clip');
+        c.addEventListener('ended', () => {
+          const t0 = performance.now();
+          const f = () => {
+            const t = performance.now() - t0;
+            if (Math.abs(window.__v('speed')) <= 0.003) resolve(t);
+            else if (t > 4000) resolve(Infinity);
+            else requestAnimationFrame(f);
+          };
+          requestAnimationFrame(f);
+        }, { once: true });
+        c.currentTime = c.duration - 0.01;
+      }));
       assert.equal(await moving(page), false, 'html.dash-moving after ended');
-      await until(page, () => Math.abs(window.__v('speed')) <= 0.003, 2000);
-      assert.ok(Date.now() - tEnded <= 2100, `speed took ${Date.now() - tEnded} ms`);
+      assert.ok(toZero <= 2100, `speed took ${toZero} ms from ended to 0`);
       // The 1500 ms ease is over by 2 s after ended; from then on the speed needle is still.
-      await page.waitForTimeout(Math.max(0, tEnded + 2000 - Date.now()));
+      await page.waitForTimeout(Math.max(0, 2000 - toZero));
       const after = await sample(page, 2000);
       assert.ok(span(after.map((x) => x.s)) <= 0.0005, `speed moves after ended: ${span(after.map((x) => x.s))}`);
       for (const x of after) assert.ok(near(x.s, 0, 0.003) && near(x.r, 0.14, TOL), JSON.stringify(x));
@@ -259,20 +270,39 @@ describe('gauges', { concurrency: 1 }, () => {
     }
   });
 
-  test('after landing: not moving, nothing running on the needles or the minimap, no page errors', async () => {
+  test('after landing: the wander and the roll that ran before are off, not moving, the clip let go, no page errors', async () => {
     const page = await open({ routes: withScene(CLIP), init: [SLOW, PROBE] });
     try {
       await introStart(page);
       await until(page, () => document.documentElement.classList.contains('dash-moving'), 4000);
       await sinceStart(page, 2000);
+      const SEL = ['#dash-gauges .dash-gauge-speed .dash-gauge-wander', '#dash-gauges .dash-gauge-revs .dash-gauge-wander', '.dash-minimap-strip'];
+      // Running animations on the needles and the minimap, and the computed animation-name and
+      // play state of the two wander groups and the strip. Computed style does not depend on the
+      // splash's display: none after landing, so it shows the html.dash-intro guards at work.
+      const look = () => page.evaluate((SEL) => ({
+        running: [...document.querySelectorAll('#dash-gauges, #dash-gauges *, .dash-minimap, .dash-minimap *')]
+          .flatMap((el) => el.getAnimations().filter((a) => a.playState === 'running').map((a) => a.animationName || a.transitionProperty))
+          .sort(),
+        computed: SEL.map((sel) => { const c = getComputedStyle(document.querySelector(sel)); return `${c.animationName} ${c.animationPlayState}`; }),
+        moving: document.documentElement.classList.contains('dash-moving'),
+        src: document.getElementById('dash-clip').getAttribute('src'),
+      }), SEL);
+      const pre = await look();
+      assert.deepEqual([...new Set(pre.running.filter((n) => /^dash-/.test(n)))],
+        ['dash-minimap-roll', 'dash-wander-revs', 'dash-wander-speed'], `before landing: ${JSON.stringify(pre)}`);
+      assert.deepEqual(pre.computed, ['dash-wander-speed running', 'dash-wander-revs running', 'dash-minimap-roll running'], JSON.stringify(pre));
+      assert.equal(pre.moving, true);
+      assert.ok(pre.src, 'no clip before landing');
       await enter(page, 'Escape');
       await landed(page);
       await page.waitForTimeout(300);
-      assert.equal(await moving(page), false);
-      const running = await page.evaluate(() => [
-        ...document.querySelectorAll('#dash-gauges, #dash-gauges *, .dash-minimap, .dash-minimap *'),
-      ].flatMap((el) => el.getAnimations().map((a) => `${el.getAttribute('class') || el.id}: ${a.animationName || a.transitionProperty || a.id} ${a.playState}`)));
-      assert.deepEqual(running, []);
+      const post = await look();
+      const s = JSON.stringify(post);
+      assert.deepEqual(post.running, [], s);
+      assert.deepEqual(post.computed, ['none running', 'none running', 'dash-minimap-roll paused'], s);
+      assert.equal(post.moving, false, s);
+      assert.equal(post.src, null, s);
       assert.deepEqual(page.errors, []);
     } finally {
       await done(page);

@@ -685,7 +685,7 @@
             body.paladin-landing .title{font-size:clamp(40px,15vw,90px)}
         }
 
-        /* Timed intro layer: the dashboard scene (dashboard-intro.css) */
+        /* Intro layer, until the visitor's first input: the dashboard scene (dashboard-intro.css) */
         #standoff-splash {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -2598,7 +2598,7 @@
             if (window.DashIntro && DashIntro.startClip) DashIntro.startClip();
             if (window.DashMotion) DashMotion.start();
             // The grid is in its normal state and the dashboard shows it scaled
-            // down inside its screen for the hold. Normally already done by
+            // down inside its screen while the intro waits. Normally already done by
             // mountDashboardEarly(); this covers any path that skipped it.
             if (!document.documentElement.classList.contains('dash-intro')) {
                 enterGridState();
