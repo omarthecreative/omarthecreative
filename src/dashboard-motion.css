@@ -1,0 +1,181 @@
+/* Dashboard motion (dashboard-motion.js): the gauges, the moving minimap and
+   the doll's follow mode.
+   The car moves only while the scene's clip plays: html.dash-moving, set by
+   dashboard-intro.js. The gauges and the minimap read that class and
+   nothing else.
+   iOS Safari: animation-* properties are spelled out, never the shorthand. */
+
+/* ---- Gauges ------------------------------------------------------------ */
+
+/* The needles, drawn over the rendered cockpit (its own are painted out).
+   Both modes; the cockpit's box (--ck-x, --ck-w, --ck-h), 1600 x 900 units.
+   In portrait the picture is a slice of that box: the right gauge shows in a
+   short window (390x664) and none in a tall one (390x844).
+   A needle at value v (0 to 0.6) is rotate(138deg + 260deg * v) about its
+   hub, clockwise from pointing right. Past 0.6 it would cross the wheel. */
+#dash-gauges {
+    display: none;
+    --dash-speed: 0;
+    --dash-revs: 0;
+}
+html.dash-rendered #dash-gauges {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: var(--ck-x);
+    width: var(--ck-w);
+    height: var(--ck-h);
+    overflow: visible;
+    pointer-events: none;
+}
+#dash-gauges line {
+    stroke: #ECEEF2;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+}
+#dash-gauges circle {
+    fill: #0A0E18;
+    stroke: #ECEEF2;
+    stroke-width: 1.5;
+}
+
+/* Each needle's group sits at its hub (translate in the markup) and turns
+   about it. The inner group adds the wander. */
+.dash-gauge-speed,
+.dash-gauge-revs,
+.dash-gauge-wander { transform-origin: 0 0; }
+.dash-gauge-speed { transform: rotate(calc(138deg + 260deg * var(--dash-speed))); }
+.dash-gauge-revs { transform: rotate(calc(138deg + 260deg * var(--dash-revs))); }
+
+/* The sweep, staged by DashMotion.start(): both up to 0.6, then down to rest,
+   700 ms each, ease in and out. Then rest: speed 0.05 while the car moves,
+   0 when it does not; revs 0.14. Rest changes ease over 1500 ms both ways.
+   A change mid-way starts again from where the needle is: it never jumps. */
+#dash-gauges.dash-gauges-on { --dash-speed: 0.6; --dash-revs: 0.6; }
+#dash-gauges.dash-gauges-swept { --dash-speed: 0; --dash-revs: 0.14; }
+html.dash-moving #dash-gauges.dash-gauges-swept { --dash-speed: 0.05; }
+.dash-gauge-speed,
+.dash-gauge-revs {
+    --dash-wamt: 0;
+    transition-property: transform, --dash-wamt;
+    transition-duration: 700ms, 1500ms;
+    transition-timing-function: ease-in-out;
+}
+.dash-gauges-settled .dash-gauge-speed,
+.dash-gauges-settled .dash-gauge-revs { transition-duration: 1500ms; }
+
+/* The wander: a slow, uneven drift about rest, at most 1.5deg (v 0.0058),
+   half swings of 1.1 to 1.8 s (periods 2.2 to 3.6 s). The keyframes move
+   --dash-wd; the drift shown is --dash-wd times --dash-wamt, which eases
+   between 0 and 1 over 1500 ms, so the drift fades in and out and never
+   jumps. Revs drifts from the end of the sweep on; speed only while the car
+   moves (at 0 it does not wander). Both properties are registered so they
+   animate smoothly; dashboard-motion.js adds .dash-gauges-wander only where
+   registering is supported (elsewhere the needles rest without a drift).
+   Only while the intro shows: nothing runs after landing. */
+@property --dash-wd {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+}
+@property --dash-wamt {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0;
+}
+.dash-gauges-settled .dash-gauge-revs,
+html.dash-moving .dash-gauges-settled .dash-gauge-speed { --dash-wamt: 1; }
+.dash-gauge-wander { transform: rotate(calc(var(--dash-wd) * var(--dash-wamt))); }
+html.dash-intro .dash-gauges-wander.dash-gauges-settled .dash-gauge-wander {
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+}
+html.dash-intro .dash-gauges-wander.dash-gauges-settled .dash-gauge-revs .dash-gauge-wander {
+    animation-name: dash-wander-revs;
+    animation-duration: 19s;
+}
+html.dash-intro .dash-gauges-wander.dash-gauges-settled .dash-gauge-speed .dash-gauge-wander {
+    animation-name: dash-wander-speed;
+    animation-duration: 17s;
+}
+@keyframes dash-wander-revs {
+    0%      { --dash-wd: 0deg; }
+    7.368%  { --dash-wd: 1.2deg; }
+    13.684% { --dash-wd: -0.9deg; }
+    23.158% { --dash-wd: 1.5deg; }
+    28.947% { --dash-wd: -0.4deg; }
+    38.421% { --dash-wd: 0.8deg; }
+    44.737% { --dash-wd: -1.5deg; }
+    53.158% { --dash-wd: 0.5deg; }
+    58.947% { --dash-wd: -0.7deg; }
+    68.421% { --dash-wd: 1.3deg; }
+    75.263% { --dash-wd: -1.1deg; }
+    83.684% { --dash-wd: 0.9deg; }
+    91.579% { --dash-wd: -0.6deg; }
+    100%    { --dash-wd: 0deg; }
+}
+@keyframes dash-wander-speed {
+    0%      { --dash-wd: 0deg; }
+    7.059%  { --dash-wd: -1deg; }
+    17.059% { --dash-wd: 1.4deg; }
+    23.529% { --dash-wd: -0.5deg; }
+    32.941% { --dash-wd: 1.1deg; }
+    40.588% { --dash-wd: -1.4deg; }
+    47.059% { --dash-wd: 0.6deg; }
+    57.647% { --dash-wd: -0.8deg; }
+    64.706% { --dash-wd: 1.5deg; }
+    73.529% { --dash-wd: -0.3deg; }
+    80%     { --dash-wd: 0.9deg; }
+    90.588% { --dash-wd: -1.2deg; }
+    100%    { --dash-wd: 0deg; }
+}
+
+/* ---- Minimap ----------------------------------------------------------- */
+
+/* The scene's strip (dashboard-intro.js swaps it in with the arrow) is three
+   windows tall and repeats every two, so rolling it from -66.6667% to 0 ends
+   on the frame it started from: one seamless loop every 24 s. It rolls only
+   in the rendered cockpit (wide and tall) and only while the car moves;
+   otherwise it holds where it is (the drawn fallback shows it still). The
+   arrow over it fills the circle and never moves. */
+.dash-minimap .dash-minimap-strip {
+    height: 300%;
+    animation-name: dash-minimap-roll;
+    animation-duration: 24s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-play-state: paused;
+}
+html.dash-rendered.dash-moving .dash-minimap .dash-minimap-strip { animation-play-state: running; }
+.dash-minimap .dash-minimap-arrow {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+@keyframes dash-minimap-roll {
+    0%   { transform: translateY(-66.6667%); }
+    100% { transform: translateY(0); }
+}
+
+/* ---- Doll -------------------------------------------------------------- */
+
+/* Follow mode: dashboard-motion.js adds .dash-doll-follow on the first mouse
+   move. The hop and the dance stop and the top piece (drawn and rendered)
+   turns by --doll-lean, written on .dash-doll, about the origin the dance
+   uses. The drawn doll's arm keeps waving. While pushing these rules let go:
+   dash-sway-hard runs as before. */
+html:not(.dash-pushing) .dash-doll.dash-doll-follow { animation-name: none; }
+html:not(.dash-pushing) .dash-doll-follow .dash-doll-top,
+html.dash-rendered:not(.dash-pushing) .dash-doll-follow.dash-doll-rendered .dash-doll-r-top {
+    animation-name: none;
+    transform: rotate(var(--doll-lean, 0deg));
+}
+
+/* ---- Reduced motion ---------------------------------------------------- */
+
+/* The intro is normally skipped then; this is a cheap guard. */
+@media (prefers-reduced-motion: reduce) {
+    html.dash-intro .dash-gauges-wander.dash-gauges-settled .dash-gauge-revs .dash-gauge-wander,
+    html.dash-intro .dash-gauges-wander.dash-gauges-settled .dash-gauge-speed .dash-gauge-wander,
+    .dash-minimap .dash-minimap-strip { animation-name: none; }
+}

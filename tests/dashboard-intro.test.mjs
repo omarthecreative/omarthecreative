@@ -24,6 +24,7 @@ after(async () => {
 
 async function open({ path: p = '/', seen = false, reduced = false, offline = false, viewport = { width: 1440, height: 900 }, routes = [] } = {}) {
   const context = await browser.newContext({ viewport, reducedMotion: reduced ? 'reduce' : 'no-preference' });
+  for (const m of ['**/assets/dash/cockpit-*', '**/assets/dash/doll-*']) await context.route(m, (r) => r.fulfill({ status: 404, body: 'not found' }));
   for (const [match, handler] of routes) await context.route(match, handler);
   if (seen) await context.addInitScript(() => sessionStorage.setItem('omar_intro_session', '1'));
   if (offline) {
@@ -78,8 +79,8 @@ async function open({ path: p = '/', seen = false, reduced = false, offline = fa
   await page.goto(server.url + p);
   return page;
 }
-// The 5000ms hold starts when the page's fonts gate opens, not at navigation.
-// Every timed wait counts from here.
+// The intro starts when the page's fonts gate opens, not at navigation. From here it
+// waits for the visitor: a test that needs the push-in performs an input.
 async function introStart(page) {
   await page.waitForFunction(() => document.body.classList.contains('intro-active'), null, { timeout: 8000, polling: 50 });
 }
@@ -134,6 +135,24 @@ async function visibleRect(page, sel) {
 }
 async function css(page, sel, prop) {
   return page.evaluate(([sel, prop]) => getComputedStyle(document.querySelector(sel))[prop], [sel, prop]);
+}
+// Which of these @keyframes names the page's own stylesheets define.
+async function keyframeNames(page, names) {
+  return page.evaluate((names) => {
+    const found = [];
+    for (const sheet of document.styleSheets) {
+      let rules;
+      try { rules = sheet.cssRules; } catch (e) { continue; } // cross-origin (Typekit)
+      const walk = (list) => {
+        for (const r of list) {
+          if (r instanceof CSSKeyframesRule && names.includes(r.name)) found.push(r.name);
+          else if (r.cssRules) walk(r.cssRules);
+        }
+      };
+      walk(rules);
+    }
+    return found;
+  }, names);
 }
 // The dashboard is up: grid placed in the screen (html.dash-intro), page visible
 // (no html.dash-loading) and the intro running (body.intro-active). On a first
@@ -204,6 +223,7 @@ for (const offline of [false, true]) {
       const page = await open({ offline });
       try {
         await introStart(page);
+        await page.keyboard.press('Escape');
         // Headless software rendering stretches timings, so poll to a deadline.
         await until(page, () => getComputedStyle(document.getElementById('standoff-splash')).display === 'none', 10000);
         assert.equal(await page.evaluate(() => document.body.classList.contains('grid-active')), true);
@@ -277,31 +297,70 @@ for (const offline of [false, true]) {
       });
     }
 
-    test('banner headline is in view at 300ms', async () => {
-      // No banners, so the plane tows the headline whatever today's date is.
-      const noBanners = 'window.DashScenes = { scenes: [{ id: "miami-beach", timezone: "America/New_York" }], banners: [] };';
-      const page = await open({ offline, routes: [['**/dashboard-scenes.js*', (r) => r.fulfill({ contentType: 'text/javascript', body: noBanners })]] });
+    test('no banner plane: no markup, no keyframes', async () => {
+      const page = await open({ offline });
       try {
         await mounted(page);
-        await page.waitForTimeout(300);
-        assert.equal((await page.textContent('#standoff-splash h1')).trim(), 'HAVE TASTE. WILL TRAVEL.');
-        assert.equal(await page.locator('#standoff-splash h1').count(), 1);
-        const h = await rect(page, '#standoff-splash h1');
-        assert.ok(h.left < page.vw && h.right > 0 && h.width > 0, JSON.stringify(h));
+        for (const sel of ['.dash-banner', '.dash-fly', '.dash-towline', '.dash-plane']) {
+          assert.equal(await page.locator(sel).count(), 0, sel);
+        }
+        assert.deepEqual(await keyframeNames(page, ['dash-fly', 'dash-gallop']), []);
       } finally {
         await done(page);
       }
     });
+
+    test('intro heading: one h1, in the accessibility tree, visually hidden', async () => {
+      const page = await open({ offline });
+      try {
+        await mounted(page);
+        assert.equal(await page.locator('#standoff-splash h1').count(), 1);
+        assert.equal(await page.locator('.dash-headline').count(), 1);
+        const h1 = page.locator('#standoff-splash h1.dash-headline');
+        assert.equal((await h1.textContent()).trim(), 'HAVE TASTE. WILL TRAVEL.');
+        assert.equal(await h1.ariaSnapshot(), '- heading "HAVE TASTE. WILL TRAVEL." [level=1]');
+        const h = await rect(page, '#standoff-splash h1');
+        assert.ok(h.width <= 1 && h.height <= 1, JSON.stringify(h));
+        assert.equal(await css(page, '#standoff-splash h1', 'position'), 'absolute');
+        assert.equal(await css(page, '#standoff-splash h1', 'clipPath'), 'inset(50%)');
+        assert.equal(await css(page, '#standoff-splash h1', 'overflow'), 'hidden');
+        assert.equal(await css(page, '#standoff-splash h1', 'whiteSpace'), 'nowrap');
+        assert.notEqual(await css(page, '#standoff-splash h1', 'display'), 'none');
+        assert.equal(await css(page, '#standoff-splash h1', 'visibility'), 'visible');
+      } finally {
+        await done(page);
+      }
+    });
+
     for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
-      test(`after hold and push-in the grid is in its normal state (${viewport.width}x${viewport.height})`, async () => {
+      test(`drawn mirror: stem and frame, plain #3A3A3A glass, no rider (${viewport.width}x${viewport.height})`, async () => {
         const page = await open({ offline, viewport });
         try {
-          await introStart(page);
-          await page.waitForTimeout(6400);
+          await mounted(page);
+          assert.equal(await page.locator('.dash-rider').count(), 0);
+          assert.equal(await page.locator('[data-gag]').count(), 0);
+          assert.equal(await page.evaluate(() => document.querySelector('.dash-mirror-glass').childNodes.length), 0);
+          assert.notEqual(await css(page, '.dash-mirror', 'display'), 'none');
+          assert.equal(await css(page, '.dash-mirror-stem', 'backgroundColor'), 'rgb(11, 11, 12)');
+          assert.ok((await rect(page, '.dash-mirror-stem')).height > 0);
+          assert.ok(parseFloat(await css(page, '.dash-mirror-glass', 'borderTopWidth')) > 0);
+          assert.equal(await css(page, '.dash-mirror-glass', 'borderTopColor'), 'rgb(11, 11, 12)');
+          assert.equal(await css(page, '.dash-mirror-glass', 'backgroundColor'), 'rgb(58, 58, 58)');
+          assert.equal(await css(page, '.dash-mirror-glass', 'backgroundImage'), 'none');
+        } finally {
+          await done(page);
+        }
+      });
+    }
+    for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
+      test(`after the push-in the grid is in its normal state (${viewport.width}x${viewport.height})`, async () => {
+        const page = await open({ offline, viewport });
+        try {
+          await mounted(page);
+          await page.keyboard.press('Escape');
           await endState(page, 3000); // slack for headless software rendering; timings asserted below
           const m = await page.evaluate(() => window.__marks);
-          const hold = m.pushStart - m.introStart, push = m.pushEnd - m.pushStart;
-          assert.ok(hold >= 4950 && hold <= 5600, `hold ${hold.toFixed(0)}ms`);
+          const push = m.pushEnd - m.pushStart;
           assert.ok(push <= 1400, `push-in ${push.toFixed(0)}ms`);
           await assertEndState(page);
         } finally {
@@ -314,7 +373,8 @@ for (const offline of [false, true]) {
       const page = await open({ offline });
       try {
         await mounted(page);
-        await until(page, () => document.documentElement.classList.contains('dash-pushing'), 7000);
+        await page.keyboard.press('Escape');
+        await until(page, () => document.documentElement.classList.contains('dash-pushing'), 2000);
         const samples = await page.evaluate(() => new Promise((resolve) => {
           const out = [];
           const t0 = performance.now();
@@ -377,18 +437,17 @@ for (const offline of [false, true]) {
       }
     });
 
-    test('click then timer: pushIn runs once', async () => {
+    test('click, then a click mid push-in: pushIn runs once', async () => {
       const page = await open({ offline });
       try {
         await introStart(page);
         await countExits(page);
         assert.ok(!('pushStart' in await page.evaluate(() => window.__marks)), 'counters attached too late');
-        // Clicks scheduled on the page clock, so runner lag cannot reorder them against the 5s timer.
+        // Clicks scheduled on the page clock, so runner lag cannot spread them apart.
         await page.evaluate(() => {
-          const at = (ms, fn) => setTimeout(fn, Math.max(0, window.__marks.introStart + ms - performance.now()));
           const click = () => document.getElementById('dash-shield').dispatchEvent(new MouseEvent('click', { bubbles: true }));
-          at(4850, click); // just before the timer
-          at(5150, click); // again, mid push-in
+          click();
+          setTimeout(click, 300); // again, mid push-in
         });
         await endState(page, 8000);
         await page.waitForTimeout(300);
@@ -456,6 +515,7 @@ for (const offline of [false, true]) {
       const page = await open({ offline });
       try {
         await introStart(page);
+        await page.keyboard.press('Escape');
         await until(page, () => (window.__afterLanding || []).length > 20, 9000);
         const ops = await page.evaluate(() => window.__afterLanding);
         assert.ok(ops.every((o) => o === 1), `tile opacity after landing: ${ops.join(',')}`);
@@ -494,11 +554,13 @@ for (const offline of [false, true]) {
       }
     });
 
-    test('no full-size project or hero pictures download during the hold', async () => {
+    test('no full-size project or hero pictures download while the intro waits, 6 s with no input', async () => {
       const page = await open({ offline });
       try {
         await mounted(page);
-        await until(page, () => 'pushStart' in window.__marks, 8000);
+        await page.waitForTimeout(6000); // the dashboard waits for input; nothing large loads meanwhile
+        await page.keyboard.press('Escape');
+        await until(page, () => 'pushStart' in window.__marks, 2000);
         const early = await page.evaluate(() => {
           const full = new Set([...projects, ...caseStudies].map((p) => new URL(p.img, location.href).href));
           const pushStart = window.__marks.pushStart;
@@ -507,7 +569,7 @@ for (const offline of [false, true]) {
             .map((e) => e.name.split('?')[0])
             .filter((u) => full.has(u) || /-bg(-comp)?\.jpe?g$|crowd-surf/.test(u) && !u.includes('/thumbs/'));
         });
-        assert.deepEqual(early, [], 'full-size pictures requested during the hold');
+        assert.deepEqual(early, [], 'full-size pictures requested while the intro waited');
       } finally {
         await done(page);
       }

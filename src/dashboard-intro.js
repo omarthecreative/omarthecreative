@@ -2,14 +2,24 @@
    mount()        places the live grid in the dashboard's screen frame (adds html.dash-intro)
    pushIn(onDone) pushes the scene in until the screen's edges meet the window's,
                   then removes the intro layer and calls onDone once.
-   applyScene()   picks a scene and a banner line from window.DashScenes
-                  (dashboard-scenes.js) and writes them into the intro markup.
+   applyScene()   picks a scene from window.DashScenes (dashboard-scenes.js)
+                  and writes it into the intro markup. Returns { sceneId }.
                   Runs once at load, on a first visit, while the page is dark.
-   startClip()    starts the scene's clip, if it has one and its still loaded.
-                  Called when the hold starts, never when the intro is skipped.
-   localDate, pickScene, liveBanner, pickLine: the pure parts of that pick.
-   Geometry lives in dashboard-intro.css; this file only sets the two
-   artwork scales and runs the state changes. */
+   startClip()    starts the scene's clip, if it has one and its still loaded:
+                  play() at once, shown once it is playing, played once.
+                  html.dash-moving is set exactly while it plays: on at its
+                  playing event, off when it waits, pauses, ends, errors or
+                  is let go, and when the intro ends. The car moves only then.
+                  Called when the intro starts waiting for the visitor, never
+                  when the intro is skipped.
+   pickScene      the pure part of that pick.
+   layout(w, h)   geometry of the rendered cockpit for a window (pure).
+   rendered()     true while html.dash-rendered is set: the cockpit picture
+                  loaded while the page was dark and fits this window. Then
+                  layout() is written to :root as inline variables; otherwise
+                  the drawn dashboard shows on the stylesheet's own geometry.
+   Geometry lives in dashboard-intro.css; this file sets the two artwork
+   scales, the rendered layout variables, and runs the state changes. */
 (function () {
     'use strict';
 
@@ -18,14 +28,83 @@
     var mounted = false;
     var state = 'idle'; // idle -> pushing -> done
 
-    function isPhone() {
-        return window.matchMedia('(max-width: 760px)').matches;
+    // The stylesheet's phone rules: a narrow window standing upright.
+    function isPhone() { return window.matchMedia('(max-width: 760px) and (orientation: portrait)').matches; }
+    // The smaller still and clip go to any narrow window, upright or not.
+    function smallMedia() { return window.matchMedia('(max-width: 760px)').matches; }
+
+    // — Rendered cockpit —
+    // At first load a cockpit picture counts only if it loaded while the page
+    // was still dark; a late one never swaps the dashboard in front of the
+    // visitor. A picture asked for by a turn of the window (loadForTurn)
+    // counts when it arrives.
+    var cockpitLoaded = { wide: false, tall: false };
+    // The <img> that holds each kind's picture, once loaded. The one for the
+    // mode on show sits in #dash-cockpit as #dash-cockpit-img.
+    var cockpitEl = { wide: null, tall: null };
+    var firstEl = null, firstKind = null; // the markup's <img>, and the kind it was given at load
+    // The rendered doll counts only if both of its pieces loaded, by the same rule.
+    var dollLoaded = { top: false, base: false };
+    var DOLL_FILES = [['top', 'assets/dash/doll-top.webp'], ['base', 'assets/dash/doll-base.webp']];
+    var firstVisit = false; // the intro plays on this visit: pictures may load
+    var lastMode = null;    // layout().mode at the last applyLayout()
+    var turnAsked = {};     // what loadForTurn() has already asked for
+    // Inline variable on :root -> the layout() field it carries (px, except k).
+    var LAYOUT_VARS = {
+        '--dash-k': 'k', '--dash-left': 'left', '--dash-top': 'top', '--dash-shield': 'shield',
+        '--ck-x': 'ckX', '--ck-w': 'ckW', '--ck-h': 'ckH', '--ck-crop-r': 'cropR',
+        '--sb-x': 'sbX', '--sb-y': 'sbY', '--sb-w': 'sbW', '--sb-h': 'sbH'
+    };
+
+    // Rendered when the cockpit fits this window and that kind's picture has
+    // loaded: write layout() into :root and set html.dash-rendered. Otherwise
+    // clear all of it, so the stylesheet's own (drawn) geometry applies.
+    function applyLayout() {
+        var o = layout(window.innerWidth, window.innerHeight);
+        var fits = o.mode === 'wide' || o.mode === 'tall';
+        // The window turned to another mode while the intro waits: get what
+        // that mode still lacks.
+        if (fits && lastMode !== null && o.mode !== lastMode) loadForTurn(o.mode);
+        lastMode = o.mode;
+        var on = fits && cockpitLoaded[o.mode];
+        // Put this mode's picture in the cockpit, already loaded: no moment
+        // with the other mode's picture in this mode's box.
+        var pic = document.getElementById('dash-cockpit-img');
+        if (on && pic && cockpitEl[o.mode] && pic !== cockpitEl[o.mode]) {
+            pic.parentNode.replaceChild(cockpitEl[o.mode], pic);
+        }
+        Object.keys(LAYOUT_VARS).forEach(function (name) {
+            var key = LAYOUT_VARS[name];
+            if (on) root.style.setProperty(name, key === 'k' ? String(o.k) : o[key] + 'px');
+            else root.style.removeProperty(name);
+        });
+        // The short screen, and the page's slide up inside it: inline only in rendered tall mode.
+        var tall = on && o.mode === 'tall';
+        [['--dash-frame-h', o.frameH], ['--dash-slide', tall ? slide() : 0]].forEach(function (v) {
+            if (tall) root.style.setProperty(v[0], v[1] + 'px');
+            else root.style.removeProperty(v[0]);
+        });
+        root.classList.toggle('dash-rendered', on);
+        // The rendered doll stands on the rendered cockpit only: never without it.
+        var doll = document.querySelector('.dash-doll');
+        if (doll) doll.classList.toggle('dash-doll-rendered', on && dollLoaded.top && dollLoaded.base);
+        if (on) root.setAttribute('data-dash-mode', o.mode);
+        else root.removeAttribute('data-dash-mode');
     }
 
+    // The slide that puts the grid's filter row 20px (page size) under the short screen's top edge
+    // (the band above it is empty during the intro). offsetTop is layout position: no transform moves it.
+    function slide() {
+        var y = 0;
+        for (var e = document.querySelector('.grid-filter-bar'); e; e = e.offsetParent) y += e.offsetTop;
+        return Math.max(0, y - 20);
+    }
+
+    function rendered() { return root.classList.contains('dash-rendered'); }
+
     function setScales() {
-        var w = window.innerWidth;
-        var h = window.innerHeight;
-        root.style.setProperty('--dash-fit', String(Math.min(w / 1440, h / 900)));
+        root.style.setProperty('--dash-fit', String(Math.min(window.innerWidth / 1440, window.innerHeight / 900)));
+        applyLayout();
         var shield = document.getElementById('dash-shield');
         // offsetHeight is layout size, unaffected by the push-in transform.
         var shieldPx = shield ? shield.offsetHeight : 0;
@@ -34,7 +113,8 @@
 
     // Size the artwork now, before first paint. This script loads after the
     // splash markup, so #dash-shield exists. Waiting for mount() showed the
-    // CSS default scale (1) first, and the doll and banner visibly shrank.
+    // CSS default scale (1) first, and the doll visibly shrank.
+    // layout() is a function declaration below, so it is already defined here.
     setScales();
     window.addEventListener('resize', setScales);
 
@@ -70,10 +150,18 @@
             if (portal) portal.removeEventListener('transitionend', onEnd);
             document.removeEventListener('visibilitychange', onHidden);
             window.removeEventListener('resize', setScales);
-            root.classList.remove('dash-intro', 'dash-pushing');
+            root.classList.remove('dash-intro', 'dash-pushing', 'dash-moving');
             if (splash) splash.style.display = 'none';
+            // Pause the clip, then let go of its file: a clip still loading
+            // would otherwise keep downloading under the grid. Its failure
+            // paths check state, so the AbortError this gives a pending
+            // play() changes nothing on screen.
             var clip = document.getElementById('dash-clip');
-            if (clip && !clip.paused) clip.pause();
+            if (clip) {
+                if (!clip.paused) clip.pause();
+                clip.removeAttribute('src');
+                clip.load();
+            }
             if (typeof onDone === 'function') onDone();
         }
         function onEnd(e) {
@@ -95,9 +183,7 @@
         root.classList.add('dash-pushing');
     }
 
-    // — Scenes and banners —
-    var DEFAULT_LINE = 'HAVE TASTE. WILL TRAVEL.';
-
+    // — Scenes —
     function readStore(key) {
         try { return localStorage.getItem(key); } catch (e) { return null; }
     }
@@ -107,13 +193,6 @@
     function pickFrom(list, rnd) {
         var i = Math.floor(rnd() * list.length);
         return list[Math.min(Math.max(i, 0), list.length - 1)];
-    }
-
-    // 'YYYY-MM-DD' for this moment in that time zone. Throws on an unknown zone.
-    function localDate(now, timezone) {
-        return new Intl.DateTimeFormat('en-CA', {
-            timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit'
-        }).format(now);
     }
 
     // One scene at random, never the one shown last time when there is a choice.
@@ -128,43 +207,16 @@
         return pool.length ? pickFrom(pool, rnd) : null;
     }
 
-    function usableLines(lines) {
-        return Array.isArray(lines) ? lines.filter(function (l) { return typeof l === 'string' && l.trim(); }) : [];
-    }
-
-    // The banner flying over this scene today, in the scene's own time zone.
-    // On overlap, the one that started later wins.
-    function liveBanner(banners, scene, now) {
-        if (!Array.isArray(banners) || !scene) return null;
-        var today;
-        try { today = localDate(now, scene.timezone); } catch (e) { return null; }
-        var live = null;
-        banners.forEach(function (b) {
-            if (!b || b.scene !== scene.id || !usableLines(b.lines).length) return;
-            if (typeof b.start !== 'string' || typeof b.end !== 'string') return;
-            if (b.start <= today && today <= b.end && (!live || b.start >= live.start)) live = b;
-        });
-        return live;
-    }
-
-    // One line at random, never the one shown last time when there is a choice.
-    function pickLine(lines, last, rnd) {
-        var pool = usableLines(lines);
-        if (pool.length > 1 && last) {
-            var others = pool.filter(function (l) { return l !== last; });
-            if (others.length) pool = others;
-        }
-        return pool.length ? pickFrom(pool, rnd) : DEFAULT_LINE;
-    }
-
     var STILL_WAIT_MS = 1500; // longest the page stays dark waiting for a still
 
     var scene = null;        // the scene on screen, once applyScene has run
-    var stillLoaded = false;
+    var stillLoaded = false; // the clip starts only over a still that loaded
+    var clipStarted = false; // startClip() starts the clip once at most
 
     // The still replaces the drawn scene only once it has loaded. The page
     // stays dark (html.dash-loading) until it does, for at most STILL_WAIT_MS.
     function showStill(src) {
+        if (smallMedia() && scene && scene.stillSmall) src = scene.stillSmall;
         var still = document.getElementById('dash-still');
         var shield = document.getElementById('dash-shield');
         if (!still || !shield) return;
@@ -195,86 +247,253 @@
         ]);
     }
 
-    // The scene's minimap replaces the inline one once it loads. On an error
-    // the inline minimap stays.
+    var MINIMAP_ARROW = 'assets/dash/minimap-arrow.svg';
+
+    // The scene's minimap strip, with the arrow over it, replaces the inline
+    // minimap once both have loaded, if the page is still dark then (a late
+    // pair never swaps in front of the visitor); dashboard-motion.css rolls
+    // the strip while the car moves. If either fails, the inline minimap stays.
     function showMinimap(src) {
         var box = document.querySelector('.dash-minimap');
         if (!box) return;
-        var img = new Image();
-        img.alt = '';
-        holdDarkFor(new Promise(function (done) {
-            img.onload = function () {
-                while (box.firstChild) box.removeChild(box.firstChild);
-                box.appendChild(img);
-                done();
-            };
-            img.onerror = done;
+        var load = function (className, url) {
+            return new Promise(function (done) {
+                var img = new Image();
+                img.alt = '';
+                img.className = className;
+                img.onload = function () { done(img); };
+                img.onerror = function () { done(null); };
+                img.src = url;
+            });
+        };
+        holdDarkFor(Promise.all([
+            load('dash-minimap-strip', src),
+            load('dash-minimap-arrow', MINIMAP_ARROW)
+        ]).then(function (imgs) {
+            if (!imgs[0] || !imgs[1] || !root.classList.contains('dash-loading')) return;
+            while (box.firstChild) box.removeChild(box.firstChild);
+            box.appendChild(imgs[0]);
+            box.appendChild(imgs[1]);
         }));
-        img.src = src;
     }
 
-    // Plays once over the still. Until it can play, and if it never can, the
-    // still stays.
+    // Plays once over the still, the same way in both modes. It starts by
+    // playing: iOS Safari loads no data until something calls play(), and the
+    // clip is muted and playsinline, so no gesture is needed. play() fetches
+    // the file whatever the markup's preload="none" says. The clip stays
+    // hidden until it is really playing. If play() is refused or the clip
+    // errors, it is hidden and let go, so nothing keeps downloading; the still
+    // stays. No retry. Once the intro is over it does nothing.
     function startClip() {
         try {
+            if (state === 'done' || clipStarted) return;
             if (!scene || !scene.clip || !stillLoaded) return;
             var clip = document.getElementById('dash-clip');
-            if (!clip || clip.getAttribute('src')) return;
+            if (!clip) return;
+            clipStarted = true;
+            // After the intro, finish() has already let go of the file.
+            var release = function () {
+                root.classList.remove('dash-moving');
+                if (state === 'done' || !clip.getAttribute('src')) return;
+                clip.hidden = true;
+                if (!clip.paused) clip.pause();
+                clip.removeAttribute('src');
+                clip.load();
+            };
             clip.loop = false;
-            clip.addEventListener('canplay', function onCanPlay() {
-                clip.removeEventListener('canplay', onCanPlay);
-                var played = clip.play();
+            clip.addEventListener('playing', function () {
+                if (state === 'done') return;
                 clip.hidden = false;
-                if (played && typeof played.catch === 'function') {
-                    played.catch(function () { clip.hidden = true; });
-                }
+                root.classList.add('dash-moving');
             });
-            clip.addEventListener('error', function () { clip.hidden = true; });
-            clip.src = isPhone() && scene.clipSmall ? scene.clipSmall : scene.clip;
-            clip.load();
+            ['waiting', 'pause', 'ended', 'emptied'].forEach(function (type) {
+                clip.addEventListener(type, function () { root.classList.remove('dash-moving'); });
+            });
+            clip.addEventListener('error', release);
+            clip.src = smallMedia() && scene.clipSmall ? scene.clipSmall : scene.clip;
+            var played = clip.play();
+            if (played && typeof played.catch === 'function') played.catch(release);
         } catch (e) {}
     }
 
-    // Never throws. On any failure the markup stays as written: the drawn scene
-    // and the headline.
-    function applyScene(now) {
-        var fallback = { sceneId: null, line: DEFAULT_LINE };
+    // Never throws. On any failure the markup stays as written: the drawn scene.
+    function applyScene() {
+        var fallback = { sceneId: null };
         try {
             var data = window.DashScenes;
             if (!data) return fallback;
             var picked = pickScene(data.scenes, readStore('omar_last_scene'), Math.random);
             if (!picked) return fallback;
-            var banner = liveBanner(data.banners, picked, now || new Date());
-            var line = banner ? pickLine(banner.lines, readStore('omar_last_line'), Math.random) : DEFAULT_LINE;
 
-            var headline = document.querySelector('.dash-headline');
             var shield = document.getElementById('dash-shield');
-            if (headline) headline.textContent = line;
             if (shield) shield.setAttribute('data-scene', picked.id);
             writeStore('omar_last_scene', picked.id);
-            writeStore('omar_last_line', line);
             scene = picked;
             if (typeof picked.still === 'string' && picked.still) showStill(picked.still);
             if (typeof picked.minimap === 'string' && picked.minimap) showMinimap(picked.minimap);
-            var mirror = document.querySelector('.dash-mirror');
-            if (mirror && typeof picked.mirror === 'string') mirror.setAttribute('data-gag', picked.mirror);
-            return { sceneId: picked.id, line: line };
+            return { sceneId: picked.id };
         } catch (e) {
             return fallback;
         }
     }
 
-    if (root.classList.contains('dash-first')) applyScene();
+    // Geometry of the rendered cockpit for a w x h window. Pure: no DOM, no
+    // globals, so it can run on every resize. All values are px except k.
+    // mode 'none' means the rendered cockpit does not fit; nothing else is set.
+    // Both modes use the wide cockpit's coordinates; frameH is the screen's
+    // height before the push-in (k * h in wide mode).
+    function layout(w, h) {
+        var o = { mode: 'none' };
+        var ckH = h, ckW = h * 16 / 9, shield = 0.412 * h;
+        var ckX, cropR = 0, k, left, top, frameH, sbW, sbH, sbX, sbY;
+        if (w <= 760 && h > w) {
+            // Upright: the phone picture is the cockpit's slice from x = 0.25 to
+            // 0.64; X0, the window's left edge in the cockpit, keeps it covered.
+            var x0 = Math.min(0.40, Math.max(0.26, 0.615 - w / ckW));
+            if (x0 + w / ckW > 0.64) x0 = 0.64 - w / ckW;
+            ckX = -x0 * ckW;
+            left = ckX + 0.458 * ckW + 2;
+            k = (w - left - 8) / w;
+            top = 0.474 * h;
+            frameH = 0.62 * k * w;
+            o.mode = (x0 >= 0.25 && k >= 0.40 && top + frameH <= h - 24) ? 'tall' : 'none';
+            // The scene box covers the window, the Colony mid-window.
+            sbH = shield; sbW = sbH * 1920 / 824; sbY = 0;
+            sbX = (-ckX + w / 2) - 0.60 * sbW;
+        } else {
+            // Every other window, a phone on its side included.
+            ckX = Math.max(0, (w - ckW) / 2);
+            cropR = Math.max(0, ckX + ckW - w);
+            top = 0.43 * h;
+            var leftMin = ckX + 0.458 * ckW;
+            var rightMax = Math.min(w, ckX + ckW) - 16;
+            k = Math.min(0.48, (rightMax - leftMin) / w);
+            left = Math.max(leftMin, Math.min(0.49 * w, rightMax - k * w));
+            frameH = k * h;
+            // The k floor. Under 500 px tall (a phone on its side, with the
+            // browser's bars showing) the grid may be smaller in the screen.
+            o.mode = (k >= (h < 500 ? 0.25 : 0.36)) ? 'wide' : 'none';
+            // The scene box covers the whole windshield view.
+            sbW = Math.max(ckW, shield * 1920 / 824); sbH = sbW * 824 / 1920;
+            sbX = (ckW - sbW) * 0.62; sbY = (shield - sbH) * 0.35;
+        }
+        if (o.mode === 'none') return o;
+        o.k = k; o.left = left; o.top = top; o.shield = shield; o.frameH = frameH;
+        o.ckX = ckX; o.ckW = ckW; o.ckH = ckH; o.cropR = cropR;
+        o.sbX = sbX; o.sbY = sbY; o.sbW = sbW; o.sbH = sbH;
+        return o;
+    }
+
+    // First visit, at load: request the cockpit picture this window needs, if
+    // the cockpit fits at all. The page stays dark for it (holdDarkFor, at most
+    // STILL_WAIT_MS). It counts only if it loads while the page is still dark.
+    function loadCockpit() {
+        var img = document.getElementById('dash-cockpit-img');
+        if (!img) return;
+        var kind = layout(window.innerWidth, window.innerHeight).mode;
+        if (kind !== 'wide' && kind !== 'tall') return;
+        var src = cockpitFile(kind);
+        firstEl = img;
+        firstKind = kind;
+        holdDarkFor(new Promise(function (done) {
+            img.addEventListener('load', function () {
+                if (root.classList.contains('dash-loading')) {
+                    cockpitLoaded[kind] = true;
+                    cockpitEl[kind] = img;
+                    setScales(); // applyLayout(), then --dash-ss from the new shield
+                }
+                done();
+            });
+            img.addEventListener('error', function () { done(); });
+        }));
+        img.src = src;
+        loadDoll();
+    }
+
+    // The doll's two pieces, requested with the cockpit. Each counts only if it
+    // loaded while the page was dark; applyLayout() decides whether the rendered
+    // doll shows. A missing piece leaves the drawn doll.
+    function loadDoll() {
+        DOLL_FILES.forEach(function (p) {
+            var img = document.querySelector('.dash-doll-r-' + p[0]);
+            if (!img) return;
+            holdDarkFor(new Promise(function (done) {
+                img.addEventListener('load', function () {
+                    if (root.classList.contains('dash-loading')) {
+                        dollLoaded[p[0]] = true;
+                        setScales();
+                    }
+                    done();
+                });
+                img.addEventListener('error', function () { done(); });
+            }));
+            img.src = p[1];
+        });
+    }
+
+    function cockpitFile(kind) {
+        return kind === 'tall' ? 'assets/dash/cockpit-phone-1620.webp'
+            : window.innerWidth > 2560 ? 'assets/dash/cockpit-wide-3840.webp'
+            : 'assets/dash/cockpit-wide-2560.webp';
+    }
+
+    // A resize has changed the mode (a phone turned on its side, say) while
+    // the intro waits. Ask now for the cockpit picture and the doll's pieces
+    // that this mode lacks; the dashboard switches when they arrive. Called
+    // from applyLayout(), so it only marks what is ready at once and leaves
+    // the rest to setScales() on arrival. Each file is asked for once.
+    function loadForTurn(kind) {
+        if (!firstVisit || state !== 'idle') return;
+        if (!cockpitLoaded[kind] && !turnAsked[kind]) {
+            turnAsked[kind] = true;
+            var shown = document.getElementById('dash-cockpit-img');
+            if (kind === firstKind && firstEl.complete && firstEl.naturalWidth > 0) {
+                // The markup's own picture, too late for the first load: here now.
+                cockpitLoaded[kind] = true;
+                cockpitEl[kind] = firstEl;
+            } else if (shown) {
+                // A second <img> like the first, loaded out of the page. Not a
+                // clone: a clone would fetch the first one's file again.
+                var pic = document.createElement('img');
+                Array.prototype.forEach.call(shown.attributes, function (a) {
+                    if (a.name !== 'src') pic.setAttribute(a.name, a.value);
+                });
+                pic.addEventListener('load', function () {
+                    if (state !== 'idle') return;
+                    cockpitLoaded[kind] = true;
+                    cockpitEl[kind] = pic;
+                    setScales();
+                });
+                pic.src = cockpitFile(kind);
+            }
+        }
+        DOLL_FILES.forEach(function (p) {
+            var img = document.querySelector('.dash-doll-r-' + p[0]);
+            if (!img || dollLoaded[p[0]] || turnAsked['doll-' + p[0]]) return;
+            turnAsked['doll-' + p[0]] = true;
+            if (img.complete && img.naturalWidth > 0) { dollLoaded[p[0]] = true; return; }
+            img.addEventListener('load', function () {
+                if (state !== 'idle') return;
+                dollLoaded[p[0]] = true;
+                setScales();
+            });
+            img.src = p[1];
+        });
+    }
+
+    if (root.classList.contains('dash-first')) {
+        firstVisit = true;
+        applyScene();
+        loadCockpit();
+    }
 
     window.DashIntro = {
         mount: mount,
         pushIn: pushIn,
         applyScene: applyScene,
         startClip: startClip,
-        localDate: localDate,
-        pickScene: pickScene,
-        liveBanner: liveBanner,
-        pickLine: pickLine,
-        DEFAULT_LINE: DEFAULT_LINE
+        layout: layout,
+        rendered: rendered,
+        pickScene: pickScene
     };
 })();

@@ -93,7 +93,8 @@
     <link rel="stylesheet" href="https://use.typekit.net/niv4qrq.css">
     <link rel="stylesheet" href="base.css">
     <link rel="stylesheet" href="video-overlay.css">
-    <link rel="stylesheet" href="dashboard-intro.css?v=6">
+    <link rel="stylesheet" href="dashboard-intro.css?v=12">
+    <link rel="stylesheet" href="dashboard-motion.css?v=2">
     <script src="https://player.vimeo.com/api/player.js"></script>
     <script src="carousel-config.js"></script>
     <script>
@@ -684,7 +685,7 @@
             body.paladin-landing .title{font-size:clamp(40px,15vw,90px)}
         }
 
-        /* Timed intro layer: the dashboard scene (dashboard-intro.css) */
+        /* Intro layer, until the visitor's first input: the dashboard scene (dashboard-intro.css) */
         #standoff-splash {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -1315,12 +1316,15 @@
     <div id="page-fade"></div>
 
     <div id="standoff-splash">
+        <h1 class="dash-headline">HAVE TASTE. WILL TRAVEL.</h1>
+        <p class="dash-hint">Press Enter, or click, to open the site.</p>
         <div id="dash-scene">
             <div id="dash-shield">
                 <!-- A scene's still and clip sit under the windshield's frame
                      (dashboard-scenes.js). Without a still, #dash-drawn shows. -->
-                <img id="dash-still" alt="" hidden>
-                <video id="dash-clip" muted playsinline preload="none" hidden></video>
+                <div id="dash-view">
+                    <div id="dash-scenebox"><img id="dash-still" alt="" hidden><video id="dash-clip" muted playsinline preload="none" hidden></video></div>
+                </div>
                 <svg class="dash-sky" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
                     <defs>
                         <linearGradient id="dash-sky-grad" x1="0" y1="0" x2="0" y2="1">
@@ -1404,50 +1408,9 @@
                     <rect x="0" y="0" width="1440" height="22" fill="#0B0B0C"></rect>
                 </svg>
 
-                <div class="dash-banner">
-                    <div class="dash-fly">
-                        <h1 class="dash-headline">HAVE TASTE. WILL TRAVEL.</h1>
-                        <div class="dash-towline" aria-hidden="true"></div>
-                        <svg class="dash-plane" viewBox="0 0 66 34" aria-hidden="true">
-                            <g class="dash-ink">
-                                <path d="M6 16 L4 4 L14 12 Z" fill="#E0281E"></path>
-                                <path d="M4 18 Q6 12 20 11 L46 10 Q58 11 60 17 Q58 23 46 23 L18 22 Q8 22 4 18 Z" fill="#F2EFE9"></path>
-                                <path d="M38 11 Q44 4 50 11 Z" fill="#33415C"></path>
-                                <path d="M26 18 L40 18 L34 29 L24 29 Z" fill="#E0281E"></path>
-                            </g>
-                            <rect x="60" y="5" width="3" height="24" rx="1.5" fill="#1A1020"></rect>
-                        </svg>
-                    </div>
-                </div>
-
                 <div class="dash-mirror" aria-hidden="true">
                     <div class="dash-mirror-stem"></div>
-                    <div class="dash-mirror-glass">
-                        <svg viewBox="0 0 216 46" preserveAspectRatio="xMidYMid slice">
-                            <rect x="0" y="0" width="216" height="26" fill="#8E8E8E"></rect>
-                            <rect x="0" y="18" width="216" height="8" fill="#B5B5B5"></rect>
-                            <polygon points="0,26 30,16 52,20 80,12 110,22 150,14 180,20 216,15 216,26" fill="#5C5C5C"></polygon>
-                            <rect x="0" y="26" width="216" height="20" fill="#3A3A3A"></rect>
-                            <polygon points="100,26 116,26 170,46 46,46" fill="#262626"></polygon>
-                            <polygon points="107.5,28 108.5,28 109,31 107,31" fill="#B5B5B5"></polygon>
-                            <circle cx="95" cy="35" r="4" fill="#9A9A9A" opacity="0.5"></circle>
-                            <circle cx="89" cy="37" r="3" fill="#9A9A9A" opacity="0.4"></circle>
-                            <g class="dash-rider" fill="#0A0A0A">
-                                <ellipse cx="108" cy="33" rx="9" ry="4.5"></ellipse>
-                                <polygon points="114,31 119,24 122,25 118,33"></polygon>
-                                <polygon points="119,24 125,25 124,28 120,27"></polygon>
-                                <polygon points="101,36 103,36 100,43 98.5,43"></polygon>
-                                <polygon points="105,36 106.6,36 106,43 104.4,43"></polygon>
-                                <polygon points="111,36 112.6,36 114,43 112.4,43"></polygon>
-                                <polygon points="115,35 116.6,35 119.5,42 118,42.5"></polygon>
-                                <path d="M99 31 Q94 32 95 37" fill="none" stroke="#0A0A0A" stroke-width="1.5"></path>
-                                <polygon points="106,29 111,29 110.5,21 106.5,21"></polygon>
-                                <circle cx="108.5" cy="19" r="2"></circle>
-                                <rect x="104.5" y="17.2" width="8" height="1.2"></rect>
-                                <rect x="106.5" y="14.5" width="4" height="3"></rect>
-                            </g>
-                        </svg>
-                    </div>
+                    <div class="dash-mirror-glass"></div>
                 </div>
 
                 <div class="dash-minimap" aria-hidden="true">
@@ -1511,10 +1474,32 @@
                             <ellipse cx="75" cy="77" rx="56" ry="7" fill="#2A2A2E"></ellipse>
                         </g>
                     </svg>
+                    <!-- Rendered doll (.dash-doll-rendered, set by dashboard-intro.js once both
+                         pieces have loaded). Hidden otherwise; the drawn doll above shows. -->
+                    <img class="dash-doll-r dash-doll-r-base" alt="">
+                    <img class="dash-doll-r dash-doll-r-top" alt="">
                 </div>
             </div>
 
             <div id="dash-body">
+                <!-- Rendered cockpit (html.dash-rendered, set by dashboard-intro.js once the
+                     image has loaded). Without it, the drawn dash below shows. -->
+                <div id="dash-cockpit" aria-hidden="true">
+                    <img id="dash-cockpit-img" alt="">
+                    <!-- Gauge needles over the picture (its own are painted out), both modes.
+                         The cockpit's box (in portrait the picture is a slice of it): 1600 x 900 units. Hubs at (0.1786,
+                         0.5394) speed and (0.3115, 0.5384) revs. dashboard-motion.css/.js. -->
+                    <svg id="dash-gauges" viewBox="0 0 1600 900" aria-hidden="true">
+                        <g transform="translate(285.76 485.46)">
+                            <g class="dash-gauge-speed"><g class="dash-gauge-wander"><line x1="-9.92" y1="0" x2="49.12" y2="0"></line></g></g>
+                            <circle r="5.44"></circle>
+                        </g>
+                        <g transform="translate(498.4 484.56)">
+                            <g class="dash-gauge-revs"><g class="dash-gauge-wander"><line x1="-9.92" y1="0" x2="49.12" y2="0"></line></g></g>
+                            <circle r="5.44"></circle>
+                        </g>
+                    </svg>
+                </div>
                 <div class="dash-surface" aria-hidden="true">
                     <div class="dash-cap"></div>
                     <div class="dash-vent"></div>
@@ -1599,9 +1584,9 @@
 
             <div id="dash-screen" aria-hidden="true"></div>
 
-            <a id="dash-wire" href="about.html">
+            <a id="dash-wire" href="about.html" aria-label="Wire Omar" title="Wire Omar">
                 <svg viewBox="0 0 1052 1600" aria-hidden="true"><use xlink:href="#knight-mark" href="#knight-mark"></use></svg>
-                <span>Wire<br>Omar</span>
+                <span>Wire<br> Omar</span>
             </a>
         </div>
     </div>
@@ -1661,13 +1646,13 @@
         <!-- HUD Elements -->
         <div class="hud-tag hud-tl" id="hud-tc">[ TC 00:00:00:00 ]</div>
         <div class="hud-tag hud-tr" id="lut-toggle">[ LUT: REC.709 ]</div>
-        <div class="hud-tag hud-tr" id="intro-timer" style="display: none; color: var(--vibrant-red-hud);">[ DISPATCH IN: 05.00 ]</div>
         <div class="hud-tag hud-bl" id="hud-fps">[ 24 FPS ]</div>
         <div class="hud-tag hud-br" id="bat-status">[ BAT: 00% ]</div>
     </div>
 
-    <script src="dashboard-scenes.js?v=1"></script>
-    <script src="dashboard-intro.js?v=5"></script>
+    <script src="dashboard-scenes.js?v=4"></script>
+    <script src="dashboard-intro.js?v=12"></script>
+    <script src="dashboard-motion.js?v=2"></script>
     <script src="apex-sound.js?v=4"></script>
     <script>
 
@@ -2582,11 +2567,9 @@
             if (typeof projectDisplay !== 'undefined' && projectDisplay) projectDisplay.style.width = '';
         }
 
-        // — TIMED INTRO SPLIT SCREEN & FOOTER TYPEWRITER SYSTEM —
-        const INTRO_HOLD_MS = 5000; // time to look at the dashboard before the push-in
-        let introTimer = null;
-        let countdownInterval = null;
-        let introTimeLeft = INTRO_HOLD_MS / 1000;
+        // INTRO: THE DASHBOARD WAITS FOR THE VISITOR
+        // Keys that start the push-in (with Ctrl, Meta or Alt held they stay the browser's).
+        const INTRO_START_KEYS = ['Escape', 'Enter', ' ', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'PageDown'];
 
         function initIntro() {
             const params = new URLSearchParams(window.location.search);
@@ -2609,39 +2592,47 @@
             }
 
             document.body.classList.add('intro-active');
-            // The hold starts now: a scene's clip, if it has one, starts with it.
+            // The intro starts now: a scene's clip, if it has one, starts with it,
+            // and the gauge needles sweep.
             if (window.DashIntro && DashIntro.startClip) DashIntro.startClip();
+            if (window.DashMotion) DashMotion.start();
             // The grid is in its normal state and the dashboard shows it scaled
-            // down inside its screen for the hold. Normally already done by
+            // down inside its screen while the intro waits. Normally already done by
             // mountDashboardEarly(); this covers any path that skipped it.
             if (!document.documentElement.classList.contains('dash-intro')) {
                 enterGridState();
                 initVisualGrid();
                 if (window.DashIntro) DashIntro.mount();
             }
-            const timerEl = document.getElementById('intro-timer');
             const lutToggle = document.getElementById('lut-toggle');
-            if (timerEl) {
-                timerEl.style.display = 'block';
-                timerEl.textContent = `[ DISPATCH IN: 05.00 ]`;
-            }
             if (lutToggle) lutToggle.style.display = 'none';
 
-            // One exit, whichever comes first: click, key, or the 3s timer.
+            // The dashboard stays until the visitor acts: a click or tap anywhere,
+            // a scroll, a swipe, or a start key. The first one starts the push-in,
+            // once; every listener goes with it. Wire Omar keeps its click and
+            // Enter to itself (DashIntro.mount), so it navigates instead.
             // Grid state was entered at mount; the push-in lands on it.
+            const PASSIVE = { passive: true };
             let introExiting = false;
-            function skipIntro() {
-                if (introTimer) {
-                    clearTimeout(introTimer);
-                    introTimer = null;
-                }
-                if (countdownInterval) {
-                    clearInterval(countdownInterval);
-                    countdownInterval = null;
-                }
+            const onStartKey = (e) => {
+                if (e.ctrlKey || e.metaKey || e.altKey) return;
+                if (INTRO_START_KEYS.indexOf(e.key) === -1) return;
+                e.preventDefault();
+                startPushIn();
+            };
+            const onStartInput = () => startPushIn();
+            document.addEventListener('click', onStartInput);
+            document.addEventListener('keydown', onStartKey);
+            document.addEventListener('wheel', onStartInput, PASSIVE);
+            document.addEventListener('touchmove', onStartInput, PASSIVE);
 
+            function startPushIn() {
                 if (introExiting) return;
                 introExiting = true;
+                document.removeEventListener('click', onStartInput);
+                document.removeEventListener('keydown', onStartKey);
+                document.removeEventListener('wheel', onStartInput, PASSIVE);
+                document.removeEventListener('touchmove', onStartInput, PASSIVE);
                 if (typeof ApexSound !== 'undefined') {
                     ApexSound.init();
                     ApexSound.play('shutter');
@@ -2650,7 +2641,6 @@
                     document.body.classList.remove('intro-active');
                     document.documentElement.classList.remove('dash-first');
                     preloadHeroBackgrounds();
-                    if (timerEl) timerEl.style.display = 'none';
                     if (lutToggle) lutToggle.style.display = 'block';
                     const gridContainer = document.getElementById('grid-scroll-container');
                     if (gridContainer && !document.activeElement?.closest?.('a, button, input')) {
@@ -2658,44 +2648,6 @@
                     }
                 });
             }
-
-            // Keyboard/Click listeners to skip
-            const handleKeyToSkip = (e) => {
-                if (document.body.classList.contains('intro-active')) {
-                    if (e.key === ' ' || e.key === 'Enter' || e.key === 'Escape') {
-                        e.preventDefault();
-                        document.removeEventListener('keydown', handleKeyToSkip);
-                        skipIntro();
-                    }
-                }
-            };
-            document.addEventListener('keydown', handleKeyToSkip);
-
-            const handleClickToSkip = () => {
-                if (document.body.classList.contains('intro-active')) {
-                    document.removeEventListener('click', handleClickToSkip);
-                    skipIntro();
-                }
-            };
-            document.addEventListener('click', handleClickToSkip);
-
-            // Countdown ticker
-            countdownInterval = setInterval(() => {
-                introTimeLeft -= 0.1;
-                if (introTimeLeft <= 0) {
-                    introTimeLeft = 0;
-                    clearInterval(countdownInterval);
-                }
-                if (timerEl) {
-                    timerEl.textContent = `[ DISPATCH IN: ${introTimeLeft.toFixed(2).padStart(5, '0')} ]`;
-                }
-            }, 100);
-
-            // Auto skip after the hold
-            introTimer = setTimeout(() => {
-                introTimer = null;
-                skipIntro();
-            }, INTRO_HOLD_MS);
         }
 
         function initVisualGrid() {
@@ -2988,8 +2940,10 @@
 
         window.addEventListener('keydown', handleEscape);
 
-        // Arrow key scrolling for the grid
+        // Arrow key scrolling for the grid. Not while the intro shows: there an
+        // arrow key starts the push-in, which lands on the grid as it was seen.
         window.addEventListener('keydown', (e) => {
+            if (e.defaultPrevented || document.documentElement.classList.contains('dash-intro')) return;
             if (!document.documentElement.classList.contains('grid-active')) return;
             const container = document.getElementById('grid-scroll-container');
             if (!container) return;

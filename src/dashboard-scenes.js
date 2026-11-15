@@ -1,38 +1,22 @@
-/* Dashboard intro scenes and banners: window.DashScenes. Data only.
-   Adding a city or a banner means editing this file only.
+/* Dashboard intro scenes: window.DashScenes. Data only.
+   Adding a city means editing this file only.
 
-   Scene:  { id, timezone, still?, clip?, clipSmall?, minimap?, mirror? }
+   Scene:  { id, still?, stillSmall?, clip?, clipSmall?, minimap? }
            still        image seen through the windshield (none: the drawn scene shows)
-           clip         six-second video, plays once; clipSmall is used on phones
-           minimap      the scene's minimap graphic
-           mirror       which mirror gag to show ('paladin' is the only one so far)
-   Banner: { scene, start, end, lines }
-           scene        the scene id it flies over
-           start, end   'YYYY-MM-DD', both inclusive, in the scene's time zone
-           lines        one or more lines, each six words or fewer. No event logos.
-   With no live banner, the plane tows HAVE TASTE. WILL TRAVEL. */
+           stillSmall   the still for phones, when present
+           clip         six-second video, plays once over the still; clipSmall is used on phones
+           minimap      the scene's minimap strip: 96 wide, three windows tall
+                        (viewBox 96 x 288), its pattern repeating every 192
+                        units, so it rolls seamlessly under the fixed arrow */
 window.DashScenes = {
     scenes: [
         {
             id: 'miami-beach',
-            timezone: 'America/New_York',
-            minimap: 'assets/dash/scenes/miami-beach/minimap.svg',
-            mirror: 'paladin'
-        }
-    ],
-    banners: [
-        {
-            // Art Basel Miami Beach: 4 to 6 December, preview days 2 and 3 December.
-            scene: 'miami-beach',
-            start: '2026-11-30',
-            end: '2026-12-06',
-            lines: [
-                'ART BASEL. BASK RESPONSIBLY.',
-                'ART BASEL. BYO BANANA.',
-                'ART BASEL. NOD KNOWINGLY.',
-                "ART BASEL. YES, IT'S ART.",
-                'ART BASEL. PARK IN FORT LAUDERDALE.'
-            ]
+            still: 'assets/dash/scenes/miami-beach/still-1920.jpg',
+            stillSmall: 'assets/dash/scenes/miami-beach/still-960.jpg',
+            clip: 'assets/dash/scenes/miami-beach/clip-1920.mp4',
+            clipSmall: 'assets/dash/scenes/miami-beach/clip-960.mp4',
+            minimap: 'assets/dash/scenes/miami-beach/minimap-strip.svg'
         }
     ]
 };

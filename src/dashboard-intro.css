@@ -18,13 +18,14 @@
     --dash-oy: calc(var(--dash-top) / (1 - var(--dash-k)));
     --dash-w: calc(var(--dash-k) * 100vw);
     --dash-h: calc(var(--dash-k) * 100vh);
+    --dash-frame-h: var(--dash-h); /* the screen's height before the push-in; inline (px) only for the rendered phone upright */
     --dash-ease: cubic-bezier(0.7, 0, 0.2, 1);
     --dash-push: 1000ms;
     /* Set by DashIntro.mount() on mount and resize. */
     --dash-fit: 1;   /* furniture: min(innerWidth / 1440, innerHeight / 900) */
     --dash-ss: 1;    /* windshield overlays: windshield height / artwork windshield height */
 }
-@media (max-width: 760px) {
+@media (max-width: 760px) and (orientation: portrait) {
     :root {
         --dash-k: 0.62;
         --dash-left: 19vw;
@@ -42,7 +43,7 @@ html.dash-intro body {
 html.dash-intro #portal {
     transform-origin: var(--dash-ox) var(--dash-oy);
     transform: scale(var(--dash-k));
-    clip-path: inset(0 0 calc(100% - 100vh) 0);
+    clip-path: inset(0 0 calc(100% - var(--dash-frame-h) / var(--dash-k)) 0); /* cut at the screen's foot */
 }
 /* Grid chrome that lives outside #portal stays hidden until the push-in lands. */
 html.dash-intro .copyright-tag.fixed {
@@ -78,6 +79,13 @@ html.dash-intro .copyright-tag.fixed {
     width: 100%;
     height: 100%;
 }
+/* The view holds the scene box (still, clip). No z-index, transform or
+   clipping here: the view adds no stacking level of its own. */
+#dash-view,
+#dash-scenebox {
+    position: absolute;
+    inset: 0;
+}
 /* A scene's still and clip, under the windshield's frame. Cropped like the
    drawn scene (xMidYMax slice). Shown only once loaded; [hidden] until then. */
 #dash-still,
@@ -97,53 +105,22 @@ html.dash-intro .copyright-tag.fixed {
 .dash-road { transform-origin: 720px 262px; animation: dash-drive .7s linear infinite; }
 @keyframes dash-drive { from { transform: scale(1); } to { transform: scale(2); } }
 
-/* Banner plane */
-.dash-banner {
+/* The intro's heading, and the line that says how to enter: for assistive
+   technology and search, never seen. */
+#standoff-splash h1.dash-headline,
+#standoff-splash p.dash-hint {
     position: absolute;
-    z-index: 1;
-    top: calc(104px * var(--dash-ss));
-    left: 8.5%;
-    right: 8.5%;
-    height: calc(64px * var(--dash-ss));
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
     overflow: hidden;
-}
-.dash-fly {
-    position: absolute;
-    top: 0;
-    display: flex;
-    align-items: center;
-    width: max-content;
-    animation: dash-fly 16s linear infinite;
-    animation-delay: -7s;
-}
-@keyframes dash-fly { from { left: 0; transform: translateX(-100%); } to { left: 100%; transform: translateX(0); } }
-#standoff-splash h1.dash-headline {
-    margin: 0;
-    padding: calc(4px * var(--dash-ss)) calc(16px * var(--dash-ss));
-    background: #F2EFE9;
-    border: calc(3px * var(--dash-ss)) solid #1A1020;
-    color: var(--vibrant-red);
-    font-family: var(--display);
-    font-weight: 600;
-    font-size: calc(36px * var(--dash-ss));
-    line-height: 1.2;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
+    clip-path: inset(50%);
     white-space: nowrap;
-    text-shadow: none;
-}
-.dash-towline {
-    width: calc(48px * var(--dash-ss));
-    height: calc(3px * var(--dash-ss));
-    background: #1A1020;
-}
-.dash-plane {
-    display: block;
-    width: calc(84px * var(--dash-ss));
-    height: calc(44px * var(--dash-ss));
 }
 
-/* Rear-view mirror with the rider */
+/* Rear-view mirror: stem, frame and plain glass. Drawn dashboard only. */
 .dash-mirror {
     position: absolute;
     z-index: 1;
@@ -165,12 +142,8 @@ html.dash-intro .copyright-tag.fixed {
     box-sizing: border-box;
     border: calc(7px * var(--dash-ss)) solid #0B0B0C;
     border-radius: calc(16px * var(--dash-ss));
-    overflow: hidden;
     background: #3A3A3A;
 }
-.dash-mirror-glass svg { display: block; width: 100%; height: 100%; }
-.dash-rider { animation: dash-gallop .36s ease-in-out infinite; }
-@keyframes dash-gallop { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.2px); } }
 
 /* Minimap */
 .dash-minimap {
@@ -193,7 +166,7 @@ html.dash-intro .copyright-tag.fixed {
    are ready, then the dashboard appears complete and the intro starts. */
 html.dash-loading body > * { visibility: hidden !important; }
 
-/* The grid sits in the screen before the hold starts (body.intro-active), so
+/* The grid sits in the screen before the intro starts (body.intro-active), so
    hide the header, menu and corners for the whole time the dashboard is up. */
 html.dash-intro .header-name,
 html.dash-intro .apex-nav,
@@ -396,14 +369,21 @@ html.dash-pushing .dash-doll-top { animation: dash-sway-hard .5s ease-in-out inf
     left: var(--dash-left);
     top: var(--dash-top);
     width: var(--dash-w);
-    height: var(--dash-h);
+    height: var(--dash-frame-h);
     background: var(--bg, #050505);
+    --dash-bezel-line: #5E636B; /* the bezel's grey line; brightens on hover */
     box-shadow:
         0 0 0 calc(10px * var(--dash-fit)) #000000,
-        0 0 0 calc(11px * var(--dash-fit)) #5E636B,
+        0 0 0 calc(11px * var(--dash-fit)) var(--dash-bezel-line),
         0 calc(24px * var(--dash-fit)) calc(48px * var(--dash-fit)) calc(11px * var(--dash-fit)) rgba(0, 0, 0, 0.6);
+    transition: box-shadow 150ms;
 }
 html.dash-intro #dash-screen { background: transparent; }
+/* While the intro waits, the screen is the way in: a pointer, and on hover its
+   grey line brightens. The black ring and the drop shadow stay. Not once the
+   push-in has started. */
+html.dash-intro:not(.dash-pushing) #dash-screen { cursor: pointer; }
+html.dash-intro:not(.dash-pushing) #dash-screen:hover { --dash-bezel-line: #C9CDD3; }
 
 /* ---- Start button: Wire Omar ------------------------------------------- */
 
@@ -453,23 +433,19 @@ html.dash-pushing #dash-scene {
 }
 html.dash-pushing #portal {
     transform: scale(1);
-    transition: transform var(--dash-push) var(--dash-ease);
+    clip-path: inset(0 0 calc(100% - 100vh) 0);
+    transition: transform var(--dash-push) var(--dash-ease), clip-path var(--dash-push) var(--dash-ease);
 }
+/* A short screen grows to --dash-h on the grid cut's clock (elsewhere nothing moves). Phone upright: the page sits --dash-slide higher in it, and slides back. */
+html.dash-pushing #dash-screen { height: var(--dash-h); transition: box-shadow 150ms, height var(--dash-push) var(--dash-ease); }
+html.dash-pushing.dash-rendered #dash-cockpit { --hb: calc(var(--dash-top) + var(--dash-h)); transition: clip-path var(--dash-push) var(--dash-ease); }
+html.dash-intro.dash-rendered[data-dash-mode="tall"] #grid-scroll-container { transform: translateY(calc(-1 * var(--dash-slide, 0px))); }
+html.dash-pushing.dash-rendered[data-dash-mode="tall"] #grid-scroll-container { transform: none; transition: transform var(--dash-push) var(--dash-ease); }
 
-/* ---- Phone ------------------------------------------------------------- */
+/* ---- Phone, upright (on its side it takes the wide rules) --------------- */
 
-@media (max-width: 760px) {
+@media (max-width: 760px) and (orientation: portrait) {
     .dash-furniture { display: none; }
-
-    .dash-banner { top: calc(62px * var(--dash-ss)); left: 0; right: 0; height: calc(44px * var(--dash-ss)); }
-    .dash-fly { animation-duration: 12s; animation-delay: -5s; }
-    #standoff-splash h1.dash-headline {
-        padding: calc(3px * var(--dash-ss)) calc(10px * var(--dash-ss));
-        border-width: calc(2px * var(--dash-ss));
-        font-size: calc(20px * var(--dash-ss));
-    }
-    .dash-towline { width: calc(28px * var(--dash-ss)); height: calc(2px * var(--dash-ss)); }
-    .dash-plane { width: calc(54px * var(--dash-ss)); height: calc(28px * var(--dash-ss)); }
 
     .dash-mirror-stem { width: calc(10px * var(--dash-ss)); height: calc(22px * var(--dash-ss)); }
     .dash-mirror-glass {
@@ -505,13 +481,13 @@ html.dash-pushing #portal {
     #dash-screen {
         box-shadow:
             0 0 0 6px #000000,
-            0 0 0 7px #5E636B,
+            0 0 0 7px var(--dash-bezel-line),
             0 16px 32px 7px rgba(0, 0, 0, 0.6);
     }
 
-    /* No knee panel on the phone: the button sits centred in the margin left of the
-       bezel (bezel is 7px wide), level with the screen's foot. */
-    #dash-wire {
+    /* Drawn: no knee panel on the phone, so the button sits centred in the margin
+       left of the bezel (7px wide), level with the screen's foot. */
+    html:not(.dash-rendered) #dash-wire {
         left: calc((var(--dash-left) - 7px) / 2 - 27px);
         top: calc(var(--dash-top) + var(--dash-h) - 54px);
         width: 54px;
@@ -521,10 +497,160 @@ html.dash-pushing #portal {
         gap: 2px;
         font-size: 10px;
     }
-    #dash-wire svg { height: 11px; }
+    html:not(.dash-rendered) #dash-wire svg { height: 11px; }
 }
 
+/* ---- Rendered cockpit (html.dash-rendered) ----------------------------- */
+
+/* One rendered cockpit picture in place of the drawn dash, with the screen cut
+   out of it. dashboard-intro.js sets html.dash-rendered, html[data-dash-mode]
+   and the layout variables (px; --dash-k a number) only once the picture has
+   loaded while the page was dark. Without the class nothing below applies and
+   the drawn dashboard shows as before.
+   Paint order: scene (#dash-shield, z 1 and lower), cockpit (z 2),
+   screen and minimap (z 3), doll (z 4), Wire Omar (z 5). #dash-shield and
+   #dash-body set no z-index, so all of these stack together. */
+#dash-cockpit { display: none; }
+html.dash-rendered #dash-cockpit {
+    display: block;
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    /* The screen's hole, as in .dash-surface but in window coordinates. */
+    --hl: var(--dash-left);
+    --ht: var(--dash-top);
+    --hr: calc(var(--dash-left) + var(--dash-w));
+    --hb: calc(var(--dash-top) + var(--dash-frame-h));
+    clip-path: polygon(evenodd,
+        0 0, 100% 0, 100% 100%, 0 100%, 0 0,
+        var(--hl) var(--ht), var(--hr) var(--ht), var(--hr) var(--hb), var(--hl) var(--hb), var(--hl) var(--ht));
+}
+html.dash-rendered #dash-cockpit-img {
+    position: absolute;
+    top: 0;
+    left: var(--ck-x);
+    display: block;
+    width: var(--ck-w);
+    max-width: none;
+    height: var(--ck-h);
+}
+/* Phone upright: the picture is the cockpit's slice from x = 0.25 to 0.64. */
+html.dash-rendered[data-dash-mode="tall"] #dash-cockpit-img { left: calc(var(--ck-x) + 0.25 * var(--ck-w)); width: calc(0.39 * var(--ck-w)); }
+/* Wider than 16:9: black beside the picture, fading in over its outer 6%.
+   The width is 0 when the picture starts at x = 0 (no margin to fade into). */
+html.dash-rendered[data-dash-mode="wide"] #dash-cockpit::before,
+html.dash-rendered[data-dash-mode="wide"] #dash-cockpit::after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    bottom: 0;
+    width: min(calc(var(--ck-x) * 1000), calc(var(--ck-x) + 0.06 * var(--ck-w)));
+}
+html.dash-rendered[data-dash-mode="wide"] #dash-cockpit::before {
+    left: 0;
+    background: linear-gradient(90deg, #000000 var(--ck-x), rgba(0, 0, 0, 0));
+}
+html.dash-rendered[data-dash-mode="wide"] #dash-cockpit::after {
+    right: 0;
+    background: linear-gradient(270deg, #000000 var(--ck-x), rgba(0, 0, 0, 0));
+}
+
+/* The windshield spans the picture. Pillars, roof, hood and the dash itself
+   are in the picture now; the drawn scene (#dash-drawn) stays as the fallback
+   for a missing still. */
+html.dash-rendered #dash-shield {
+    left: var(--ck-x);
+    width: var(--ck-w);
+}
+html.dash-rendered .dash-surface,
+html.dash-rendered .dash-furniture,
+html.dash-rendered .dash-sky > :not(defs):not(#dash-drawn) {
+    display: none;
+}
+
+/* The mirror, glass and all, is painted into the cockpit picture. */
+html.dash-rendered .dash-mirror { display: none; }
+
+/* Minimap over the picture, 7% of its width in from its visible right edge. */
+html.dash-rendered .dash-minimap {
+    z-index: 3;
+    right: calc(var(--ck-crop-r) + 0.07 * var(--ck-w));
+}
+/* Phone upright: under the mirror, over the sky, 10px in from the window's left (the windshield starts at --ck-x). */
+html.dash-rendered[data-dash-mode="tall"] .dash-minimap {
+    left: calc(10px - var(--ck-x)); right: auto; top: calc(0.16 * var(--ck-h)); width: 56px; height: 56px;
+}
+
+/* Wire Omar on the picture's start button: a ring 128px across at 3840 wide,
+   centred on (0.428, 0.674), in both modes. The knight alone on its face, no
+   words (the link keeps its name in aria-label and title). */
+html.dash-rendered #dash-wire {
+    left: calc(var(--ck-x) + (0.428 - 0.01665) * var(--ck-w));
+    top: calc(0.674 * var(--ck-h) - 0.01665 * var(--ck-w));
+    width: calc(0.0333 * var(--ck-w));
+    height: calc(0.0333 * var(--ck-w));
+    border: 0;
+    background: none;
+    box-shadow: none;
+}
+html.dash-rendered #dash-wire:focus-visible { color: var(--vibrant-red-hud); }
+html.dash-rendered #dash-wire svg { height: 46%; }
+html.dash-rendered #dash-wire span { display: none; }
+
+/* Scene box: one box in the scene's 21:9 shape, so the still and the clip
+   share coordinates. Under the cockpit (z 2). */
+html.dash-rendered #dash-view { overflow: hidden; }
+html.dash-rendered #dash-scenebox {
+    right: auto;
+    bottom: auto;
+    left: var(--sb-x);
+    top: var(--sb-y);
+    width: var(--sb-w);
+    height: var(--sb-h);
+}
+
+/* Rendered doll: two pictures split at the spring. The base stands still; the
+   top sways about the spring's top, with the drawn doll's motion. Only with
+   .dash-doll-rendered (dashboard-intro.js adds it under html.dash-rendered once
+   both pieces have loaded); otherwise the drawn doll shows, as before.
+   Left and top resolve against #dash-shield, which starts at --ck-x and is
+   --ck-w wide, so the doll's centre is --ck-x + CX * --ck-w. Feet at 0.42 of
+   the picture are below the shield's foot: the shield does not clip. */
+.dash-doll-r { display: none; }
+html.dash-rendered .dash-doll.dash-doll-rendered {
+    width: auto;
+    height: calc(0.18 * var(--ck-h));
+    aspect-ratio: 1161 / 3092;
+    left: calc(0.43 * var(--ck-w));
+    top: calc(0.42 * var(--ck-h));
+    transform: translate(-50%, -100%);
+}
+html.dash-rendered[data-dash-mode="tall"] .dash-doll.dash-doll-rendered { height: calc(0.15 * var(--ck-h)); }
+/* Phone upright, a doll picture missing: the drawn doll (100px wide there) keeps the same centre. */
+html.dash-rendered[data-dash-mode="tall"] .dash-doll:not(.dash-doll-rendered) { left: calc(0.43 * var(--ck-w) - 50px * var(--dash-ss)); }
+html.dash-rendered .dash-doll-rendered .dash-doll-top,
+html.dash-rendered .dash-doll-rendered .dash-doll-base { display: none; }
+html.dash-rendered .dash-doll-rendered .dash-doll-r {
+    display: block;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    max-width: none;
+    object-fit: fill;
+}
+html.dash-rendered .dash-doll-rendered .dash-doll-r-base { top: 43.47%; height: 56.53%; }
+html.dash-rendered .dash-doll-rendered .dash-doll-r-top {
+    top: 0;
+    height: 57.21%;
+    transform-origin: 49.53% 77.33%;
+    animation: dash-dance 1.6s ease-in-out infinite;
+}
+html.dash-pushing.dash-rendered .dash-doll-rendered .dash-doll-r-top { animation: dash-sway-hard .5s ease-in-out infinite; }
+
 @media (prefers-reduced-motion: reduce) {
-    .dash-road, .dash-fly, .dash-rider, .dash-doll, .dash-doll-top, .dash-doll-wave,
-    html.dash-pushing .dash-doll-top { animation: none; }
+    .dash-road, .dash-doll, .dash-doll-top, .dash-doll-wave,
+    html.dash-pushing .dash-doll-top,
+    html.dash-rendered .dash-doll-rendered .dash-doll-r-top,
+    html.dash-pushing.dash-rendered .dash-doll-rendered .dash-doll-r-top { animation: none; }
 }

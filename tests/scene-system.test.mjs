@@ -29,10 +29,10 @@ after(async () => {
 //   seen: this browser session has already played the intro.
 //   storageBlocked: localStorage and sessionStorage throw on access.
 //   init: extra init scripts (functions) for the context.
-//   time: ISO string; the page clock is fixed there before the first load.
 async function open({ path: p = '/', seen = false, offline = false, storageBlocked = false, viewport = { width: 1440, height: 900 },
-  timezoneId, time, routes = [], init = [], goto = true } = {}) {
-  const context = await browser.newContext({ viewport, timezoneId });
+  routes = [], init = [], goto = true } = {}) {
+  const context = await browser.newContext({ viewport });
+  for (const m of ['**/assets/dash/cockpit-*', '**/assets/dash/doll-*']) await context.route(m, (r) => r.fulfill({ status: 404, body: 'not found' }));
   for (const [match, handler] of routes) await context.route(match, handler);
   if (offline) {
     await context.route(
@@ -65,7 +65,6 @@ async function open({ path: p = '/', seen = false, offline = false, storageBlock
   page.on('pageerror', (e) => page.errors.push(e.message));
   page.requested = [];
   page.on('request', (r) => page.requested.push(r.url()));
-  if (time) await page.clock.setFixedTime(new Date(time));
   if (goto) await page.goto(server.url + p);
   return page;
 }
@@ -82,15 +81,11 @@ async function hasClass(page, sel, cls) {
   return page.evaluate(([sel, cls]) => document.querySelector(sel).classList.contains(cls), [sel, cls]);
 }
 const close = (page) => page.context().close();
-const HEAD = 'HAVE TASTE. WILL TRAVEL.';
-const LINES = ['ART BASEL. BASK RESPONSIBLY.', 'ART BASEL. BYO BANANA.', 'ART BASEL. NOD KNOWINGLY.',
-               "ART BASEL. YES, IT'S ART.", 'ART BASEL. PARK IN FORT LAUDERDALE.'];
-const IN_WINDOW = '2026-12-03T17:00:00Z';
-// Routes for a page whose scenes file holds just this scene and no banners.
+// Routes for a page whose scenes file holds just this scene.
 // Media under test-media/ come from tests/fixtures/ (clip-small.mp4 is clip.mp4);
 // any other name there is a 404.
 function withScene(scene, { delayMs = 0 } = {}) {
-  const body = `window.DashScenes = { scenes: [${JSON.stringify({ id: 'test-scene', timezone: 'America/New_York', ...scene })}], banners: [] };`;
+  const body = `window.DashScenes = { scenes: [${JSON.stringify({ id: 'test-scene', ...scene })}] };`;
   return [
     ['**/dashboard-scenes.js*', (r) => r.fulfill({ contentType: 'text/javascript', body })],
     ['**/test-media/**', async (r) => {
@@ -123,9 +118,6 @@ const firstShown = () => {
   }).observe(document, { attributes: true, subtree: true, attributeFilter: ['class'] });
 };
 const media = (page) => page.requested.filter((u) => /test-media/.test(u));
-async function headline(page) {
-  return (await page.textContent('.dash-headline')).trim();
-}
 
 for (const offline of [false, true]) {
   const mode = offline ? 'offline' : 'online';
@@ -154,46 +146,20 @@ for (const offline of [false, true]) {
       try {
         assert.equal(await hasClass(page, 'html', 'dash-first'), true);
         await introStart(page);
+        await page.keyboard.press('Escape');
         await landed(page);
         assert.deepEqual(page.errors, []);
         assert.equal(await css(page, '#portal', 'transform'), 'none');
       } finally { await close(page); }
     });
 
-    // — Task 2: scenes, banners and the pick —
-    const atTime = (iso, check, extra = {}) => async () => {
-      const page = await open({ offline, time: iso, ...extra });
-      try { await check(page); } finally { await close(page); }
-    };
-    const headlineIs = (want) => async (page) => assert.equal(await headline(page), want);
-    const headlineIn = (list) => async (page) => assert.ok(list.includes(await headline(page)), await headline(page));
-
-    test('before the window (Nov 29 23:30 Miami): headline', atTime('2026-11-30T04:30:00Z', headlineIs(HEAD)));
-    test('window opens (Nov 30 00:30 Miami): an Art Basel line', atTime('2026-11-30T05:30:00Z', headlineIn(LINES)));
-    test('last minutes (Dec 6 23:30 Miami): an Art Basel line', atTime('2026-12-07T04:30:00Z', headlineIn(LINES)));
-    test('after the window (Dec 7 00:30 Miami): headline', atTime('2026-12-07T05:30:00Z', headlineIs(HEAD)));
-    test('visitor in Tokyo at Dec 6 23:30 Miami: still an Art Basel line',
-      atTime('2026-12-07T04:30:00Z', headlineIn(LINES), { timezoneId: 'Asia/Tokyo' }));
-
-    test('scene and line are recorded', atTime(IN_WINDOW, async (page) => {
-      assert.equal(await page.getAttribute('#dash-shield', 'data-scene'), 'miami-beach');
-      const stored = await page.evaluate(() => [localStorage.getItem('omar_last_scene'), localStorage.getItem('omar_last_line')]);
-      assert.deepEqual(stored, ['miami-beach', await headline(page)]);
-    }));
-
-    test('two intros running never repeat a line', async () => {
-      const page = await open({ offline, time: IN_WINDOW });
+    // — Task 2: scenes and the pick —
+    test('scene is recorded, and no banner line', async () => {
+      const page = await open({ offline });
       try {
-        const seen = [await headline(page)];
-        for (let i = 0; i < 10; i++) {
-          await page.evaluate(() => sessionStorage.removeItem('omar_intro_session'));
-          await page.goto(server.url + '/');
-          seen.push(await headline(page));
-        }
-        for (let i = 1; i < seen.length; i++) {
-          assert.ok(LINES.includes(seen[i]), seen[i]);
-          assert.notEqual(seen[i], seen[i - 1], `intro ${i} repeated "${seen[i]}"`);
-        }
+        assert.equal(await page.getAttribute('#dash-shield', 'data-scene'), 'miami-beach');
+        const stored = await page.evaluate(() => [localStorage.getItem('omar_last_scene'), localStorage.getItem('omar_last_line')]);
+        assert.deepEqual(stored, ['miami-beach', null]);
       } finally { await close(page); }
     });
 
@@ -202,81 +168,61 @@ for (const offline of [false, true]) {
       try {
         const r = await page.evaluate(() => {
           const D = window.DashIntro;
-          const a = { id: 'a', timezone: 'America/New_York' };
-          const b = { id: 'b', timezone: 'Asia/Tokyo' };
-          const now = new Date('2026-12-03T17:00:00Z');
-          const one = { scene: 'a', start: '2026-12-01', end: '2026-12-05', lines: ['one'] };
-          const two = { scene: 'a', start: '2026-12-02', end: '2026-12-04', lines: ['two'] };
+          const a = { id: 'a' };
+          const b = { id: 'b' };
           return {
-            tz: D.localDate(new Date('2026-12-07T04:30:00Z'), 'America/New_York'),
-            tzTokyo: D.localDate(new Date('2026-12-07T04:30:00Z'), 'Asia/Tokyo'),
             otherScene: D.pickScene([a, b], 'a', () => 0).id,
             onlyScene: D.pickScene([a], 'a', () => 0).id,
             noScene: D.pickScene([], null, () => 0),
-            overlap: D.liveBanner([one, two], a, now).lines[0],
-            overlapReversed: D.liveBanner([two, one], a, now).lines[0],
-            emptyLines: D.liveBanner([{ scene: 'a', start: '2026-12-01', end: '2026-12-05', lines: [] }], a, now),
-            noLines: D.liveBanner([{ scene: 'a', start: '2026-12-01', end: '2026-12-05' }], a, now),
-            unknownScene: D.liveBanner([{ scene: 'zz', start: '2026-12-01', end: '2026-12-05', lines: ['x'] }], a, now),
-            notArray: D.liveBanner(null, a, now),
-            onlyLine: D.pickLine(['x'], 'x', () => 0),
-            otherLine: D.pickLine(['x', 'y'], 'x', () => 0),
-            def: D.DEFAULT_LINE,
           };
         });
-        assert.deepEqual(r, {
-          tz: '2026-12-06', tzTokyo: '2026-12-07', otherScene: 'b', onlyScene: 'a', noScene: null,
-          overlap: 'two', overlapReversed: 'two', emptyLines: null, noLines: null, unknownScene: null, notArray: null,
-          onlyLine: 'x', otherLine: 'y', def: HEAD,
-        });
+        assert.deepEqual(r, { otherScene: 'b', onlyScene: 'a', noScene: null });
       } finally { await close(page); }
     });
 
-    test('scenes file blocked: headline, drawn scene, no page errors', async () => {
-      const page = await open({ offline, time: IN_WINDOW, routes: [['**/dashboard-scenes.js*', (r) => r.abort()]] });
+    test('no banner and no mirror gag: not in the scenes file, not on DashIntro', async () => {
+      const page = await open({ offline, seen: true });
       try {
-        assert.equal(await headline(page), HEAD);
+        const r = await page.evaluate(() => {
+          const D = window.DashIntro;
+          const S = window.DashScenes;
+          const picked = D.applyScene();
+          window.DashScenes = undefined;
+          const none = D.applyScene();
+          return {
+            gone: ['liveBanner', 'pickLine', 'localDate', 'DEFAULT_LINE'].filter((k) => k in D),
+            banners: 'banners' in S,
+            mirror: S.scenes.filter((s) => 'mirror' in s).map((s) => s.id),
+            picked, none,
+          };
+        });
+        assert.deepEqual(r, { gone: [], banners: false, mirror: [], picked: { sceneId: 'miami-beach' }, none: { sceneId: null } });
+      } finally { await close(page); }
+    });
+
+    test('scenes file blocked: drawn scene, no page errors', async () => {
+      const page = await open({ offline, routes: [['**/dashboard-scenes.js*', (r) => r.abort()]] });
+      try {
         assert.equal(await page.getAttribute('#dash-shield', 'data-scene'), null);
         await introStart(page);
         assert.deepEqual(page.errors, []);
       } finally { await close(page); }
     });
 
-    test('malformed scenes file: headline, no page errors', async () => {
-      const body = 'window.DashScenes = { scenes: [{ id: "miami-beach", timezone: "Not/AZone" }], banners: [{ scene: "miami-beach", start: "2026-11-30", end: "2026-12-06", lines: "oops" }, null] };';
-      const page = await open({ offline, time: IN_WINDOW,
+    test('malformed scenes file: no page errors', async () => {
+      const body = 'window.DashScenes = { scenes: [null, { id: 42 }, { id: "miami-beach", still: 7, minimap: {} }] };';
+      const page = await open({ offline,
         routes: [['**/dashboard-scenes.js*', (r) => r.fulfill({ contentType: 'text/javascript', body })]] });
       try {
-        assert.equal(await headline(page), HEAD);
         await introStart(page);
         assert.deepEqual(page.errors, []);
       } finally { await close(page); }
     });
 
-    // Online only: offline, Typekit is blocked and the fallback font sets this
-    // line about 380px wide, so it can never sit fully inside 390px. Visitors
-    // see the real font (the page waits for it), where the line is ~284px.
-    test('longest line fully in view at 390x844 at some point in the hold', { skip: offline && 'needs the real font' }, async () => {
-      const page = await open({ offline, time: IN_WINDOW, viewport: { width: 390, height: 844 },
-        init: [() => { Math.random = () => 0.9; }] });
-      try {
-        assert.equal(await headline(page), LINES[4]);
-        await introStart(page);
-        const samples = [];
-        for (let i = 0; i < 20; i++) {
-          samples.push(await page.evaluate(() => {
-            const r = document.querySelector('.dash-headline').getBoundingClientRect();
-            return { left: r.left, right: r.right };
-          }));
-          await page.waitForTimeout(250);
-        }
-        assert.ok(samples.some((r) => r.left >= 0 && r.right <= 390), JSON.stringify(samples));
-      } finally { await close(page); }
-    });
-
     // — Task 3: still and clip under the windshield —
     test('no still: #dash-drawn is rendered, no still or clip requested', async () => {
-      const page = await open({ offline });
+      // Pinned to a still-less scene: the default scene has its real still since Task 7.
+      const page = await open({ offline, routes: withScene({}) });
       try {
         await introStart(page);
         assert.notEqual(await css(page, '#dash-drawn', 'display'), 'none');
@@ -330,14 +276,16 @@ for (const offline of [false, true]) {
       } finally { await close(page); }
     });
 
-    test('clip 404: still stays, intro lands on time', async () => {
+    test('clip 404: still stays, intro lands', async () => {
       const page = await open({ offline, routes: withScene({ still: STILL, clip: 'test-media/missing.mp4' }) });
       try {
         await introStart(page);
+        await page.waitForFunction(() => document.getElementById('dash-clip').getAttribute('src') === null
+          && performance.now() - window.__marks.introStart > 1000, null, { timeout: 4000, polling: 50 });
+        await page.keyboard.press('Escape');
         await landed(page);
         const m = await page.evaluate(() => window.__marks);
-        const took = m.pushEnd - m.introStart;
-        assert.ok(took >= 5000 && took <= 6600, `introStart to pushEnd: ${took}ms`);
+        assert.ok(m.pushEnd - m.pushStart <= 1400, `push-in ${(m.pushEnd - m.pushStart).toFixed(0)}ms`);
         assert.equal(await page.evaluate(() => document.getElementById('dash-clip').hidden), true);
         assert.equal(await hasClass(page, '#dash-shield', 'dash-has-still'), true);
         assert.deepEqual(page.errors, []);
@@ -364,33 +312,27 @@ for (const offline of [false, true]) {
       } finally { await close(page); }
     });
 
-    // — Task 4: Miami Beach minimap and mirror field —
-    test('miami-beach: minimap image is the scene file and has loaded', async () => {
+    // — Task 4: Miami Beach minimap —
+    test('miami-beach: minimap strip is the scene file and has loaded, with the arrow', async () => {
       const page = await open({ offline });
       try {
         await introStart(page);
-        assert.match(await page.getAttribute('.dash-minimap img', 'src'), /miami-beach\/minimap\.svg$/);
-        assert.ok(await page.evaluate(() => document.querySelector('.dash-minimap img').naturalWidth > 0));
-        assert.notEqual(await css(page, '.dash-minimap img', 'display'), 'none');
+        assert.match(await page.getAttribute('.dash-minimap img.dash-minimap-strip', 'src'), /miami-beach\/minimap-strip\.svg$/);
+        assert.ok(await page.evaluate(() => [...document.querySelectorAll('.dash-minimap img')].every((i) => i.naturalWidth > 0)));
+        assert.equal(await page.locator('.dash-minimap img').count(), 2);
+        assert.notEqual(await css(page, '.dash-minimap img.dash-minimap-strip', 'display'), 'none');
         assert.equal(await page.locator('.dash-minimap svg').count(), 0);
       } finally { await close(page); }
     });
 
-    test('minimap 404: inline minimap still shown', async () => {
-      const page = await open({ offline, routes: [['**/scenes/miami-beach/minimap.svg', (r) => r.fulfill({ status: 404, body: 'not found' })]] });
+    test('minimap strip 404: inline minimap still shown', async () => {
+      const page = await open({ offline, routes: [['**/scenes/miami-beach/minimap-strip.svg', (r) => r.fulfill({ status: 404, body: 'not found' })]] });
       try {
         await introStart(page);
         await page.waitForTimeout(300);
         assert.equal(await page.locator('.dash-minimap img').count(), 0);
         assert.equal(await css(page, '.dash-minimap svg', 'display'), 'block');
         assert.deepEqual(page.errors, []);
-      } finally { await close(page); }
-    });
-
-    test('mirror gag recorded', async () => {
-      const page = await open({ offline });
-      try {
-        assert.equal(await page.getAttribute('.dash-mirror', 'data-gag'), 'paladin');
       } finally { await close(page); }
     });
   });
