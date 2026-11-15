@@ -17,7 +17,7 @@
     // transition ends: on (both needles up to 0.6), swept (down to rest),
     // settled (rest changes ease over 1500 ms, the wander starts). The revs
     // needle drives them: its targets never change mid-stage. Hidden gauges
-    // (the drawn or tall look, or the intro gone mid-sweep) have no
+    // (the drawn look, or the intro gone mid-sweep) have no
     // transitions: they go straight to settled. No timers.
     function sweepGauges() {
         var svg = document.getElementById('dash-gauges');

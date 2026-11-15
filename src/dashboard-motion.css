@@ -8,7 +8,9 @@
 /* ---- Gauges ------------------------------------------------------------ */
 
 /* The needles, drawn over the rendered cockpit (its own are painted out).
-   Wide mode only; same box as #dash-cockpit-img, 1600 x 900 units.
+   Both modes; the cockpit's box (--ck-x, --ck-w, --ck-h), 1600 x 900 units.
+   In portrait the picture is a slice of that box and only the right gauge
+   can show.
    A needle at value v (0 to 0.6) is rotate(138deg + 260deg * v) about its
    hub, clockwise from pointing right. Past 0.6 it would cross the wheel. */
 #dash-gauges {
@@ -16,7 +18,7 @@
     --dash-speed: 0;
     --dash-revs: 0;
 }
-html.dash-rendered[data-dash-mode="wide"] #dash-gauges {
+html.dash-rendered #dash-gauges {
     display: block;
     position: absolute;
     top: 0;

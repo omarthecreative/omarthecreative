@@ -309,19 +309,6 @@ describe('gauges', { concurrency: 1 }, () => {
     }
   });
 
-  test('no gauges in the tall cockpit (390x844)', async () => {
-    const page = await open({ viewport: { width: 390, height: 844 } });
-    try {
-      await mounted(page);
-      assert.equal(await page.evaluate(() => document.documentElement.getAttribute('data-dash-mode')), 'tall');
-      assert.equal(await css(page, '#dash-gauges', 'display'), 'none');
-      const r = await rect(page, '#dash-gauges');
-      assert.equal(r.width + r.height, 0);
-    } finally {
-      await done(page);
-    }
-  });
-
   test('no gauges in the drawn fallback (cockpit picture blocked)', async () => {
     const page = await open({ drawn: true });
     try {

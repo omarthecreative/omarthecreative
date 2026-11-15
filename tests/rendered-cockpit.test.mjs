@@ -380,7 +380,7 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
     }
   });
 
-  test('rendered at 390x844: the phone slice of the wide cockpit, no floor', async () => {
+  test('rendered at 390x844: the phone slice of the wide cockpit, no floor, the knight on its start button', async () => {
     const page = await open({ viewport: { width: 390, height: 844 } });
     try {
       await mounted(page);
@@ -392,6 +392,7 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
       assert.ok(Math.abs(ck.left - (o.ckX + 0.25 * o.ckW)) <= 1 && Math.abs(ck.width - 0.39 * o.ckW) <= 1 && Math.abs(ck.height - 844) <= 1, JSON.stringify(ck));
       assert.equal(await page.locator('.dash-cockpit-floor').count(), 0);
       assert.equal(await page.getAttribute('#dash-wire', 'title'), 'Wire Omar');
+      assert.equal(await page.evaluate(() => document.querySelector('#dash-wire span').getClientRects().length), 0, 'words rendered');
       const screen = await rect(page, '#dash-screen');
       assert.ok(screen.top >= (await rect(page, '#dash-shield')).bottom, 'screen below the windshield');
       await assertFrameFitsGrid(page);
@@ -428,7 +429,7 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
           dollEl.style.animation = 'none';
           const doll = box(dollOn ? '.dash-doll-r-base' : '.dash-doll-base');
           const points = {
-            opaque: [ib.left + 0.05 * ib.width, ib.top + 0.95 * Math.min(ib.height, innerHeight)],
+            opaque: [Math.max(ib.left, 0) + 0.05 * ib.width, ib.top + 0.95 * Math.min(ib.height, innerHeight)],
             minimap: centre('.dash-minimap'),
             doll: [doll.left + doll.width / 2, dollOn ? doll.bottom - 3 : doll.top + doll.height * 0.75],
             wire: centre('#dash-wire'),
@@ -463,15 +464,12 @@ describe('rendered cockpit', { concurrency: 1 }, () => {
         assert.ok(probes.wire.in.includes('#dash-wire'), p);
         assert.equal(probes.screen.top, '#dash-screen', p);
         assert.equal(probes.screen.imgAt, -1, `cockpit image covers the screen: ${p}`);
-        if (mode === 'wide') {
-          assert.ok(probes.wire.alpha > 200, `Wire Omar not on an opaque button: ${p}`);
-          assert.ok(probes.doll.alpha > 200, `doll not standing on the dash: ${p}`);
-          assert.ok(probes.wire.imgAt > 0, `cockpit image not under Wire Omar: ${p}`);
-        }
-        // Minimap: 7% of the cockpit's width in from the visible right edge of the image.
-        const ck = await rect(page, '#dash-cockpit-img');
-        const mm = await rect(page, '.dash-minimap');
-        assert.ok(Math.abs(mm.right - (Math.min(w, ck.right) - 0.07 * ck.width)) <= 1, `minimap right ${mm.right}`);
+        assert.ok(probes.wire.alpha > 200, `Wire Omar not on an opaque button: ${p}`);
+        assert.ok(probes.doll.alpha > 200, `doll not standing on the dash: ${p}`);
+        assert.ok(probes.wire.imgAt > 0, `cockpit image not under Wire Omar: ${p}`);
+        // Minimap (wide): 7% of the cockpit's width in from the visible right edge of the image. Portrait: phone-portrait.test.mjs.
+        const ck = await rect(page, '#dash-cockpit-img'), mm = await rect(page, '.dash-minimap');
+        if (mode === 'wide') assert.ok(Math.abs(mm.right - (Math.min(w, ck.right) - 0.07 * ck.width)) <= 1, `minimap right ${mm.right}`);
         assert.notEqual(await css(page, '.dash-doll', 'display'), 'none');
       } finally {
         await done(page);

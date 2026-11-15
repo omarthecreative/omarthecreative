@@ -309,6 +309,175 @@ describe('the short screen and the push-in', { concurrency: 1 }, () => {
   });
 });
 
+describe('phone details', { concurrency: 1 }, () => {
+  test('390x844: Wire Omar is the knight on the rendered start button', async () => {
+    const page = await open({ viewport: { width: 390, height: 844 } });
+    try {
+      await mounted(page);
+      const o = await assertPortrait(page, '390x844');
+      const wire = await rect(page, '#dash-wire');
+      near(wire.width, 0.0333 * o.ckW, 1, 'button width');
+      near(wire.height, 0.0333 * o.ckW, 1, 'button height');
+      near(wire.left + wire.width / 2, o.ckX + 0.428 * o.ckW, 1, 'button centre x');
+      near(wire.top + wire.height / 2, 0.674 * o.ckH, 1, 'button centre y');
+      assert.equal(await page.evaluate(() => document.querySelector('#dash-wire span').getClientRects().length), 0, 'words shown');
+      assert.equal(await css(page, '#dash-wire', 'borderTopWidth'), '0px');
+      assert.equal(await css(page, '#dash-wire', 'backgroundColor'), 'rgba(0, 0, 0, 0)');
+      assert.equal(await css(page, '#dash-wire', 'boxShadow'), 'none');
+      near((await rect(page, '#dash-wire svg')).height, 0.46 * wire.height, 1, 'knight height');
+      assert.equal(await page.getAttribute('#dash-wire', 'aria-label'), 'Wire Omar');
+      assert.equal(await page.getAttribute('#dash-wire', 'title'), 'Wire Omar');
+      const RED = 'rgb(255, 0, 21)', WHITE = 'rgb(255, 255, 255)';
+      await page.mouse.move(2, 2);
+      assert.equal(await css(page, '#dash-wire svg', 'fill'), WHITE);
+      await page.mouse.move(wire.left + wire.width / 2, wire.top + wire.height / 2);
+      assert.equal(await css(page, '#dash-wire svg', 'fill'), RED, 'on hover');
+      await page.mouse.move(2, 2);
+      for (let i = 0; i < 40 && await page.evaluate(() => document.activeElement?.id) !== 'dash-wire'; i++) {
+        await page.keyboard.press('Tab');
+      }
+      assert.equal(await page.evaluate(() => document.querySelector('#dash-wire').matches(':focus-visible')), true, 'no keyboard focus');
+      assert.equal(await css(page, '#dash-wire svg', 'fill'), RED, 'on keyboard focus');
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('390x844: a tap on Wire Omar goes to about.html and does not start the push-in', async () => {
+    // The intro page is gone after the tap, so it notes a push-in in sessionStorage, which the
+    // next page of this tab can read.
+    const NOTE = () => new MutationObserver(() => {
+      if (document.documentElement.classList.contains('dash-pushing')) sessionStorage.setItem('__pushed', '1');
+    }).observe(document, { attributes: true, subtree: true, attributeFilter: ['class'] });
+    const page = await open({ viewport: { width: 390, height: 844 }, touch: true, init: [NOTE] });
+    try {
+      await mounted(page);
+      await page.tap('#dash-wire');
+      await page.waitForURL(/about\.html$/, { timeout: 5000 });
+      assert.equal(await page.evaluate(() => sessionStorage.getItem('__pushed')), null, 'the tap started the push-in');
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('390x844 drawn fallback (pictures blocked): the old phone button, with its words', async () => {
+    const page = await open({ viewport: { width: 390, height: 844 }, drawn: true });
+    try {
+      await mounted(page);
+      assert.equal(await dashMode(page), 'drawn');
+      const wire = await rect(page, '#dash-wire');
+      near(wire.width, 54, 0.5, 'button width');
+      near(wire.left, (0.19 * 390 - 7) / 2 - 27, 0.5, 'button left');
+      assert.equal(await css(page, '#dash-wire', 'borderTopWidth'), '2px');
+      const words = await rect(page, '#dash-wire span');
+      assert.ok(words.width > 0 && words.height > 0, `words not shown: ${JSON.stringify(words)}`);
+      near((await rect(page, '#dash-wire svg')).height, 11, 0.5, 'knight height');
+      near((await rect(page, '#dash-screen')).height, 0.62 * 844, 1, 'drawn screen height');
+      assert.equal(await frameVar(page), '');
+      await frameFitsGrid(page, 'drawn 390x844: ');
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  for (const [w, h] of [[390, 844], [390, 664]]) {
+    test(`${w}x${h}: the gauges take the cockpit box; the right hub ring on its hub`, async () => {
+      const page = await open({ viewport: { width: w, height: h } });
+      try {
+        await mounted(page);
+        const o = await assertPortrait(page, `${w}x${h}`);
+        assert.equal(await css(page, '#dash-gauges', 'display'), 'block');
+        const svg = await rect(page, '#dash-gauges');
+        for (const [k, want] of [['left', o.ckX], ['top', 0], ['width', o.ckW], ['height', o.ckH]]) near(svg[k], want, 1, `gauges ${k}`);
+        const ring = await page.evaluate(() => {
+          const b = document.querySelector('#dash-gauges .dash-gauge-revs').parentNode.querySelector(':scope > circle').getBoundingClientRect();
+          return [b.left + b.width / 2, b.top + b.height / 2];
+        });
+        near(ring[0], o.ckX + 0.3115 * o.ckW, 1, 'revs hub x');
+        near(ring[1], 0.5384 * o.ckH, 1, 'revs hub y');
+      } finally {
+        await done(page);
+      }
+    });
+  }
+
+  for (const [w, h] of [[390, 844], [390, 664]]) test(`${w}x${h}: the needles sweep to 0.6 and come to rest (speed 0, revs 0.14), as in wide mode`, async () => {
+    const READ = () => {
+      const angle = (el) => {
+        const t = getComputedStyle(el).transform;
+        if (!t || t === 'none') return 0;
+        const m = new DOMMatrixReadOnly(t);
+        return Math.atan2(m.b, m.a) * 180 / Math.PI;
+      };
+      window.__v = (which) => {
+        const g = document.querySelector('#dash-gauges .dash-gauge-' + which);
+        let a = angle(g) + angle(g.querySelector('.dash-gauge-wander'));
+        a = ((a % 360) + 360) % 360;
+        if (a < 90) a += 360;
+        return (a - 138) / 260;
+      };
+    };
+    const page = await open({ viewport: { width: w, height: h }, routes: withScene(NO_CLIP), init: [READ] });
+    try {
+      await introStart(page);
+      const peak = await page.evaluate(() => new Promise((resolve) => {
+        let best = 0;
+        const t0 = performance.now();
+        (function f() {
+          best = Math.max(best, window.__v('revs'));
+          if (performance.now() - t0 < 1400) requestAnimationFrame(f); else resolve(best);
+        })();
+      }));
+      assert.ok(peak >= 0.55 && peak <= 0.605, `revs peak ${peak}`);
+      await until(page, () => performance.now() - window.__marks.introStart > 2600, 8000);
+      near(await page.evaluate(() => window.__v('speed')), 0, 0.003, 'speed at rest');
+      near(await page.evaluate(() => window.__v('revs')), 0.14, 0.008, 'revs at rest');
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('390x844: the rendered doll, 0.15 of the cockpit tall, centre 0.43, feet 0.42', async () => {
+    const page = await open({ viewport: { width: 390, height: 844 } });
+    try {
+      await mounted(page);
+      const o = await assertPortrait(page, '390x844');
+      await until(page, () => document.querySelector('.dash-doll').classList.contains('dash-doll-rendered'), 4000);
+      const d = await page.evaluate(() => {
+        const el = document.querySelector('.dash-doll');
+        const keep = el.style.animation;
+        el.style.animation = 'none';
+        const r = el.getBoundingClientRect();
+        el.style.animation = keep;
+        return { bottom: r.bottom, height: r.height, cx: r.left + r.width / 2 };
+      });
+      near(d.height, 0.15 * o.ckH, 2, 'doll height');
+      near(d.cx, o.ckX + 0.43 * o.ckW, 2, 'doll centre x');
+      near(d.bottom, 0.42 * o.ckH, 2, 'doll feet');
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('390x844: the minimap 10 px from the window\'s left, 0.16 of the cockpit down, 56 x 56', async () => {
+    const page = await open({ viewport: { width: 390, height: 844 } });
+    try {
+      await mounted(page);
+      const o = await assertPortrait(page, '390x844');
+      const m = await rect(page, '.dash-minimap');
+      near(m.left, 10, 0.5, 'minimap left');
+      near(m.top, 0.16 * o.ckH, 0.5, 'minimap top');
+      near(m.width, 56, 0.5, 'minimap width');
+      near(m.height, 56, 0.5, 'minimap height');
+    } finally {
+      await done(page);
+    }
+  });
+});
+
 describe('rotation', { concurrency: 1 }, () => {
   test('load at 390x844, turn to 844x390: the wide cockpit loads then, wide geometry; back: the phone picture and the short screen', async () => {
     const page = await open({ viewport: { width: 390, height: 844 } });
