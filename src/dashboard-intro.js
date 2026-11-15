@@ -335,36 +335,49 @@
     // Geometry of the rendered cockpit for a w x h window. Pure: no DOM, no
     // globals, so it can run on every resize. All values are px except k.
     // mode 'none' means the rendered cockpit does not fit; nothing else is set.
+    // Both modes use the wide cockpit's coordinates; frameH is the screen's
+    // visible height before the push-in (k * h in wide mode).
     function layout(w, h) {
         var o = { mode: 'none' };
-        var ckW, ckH, ckX, cropR, shield, k, left, top;
-        // The tall cockpit is for a narrow window standing upright. Every other
-        // window, a phone on its side included, takes the wide one.
+        var ckH = h, ckW = h * 16 / 9, shield = 0.412 * h;
+        var ckX, cropR = 0, k, left, top, frameH, sbW, sbH, sbX, sbY;
         if (w <= 760 && h > w) {
-            ckW = w; ckH = w * 16 / 9; ckX = 0; cropR = 0;
-            shield = 0.275 * ckH; k = 0.62; left = 0.19 * w;
-            top = Math.max(0.32 * h, shield + 10);
-            o.mode = (top + k * h <= h - 8) ? 'tall' : 'none';
+            // A narrow window standing upright: a slice of the wide cockpit
+            // (the phone picture covers x 0.25 to 0.64 of it), part of the
+            // steering wheel, and a short, wide screen. X0 is the window's
+            // left edge as a fraction of the cockpit; the slice must cover it.
+            var x0 = Math.min(0.40, Math.max(0.26, 0.615 - w / ckW));
+            if (x0 + w / ckW > 0.64) x0 = 0.64 - w / ckW;
+            ckX = -x0 * ckW;
+            left = ckX + 0.458 * ckW + 2;
+            k = (w - left - 8) / w;
+            top = 0.474 * h;
+            frameH = 0.62 * k * w;
+            o.mode = (x0 >= 0.25 && k >= 0.40 && top + frameH <= h - 24) ? 'tall' : 'none';
+            // The scene box covers the window, the Colony mid-window.
+            sbH = shield; sbW = sbH * 1920 / 824; sbY = 0;
+            sbX = (-ckX + w / 2) - 0.60 * sbW;
         } else {
-            ckH = h; ckW = h * 16 / 9; ckX = Math.max(0, (w - ckW) / 2);
+            // Every other window, a phone on its side included.
+            ckX = Math.max(0, (w - ckW) / 2);
             cropR = Math.max(0, ckX + ckW - w);
-            shield = 0.412 * h; top = 0.43 * h;
+            top = 0.43 * h;
             var leftMin = ckX + 0.458 * ckW;
             var rightMax = Math.min(w, ckX + ckW) - 16;
             k = Math.min(0.48, (rightMax - leftMin) / w);
             left = Math.max(leftMin, Math.min(0.49 * w, rightMax - k * w));
+            frameH = k * h;
             // The k floor. Under 500 px tall (a phone on its side, with the
             // browser's bars showing) the grid may be smaller in the screen.
             o.mode = (k >= (h < 500 ? 0.25 : 0.36)) ? 'wide' : 'none';
+            // The scene box covers the whole windshield view.
+            sbW = Math.max(ckW, shield * 1920 / 824); sbH = sbW * 824 / 1920;
+            sbX = (ckW - sbW) * 0.62; sbY = (shield - sbH) * 0.35;
         }
         if (o.mode === 'none') return o;
-        var viewW = ckW, viewH = shield;
-        var sbW = Math.max(viewW, viewH * 1920 / 824);
-        var sbH = sbW * 824 / 1920;
-        o.k = k; o.left = left; o.top = top; o.shield = shield;
+        o.k = k; o.left = left; o.top = top; o.shield = shield; o.frameH = frameH;
         o.ckX = ckX; o.ckW = ckW; o.ckH = ckH; o.cropR = cropR;
-        o.sbX = (viewW - sbW) * 0.62; o.sbY = (viewH - sbH) * 0.35;
-        o.sbW = sbW; o.sbH = sbH;
+        o.sbX = sbX; o.sbY = sbY; o.sbW = sbW; o.sbH = sbH;
         return o;
     }
 

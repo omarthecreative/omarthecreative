@@ -52,8 +52,7 @@ describe('layout', () => {
     [1280, 500,  { mode: 'wide', k: 0.364,  left: 602.7,  top: 215,    shield: 206,   ckX: 195.6, ckW: 888.9, cropR: 0 }],
     [1280, 1024, { mode: 'none' }],
     [768, 1024,  { mode: 'none' }],
-    [390, 844,   { mode: 'tall', k: 0.62,   left: 74.1,   top: 270.1,  shield: 190.7, ckX: 0,   ckW: 390,     cropR: 0 }],
-    [412, 732,   { mode: 'tall', k: 0.62,   left: 78.3,   top: 234.2,  shield: 201.4, ckX: 0,   ckW: 412,     cropR: 0 }],
+    // Portrait rows (the short screen): phone-portrait.test.mjs.
     [740, 360,   { mode: 'wide', k: 0.447,  left: 343.1,  top: 154.8,  shield: 148.3, ckX: 50,  ckW: 640,     cropR: 0 }],
   ];
 

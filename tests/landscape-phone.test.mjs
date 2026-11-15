@@ -81,7 +81,7 @@ describe('layout(): tall only when w <= 760 and h > w', () => {
       const cases = [
         [844, 390, 'wide', 0.4263], [844, 340, 'wide', 0.3692], [812, 320, 'wide', 0.3600], [667, 320, 'wide', 0.4383],
         [740, 360, 'wide', 0.4472], [932, 430, 'wide', 0.4274], [700, 500, 'wide', 0.3956],
-        [390, 844, 'tall', 0.62], [412, 732, 'tall', 0.62], [760, 1400, 'tall', 0.62],
+        [390, 844, 'tall', 0.5784], [412, 732, 'tall', 0.4716], [760, 1400, 'tall', 0.5010],
         [600, 600, 'none'], [761, 1400, 'none'],
         // Real phones on their side: the page has viewport-fit=cover, so the window is the full
         // width, and the browser's bars leave 290 to 360 px of height. Under 500 px tall the k
@@ -100,7 +100,8 @@ describe('layout(): tall only when w <= 760 and h > w', () => {
         assert.ok(Math.abs(o.k - k) <= 0.0006, `${w}x${h} k ${o.k} vs ${k}`);
         if (mode === 'wide') assert.ok(o.k >= (h < 500 ? 0.25 : 0.36), `${w}x${h} under the k floor: ${o.k}`);
         assert.ok(o.top >= o.shield, `${w}x${h} screen top above the windshield's foot`);
-        assert.ok(o.left + o.k * w <= w && o.top + o.k * h <= h, `${w}x${h} screen outside the window`);
+        // frameH: the screen's height before the push-in (k * h in wide mode, short in portrait).
+        assert.ok(o.left + o.k * w <= w && o.top + o.frameH <= h, `${w}x${h} screen outside the window`);
       }
     } finally {
       await done(page);
