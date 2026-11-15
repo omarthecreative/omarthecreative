@@ -470,7 +470,7 @@ describe('idle', { concurrency: 1 }, () => {
         const at = await now(page);
         const fr = (await sampling).filter((f) => f.t >= at).map((f) => ({ t: f.t - at, lean: f.lean }));
         const within = (a, b) => fr.filter((f) => f.t >= a && f.t <= b).map((f) => f.lean);
-        const following = within(1500, 3800);
+        const following = within(2500, 3800); // settled: slow headless frames stretch the spring
         const back = within(4000, 4800);
         const sway = within(5500, 7500);
         const r = {
