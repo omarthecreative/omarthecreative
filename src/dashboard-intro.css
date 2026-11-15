@@ -625,6 +625,8 @@ html.dash-rendered .dash-doll.dash-doll-rendered {
     transform: translate(-50%, -100%);
 }
 html.dash-rendered[data-dash-mode="tall"] .dash-doll.dash-doll-rendered { height: calc(0.15 * var(--ck-h)); }
+/* Phone upright, a doll picture missing: the drawn doll (100px wide there) keeps the same centre. */
+html.dash-rendered[data-dash-mode="tall"] .dash-doll:not(.dash-doll-rendered) { left: calc(0.43 * var(--ck-w) - 50px * var(--dash-ss)); }
 html.dash-rendered .dash-doll-rendered .dash-doll-top,
 html.dash-rendered .dash-doll-rendered .dash-doll-base { display: none; }
 html.dash-rendered .dash-doll-rendered .dash-doll-r {

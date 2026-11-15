@@ -1464,6 +1464,16 @@ describe('rendered doll', { concurrency: 1 }, () => {
     }
   });
 
+  test('390x844, both doll images 404: the drawn doll stands in the window, centred where the rendered doll would be', async () => {
+    const page = await open({ viewport: { width: 390, height: 844 }, routes: noDoll });
+    try {
+      await mounted(page);
+      await page.waitForTimeout(300);
+      await assertRendered(page, 'tall');
+      const d = await dollBox(page);
+      assert.ok(!d.rendered && d.left >= 0 && d.right <= 390 && Math.abs(d.cx - (d.ckLeft + 0.43 * d.ckWidth)) <= 1, JSON.stringify(d));
+    } finally { await done(page); }
+  });
   test('cockpit 404 with both doll images fine: drawn dashboard, drawn doll, never the rendered doll', async () => {
     const page = await open({ routes: noCockpit });
     try {

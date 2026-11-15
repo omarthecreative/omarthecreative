@@ -9,8 +9,8 @@
 
 /* The needles, drawn over the rendered cockpit (its own are painted out).
    Both modes; the cockpit's box (--ck-x, --ck-w, --ck-h), 1600 x 900 units.
-   In portrait the picture is a slice of that box and only the right gauge
-   can show.
+   In portrait the picture is a slice of that box: the right gauge shows in a
+   short window (390x664) and none in a tall one (390x844).
    A needle at value v (0 to 0.6) is rotate(138deg + 260deg * v) about its
    hub, clockwise from pointing right. Past 0.6 it would cross the wheel. */
 #dash-gauges {

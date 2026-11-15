@@ -320,14 +320,26 @@ export const PUSH_SAMPLES = () => new Promise((resolve) => {
     const sx = r.width / w, sy = r.height / h;
     return { left: r.left + ins[3] * sx, top: r.top + ins[0] * sy, right: r.right - ins[1] * sx, bottom: r.bottom - ins[2] * sy };
   };
+  // Is the cockpit picture painted at a point? Its clip-path hole must follow the growing screen,
+  // and hit-testing obeys clip-path. The picture takes pointer events only while this sampler runs.
+  const pic = document.getElementById('dash-cockpit-img');
+  if (pic) pic.style.pointerEvents = 'auto';
+  const picAt = (x, y) => !!pic && document.elementsFromPoint(x, y).includes(pic);
   const out = [];
   const t0 = performance.now();
   (function frame() {
-    if (!document.documentElement.classList.contains('dash-pushing') || performance.now() - t0 > 1500) return resolve(out);
+    if (!document.documentElement.classList.contains('dash-pushing') || performance.now() - t0 > 1500) {
+      if (pic) pic.style.pointerEvents = '';
+      return resolve(out);
+    }
     const s = screen.getBoundingClientRect();
     const p = visible();
+    // 3px inside the frame's bottom edge (or the window's, when the frame runs past it), mid-width;
+    // and, as the control, 3px above the frame's top edge, where the picture must be.
+    const x = (Math.max(s.left, 0) + Math.min(s.right, innerWidth)) / 2;
     out.push({ t: performance.now() - t0, scale: portal.getBoundingClientRect().width / portal.offsetWidth,
-      s: { left: s.left, top: s.top, right: s.right, bottom: s.bottom }, p });
+      s: { left: s.left, top: s.top, right: s.right, bottom: s.bottom }, p,
+      covered: picAt(x, Math.min(s.bottom, innerHeight) - 3), above: s.top > 4 ? picAt(x, s.top - 3) : null });
     requestAnimationFrame(frame);
   })();
 });

@@ -237,6 +237,8 @@ describe('the short screen and the push-in', { concurrency: 1 }, () => {
           assert.ok(d <= 1.5, `at scale ${x.scale.toFixed(3)} ${k}: frame ${x.s[k].toFixed(2)} vs grid ${x.p[k].toFixed(2)}`);
         }
       }
+      assert.ok(mid.every((x) => !x.covered), 'the cockpit picture covers the growing screen (its hole did not follow)');
+      assert.ok(mid.some((x) => x.above === true), 'control: the picture was never found above the frame');
       const heights = mid.map((x) => x.p.bottom - x.p.top);
       t.diagnostic(`${mid.length} mid-push frames, worst edge gap ${worst.toFixed(3)} px, heights ${heights.map((v) => v.toFixed(0)).join(' ')}`);
       for (let i = 1; i < heights.length; i++) assert.ok(heights[i] >= heights[i - 1] - 0.5, `the visible height shrank: ${heights.join(' ')}`);
