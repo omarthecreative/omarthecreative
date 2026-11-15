@@ -271,8 +271,8 @@ describe('follow mode', { concurrency: 1 }, () => {
       const y = farY(page, d);
       assert.ok(await moveListeners() > 0, 'a pointermove listener while the intro shows');
       await page.mouse.move(page.vw - 10, y);
-      await page.waitForTimeout(500);
-      assert.ok(await page.evaluate(() => window.__loopRuns) > 10, 'the loop ran while following');
+      // Headless frames can come 100 ms apart: wait for the runs, not a fixed time.
+      await until(page, () => window.__loopRuns > 10 && document.querySelector('.dash-doll.dash-doll-follow'), 3000);
       await enter(page, 'Escape');
       await landed(page);
       const s0 = await page.evaluate(() => ({ runs: window.__loopRuns, lean: window.__lean() }));
@@ -340,8 +340,6 @@ describe('the doll and the screen', { concurrency: 1 }, () => {
 // Settle with the pointer at `from` (far from the doll), then move to each point of `path`
 // ([x, y, wait before it in ms]), sampling every frame. Returns the settled lean, the frames and
 // the page-clock time of each move's pointermove. Shorter than the 4 s idle wait throughout.
-// Headless frames come 33 to 130 ms apart, so the sampling runs long enough to hold every
-// window `extreme` reads.
 async function pass(page, from, path, settle = 1800) {
   // On <html>, not document or window: 'after landing' counts the listeners on those two.
   await page.evaluate(() => {
@@ -369,12 +367,10 @@ async function pass(page, from, path, settle = 1800) {
 const extreme = (p, fn, i = 0, ms = 400) => fn(...p.frames.filter((f) => f.t >= p.at[i] && f.t <= p.at[i] + ms)
   .map((f) => f.lean)) - p.base;
 
-// A kick moves the lean by 3.4 degrees in the first spring step and about 9 at its peak, 4 or 5
-// steps on; then the spring swings back, about 4 the other way. Headless frames come 33 to 130 ms
-// apart and the lean is seen once a frame, so the peak may be missed but the first frame after the
-// kick is still on the kick's side. firstSwing: the first lean in the frames from move i on, for
-// ms, that is over 2 degrees from the settled lean, relative to it (0 if none). Without a kick the
-// lean moves under 1.
+// A kick: 3.4 degrees in the first step, about 9 at the peak 4 or 5 steps on, then about 4 back.
+// Headless frames come 33 to 130 ms apart, so the peak may fall between them, but the first frame
+// after the kick is on its side. firstSwing: the first lean from move i on, for ms, over 2 degrees
+// from the settled lean, relative to it (0 if none). Without a kick the lean moves under 1.
 const KICKED = 3;
 const firstSwing = (p, i = 0, ms = 400) => {
   const f = p.frames.find((f) => f.t >= p.at[i] && f.t <= p.at[i] + ms && Math.abs(f.lean - p.base) > 2);
