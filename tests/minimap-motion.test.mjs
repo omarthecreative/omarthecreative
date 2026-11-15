@@ -5,9 +5,11 @@
 // Run from tests/: `node --test minimap-motion.test.mjs`.
 import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
 import {
   start, stop, open, done, until, introStart, mounted, landed, css, rect, enter,
-  STRIP, withScene, CLIP, NO_CLIP, SLOW, LATE,
+  SRC, STRIP, withScene, CLIP, NO_CLIP, SLOW, LATE,
 } from './helpers/intro-page.mjs';
 
 before(start);
@@ -196,4 +198,19 @@ describe('minimap: rendered cockpit only, loaded while dark or never', { concurr
       await done(page);
     }
   });
+});
+
+describe('minimap files', () => {
+  // The drawing only: no embedded metadata block (it was about 17 KB of the first load).
+  for (const [file, shapes, limit] of [['assets/dash/minimap-arrow.svg', { polygon: 1 }, 400], [STRIP, { rect: 47, circle: 18, path: 2 }, 5200]]) {
+    test(`${file}: no metadata block, the drawing is whole, at most ${limit} bytes`, async () => {
+      const svg = await readFile(path.join(SRC, file), 'utf8');
+      assert.ok(svg.startsWith('<svg ') && svg.trimEnd().endsWith('</svg>'), 'not one svg element');
+      assert.ok(!/<metadata|c2pa|xpacket|<rdf/i.test(svg), 'metadata still in the file');
+      for (const [tag, n] of Object.entries(shapes)) {
+        assert.equal((svg.match(new RegExp(`<${tag}[ />]`, 'g')) || []).length, n, `<${tag}> count`);
+      }
+      assert.ok(Buffer.byteLength(svg) <= limit, `${Buffer.byteLength(svg)} bytes`);
+    });
+  }
 });
