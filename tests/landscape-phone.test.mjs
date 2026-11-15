@@ -83,6 +83,14 @@ describe('layout(): tall only when w <= 760 and h > w', () => {
         [740, 360, 'wide', 0.4472], [932, 430, 'wide', 0.4274], [700, 500, 'wide', 0.3956],
         [390, 844, 'tall', 0.62], [412, 732, 'tall', 0.62], [760, 1400, 'tall', 0.62],
         [600, 600, 'none'], [761, 1400, 'none'],
+        // Real phones on their side: the page has viewport-fit=cover, so the window is the full
+        // width, and the browser's bars leave 290 to 360 px of height. Under 500 px tall the k
+        // floor is 0.25.
+        [852, 343, 'wide', 0.3691], [852, 310, 'wide', 0.3318], [844, 307, 'wide', 0.3315], [874, 319, 'wide', 0.3334],
+        [932, 347, 'wide', 0.3416], [956, 357, 'wide', 0.3431], [812, 292, 'wide', 0.3268], [915, 356, 'wide', 0.3574],
+        [800, 304, 'wide', 0.3462], [932, 300, 'wide', 0.2930], [1400, 499, 'wide', 0.3320],
+        // Still too flat, or 500 px tall and up with k under 0.36: the drawn dashboard.
+        [1600, 400, 'none'], [1400, 500, 'none'],
       ];
       for (const [w, h, mode, k] of cases) {
         const o = await layoutOf(page, w, h);
@@ -90,7 +98,7 @@ describe('layout(): tall only when w <= 760 and h > w', () => {
         if (mode === 'none') continue;
         t.diagnostic(`${w}x${h}: ${o.mode}, k ${o.k.toFixed(4)}`);
         assert.ok(Math.abs(o.k - k) <= 0.0006, `${w}x${h} k ${o.k} vs ${k}`);
-        if (mode === 'wide') assert.ok(o.k >= 0.36, `${w}x${h} under the k floor: ${o.k}`);
+        if (mode === 'wide') assert.ok(o.k >= (h < 500 ? 0.25 : 0.36), `${w}x${h} under the k floor: ${o.k}`);
         assert.ok(o.top >= o.shield, `${w}x${h} screen top above the windshield's foot`);
         assert.ok(o.left + o.k * w <= w && o.top + o.k * h <= h, `${w}x${h} screen outside the window`);
       }
@@ -101,7 +109,7 @@ describe('layout(): tall only when w <= 760 and h > w', () => {
 });
 
 describe('load in landscape', { concurrency: 1 }, () => {
-  for (const [w, h] of [[844, 390], [844, 340], [812, 320], [667, 320]]) {
+  for (const [w, h] of [[844, 390], [844, 340], [812, 320], [667, 320], [852, 310], [932, 300]]) {
     test(`load at ${w}x${h}: the rendered wide cockpit, frame and grid coincide`, async () => {
       const page = await open({ viewport: { width: w, height: h } });
       try {
@@ -138,6 +146,23 @@ describe('rotation', { concurrency: 1 }, () => {
       assert.deepEqual(cockpitFiles(page), [FILE.tall, FILE.wide]);
       await enter(page, 'Escape');
       await landed(page);
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('load at 393x659 (phone upright, bars showing), turn to 852x310: the wide cockpit takes over; back: tall again', async () => {
+    const page = await open({ viewport: { width: 393, height: 659 } });
+    try {
+      await mounted(page);
+      await assertCockpit(page, 'tall', 'load 393x659');
+      await resize(page, 852, 310);
+      await untilMode(page, 'wide');
+      await assertCockpit(page, 'wide', 'turned to 852x310');
+      await resize(page, 393, 659);
+      await untilMode(page, 'tall', 1000);
+      await assertCockpit(page, 'tall', 'back at 393x659');
       assert.deepEqual(page.errors, []);
     } finally {
       await done(page);

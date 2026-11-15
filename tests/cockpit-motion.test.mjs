@@ -350,7 +350,7 @@ describe('files', () => {
     // assert.ok, not assert.match: a failing match would print the whole page.
     assert.ok(/href="dashboard-intro\.css\?v=10">\s*<link rel="stylesheet" href="dashboard-motion\.css\?v=1">/.test(html),
       'dashboard-motion.css?v=1 right after dashboard-intro.css');
-    assert.ok(/src="dashboard-intro\.js\?v=9"><\/script>\s*<script src="dashboard-motion\.js\?v=1"><\/script>/.test(html),
+    assert.ok(/src="dashboard-intro\.js\?v=10"><\/script>\s*<script src="dashboard-motion\.js\?v=1"><\/script>/.test(html),
       'dashboard-motion.js?v=1 right after dashboard-intro.js');
     assert.ok(/DashIntro\.startClip\(\);\s*\n\s*if \(window\.DashMotion\) DashMotion\.start\(\);/.test(html),
       'DashMotion.start() right after DashIntro.startClip()');

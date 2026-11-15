@@ -1555,7 +1555,7 @@ describe('miami beach, real files', { concurrency: 1 }, () => {
     const html = await fs.readFile(path.join(SRC, 'index.html'), 'utf8');
     assert.match(html, /href="dashboard-intro\.css\?v=10"/);
     assert.match(html, /src="dashboard-scenes\.js\?v=4"/);
-    assert.match(html, /src="dashboard-intro\.js\?v=9"/);
+    assert.match(html, /src="dashboard-intro\.js\?v=10"/);
   });
 
   test('1440x900: rendered, still shown at the first frame, then clip-1920 requested', async () => {

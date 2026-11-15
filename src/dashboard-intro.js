@@ -353,7 +353,9 @@
             var rightMax = Math.min(w, ckX + ckW) - 16;
             k = Math.min(0.48, (rightMax - leftMin) / w);
             left = Math.max(leftMin, Math.min(0.49 * w, rightMax - k * w));
-            o.mode = (k >= 0.36) ? 'wide' : 'none';
+            // The k floor. Under 500 px tall (a phone on its side, with the
+            // browser's bars showing) the grid may be smaller in the screen.
+            o.mode = (k >= (h < 500 ? 0.25 : 0.36)) ? 'wide' : 'none';
         }
         if (o.mode === 'none') return o;
         var viewW = ckW, viewH = shield;
