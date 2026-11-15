@@ -18,6 +18,9 @@
     --dash-oy: calc(var(--dash-top) / (1 - var(--dash-k)));
     --dash-w: calc(var(--dash-k) * 100vw);
     --dash-h: calc(var(--dash-k) * 100vh);
+    /* The screen's visible height before the push-in. dashboard-intro.js sets
+       it inline (px) only for the phone upright, rendered: a short screen. */
+    --dash-frame-h: var(--dash-h);
     --dash-ease: cubic-bezier(0.7, 0, 0.2, 1);
     --dash-push: 1000ms;
     /* Set by DashIntro.mount() on mount and resize. */
@@ -42,7 +45,8 @@ html.dash-intro body {
 html.dash-intro #portal {
     transform-origin: var(--dash-ox) var(--dash-oy);
     transform: scale(var(--dash-k));
-    clip-path: inset(0 0 calc(100% - 100vh) 0);
+    /* Cut at the screen's foot: --dash-frame-h of the window is --dash-frame-h / k of the grid. */
+    clip-path: inset(0 0 calc(100% - var(--dash-frame-h) / var(--dash-k)) 0);
 }
 /* Grid chrome that lives outside #portal stays hidden until the push-in lands. */
 html.dash-intro .copyright-tag.fixed {
@@ -368,7 +372,7 @@ html.dash-pushing .dash-doll-top { animation: dash-sway-hard .5s ease-in-out inf
     left: var(--dash-left);
     top: var(--dash-top);
     width: var(--dash-w);
-    height: var(--dash-h);
+    height: var(--dash-frame-h);
     background: var(--bg, #050505);
     --dash-bezel-line: #5E636B; /* the bezel's grey line; brightens on hover */
     box-shadow:
@@ -432,7 +436,19 @@ html.dash-pushing #dash-scene {
 }
 html.dash-pushing #portal {
     transform: scale(1);
-    transition: transform var(--dash-push) var(--dash-ease);
+    clip-path: inset(0 0 calc(100% - 100vh) 0);
+    transition: transform var(--dash-push) var(--dash-ease), clip-path var(--dash-push) var(--dash-ease);
+}
+/* A short screen grows to --dash-h on the same clock: the screen, the
+   cockpit's hole and the grid's cut stay on one line. Elsewhere start and
+   end are equal and nothing moves. */
+html.dash-pushing #dash-screen {
+    height: var(--dash-h);
+    transition: box-shadow 150ms, height var(--dash-push) var(--dash-ease);
+}
+html.dash-pushing.dash-rendered #dash-cockpit {
+    --hb: calc(var(--dash-top) + var(--dash-h));
+    transition: clip-path var(--dash-push) var(--dash-ease);
 }
 
 /* ---- Phone, upright (on its side it takes the wide rules) --------------- */
@@ -513,7 +529,7 @@ html.dash-rendered #dash-cockpit {
     --hl: var(--dash-left);
     --ht: var(--dash-top);
     --hr: calc(var(--dash-left) + var(--dash-w));
-    --hb: calc(var(--dash-top) + var(--dash-h));
+    --hb: calc(var(--dash-top) + var(--dash-frame-h));
     clip-path: polygon(evenodd,
         0 0, 100% 0, 100% 100%, 0 100%, 0 0,
         var(--hl) var(--ht), var(--hr) var(--ht), var(--hr) var(--hb), var(--hl) var(--hb), var(--hl) var(--ht));

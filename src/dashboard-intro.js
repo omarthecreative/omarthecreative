@@ -83,6 +83,10 @@
             if (on) root.style.setProperty(name, key === 'k' ? String(o.k) : o[key] + 'px');
             else root.style.removeProperty(name);
         });
+        // The short screen: inline only in rendered tall mode. Elsewhere the
+        // stylesheet's default (--dash-h, k * 100vh) stays exactly as it was.
+        if (on && o.mode === 'tall') root.style.setProperty('--dash-frame-h', o.frameH + 'px');
+        else root.style.removeProperty('--dash-frame-h');
         root.classList.toggle('dash-rendered', on);
         // The rendered doll stands on the rendered cockpit only: never without it.
         var doll = document.querySelector('.dash-doll');

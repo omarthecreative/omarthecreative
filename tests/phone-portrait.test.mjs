@@ -168,6 +168,199 @@ describe('layout() in portrait', () => {
   });
 });
 
+describe('the phone picture', { concurrency: 1 }, () => {
+  for (const [w, h] of [[390, 844], [390, 664]]) {
+    test(`load at ${w}x${h}: the phone slice, decoded, in its box, covering the window; no other cockpit file; no floor`, async () => {
+      const page = await open({ viewport: { width: w, height: h } });
+      try {
+        await mounted(page);
+        await assertPortrait(page, `${w}x${h}`);
+        assert.deepEqual(cockpitFiles(page), [PHONE]);
+        assert.deepEqual(page.requested.filter((u) => /cockpit-(tall|wide)/.test(u)), []);
+        assert.equal(await page.locator('.dash-cockpit-floor').count(), 0);
+        assert.deepEqual(page.errors, []);
+      } finally {
+        await done(page);
+      }
+    });
+  }
+});
+
+// In the page: the screen's rect and the grid's visible rect (its clip-path inset, resolved), each frame.
+const SAMPLE_PUSH = () => new Promise((resolve) => {
+  const portal = document.getElementById('portal');
+  const screen = document.getElementById('dash-screen');
+  const resolveLen = (expr, refPx) => {
+    const box = document.createElement('div');
+    box.style.cssText = `position:fixed;left:0;top:0;width:${refPx}px;height:${refPx}px;visibility:hidden`;
+    const probe = document.createElement('div');
+    probe.style.cssText = `position:absolute;height:${expr}`;
+    box.appendChild(probe);
+    document.body.appendChild(box);
+    const v = probe.getBoundingClientRect().height;
+    box.remove();
+    return v;
+  };
+  const visible = () => {
+    const r = portal.getBoundingClientRect();
+    const w = portal.offsetWidth, h = portal.offsetHeight;
+    const m = /^inset\((.*)\)$/.exec(getComputedStyle(portal).clipPath.trim());
+    let ins = [0, 0, 0, 0];
+    if (m) {
+      const parts = [];
+      let depth = 0, cur = '';
+      for (const ch of m[1]) {
+        if (ch === '(') depth++;
+        if (ch === ')') depth--;
+        if (/\s/.test(ch) && depth === 0) { if (cur) parts.push(cur); cur = ''; } else cur += ch;
+      }
+      if (cur) parts.push(cur);
+      const v = [parts[0], parts[1] ?? parts[0], parts[2] ?? parts[0], parts[3] ?? parts[1] ?? parts[0]];
+      ins = [resolveLen(v[0], h), resolveLen(v[1], w), resolveLen(v[2], h), resolveLen(v[3], w)];
+    }
+    const sx = r.width / w, sy = r.height / h;
+    return { left: r.left + ins[3] * sx, top: r.top + ins[0] * sy, right: r.right - ins[1] * sx, bottom: r.bottom - ins[2] * sy };
+  };
+  const out = [];
+  const t0 = performance.now();
+  (function frame() {
+    if (!document.documentElement.classList.contains('dash-pushing') || performance.now() - t0 > 1500) return resolve(out);
+    const s = screen.getBoundingClientRect();
+    const p = visible();
+    out.push({ t: performance.now() - t0, scale: portal.getBoundingClientRect().width / portal.offsetWidth,
+      s: { left: s.left, top: s.top, right: s.right, bottom: s.bottom }, p });
+    requestAnimationFrame(frame);
+  })();
+});
+
+describe('the short screen and the push-in', { concurrency: 1 }, () => {
+  test('390x844 before the push-in: the screen is the short frame, the grid shows exactly in it and nowhere below', async () => {
+    const page = await open({ viewport: { width: 390, height: 844 } });
+    try {
+      await mounted(page);
+      const o = await assertPortrait(page, '390x844');
+      near(o.frameH, 139.9, 0.6, 'frameH');
+      const s = await rect(page, '#dash-screen');
+      const g = await visibleRect(page, '#portal');
+      for (const k of ['left', 'top', 'right', 'bottom']) near(g[k], s[k], 1, `visible grid ${k}`);
+      const hits = await page.evaluate(([cx, bottom, h]) => {
+        const portal = document.getElementById('portal');
+        const img = document.getElementById('dash-cockpit-img');
+        const inGrid = (y) => document.elementsFromPoint(cx, y).some((el) => portal.contains(el));
+        img.style.pointerEvents = 'auto';
+        const inImg = (y) => document.elementsFromPoint(cx, y).includes(img);
+        const r = { gridIn: inGrid(bottom - 6), gridBelow: inGrid(bottom + 6), gridFoot: inGrid(h - 4),
+          holeIn: inImg(bottom - 3), holeBelow: inImg(bottom + 3) };
+        img.style.pointerEvents = '';
+        return r;
+      }, [s.left + s.width / 2, s.bottom, 844]);
+      const j = JSON.stringify(hits);
+      assert.equal(hits.gridIn, true, `the grid does not show inside the frame: ${j}`);
+      assert.equal(hits.gridBelow, false, `the grid shows 6 px below the frame: ${j}`);
+      assert.equal(hits.gridFoot, false, `the grid shows at the window's foot: ${j}`);
+      assert.equal(hits.holeIn, false, `the cockpit covers the frame: ${j}`);
+      assert.equal(hits.holeBelow, true, `the cockpit's hole runs past the frame: ${j}`);
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('390x844 mid push-in: frame and grid edges coincide, the visible height grows toward the window; then the grid is normal', async (t) => {
+    const page = await open({ viewport: { width: 390, height: 844 } });
+    try {
+      await mounted(page);
+      const o = await assertPortrait(page, '390x844');
+      await enter(page, 'Escape');
+      await until(page, () => document.documentElement.classList.contains('dash-pushing'), 2000);
+      const samples = await page.evaluate(SAMPLE_PUSH);
+      const mid = samples.filter((x) => x.scale < 0.995);
+      assert.ok(mid.length >= 3, `too few mid-push frames: ${samples.length}`);
+      let worst = 0;
+      for (const x of mid) {
+        for (const k of ['left', 'top', 'right', 'bottom']) {
+          const d = Math.abs(x.s[k] - x.p[k]);
+          worst = Math.max(worst, d);
+          assert.ok(d <= 1.5, `at scale ${x.scale.toFixed(3)} ${k}: frame ${x.s[k].toFixed(2)} vs grid ${x.p[k].toFixed(2)}`);
+        }
+      }
+      const heights = mid.map((x) => x.p.bottom - x.p.top);
+      t.diagnostic(`${mid.length} mid-push frames, worst edge gap ${worst.toFixed(3)} px, heights ${heights.map((v) => v.toFixed(0)).join(' ')}`);
+      for (let i = 1; i < heights.length; i++) assert.ok(heights[i] >= heights[i - 1] - 0.5, `the visible height shrank: ${heights.join(' ')}`);
+      assert.ok(Math.min(...heights) <= o.frameH + 0.2 * (844 - o.frameH), `first heights ${heights.slice(0, 3)}`);
+      assert.ok(Math.max(...heights) >= o.frameH + 0.6 * (844 - o.frameH), `last heights ${heights.slice(-3)}`);
+      await landed(page);
+      await page.waitForTimeout(200);
+      assert.equal(await css(page, '#portal', 'transform'), 'none');
+      assert.equal(await css(page, '#portal', 'clipPath'), 'none');
+      assert.equal(await css(page, '#standoff-splash', 'display'), 'none');
+      const p = await rect(page, '#portal');
+      assert.ok(p.left === 0 && p.top === 0 && Math.abs(p.width - 390) <= 1, JSON.stringify(p));
+      const scrolled = await page.evaluate(() => {
+        const c = document.getElementById('grid-scroll-container');
+        c.scrollTop = 400;
+        return c.scrollTop;
+      });
+      assert.equal(scrolled, 400, 'the grid does not scroll');
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+});
+
+describe('rotation', { concurrency: 1 }, () => {
+  test('load at 390x844, turn to 844x390: the wide cockpit loads then, wide geometry; back: the phone picture and the short screen', async () => {
+    const page = await open({ viewport: { width: 390, height: 844 } });
+    try {
+      await mounted(page);
+      await assertPortrait(page, 'load 390x844');
+      await resize(page, 844, 390);
+      await untilMode(page, 'wide');
+      await assertWide(page, 'turned to 844x390');
+      await resize(page, 390, 844);
+      await untilMode(page, 'tall', 1000);
+      await assertPortrait(page, 'back at 390x844');
+      assert.deepEqual(cockpitFiles(page), [PHONE, WIDE]);
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+
+  test('load at 844x390, turn to 390x844: the phone picture loads then, the short screen; back: wide again', async () => {
+    const page = await open({ viewport: { width: 844, height: 390 } });
+    try {
+      await mounted(page);
+      await assertWide(page, 'load 844x390');
+      await resize(page, 390, 844);
+      await untilMode(page, 'tall');
+      await assertPortrait(page, 'turned to 390x844');
+      await resize(page, 844, 390);
+      await untilMode(page, 'wide', 1000);
+      await assertWide(page, 'back at 844x390');
+      assert.deepEqual(cockpitFiles(page), [WIDE, PHONE]);
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+});
+
+describe('wide mode untouched', { concurrency: 1 }, () => {
+  test('1440x900: the screen is k * h tall, the visible grid equals it, no --dash-frame-h inline', async () => {
+    const page = await open();
+    try {
+      await mounted(page);
+      await assertWide(page, '1440x900');
+      near((await rect(page, '#dash-screen')).height, 0.48 * 900, 1, 'screen height');
+      assert.deepEqual(page.errors, []);
+    } finally {
+      await done(page);
+    }
+  });
+});
+
 describe('files', () => {
   test('phone first-load weight: phone picture + still-960 + the doll <= 400,000 bytes; the tall picture is gone', async (t) => {
     const size = async (f) => (await fs.stat(path.join(SRC, f))).size;

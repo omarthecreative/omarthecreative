@@ -55,7 +55,7 @@ async function assertCockpit(page, mode, label) {
     assert.ok(Math.abs(img[k] - want) <= 1, `${label}: picture ${k} ${img[k]} vs ${want}`);
   }
   const s = await rect(page, '#dash-screen');
-  for (const [k, want] of [['left', o.left], ['top', o.top], ['width', o.k * page.vw], ['height', o.k * page.vh]]) {
+  for (const [k, want] of [['left', o.left], ['top', o.top], ['width', o.k * page.vw], ['height', o.frameH]]) {
     assert.ok(Math.abs(s[k] - want) <= 1, `${label}: screen ${k} ${s[k]} vs ${want}`);
   }
   await frameFitsGrid(page, `${label}: `);
