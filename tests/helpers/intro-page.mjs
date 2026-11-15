@@ -283,6 +283,54 @@ export async function frameFitsGrid(page, label = '') {
     assert.ok(Math.abs(s[k] - g[k]) <= 1, `${label}${k}: frame ${s[k].toFixed(2)} vs grid ${g[k].toFixed(2)}`);
   }
 }
+// For page.evaluate once html.dash-pushing is set: every frame of the push-in (at most 1.5 s), the
+// screen's rect (s) and the grid's visible rect (p: its clip-path inset, resolved as in visibleRect),
+// with the grid's scale. Page clock.
+export const PUSH_SAMPLES = () => new Promise((resolve) => {
+  const portal = document.getElementById('portal');
+  const screen = document.getElementById('dash-screen');
+  const resolveLen = (expr, refPx) => {
+    const box = document.createElement('div');
+    box.style.cssText = `position:fixed;left:0;top:0;width:${refPx}px;height:${refPx}px;visibility:hidden`;
+    const probe = document.createElement('div');
+    probe.style.cssText = `position:absolute;height:${expr}`;
+    box.appendChild(probe);
+    document.body.appendChild(box);
+    const v = probe.getBoundingClientRect().height;
+    box.remove();
+    return v;
+  };
+  const visible = () => {
+    const r = portal.getBoundingClientRect();
+    const w = portal.offsetWidth, h = portal.offsetHeight;
+    const m = /^inset\((.*)\)$/.exec(getComputedStyle(portal).clipPath.trim());
+    let ins = [0, 0, 0, 0];
+    if (m) {
+      const parts = [];
+      let depth = 0, cur = '';
+      for (const ch of m[1]) {
+        if (ch === '(') depth++;
+        if (ch === ')') depth--;
+        if (/\s/.test(ch) && depth === 0) { if (cur) parts.push(cur); cur = ''; } else cur += ch;
+      }
+      if (cur) parts.push(cur);
+      const v = [parts[0], parts[1] ?? parts[0], parts[2] ?? parts[0], parts[3] ?? parts[1] ?? parts[0]];
+      ins = [resolveLen(v[0], h), resolveLen(v[1], w), resolveLen(v[2], h), resolveLen(v[3], w)];
+    }
+    const sx = r.width / w, sy = r.height / h;
+    return { left: r.left + ins[3] * sx, top: r.top + ins[0] * sy, right: r.right - ins[1] * sx, bottom: r.bottom - ins[2] * sy };
+  };
+  const out = [];
+  const t0 = performance.now();
+  (function frame() {
+    if (!document.documentElement.classList.contains('dash-pushing') || performance.now() - t0 > 1500) return resolve(out);
+    const s = screen.getBoundingClientRect();
+    const p = visible();
+    out.push({ t: performance.now() - t0, scale: portal.getBoundingClientRect().width / portal.offsetWidth,
+      s: { left: s.left, top: s.top, right: s.right, bottom: s.bottom }, p });
+    requestAnimationFrame(frame);
+  })();
+});
 // Which dashboard is up: 'wide' or 'tall' (rendered), or 'drawn'.
 export const dashMode = (page) => page.evaluate(() => {
   const h = document.documentElement;

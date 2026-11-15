@@ -83,8 +83,7 @@
             if (on) root.style.setProperty(name, key === 'k' ? String(o.k) : o[key] + 'px');
             else root.style.removeProperty(name);
         });
-        // The short screen: inline only in rendered tall mode. Elsewhere the
-        // stylesheet's default (--dash-h, k * 100vh) stays exactly as it was.
+        // The short screen: inline only in rendered tall mode (default: --dash-h).
         if (on && o.mode === 'tall') root.style.setProperty('--dash-frame-h', o.frameH + 'px');
         else root.style.removeProperty('--dash-frame-h');
         root.classList.toggle('dash-rendered', on);
@@ -340,16 +339,14 @@
     // globals, so it can run on every resize. All values are px except k.
     // mode 'none' means the rendered cockpit does not fit; nothing else is set.
     // Both modes use the wide cockpit's coordinates; frameH is the screen's
-    // visible height before the push-in (k * h in wide mode).
+    // height before the push-in (k * h in wide mode).
     function layout(w, h) {
         var o = { mode: 'none' };
         var ckH = h, ckW = h * 16 / 9, shield = 0.412 * h;
         var ckX, cropR = 0, k, left, top, frameH, sbW, sbH, sbX, sbY;
         if (w <= 760 && h > w) {
-            // A narrow window standing upright: a slice of the wide cockpit
-            // (the phone picture covers x 0.25 to 0.64 of it), part of the
-            // steering wheel, and a short, wide screen. X0 is the window's
-            // left edge as a fraction of the cockpit; the slice must cover it.
+            // Upright: the phone picture is the cockpit's slice from x = 0.25 to
+            // 0.64; X0, the window's left edge in the cockpit, keeps it covered.
             var x0 = Math.min(0.40, Math.max(0.26, 0.615 - w / ckW));
             if (x0 + w / ckW > 0.64) x0 = 0.64 - w / ckW;
             ckX = -x0 * ckW;

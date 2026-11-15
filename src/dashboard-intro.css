@@ -18,9 +18,7 @@
     --dash-oy: calc(var(--dash-top) / (1 - var(--dash-k)));
     --dash-w: calc(var(--dash-k) * 100vw);
     --dash-h: calc(var(--dash-k) * 100vh);
-    /* The screen's visible height before the push-in. dashboard-intro.js sets
-       it inline (px) only for the phone upright, rendered: a short screen. */
-    --dash-frame-h: var(--dash-h);
+    --dash-frame-h: var(--dash-h); /* the screen's height before the push-in; inline (px) only for the rendered phone upright */
     --dash-ease: cubic-bezier(0.7, 0, 0.2, 1);
     --dash-push: 1000ms;
     /* Set by DashIntro.mount() on mount and resize. */
@@ -45,8 +43,7 @@ html.dash-intro body {
 html.dash-intro #portal {
     transform-origin: var(--dash-ox) var(--dash-oy);
     transform: scale(var(--dash-k));
-    /* Cut at the screen's foot: --dash-frame-h of the window is --dash-frame-h / k of the grid. */
-    clip-path: inset(0 0 calc(100% - var(--dash-frame-h) / var(--dash-k)) 0);
+    clip-path: inset(0 0 calc(100% - var(--dash-frame-h) / var(--dash-k)) 0); /* cut at the screen's foot */
 }
 /* Grid chrome that lives outside #portal stays hidden until the push-in lands. */
 html.dash-intro .copyright-tag.fixed {
@@ -439,17 +436,9 @@ html.dash-pushing #portal {
     clip-path: inset(0 0 calc(100% - 100vh) 0);
     transition: transform var(--dash-push) var(--dash-ease), clip-path var(--dash-push) var(--dash-ease);
 }
-/* A short screen grows to --dash-h on the same clock: the screen, the
-   cockpit's hole and the grid's cut stay on one line. Elsewhere start and
-   end are equal and nothing moves. */
-html.dash-pushing #dash-screen {
-    height: var(--dash-h);
-    transition: box-shadow 150ms, height var(--dash-push) var(--dash-ease);
-}
-html.dash-pushing.dash-rendered #dash-cockpit {
-    --hb: calc(var(--dash-top) + var(--dash-h));
-    transition: clip-path var(--dash-push) var(--dash-ease);
-}
+/* A short screen grows to --dash-h on the same clock as the grid's cut (elsewhere nothing moves). */
+html.dash-pushing #dash-screen { height: var(--dash-h); transition: box-shadow 150ms, height var(--dash-push) var(--dash-ease); }
+html.dash-pushing.dash-rendered #dash-cockpit { --hb: calc(var(--dash-top) + var(--dash-h)); transition: clip-path var(--dash-push) var(--dash-ease); }
 
 /* ---- Phone, upright (on its side it takes the wide rules) --------------- */
 
@@ -495,8 +484,7 @@ html.dash-pushing.dash-rendered #dash-cockpit {
     }
 
     /* Drawn: no knee panel on the phone, so the button sits centred in the margin
-       left of the bezel (7px wide), level with the screen's foot. The rendered
-       cockpit puts it on the picture's start button instead. */
+       left of the bezel (7px wide), level with the screen's foot. */
     html:not(.dash-rendered) #dash-wire {
         left: calc((var(--dash-left) - 7px) / 2 - 27px);
         top: calc(var(--dash-top) + var(--dash-h) - 54px);
@@ -545,10 +533,7 @@ html.dash-rendered #dash-cockpit-img {
     height: var(--ck-h);
 }
 /* Phone upright: the picture is the cockpit's slice from x = 0.25 to 0.64. */
-html.dash-rendered[data-dash-mode="tall"] #dash-cockpit-img {
-    left: calc(var(--ck-x) + 0.25 * var(--ck-w));
-    width: calc(0.39 * var(--ck-w));
-}
+html.dash-rendered[data-dash-mode="tall"] #dash-cockpit-img { left: calc(var(--ck-x) + 0.25 * var(--ck-w)); width: calc(0.39 * var(--ck-w)); }
 /* Wider than 16:9: black beside the picture, fading in over its outer 6%.
    The width is 0 when the picture starts at x = 0 (no margin to fade into). */
 html.dash-rendered[data-dash-mode="wide"] #dash-cockpit::before,
@@ -590,14 +575,9 @@ html.dash-rendered .dash-minimap {
     z-index: 3;
     right: calc(var(--ck-crop-r) + 0.07 * var(--ck-w));
 }
-/* Phone upright: under the mirror, over the sky, 10px in from the window's
-   left (the windshield starts at --ck-x, left of the window). */
+/* Phone upright: under the mirror, over the sky, 10px in from the window's left (the windshield starts at --ck-x). */
 html.dash-rendered[data-dash-mode="tall"] .dash-minimap {
-    left: calc(10px - var(--ck-x));
-    right: auto;
-    top: calc(0.16 * var(--ck-h));
-    width: 56px;
-    height: 56px;
+    left: calc(10px - var(--ck-x)); right: auto; top: calc(0.16 * var(--ck-h)); width: 56px; height: 56px;
 }
 
 /* Wire Omar on the picture's start button: a ring 128px across at 3840 wide,
