@@ -8,7 +8,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const SRC = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'src');
-const ORIGIN = 'https://omarthecreative.com/';
+// www, not the apex: the apex answers 301 to www, and LinkedIn finds no image behind a redirect.
+const ORIGIN = 'https://www.omarthecreative.com/';
 const DASH_IMAGE = `${ORIGIN}assets/og/og-dashboard-miami-v2-1200x630.jpg`;
 const DASH_PAGES = ['index.html', 'films.html'];
 
@@ -53,7 +54,8 @@ test('every og:image is absolute, exists under src/, and matches twitter:image',
     await assert.doesNotReject(fs.access(file), `${rel}: ${url} exists under src/`);
     assert.equal(m['twitter:image'], url, `${rel}: twitter:image matches og:image`);
     assert.equal(m['twitter:card'], 'summary_large_image', `${rel}: twitter:card`);
-    assert.ok(m['og:url']?.startsWith(ORIGIN.slice(0, -1)), `${rel}: has an absolute og:url`);
+    assert.ok(m['og:url']?.startsWith(ORIGIN), `${rel}: og:url is on ${ORIGIN} (${m['og:url']})`);
+    if (m['og:image:secure_url']) assert.equal(m['og:image:secure_url'], url, `${rel}: og:image:secure_url matches og:image`);
   }
 });
 
