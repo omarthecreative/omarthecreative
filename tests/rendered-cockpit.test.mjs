@@ -1559,7 +1559,7 @@ describe('miami beach, real files', { concurrency: 1 }, () => {
   test('query strings in index.html are the bumped ones', async () => {
     const html = await fs.readFile(path.join(SRC, 'index.html'), 'utf8');
     assert.match(html, /href="dashboard-intro\.css\?v=12"/);
-    assert.match(html, /src="dashboard-scenes\.js\?v=5"/);
+    assert.match(html, /src="dashboard-scenes\.js\?v=6"/);
     assert.match(html, /src="dashboard-intro\.js\?v=13"/);
   });
 
