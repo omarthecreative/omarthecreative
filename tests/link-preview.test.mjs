@@ -114,3 +114,10 @@ test('pages that share the site title use "Creative Director & Writer"', async (
     assert.equal(m['twitter:title'], want, `${rel}: twitter:title`);
   }
 });
+
+test('the Remember WE essay names its author and its first publish date (Substack, 2026-02-25 ET)', async () => {
+  const m = metas(await fs.readFile(path.join(SRC, 'essays', 'remember-we.html'), 'utf8'));
+  assert.equal(m['og:type'], 'article');
+  assert.equal(m['author'], 'Omar Silwany');
+  assert.equal(m['article:published_time'], '2026-02-25T19:42:57-05:00');
+});
