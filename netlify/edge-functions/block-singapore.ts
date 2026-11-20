@@ -10,4 +10,12 @@ export default async (request: Request, context: Context) => {
   return context.next();
 };
 
-export const config = { path: "/*" };
+// Link-preview images stay reachable from Singapore: LinkedIn fetches them from servers there.
+export const config = {
+  path: "/*",
+  excludedPath: [
+    "/assets/og/*",
+    "/assets/og-image-*.jpg",
+    "/happy-birthday-kayla/31/kayla-flip-yard.png",
+  ],
+};
