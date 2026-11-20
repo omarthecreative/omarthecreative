@@ -81,6 +81,12 @@ async function hasClass(page, sel, cls) {
   return page.evaluate(([sel, cls]) => document.querySelector(sel).classList.contains(cls), [sel, cls]);
 }
 const close = (page) => page.context().close();
+// Pins the real scenes file to one city, so a test that expects that city gets it while the scenes rotate.
+const pinScene = (id) => ['**/dashboard-scenes.js*', async (r) => {
+  const res = await r.fetch();
+  const pin = `\nwindow.DashScenes.scenes = window.DashScenes.scenes.filter(function (s) { return s.id === ${JSON.stringify(id)}; });\n`;
+  await r.fulfill({ contentType: 'text/javascript', body: (await res.text()) + pin });
+}];
 // Routes for a page whose scenes file holds just this scene.
 // Media under test-media/ come from tests/fixtures/ (clip-small.mp4 is clip.mp4);
 // any other name there is a 404.
@@ -155,7 +161,7 @@ for (const offline of [false, true]) {
 
     // — Task 2: scenes and the pick —
     test('scene is recorded, and no banner line', async () => {
-      const page = await open({ offline });
+      const page = await open({ offline, routes: [pinScene('miami-beach')] });
       try {
         assert.equal(await page.getAttribute('#dash-shield', 'data-scene'), 'miami-beach');
         const stored = await page.evaluate(() => [localStorage.getItem('omar_last_scene'), localStorage.getItem('omar_last_line')]);
@@ -186,7 +192,11 @@ for (const offline of [false, true]) {
         const r = await page.evaluate(() => {
           const D = window.DashIntro;
           const S = window.DashScenes;
+          // The first scene in the file is the first pick when nothing was shown last and the dice say 0.
+          const dice = Math.random;
+          Math.random = () => 0;
           const picked = D.applyScene();
+          Math.random = dice;
           window.DashScenes = undefined;
           const none = D.applyScene();
           return {
@@ -314,7 +324,7 @@ for (const offline of [false, true]) {
 
     // — Task 4: Miami Beach minimap —
     test('miami-beach: minimap strip is the scene file and has loaded, with the arrow', async () => {
-      const page = await open({ offline });
+      const page = await open({ offline, routes: [pinScene('miami-beach')] });
       try {
         await introStart(page);
         assert.match(await page.getAttribute('.dash-minimap img.dash-minimap-strip', 'src'), /miami-beach\/minimap-strip\.svg$/);
@@ -326,7 +336,8 @@ for (const offline of [false, true]) {
     });
 
     test('minimap strip 404: inline minimap still shown', async () => {
-      const page = await open({ offline, routes: [['**/scenes/miami-beach/minimap-strip.svg', (r) => r.fulfill({ status: 404, body: 'not found' })]] });
+      const page = await open({ offline, routes: [pinScene('miami-beach'),
+        ['**/scenes/miami-beach/minimap-strip.svg', (r) => r.fulfill({ status: 404, body: 'not found' })]] });
       try {
         await introStart(page);
         await page.waitForTimeout(300);

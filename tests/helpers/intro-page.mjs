@@ -212,6 +212,18 @@ export function withScene(scene) {
     }],
   ];
 }
+// routes: pinScene(id) serves the REAL scenes file cut down to the scene with this id, so a test
+// that needs one real city gets it every time while the scenes rotate. An unknown id leaves no scene.
+export function pinScene(id) {
+  return ['**/dashboard-scenes.js*', async (r) => {
+    const res = await r.fetch();
+    const pin = `\nwindow.DashScenes.scenes = window.DashScenes.scenes.filter(function (s) { return s.id === ${JSON.stringify(id)}; });\n`;
+    await r.fulfill({ contentType: 'text/javascript', body: (await res.text()) + pin });
+  }];
+}
+// The Chromium that start() launched, for a test that keeps one context (one browser's
+// localStorage) across several page loads.
+export const getBrowser = () => browser;
 export const STILL = 'test-media/still.jpg';
 export const CLIP = { still: STILL, clip: 'test-media/clip.webm' };
 export const NO_CLIP = { still: STILL };
