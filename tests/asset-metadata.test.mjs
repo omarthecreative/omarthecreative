@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 
 const SRC = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'src');
 const DASH = path.join(SRC, 'assets', 'dash');
+const OG = path.join(SRC, 'assets', 'og');
 
 async function walk(dir) {
   const out = [];
@@ -23,6 +24,17 @@ async function walk(dir) {
 test('no file under src/assets/dash/ holds a c2pa or jumb record', async () => {
   const files = await walk(DASH);
   assert.ok(files.length > 20, `found the assets (${files.length} files)`);
+  const dirty = [];
+  for (const f of files) {
+    const b = await fs.readFile(f);
+    for (const needle of ['c2pa', 'jumb']) if (b.includes(Buffer.from(needle))) dirty.push(`${path.relative(SRC, f)} has "${needle}"`);
+  }
+  assert.deepEqual(dirty, [], 'files with provenance metadata');
+});
+
+test('no file under src/assets/og/ holds a c2pa or jumb record', async () => {
+  const files = await walk(OG);
+  assert.ok(files.length >= 1, `found the link-preview images (${files.length} files)`);
   const dirty = [];
   for (const f of files) {
     const b = await fs.readFile(f);
