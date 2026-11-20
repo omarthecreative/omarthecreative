@@ -1528,6 +1528,12 @@ describe('rendered doll', { concurrency: 1 }, () => {
 // These tests use the scene entry in src/dashboard-scenes.js and the real files. Playwright's Chromium
 // may not decode H.264, so they assert on requests and on the still, not on playback.
 const MB = 'assets/dash/scenes/miami-beach/';
+// The scenes rotate: a test of Miami's own files pins the real scenes file to it.
+const pinMiami = ['**/dashboard-scenes.js*', async (r) => {
+  const res = await r.fetch();
+  const pin = '\nwindow.DashScenes.scenes = window.DashScenes.scenes.filter(function (s) { return s.id === "miami-beach"; });\n';
+  await r.fulfill({ contentType: 'text/javascript', body: (await res.text()) + pin });
+}];
 const REAL = (page) => page.requested.filter((u) => /\/(still|clip)-\d+\./.test(u) || /\/cockpit-/.test(u) || /\/doll-/.test(u));
 const realName = (u) => new URL(u).pathname.split('/').pop();
 const isRealClip = (u) => /\/miami-beach\/clip-\d+\.mp4$/.test(u);
@@ -1553,12 +1559,12 @@ describe('miami beach, real files', { concurrency: 1 }, () => {
   test('query strings in index.html are the bumped ones', async () => {
     const html = await fs.readFile(path.join(SRC, 'index.html'), 'utf8');
     assert.match(html, /href="dashboard-intro\.css\?v=12"/);
-    assert.match(html, /src="dashboard-scenes\.js\?v=4"/);
-    assert.match(html, /src="dashboard-intro\.js\?v=12"/);
+    assert.match(html, /src="dashboard-scenes\.js\?v=5"/);
+    assert.match(html, /src="dashboard-intro\.js\?v=13"/);
   });
 
   test('1440x900: rendered, still shown at the first frame, then clip-1920 requested', async () => {
-    const page = await open({ init: [firstShownStill] });
+    const page = await open({ routes: [pinMiami], init: [firstShownStill] });
     try {
       await introStart(page);
       await assertRendered(page, 'wide');
@@ -1578,7 +1584,7 @@ describe('miami beach, real files', { concurrency: 1 }, () => {
   });
 
   test('390x844: requests still-960 and clip-960 and no 1920 file', async () => {
-    const page = await open({ viewport: { width: 390, height: 844 }, init: [firstShownStill] });
+    const page = await open({ viewport: { width: 390, height: 844 }, routes: [pinMiami], init: [firstShownStill] });
     try {
       await introStart(page);
       await assertRendered(page, 'tall');

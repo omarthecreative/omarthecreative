@@ -13,7 +13,8 @@
                   Called when the intro starts waiting for the visitor, never
                   when the intro is skipped.
    pickScene      the pure part of that pick.
-   layout(w, h)   geometry of the rendered cockpit for a window (pure).
+   layout(w, h)   geometry of the rendered cockpit for a window (reads the
+                  scene on screen only for its focus).
    rendered()     true while html.dash-rendered is set: the cockpit picture
                   loaded while the page was dark and fits this window. Then
                   layout() is written to :root as inline variables; otherwise
@@ -337,8 +338,17 @@
         }
     }
 
-    // Geometry of the rendered cockpit for a w x h window. Pure: no DOM, no
-    // globals, so it can run on every resize. All values are px except k.
+    // Where the scene's landmark stands across it, 0 to 1: the scene on screen's
+    // `focus`, or 0.60 when it has none or has one that is not a fraction.
+    var DEFAULT_FOCUS = 0.60;
+    function sceneFocus() {
+        var f = scene && scene.focus;
+        return (typeof f === 'number' && f >= 0 && f <= 1) ? f : DEFAULT_FOCUS;
+    }
+
+    // Geometry of the rendered cockpit for a w x h window. No DOM; the one thing
+    // it reads beyond w and h is the scene on screen (sceneFocus), so it can run
+    // on every resize. All values are px except k.
     // mode 'none' means the rendered cockpit does not fit; nothing else is set.
     // Both modes use the wide cockpit's coordinates; frameH is the screen's
     // height before the push-in (k * h in wide mode).
@@ -357,9 +367,9 @@
             top = 0.474 * h;
             frameH = 0.62 * k * w;
             o.mode = (x0 >= 0.25 && k >= 0.40 && top + frameH <= h - 24) ? 'tall' : 'none';
-            // The scene box covers the window, the Colony mid-window.
+            // The scene box covers the window, the scene's landmark mid-window.
             sbH = shield; sbW = sbH * 1920 / 824; sbY = 0;
-            sbX = (-ckX + w / 2) - 0.60 * sbW;
+            sbX = (-ckX + w / 2) - sceneFocus() * sbW;
         } else {
             // Every other window, a phone on its side included.
             ckX = Math.max(0, (w - ckW) / 2);
