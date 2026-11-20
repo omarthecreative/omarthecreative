@@ -105,3 +105,12 @@ test('every local og:image JPEG is baseline, not progressive (LinkedIn finds no 
     assert.equal(sof, 0xC0, `${rel}: ${url} is baseline (SOF0), found 0x${sof?.toString(16)}`);
   }
 });
+
+test('pages that share the site title use "Creative Director & Writer"', async () => {
+  const want = 'Omar, the Creative | Creative Director & Writer';
+  for (const rel of ['index.html', 'films.html', 'about.html', 'long-pour.html', 'choice-cuts.html']) {
+    const m = metas(await fs.readFile(path.join(SRC, rel), 'utf8'));
+    assert.equal(m['og:title'], want, `${rel}: og:title`);
+    assert.equal(m['twitter:title'], want, `${rel}: twitter:title`);
+  }
+});
