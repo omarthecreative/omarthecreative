@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 
 const SRC = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'src');
 const ORIGIN = 'https://omarthecreative.com/';
-const DASH_IMAGE = `${ORIGIN}assets/og/og-dashboard-miami-1200x630.jpg`;
+const DASH_IMAGE = `${ORIGIN}assets/og/og-dashboard-miami-v2-1200x630.jpg`;
 const DASH_PAGES = ['index.html', 'films.html'];
 
 async function htmlFiles(dir) {
@@ -76,7 +76,7 @@ test('the landing page and films page use the dashboard image, not the old shoot
 });
 
 test('the dashboard image file really is a 1200 x 630 JPEG', async () => {
-  const b = await fs.readFile(path.join(SRC, 'assets', 'og', 'og-dashboard-miami-1200x630.jpg'));
+  const b = await fs.readFile(path.join(SRC, 'assets', 'og', 'og-dashboard-miami-v2-1200x630.jpg'));
   assert.equal(b[0], 0xFF); assert.equal(b[1], 0xD8, 'is a JPEG');
   let i = 2, size;
   while (i < b.length && b[i] === 0xFF) {
@@ -87,4 +87,19 @@ test('the dashboard image file really is a 1200 x 630 JPEG', async () => {
     i += 2 + len;
   }
   assert.deepEqual(size, { w: 1200, h: 630 });
+});
+
+test('every local og:image JPEG is baseline, not progressive (LinkedIn finds no image in a progressive one)', async () => {
+  for (const { rel, m } of await pagesWithPreview()) {
+    const url = m['og:image'];
+    if (!/\.jpe?g$/i.test(url)) continue;
+    const b = await fs.readFile(path.join(SRC, decodeURIComponent(url.slice(ORIGIN.length))));
+    let i = 2, sof;
+    while (i < b.length && b[i] === 0xFF) {
+      const marker = b[i + 1];
+      if (marker >= 0xC0 && marker <= 0xCF && ![0xC4, 0xC8, 0xCC].includes(marker)) { sof = marker; break; }
+      i += 2 + b.readUInt16BE(i + 2);
+    }
+    assert.equal(sof, 0xC0, `${rel}: ${url} is baseline (SOF0), found 0x${sof?.toString(16)}`);
+  }
 });
